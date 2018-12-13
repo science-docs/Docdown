@@ -1,0 +1,56 @@
+﻿<Metro:MetroWindow x:Class="Docdown.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        xmlns:Controls="clr-namespace:Docdown.Controls"
+        mc:Ignorable="d"
+        TitleCharacterCasing="Normal"
+        Title="Docdown" Height="450" Width="800"
+        WindowTitleBrush="{StaticResource BaseColorBrush}"
+        Dialog:DialogParticipation.Register="{Binding}">
+    <FrameworkElement.Resources>
+        <Style BasedOn="{StaticResource MetroFlatButton}" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{StaticResource BaseColorBrush}"/>
+        </Style>
+    </FrameworkElement.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.ColumnSpan="5" Grid.Row="1" Orientation="Horizontal" Background="{StaticResource BaseColorBrush}">
+            <Button Command="{Binding SaveSelectedItemCommand}" ToolTip="{Binding SelectedItemName, StringFormat='Save {0}'}">
+                <Rectangle Fill="{StaticResource Save}" Height="16" Width="16"/>
+            </Button>
+            <Button Command="{Binding SaveAllItemsCommand}">
+                <Rectangle Fill="{StaticResource SaveAll}" Height="16" Width="16"/>
+            </Button>
+            <Button Click="Button_Click">
+                <Rectangle Fill="{StaticResource Run}" Height="16" Width="16"/>
+            </Button>
+            <!--<Button Grid.Column="0" Grid.Row="0" Content="Start" Click="Button_Click" Style="{StaticResource MetroFlatButton}"/>-->
+        </StackPanel>
+        
+        <Controls:WorkspaceView x:Name="WorkspaceView" Grid.Column="0" Grid.Row="2"/>
+        <Rectangle Grid.Column="1" Grid.Row="2" Fill="#80D0D0D0" HorizontalAlignment="Stretch"/>
+        <Controls:Editor x:Name="Editor" Grid.Column="2" Grid.Row="2"/>
+        <Rectangle Grid.Column="3" Grid.Row="2" Fill="#80D0D0D0" HorizontalAlignment="Stretch"/>
+        <Controls:DocumentViewer x:Name="Viewer" Grid.Column="4" Grid.Row="2"/>
+
+        <Grid Grid.Row="3" Grid.ColumnSpan="5" Height="23" Background="{StaticResource AccentBaseColorBrush}">
+            
+        </Grid>
+    </Grid>
+</Metro:MetroWindow>
