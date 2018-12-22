@@ -30,31 +30,40 @@ namespace Docdown
         private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             string text = Editor.Text;
-            
+            Viewer.StartLoad();
+            Viewer.DismissError();
             Task.Run(() =>
             {
                 string tempFile = Path.GetTempFileName();
                 File.WriteAllText(tempFile, text);
-                var response = WebUtility.MultipartFormDataPost("http://localhost:3030/convert", "Docdown",
+                try
+                {
+                    var response = WebUtility.MultipartFormDataPost("http://localhost:3030/convert", "Docdown",
                     MultipartFormParameter.CreateField("from", "markdown"),
                     MultipartFormParameter.CreateField("to", "pdf"),
                     MultipartFormParameter.CreateField("template", "eisvogel"),
                     MultipartFormParameter.CreateFile("content", tempFile));
 
-                string tempFinalFile = Path.GetTempFileName();
-                using (var responseStream = response.GetResponseStream())
-                {
-                    using (var fs = new FileStream(tempFinalFile, FileMode.Open))
+                    string tempFinalFile = Path.GetTempFileName();
+                    using (var responseStream = response.GetResponseStream())
                     {
-                        responseStream.CopyTo(fs);
+                        using (var fs = new FileStream(tempFinalFile, FileMode.Open))
+                        {
+                            responseStream.CopyTo(fs);
+                        }
                     }
+                    Viewer.Navigate(tempFinalFile);
                 }
-                Viewer.NavigateFile(tempFinalFile);
+                catch
+                {
+                    Viewer.ShowError("Client could not connect to server");
+                }
             });
         }
 
         private void WorkspaceTextChanged(object sender, EventArgs e)
         {
+            Editor.FileName = workspaceViewModel.SelectedItem.Data.FileSystemInfo.FullName;
             Editor.Text = workspaceViewModel.SelectedItemText;
         }
     }

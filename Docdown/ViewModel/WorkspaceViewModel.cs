@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Docdown.ViewModel
@@ -23,7 +24,12 @@ namespace Docdown.ViewModel
                 SendPropertyUpdate(nameof(SelectedItemName));
                 if (Data.SelectedItem.IsPlainText())
                 {
+                    CanConvert = true;
                     SendPropertyUpdate(nameof(SelectedItemText));
+                }
+                else
+                {
+                    CanConvert = false;
                 }
             }
         }
@@ -70,11 +76,30 @@ namespace Docdown.ViewModel
             }
         }
 
+        public bool CanConvert
+        {
+            get => canConvert && !isConverting;
+            set => Set(ref canConvert, value);
+        }
+
+        public bool IsConverting
+        {
+            get => isConverting;
+            set
+            {
+                Set(ref isConverting, value);
+                SendPropertyUpdate(nameof(CanConvert));
+            }
+        }
+
         public ICommand SaveSelectedItemCommand => new ActionCommand(SaveSelectedItem);
         public ICommand SaveAllItemsCommand => new ActionCommand(SaveAllItems);
+        public ICommand ConvertCommand => new ActionCommand(Convert);
 
         public event EventHandler SelectedItemTextChanged;
 
+        private bool canConvert;
+        private bool isConverting;
         private Dictionary<string, string> textCache = new Dictionary<string, string>();
 
         public IEnumerable<WorkspaceItemViewModel> Children
@@ -107,6 +132,23 @@ namespace Docdown.ViewModel
             {
                 File.WriteAllText(pair.Key, pair.Value);
             }
+        }
+
+        private void Convert()
+        {
+            IsConverting = true;
+            Task.Run(() =>
+            {
+                try
+                {
+                    Data.Convert();
+                }
+                catch
+                {
+
+                }
+                IsConverting = false;
+            });
         }
     }
 }

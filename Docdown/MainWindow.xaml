@@ -37,7 +37,7 @@
             <Button Command="{Binding SaveAllItemsCommand}">
                 <Rectangle Fill="{StaticResource SaveAll}" Height="16" Width="16"/>
             </Button>
-            <Button Click="Button_Click">
+            <Button IsEnabled="{Binding CanConvert}" Click="Button_Click">
                 <Rectangle Fill="{StaticResource Run}" Height="16" Width="16"/>
             </Button>
             <!--<Button Grid.Column="0" Grid.Row="0" Content="Start" Click="Button_Click" Style="{StaticResource MetroFlatButton}"/>-->

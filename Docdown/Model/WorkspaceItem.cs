@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Docdown.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -18,6 +19,7 @@ namespace Docdown.Model
         public FileSystemInfo FileSystemInfo { get; set; }
         public WorkspaceItemType Type { get; set; }
         public List<WorkspaceItem> Children { get; } = new List<WorkspaceItem>();
+        public WorkspaceItem Parent { get; private set; }
 
         public WorkspaceItem()
         {
@@ -47,7 +49,7 @@ namespace Docdown.Model
 
                 if (recursively)
                 {
-                    Children.AddRange(FromDirectory(directoryInfo));
+                    Children.AddRange(FromDirectory(directoryInfo, this));
                 }
             }
             else if (fileSystemInfo is FileInfo fileInfo)
@@ -83,7 +85,10 @@ namespace Docdown.Model
 
             File.WriteAllText(fullName, content);
             var fileInfo = new FileInfo(fullName);
-            var item = new WorkspaceItem(fileInfo);
+            var item = new WorkspaceItem(fileInfo)
+            {
+                Parent = this
+            };
             Children.Add(item);
             return item;
         }
@@ -106,7 +111,6 @@ namespace Docdown.Model
 
         public bool IsPlainText()
         {
-            return Type != WorkspaceItemType.Directory;
             switch (Type)
             {
                 case WorkspaceItemType.Latex:
@@ -116,11 +120,11 @@ namespace Docdown.Model
             return false;
         }
         
-        private static IEnumerable<WorkspaceItem> FromDirectory(DirectoryInfo directoryInfo)
+        private static IEnumerable<WorkspaceItem> FromDirectory(DirectoryInfo directoryInfo, WorkspaceItem parent)
         {
             foreach (var dir in directoryInfo.EnumerateFileSystemInfos())
             {
-                yield return new WorkspaceItem(dir, true);
+                yield return new WorkspaceItem(dir, true) { Parent = parent };
             }
         }
     }

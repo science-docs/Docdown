@@ -1,6 +1,8 @@
+using Docdown.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 
@@ -109,6 +111,7 @@ namespace Docdown.Util
         public MultipartFormParameterType Type { get; set; }
 
         private const string cType = "application/octet-stream";
+        private const string MainFile = "content";
 
         private MultipartFormParameter() { }
 
@@ -148,6 +151,46 @@ namespace Docdown.Util
                 Type = MultipartFormParameterType.File
             };
         }
+
+        public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(WorkspaceItem workspaceItem)
+        {
+            return CreateFormData(workspaceItem.Parent, workspaceItem, null);
+        }
+
+        private static IEnumerable<MultipartFormParameter> CreateFormData(WorkspaceItem item, WorkspaceItem root, string current)
+        {
+            if (item == null)
+            {
+                yield break;
+            }
+            if (item == root)
+            {
+                yield return CreateFile(MainFile, item.FileSystemInfo.FullName);
+            }
+            else if (item.Type == WorkspaceItemType.Directory)
+            {
+                string folder = item.FileSystemInfo.Name;
+                if (!string.IsNullOrWhiteSpace(current))
+                    folder = Path.Combine(current, folder);
+
+                foreach (var child in item.Children)
+                {
+                    foreach (var data in CreateFormData(child, root, folder))
+                    {
+                        yield return data;
+                    }
+                }
+            }
+            else
+            {
+                var fsi = item.FileSystemInfo;
+                string name = fsi.Name;
+
+                if (!string.IsNullOrWhiteSpace(current))
+                    name = Path.Combine(current, name);
+
+                yield return CreateFile(name, fsi.FullName);
+            }
+        }
     }
 }
-

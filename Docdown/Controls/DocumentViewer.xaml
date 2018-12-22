@@ -7,6 +7,13 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <PdfViewer:PdfViewer x:Name="Viewer" ZoomMode="FitWidth" ShowBookmarks="False" ShowToolbar="False"/>
+        <PdfViewer:PdfViewer x:Name="Viewer"/>
+        <!--<PdfViewer:PdfViewerHost x:Name="Viewer" Visibility="Collapsed" ZoomMode="FitWidth" ShowBookmarks="False" ShowToolbar="False"/>-->
+        <TextBlock x:Name="Error" Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Control x:Name="Spinner" 
+                 Style="{StaticResource BusyAnimationStyle}" 
+                 Visibility="Collapsed" 
+                 VerticalAlignment="Center" 
+                 HorizontalAlignment="Center"/>
     </Grid>
 </UserControl>
