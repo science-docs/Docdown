@@ -6,6 +6,7 @@ namespace Docdown.ViewModel
 {
     public class WorkspaceItemViewModel : ObservableObject<WorkspaceItem>
     {
+        [ChangeListener(nameof(IsExpanded))]
         public string IconName
         {
             get
@@ -14,6 +15,20 @@ namespace Docdown.ViewModel
                 {
                     case WorkspaceItemType.Directory:
                         return IsExpanded ? "FolderOpenIcon" : "FolderIcon";
+                    case WorkspaceItemType.Audio:
+                        return "AudioIcon";
+                    case WorkspaceItemType.Docx:
+                        return "WordIcon";
+                    case WorkspaceItemType.Image:
+                        return "ImageIcon";
+                    case WorkspaceItemType.Latex:
+                        return "TexIcon";
+                    case WorkspaceItemType.Pdf:
+                        return "PdfIcon";
+                    case WorkspaceItemType.Video:
+                        return "VideoIcon";
+                    case WorkspaceItemType.Markdown:
+                        return "MarkdownIcon";
                     default:
                         return "DocumentIcon";
                 }
@@ -23,18 +38,13 @@ namespace Docdown.ViewModel
         public bool IsExpanded
         {
             get => isExpanded;
-            set
-            {
-                Set(ref isExpanded, value);
-                if (Data.Type == WorkspaceItemType.Directory)
-                    SendPropertyUpdate(nameof(IconName));
-            }
+            set => Set(ref isExpanded, value);
         }
 
-        public IEnumerable<WorkspaceItemViewModel> Children
-        {
-            get => Data.Children.Select(e => new WorkspaceItemViewModel(e));
-        }
+        public IEnumerable<WorkspaceItemViewModel> Children 
+            => Data.Children
+                .OrderByDescending(e => e.IsDirectory())
+                .Select(e => new WorkspaceItemViewModel(e));
 
         private bool isExpanded = false;
 

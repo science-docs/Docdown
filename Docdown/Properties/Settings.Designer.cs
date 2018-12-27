@@ -22,5 +22,64 @@ namespace Docdown.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:3030")]
+        public string API {
+            get {
+                return ((string)(this["API"]));
+            }
+            set {
+                this["API"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection LastTempFiles {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["LastTempFiles"]));
+            }
+            set {
+                this["LastTempFiles"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WorkspacePath {
+            get {
+                return ((string)(this["WorkspacePath"]));
+            }
+            set {
+                this["WorkspacePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Template {
+            get {
+                return ((string)(this["Template"]));
+            }
+            set {
+                this["Template"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection LastWorkspaces {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["LastWorkspaces"]));
+            }
+            set {
+                this["LastWorkspaces"] = value;
+            }
+        }
     }
 }

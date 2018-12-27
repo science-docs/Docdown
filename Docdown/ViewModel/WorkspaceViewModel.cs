@@ -1,4 +1,6 @@
 ﻿using Docdown.Model;
+using Docdown.Util;
+using Docdown.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,8 +22,9 @@ namespace Docdown.ViewModel
             set
             {
                 Data.SelectedItem = value.Data;
-                SendPropertyUpdate();
-                SendPropertyUpdate(nameof(SelectedItemName));
+                if (!Data.SelectedItem.IsDirectory())
+                    SendPropertyUpdate();
+
                 if (Data.SelectedItem.IsPlainText())
                 {
                     CanConvert = true;
@@ -34,19 +37,58 @@ namespace Docdown.ViewModel
             }
         }
 
-        public string SelectedItemName
+        [ChangeListener(nameof(SelectedItem))]
+        public string SelectedItemName => Data?.SelectedItem?.FileSystemInfo?.Name ?? "";
+
+        [ChangeListener(nameof(SelectedItem))]
+        public OutlineViewModel Outline
         {
-            get
+            get => outline;
+            set
             {
-                var item = Data.SelectedItem;
-                if (item != null)
-                {
-                    return item.FileSystemInfo.Name;
-                }
-                return "";
+                if (outline != null && value != null)
+                    outline.Exchange(value);
+                outline = value;
+                SendPropertyUpdate();
             }
         }
 
+        public OutlineItemViewModel SelectedOutlineItem
+        {
+            get;
+            set;
+        }
+
+        [ChangeListener(nameof(Data))]
+        public IEnumerable<WorkspaceItemViewModel> Children
+            => Data.Item.Children
+                .OrderByDescending(e => e.IsDirectory())
+                .Select(e => new WorkspaceItemViewModel(e));
+
+        [ChangeListener(nameof(SelectedItem))]
+        public ConverterType FromType => Data.FromType;
+
+        public ConverterType ToType
+        {
+            get => Data.ToType;
+            set
+            {
+                Data.ToType = value;
+                SendPropertyUpdate();
+            }
+        }
+
+        public string Template
+        {
+            get => Data.Template;
+            set
+            {
+                Data.Template = value;
+                Settings.Template = value;
+                SendPropertyUpdate();
+            }
+        }
+        
         public string SelectedItemText
         {
             get
@@ -76,6 +118,12 @@ namespace Docdown.ViewModel
             }
         }
 
+        public string SelectedPdfPath
+        {
+            get => pdfPath;
+            set => Set(ref pdfPath, value);
+        }
+
         public bool CanConvert
         {
             get => canConvert && !isConverting;
@@ -92,30 +140,34 @@ namespace Docdown.ViewModel
             }
         }
 
+        public string ErrorMessage
+        {
+            get => errorMessage;
+            set => Set(ref errorMessage, value);
+        }
+
+        public SettingsViewModel Settings { get; }
+
         public ICommand SaveSelectedItemCommand => new ActionCommand(SaveSelectedItem);
         public ICommand SaveAllItemsCommand => new ActionCommand(SaveAllItems);
         public ICommand ConvertCommand => new ActionCommand(Convert);
-
-        public event EventHandler SelectedItemTextChanged;
+        public ICommand SearchWorkspaceCommand => new SearchWorkspaceCommand(Settings.WorkspacePath, ChangeWorkspace);
+        [ChangeListener(nameof(SelectedPdfPath))]
+        public ICommand PrintCommand => new PrintCommand(SelectedItemName, SelectedPdfPath);
 
         private bool canConvert;
         private bool isConverting;
+        private string pdfPath;
+        private string errorMessage;
+        private OutlineViewModel outline;
         private Dictionary<string, string> textCache = new Dictionary<string, string>();
-
-        public IEnumerable<WorkspaceItemViewModel> Children
-            => Data.Item.Children.Select(e => new WorkspaceItemViewModel(e));
-
+        
         public WorkspaceViewModel(Workspace workspace) : base(workspace)
         {
-
+            Settings = new SettingsViewModel(ChangeWorkspace);
+            Template = Settings.Template;
         }
-
-        protected override void OnPropertyChanged(string name)
-        {
-            if (name == nameof(SelectedItemText))
-                SelectedItemTextChanged?.Invoke(this, EventArgs.Empty);
-        }
-
+        
         private void SaveSelectedItem()
         {
             var selectedItem = Data.SelectedItem;
@@ -134,6 +186,22 @@ namespace Docdown.ViewModel
             }
         }
 
+        private void ChangeWorkspace(string newWorkspace)
+        {
+            if (newWorkspace == null)
+                return;
+
+            Task.Run(() =>
+            {
+                Settings.WorkspacePath = newWorkspace;
+                Settings.Save();
+                Data = new Workspace(newWorkspace)
+                {
+                    ToType = ConverterType.Pdf
+                };
+            });
+        }
+
         private void Convert()
         {
             IsConverting = true;
@@ -141,14 +209,41 @@ namespace Docdown.ViewModel
             {
                 try
                 {
-                    Data.Convert();
+                    var path = Data.Convert();
+                    SelectedPdfPath = path;
+                    ErrorMessage = "";
                 }
-                catch
+                catch (Exception e)
                 {
-
+                    ErrorMessage = ErrorUtility.GetErrorMessage(e);
                 }
+                
                 IsConverting = false;
             });
         }
+
+        //private OutlineViewModel BuildOutline()
+        //{
+        //    var text = SelectedItemText;
+        //    if (text != null)
+        //    {
+        //        var ast = AbstractSyntaxTree.GenerateAbstractSyntaxTree(text);
+        //        var header = AbstractSyntaxTree.EnumerateHeader(ast);
+
+        //        var outline = new Outline(header);
+        //        return new OutlineViewModel(outline);
+        //    }
+        //    else
+        //    {
+        //        return new OutlineViewModel(new Outline());
+        //    }
+        //}
+
+        //private void BuildOutlineDiff(Outline newOutline)
+        //{
+
+
+        //    outline = newOutline;
+        //}
     }
 }

@@ -1,7 +1,11 @@
-﻿using PdfiumViewer;
+﻿using Docdown.Util;
+using Docdown.ViewModel;
+using PdfiumViewer;
+using PdfiumViewer.Wpf.Util;
 using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Media.Animation;
 
 namespace Docdown.Controls
 {
@@ -9,62 +13,49 @@ namespace Docdown.Controls
     {
         public DocumentViewer()
         {
+            this.AddHandler(nameof(WorkspaceViewModel.SelectedPdfPath), PdfPathChanged);
+            this.AddHandler(nameof(WorkspaceViewModel.IsConverting), ConvertingChanged);
             InitializeComponent();
         }
-
+        
         public void Navigate(string fileName)
         {
+            if (!File.Exists(fileName))
+            {
+                throw new IOException(nameof(fileName));
+            }
+            var doc = PdfDocument.Load(fileName);
+
             Dispatcher.BeginInvoke((Action)(() =>
             {
-                Error.Visibility = Visibility.Collapsed;
-                if (!File.Exists(fileName))
-                {
-                    ShowError("File does not exist");
-                    return;
-                }
-
-                try
-                {
-
-                    var doc = PdfDocument.Load(fileName);
-                    EndLoad();
-                    Viewer.Document = doc;
-                    Viewer.Opacity = 1;
-                    Viewer.Visibility = Visibility.Visible;
-                }
-                catch
-                {
-                    ShowError("Could not load PDF file");
-                }
+                Viewer.Document = doc;
+                Viewer.Opacity = 1;
+                Viewer.Visibility = Visibility.Visible;
             }));
         }
-
-        public void ShowError(string message)
+        
+        private void PdfPathChanged()
         {
-            Dispatcher.BeginInvoke((Action)(() =>
+            if (DataContext is WorkspaceViewModel workspace)
             {
-                EndLoad();
-                Viewer.Visibility = Visibility.Collapsed;
-                Error.Visibility = Visibility.Visible;
-                Error.Text = message;
-            }));
+                Navigate(workspace.SelectedPdfPath);
+            }
         }
 
-        public void DismissError()
+        private void ConvertingChanged()
         {
-            Error.Visibility = Visibility.Collapsed;
+            if (DataContext is WorkspaceViewModel workspace)
+            {
+                if (workspace.IsConverting)
+                {
+                    Viewer.BeginStoryboard(ResourceUtility.TryFindResource<Storyboard>("DecreaseOpacityAnimation"));
+                    Spinner.BeginStoryboard(ResourceUtility.TryFindResource<Storyboard>("StartSpinnerAnimation"));
+                }
+                else
+                {
+                    Viewer.BeginStoryboard(ResourceUtility.TryFindResource<Storyboard>("IncreaseOpacityAnimation"));
+                }
+            }
         }
-
-        public void StartLoad()
-        {
-            Viewer.Opacity = 0.3;
-            Spinner.Visibility = Visibility.Visible;
-        }
-
-        public void EndLoad()
-        {
-            Spinner.Visibility = Visibility.Collapsed;
-        }
-
     }
 }

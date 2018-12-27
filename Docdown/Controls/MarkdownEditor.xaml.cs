@@ -1,74 +1,69 @@
 ﻿using CommonMark.Syntax;
 using Docdown.Controls.Markdown;
+using Docdown.Model;
 using Docdown.Util;
+using Docdown.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using static Docdown.Controls.Markdown.AbstractSyntaxTree;
 
 namespace Docdown.Controls
 {
-    public partial class Editor : INotifyPropertyChanged
+    public partial class MarkdownEditor : INotifyPropertyChanged
     {
         public static readonly DependencyProperty AutoSaveProperty = DependencyProperty.Register(
-             "AutoSave", typeof(bool), typeof(Editor), new PropertyMetadata(default(bool)));
+             nameof(AutoSave), typeof(bool), typeof(MarkdownEditor), new PropertyMetadata(default(bool)));
 
         public static readonly DependencyProperty ThemeProperty = DependencyProperty.Register(
-            "Theme", typeof(Theme), typeof(Editor), new PropertyMetadata(default(Theme), ThemeChangedCallback));
+            nameof(Theme), typeof(Theme), typeof(MarkdownEditor), new PropertyMetadata(default(Theme), ThemeChangedCallback));
 
         public static readonly DependencyProperty VerticalScrollBarVisibilityProperty = DependencyProperty.Register(
-            "VerticalScrollBarVisibility", typeof(ScrollBarVisibility), typeof(Editor),
+            nameof(VerticalScrollBarVisibility), typeof(ScrollBarVisibility), typeof(MarkdownEditor),
             new PropertyMetadata(default(ScrollBarVisibility)));
 
         public static readonly DependencyProperty ShowEndOfLineProperty = DependencyProperty.Register(
-            "ShowEndOfLine", typeof(bool), typeof(Editor), new PropertyMetadata(default(bool), ShowEndOfLineChanged));
+            nameof(ShowEndOfLine), typeof(bool), typeof(MarkdownEditor), new PropertyMetadata(default(bool), ShowEndOfLineChanged));
 
         public static readonly DependencyProperty ShowSpacesProperty = DependencyProperty.Register(
-            "ShowSpaces", typeof(bool), typeof(Editor), new PropertyMetadata(default(bool), ShowSpacesChanged));
+            nameof(ShowSpaces), typeof(bool), typeof(MarkdownEditor), new PropertyMetadata(default(bool), ShowSpacesChanged));
 
         public static readonly DependencyProperty ShowLineNumbersProperty = DependencyProperty.Register(
-            "ShowLineNumbers", typeof(bool), typeof(Editor), new PropertyMetadata(default(bool)));
+            nameof(ShowLineNumbers), typeof(bool), typeof(MarkdownEditor), new PropertyMetadata(default(bool)));
 
         public static readonly DependencyProperty ShowTabsProperty = DependencyProperty.Register(
-            "ShowTabs", typeof(bool), typeof(Editor), new PropertyMetadata(default(bool), ShowTabsChanged));
+            nameof(ShowTabs), typeof(bool), typeof(MarkdownEditor), new PropertyMetadata(default(bool), ShowTabsChanged));
 
         public static readonly DependencyProperty HighlightCurrentLineProperty = DependencyProperty.Register(
-            "HighlightCurrentLine", typeof(bool), typeof(Editor),
+            nameof(HighlightCurrentLine), typeof(bool), typeof(MarkdownEditor),
             new PropertyMetadata(default(bool), HighlightCurrentLineChanged));
 
         public static readonly DependencyProperty WordWrapProperty = DependencyProperty.Register(
-            "WordWrap", typeof(bool), typeof(Editor), new PropertyMetadata(default(bool)));
+            nameof(WordWrap), typeof(bool), typeof(MarkdownEditor), new PropertyMetadata(default(bool)));
 
         public static readonly DependencyProperty SpellCheckProperty = DependencyProperty.Register(
-            "SpellCheck", typeof(bool), typeof(Editor), new PropertyMetadata(default(bool), SpellCheckPropertyChanged));
+            nameof(SpellCheck), typeof(bool), typeof(MarkdownEditor), new PropertyMetadata(default(bool), SpellCheckPropertyChanged));
 
         public static readonly DependencyProperty AbstractSyntaxTreeProperty = DependencyProperty.Register(
-            "AbstractSyntaxTree", typeof(Block), typeof(Editor), new PropertyMetadata(default(Block)));
+            nameof(AbstractSyntaxTree), typeof(Block), typeof(MarkdownEditor), new PropertyMetadata(default(Block)));
 
         private string _displayName = string.Empty;
         private EditorState _editorState = new EditorState();
         private string _fileName;
         private bool _isModified;
         private int _previousLineCount = -1;
+        private Outline outline;
 
         public event EventHandler TextChanged;
         public event EventHandler<ThemeChangedEventArgs> ThemeChanged;
         public bool ConvertFromHtml;
 
-        public Editor()
+        public MarkdownEditor()
         {
             InitializeComponent();
             SetupSyntaxHighlighting(); // won't paint on first load unless here.
@@ -189,6 +184,12 @@ namespace Docdown.Controls
             set => SetValue(AbstractSyntaxTreeProperty, value);
         }
 
+        public Outline Outline
+        {
+            get => outline;
+            set => outline = value;
+        }
+
         //public MyEncodingInfo Encoding
         //{
         //    get => (MyEncodingInfo)GetValue(MyEncodingInfoProperty);
@@ -229,6 +230,11 @@ namespace Docdown.Controls
             });
         }
 
+        public void Redraw()
+        {
+            EditBox.TextArea.TextView.Redraw();
+        }
+
         private void SetupSyntaxHighlighting()
         {
             var colorizer = new MarkdownHighlightingColorizer();
@@ -239,9 +245,14 @@ namespace Docdown.Controls
                 try
                 {
                     AbstractSyntaxTree = GenerateAbstractSyntaxTree(Text);
-                    string html = CommonMark.CommonMarkConverter.Convert(Text);
                     colorizer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
                     blockBackgroundRenderer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
+                    var headers = EnumerateHeader(AbstractSyntaxTree);
+                    outline = new Outline(headers);
+                    if (DataContext is WorkspaceViewModel workspace)
+                    {
+                        workspace.Outline = new OutlineViewModel(outline, JumpToLocation);
+                    }
                     // The block nature of markdown causes edge cases in the syntax hightlighting.
                     // This is the nuclear option but it doesn't seem to cause issues.
                     EditBox.TextArea.TextView.Redraw();
@@ -261,6 +272,12 @@ namespace Docdown.Controls
 
             EditBox.TextArea.TextView.LineTransformers.Add(colorizer);
             EditBox.TextArea.TextView.BackgroundRenderers.Add(blockBackgroundRenderer);
+        }
+
+        private void JumpToLocation(int location)
+        {
+            EditBox.TextArea.Caret.Offset = location;
+            EditBox.TextArea.Caret.BringCaretToView();
         }
 
         private void OnEditBoxPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -546,46 +563,46 @@ namespace Docdown.Controls
 
         public static void ThemeChangedCallback(DependencyObject source, DependencyPropertyChangedEventArgs ea)
         {
-            var editor = (Editor)source;
+            var editor = (MarkdownEditor)source;
             editor.OnThemeChanged(new ThemeChangedEventArgs { Theme = editor.Theme });
         }
 
         private static void ShowEndOfLineChanged(DependencyObject source, DependencyPropertyChangedEventArgs ea)
         {
-            var editor = (Editor)source;
+            var editor = (MarkdownEditor)source;
             editor.EditBox.Options.ShowEndOfLine = editor.ShowEndOfLine;
         }
 
         private static void ShowSpacesChanged(DependencyObject source, DependencyPropertyChangedEventArgs ea)
         {
-            var editor = (Editor)source;
+            var editor = (MarkdownEditor)source;
             editor.EditBox.Options.ShowSpaces = editor.ShowSpaces;
         }
 
         private static void ShowTabsChanged(DependencyObject source, DependencyPropertyChangedEventArgs ea)
         {
-            var editor = (Editor)source;
+            var editor = (MarkdownEditor)source;
             editor.EditBox.Options.ShowTabs = editor.ShowTabs;
         }
 
         private static void SpellCheckProviderPropertyChanged(DependencyObject source,
             DependencyPropertyChangedEventArgs e)
         {
-            var editor = (Editor)source;
+            var editor = (MarkdownEditor)source;
             //editor.SpellCheckProvider.Initialize(editor);
             //editor.SpellCheckProvider.Enabled = editor.SpellCheck;
         }
 
         private static void HighlightCurrentLineChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
-            var editor = (Editor)source;
+            var editor = (MarkdownEditor)source;
             editor.EditBox.Options.HighlightCurrentLine = editor.HighlightCurrentLine;
         }
 
         private static void SpellCheckPropertyChanged(DependencyObject dependencyObject,
             DependencyPropertyChangedEventArgs ea)
         {
-            var editor = (Editor)dependencyObject;
+            var editor = (MarkdownEditor)dependencyObject;
             //if (editor.SpellCheckProvider == null) return;
             //editor.SpellCheckProvider.Enabled = (bool)ea.NewValue;
             editor.EditBox.Document.Insert(0, " ");
@@ -619,7 +636,7 @@ namespace Docdown.Controls
             private int _caretOffset;
             private double _verticalOffset;
 
-            public void Save(Editor editor)
+            public void Save(MarkdownEditor editor)
             {
                 _text = editor.Text;
                 _isModified = editor.IsModified;
@@ -635,7 +652,7 @@ namespace Docdown.Controls
                 StateSaved = true;
             }
 
-            public void Restore(Editor editor)
+            public void Restore(MarkdownEditor editor)
             {
                 if (StateSaved == false) return;
                 editor.Text = _text;

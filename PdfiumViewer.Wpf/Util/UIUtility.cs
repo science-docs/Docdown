@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Media;
 
@@ -35,6 +32,22 @@ namespace PdfiumViewer.Wpf.Util
                 if (foundElement != null) break;
             }
             return foundElement;
+        }
+
+        public static T GetParentByType<T>(this Visual element) where T : Visual
+        {
+            return element.GetParentBy((T e) => true);
+        }
+
+        public static T GetParentBy<T>(this Visual element, Func<T, bool> filter) where T : Visual
+        {
+            if (element == null) return default;
+            if (element is T item && filter(item))
+            {
+                return item;
+            }
+            (element as FrameworkElement)?.ApplyTemplate();
+            return GetParentBy(VisualTreeHelper.GetParent(element) as Visual, filter);
         }
     }
 }

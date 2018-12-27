@@ -5,23 +5,34 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Themes/Dark.xaml"/>
+
                 <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
                 <!-- Accent and AppTheme setting -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
 
-                <ResourceDictionary Source="Resources/Spinner.xaml"/>
+                <ResourceDictionary Source="Resources/Styles.xaml"/>
+                <ResourceDictionary Source="Resources/Animation.xaml"/>
                 <ResourceDictionary Source="Resources/Converters.xaml"/>
+                <ResourceDictionary Source="Resources/Windows.xaml"/>
                 <ResourceDictionary Source="Resources/Images/Markdown.xaml"/>
                 <ResourceDictionary Source="Resources/Images/VS.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <Color x:Key="AccentDarkColor">#FF186191</Color>
-            <SolidColorBrush x:Key="AccentDarkColorBrush" Color="{StaticResource AccentDarkColor}"/>
-            <Color x:Key="BaseColor">#FFEEEEEE</Color>
-            <SolidColorBrush x:Key="BaseColorBrush" Color="{StaticResource BaseColor}"/>
+
+            <DrawingBrush x:Key="DocdownIcon">
+                <DrawingBrush.Drawing>
+                    <DrawingGroup>
+                        <DrawingGroup.Children>
+                            <GeometryDrawing Brush="#FF1A72AD" Geometry="M0,0 0,20 11,27 11,7 M4,7.285 4,17.8 7,19.72 7,9.194 M0,23 12,31 12,37 0,27z" />
+                            <GeometryDrawing Brush="#FF1178BE" Geometry="M13,7 24,0 24,4.74 17,9.194 17,19.72 24,15.26 24,20 13,27 M24,23 11.99,31 11.99,37 24,27z" />
+                        </DrawingGroup.Children>
+                    </DrawingGroup>
+                </DrawingBrush.Drawing>
+            </DrawingBrush>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

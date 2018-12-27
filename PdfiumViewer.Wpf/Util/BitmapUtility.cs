@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
@@ -7,10 +8,13 @@ using System.Windows.Media.Imaging;
 
 namespace PdfiumViewer.Wpf.Util
 {
-    internal class BitmapUtility
+    internal static class BitmapUtility
     {
-        public static int DpiX { get; }
-        public static int DpiY { get; }
+        public static double DpiX { get; }
+        public static double DpiY { get; }
+
+        public const double DefaultDpiX = 96;
+        public const double DefaultDpiY = 96;
 
         static BitmapUtility()
         {
@@ -21,34 +25,32 @@ namespace PdfiumViewer.Wpf.Util
             DpiY = (int)dpiYProperty.GetValue(null, null);
         }
 
+        public static System.Windows.Size ConvertSize(System.Windows.Size size)
+        {
+            var dpiXRatio = DefaultDpiX / DpiX;
+            var dpiYRatio = DefaultDpiY / DpiY;
+            return new System.Windows.Size(size.Width / dpiXRatio, size.Height / dpiYRatio);
+        }
+
         public static BitmapSource ToBitmapSource(Image image)
         {
             return ToBitmapSource(image as Bitmap);
         }
-
-        /// <summary>
-        /// Convert an IImage to a WPF BitmapSource. The result can be used in the Set Property of Image.Source
-        /// </summary>
-        /// <param name="bitmap">The Source Bitmap</param>
-        /// <returns>The equivalent BitmapSource</returns>
-        public static BitmapSource ToBitmapSource(Bitmap bitmap)
+        
+        public static BitmapSource ToBitmapSource(Bitmap gdiBitmap)
         {
-            if (bitmap == null) return null;
+            if (gdiBitmap == null) return null;
 
-            using (Bitmap source = (Bitmap)bitmap.Clone())
-            {
-                IntPtr ptr = source.GetHbitmap(); //obtain the Hbitmap
+            System.Drawing.Imaging.BitmapData data = gdiBitmap.LockBits(new Rectangle(0, 0, 
+                gdiBitmap.Width, gdiBitmap.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, gdiBitmap.PixelFormat);
 
-                BitmapSource bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                    ptr,
-                    IntPtr.Zero,
-                    System.Windows.Int32Rect.Empty,
-                    BitmapSizeOptions.FromEmptyOptions());
+            BitmapSource bs = BitmapSource.Create(gdiBitmap.Width, 
+                gdiBitmap.Height, DpiX, DpiY, PixelFormats.Bgra32, null,
+                data.Scan0, data.Stride * gdiBitmap.Height, data.Stride);
 
-                NativeMethods.DeleteObject(ptr); //release the HBitmap
-                bs.Freeze();
-                return bs;
-            }
+            gdiBitmap.UnlockBits(data);
+            bs.Freeze();
+            return bs;
         }
 
         public static BitmapSource ToBitmapSource(byte[] bytes, int width, int height, int dpiX, int dpiY)
@@ -65,6 +67,17 @@ namespace PdfiumViewer.Wpf.Util
             result.Freeze();
 
             return result;
+        }
+
+        public static void Save(this BitmapSource image, string filePath)
+        {
+            BitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(image));
+
+            using (var fileStream = File.OpenWrite(filePath))
+            {
+                encoder.Save(fileStream);
+            }
         }
     }
 }

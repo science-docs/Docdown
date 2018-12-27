@@ -1,4 +1,5 @@
 using Docdown.Model;
+using Docdown.Properties;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +13,23 @@ namespace Docdown.Util
     {
         private static readonly Encoding encoding = Encoding.UTF8;
 
+        public static string UserAgent { get; } = $"Docdown_v" + typeof(WebUtility).Assembly.GetName().Version.ToString();
+
+        public static string BuildConvertUrl()
+        {
+            var settings = Settings.Default;
+            var api = settings.API;
+            return $"{api}/convert";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="postUrl"></param>
+        /// <param name="userAgent"></param>
+        /// <param name="postParameters"></param>
+        /// <returns></returns>
+        /// <exception cref="WebException"/>
         public static HttpWebResponse MultipartFormDataPost(string postUrl, string userAgent, params MultipartFormParameter[] postParameters)
         {
             string formDataBoundary = $"----------{Guid.NewGuid()}";
@@ -22,6 +40,15 @@ namespace Docdown.Util
             return PostForm(postUrl, userAgent, contentType, formData);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="postUrl"></param>
+        /// <param name="userAgent"></param>
+        /// <param name="contentType"></param>
+        /// <param name="formData"></param>
+        /// <returns></returns>
+        /// <exception cref="WebException"/>
         private static HttpWebResponse PostForm(string postUrl, string userAgent, string contentType, byte[] formData)
         {
             var request = WebRequest.Create(postUrl) as HttpWebRequest 
@@ -132,7 +159,14 @@ namespace Docdown.Util
 
         public static MultipartFormParameter CreateFile(string name, string fileName, string contentType)
         {
-            return CreateFile(name, fileName, File.ReadAllBytes(fileName), contentType);
+            try
+            {
+                return CreateFile(name, fileName, File.ReadAllBytes(fileName), contentType);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public static MultipartFormParameter CreateFile(string name, string fileName, byte[] file)
@@ -152,9 +186,19 @@ namespace Docdown.Util
             };
         }
 
+        public static IEnumerable<MultipartFormParameter> ApiParameter(ConverterType from, ConverterType to, string template)
+        {
+            if (from != ConverterType.Undefined)
+                yield return CreateField("from", from.ToString().ToLower());
+            if (to != ConverterType.Undefined)
+                yield return CreateField("to", to.ToString().ToLower());
+            if (!string.IsNullOrWhiteSpace(template))
+                yield return CreateField("template", template);
+        }
+
         public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(WorkspaceItem workspaceItem)
         {
-            return CreateFormData(workspaceItem.Parent, workspaceItem, null);
+            return CreateFormData(workspaceItem.Parent, workspaceItem, null).Where(e => e != null);
         }
 
         private static IEnumerable<MultipartFormParameter> CreateFormData(WorkspaceItem item, WorkspaceItem root, string current)
@@ -172,6 +216,8 @@ namespace Docdown.Util
                 string folder = item.FileSystemInfo.Name;
                 if (!string.IsNullOrWhiteSpace(current))
                     folder = Path.Combine(current, folder);
+                if (item == root.Parent)
+                    folder = null;
 
                 foreach (var child in item.Children)
                 {

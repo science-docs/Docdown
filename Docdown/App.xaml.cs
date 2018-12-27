@@ -8,12 +8,17 @@ namespace Docdown
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            ThemeManager.AddAccent("BluePPI",
-                new Uri("pack://application:,,,/Docdown;component/Resources/BluePPI.xaml"));
-            Tuple<AppTheme, Accent> theme = ThemeManager.DetectAppStyle(Current);
-            ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent("BluePPI"), theme.Item1);
+            ThemeManager.AddAccent("BluePPI", GetResourceUri("Resources/Themes/BluePPI.xaml"));
+            ThemeManager.AddAppTheme("DarkDoc", GetResourceUri("Resources/Themes/Dark.xaml"));
+            ThemeManager.AddAppTheme("LightDoc", GetResourceUri("Resources/Themes/Light.xaml"));
+            ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent("BluePPI"), ThemeManager.GetAppTheme("DarkDoc"));
             
             base.OnStartup(e);
+        }
+
+        public static Uri GetResourceUri(string resource)
+        {
+            return new Uri("pack://application:,,,/Docdown;component/" + resource);
         }
     }
 }

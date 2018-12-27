@@ -7,8 +7,19 @@
              xmlns:ViewModel="clr-namespace:Docdown.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="White">
-        <TreeView Background="Transparent" ItemsSource="{Binding Children}" SelectedItemChanged="TreeView_SelectedItemChanged">
+    <Grid Background="{DynamicResource EditorBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border Background="#20FFFFFF" 
+                BorderBrush="{DynamicResource GrayBrush1}" 
+                BorderThickness="0 0 0 1">
+            <TextBlock Text="Workspace Explorer" 
+                       Foreground="{DynamicResource BlackBrush}" 
+                       Margin="4 2"/>
+        </Border>
+        <TreeView Grid.Row="1" Background="Transparent" ItemsSource="{Binding Children, IsAsync=True}" SelectedItemChanged="ViewSelectedItemChanged">
             <TreeView.Resources>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="{x:Type ViewModel:WorkspaceItemViewModel}">
                     <StackPanel Orientation="Horizontal">

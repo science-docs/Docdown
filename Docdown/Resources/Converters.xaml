@@ -3,5 +3,7 @@
                     xmlns:Converters="clr-namespace:Docdown.Converters">
 
     <Converters:StringToResourceConverter x:Key="StringToResourceConverter"/>
+    <Converters:PathToPdfConverter x:Key="PathToPdfConverter"/>
+    <Converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
 
 </ResourceDictionary>

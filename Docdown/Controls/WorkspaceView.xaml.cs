@@ -10,7 +10,7 @@ namespace Docdown.Controls
             InitializeComponent();
         }
 
-        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void ViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (DataContext is WorkspaceViewModel workspace && 
                 e.NewValue is WorkspaceItemViewModel workspaceItem)

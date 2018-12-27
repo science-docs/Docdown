@@ -51,6 +51,11 @@ namespace Docdown.Controls.Markdown
             {InlineTag.RawHtml, t => t.HighlightBlockCode}
         };
 
+        public static IEnumerable<Block> EnumerateHeader(Block ast)
+        {
+            return EnumerateBlocks(ast).Where(e => e.Tag == BlockTag.AtxHeading);
+        }
+
         public static IEnumerable<Block> EnumerateSpanningBlocks(Block ast, int startOffset, int endOffset)
         {
             return EnumerateBlocks(ast.FirstChild)

@@ -1,33 +1,49 @@
 ﻿using PdfiumViewer.Wpf.Util;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 
 namespace PdfiumViewer.Wpf
 {
     public class PdfViewer : Control
     {
         public static readonly DependencyProperty DocumentProperty;
+        public static readonly DependencyProperty DocumentPathProperty;
 
         static PdfViewer()
         {
             var type = typeof(PdfViewer);
             
-            DocumentProperty = DependencyProperty.Register(nameof(Document), typeof(IPdfDocument), type, new PropertyMetadata(null, DocumentChanged));
-        }
+            DocumentProperty = DependencyProperty.Register(nameof(Document), 
+                typeof(IPdfDocument), type, new PropertyMetadata(null, DocumentChanged));
+            DocumentPathProperty = DependencyProperty.Register(nameof(DocumentPath),
+                typeof(string), type, new PropertyMetadata(null, DocumentPathChanged));
 
+            StackPanel.OrientationProperty.AddOwner(type, 
+                new FrameworkPropertyMetadata(
+                    Orientation.Vertical,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure,
+                    OnOrientationChanged));
+        }
+        
         public IPdfDocument Document
         {
             get => (IPdfDocument)GetValue(DocumentProperty);
             set => SetValue(DocumentProperty, value);
         }
+
+        public string DocumentPath
+        {
+            get => (string)GetValue(DocumentPathProperty);
+            set => SetValue(DocumentPathProperty, value);
+        }
+
+        public Orientation Orientation
+        {
+            get => (Orientation)GetValue(StackPanel.OrientationProperty);
+            set => SetValue(StackPanel.OrientationProperty, value);
+        }
+
+        private PageViewModel[] pageCache = new PageViewModel[0];
 
         public PdfViewer()
         {
@@ -38,46 +54,44 @@ namespace PdfiumViewer.Wpf
         {
             if (e.NewValue is IPdfDocument document && d is PdfViewer viewer)
             {
-                var reference = viewer.GetDescendantByName<System.Windows.Shapes.Rectangle>("Reference");
-                var width = reference.ActualWidth;
-                
-                Task.Run(() =>
+                viewer.DisplayPdf(document);
+            }
+        }
+
+        private void DisplayPdf(IPdfDocument document)
+        {
+            var itemsControl = this.GetDescendantByType<ItemsControl>();
+            pageCache = new PageViewModel[document.PageCount];
+            for (int i = 0; i < pageCache.Length; i++)
+            {
+                pageCache[i] = new PageViewModel(document, i)
                 {
-                    var watch = Stopwatch.StartNew();
-                    var bitmaps = viewer.RenderPdf(document, (int)width);
-                    Debug.WriteLine("Converted in: " + watch.ElapsedMilliseconds);
-                    viewer.DisplayPdf(bitmaps);
-                });
+                    Orientation = Orientation
+                };
+            }
+            itemsControl.ItemsSource = pageCache;
+        }
+
+        private static void DocumentPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is PdfViewer pdfViewer)
+            {
+                var path = e.NewValue as string;
+                IPdfDocument doc = PdfDocument.Load(path);
+                pdfViewer.Document = doc;
             }
         }
 
-        private BitmapSource[] RenderPdf(IPdfDocument document, int width)
+        private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var images = new BitmapSource[document.PageCount];
-
-            for (int i = 0; i < document.PageCount; i++)
+            if (d is PdfViewer pdfViewer)
             {
-                var size = ConvertSize(document.PageSizes[i], width);
-                var image = document.Render(i, (int)size.Width, (int)size.Height, BitmapUtility.DpiX, BitmapUtility.DpiY, PdfRenderFlags.Annotations);
-                images[i] = BitmapUtility.ToBitmapSource(image);
+                var orientation = (Orientation)e.NewValue;
+                for (int i = 0; i < pdfViewer.pageCache.Length; i++)
+                {
+                    pdfViewer.pageCache[i].Orientation = orientation;
+                }
             }
-
-            return images;
-        }
-
-        private SizeF ConvertSize(SizeF size, int width)
-        {
-            var ratio = size.Width / width;
-            return new SizeF(size.Width / ratio, size.Height / ratio);
-        }
-
-        private void DisplayPdf(BitmapSource[] bitmaps)
-        {
-            Dispatcher.BeginInvoke((Action)(() =>
-            {
-                var itemsControl = this.GetDescendantByType<ItemsControl>();
-                itemsControl.ItemsSource = bitmaps;
-            }));
         }
     }
 }

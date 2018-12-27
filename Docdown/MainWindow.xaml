@@ -6,16 +6,56 @@
         xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         xmlns:Controls="clr-namespace:Docdown.Controls"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         TitleCharacterCasing="Normal"
-        Title="Docdown" Height="450" Width="800"
-        WindowTitleBrush="{StaticResource BaseColorBrush}"
-        Dialog:DialogParticipation.Register="{Binding}">
+        Title="Docdown - Document Converter" Height="450" Width="800"
+        WindowTitleBrush="{DynamicResource WhiteBrush}"
+        Background="{DynamicResource WhiteBrush}"
+        Dialog:DialogParticipation.Register="{Binding}"
+        NonActiveWindowTitleBrush="{DynamicResource WhiteBrush}"
+        UseLayoutRounding="True">
     <FrameworkElement.Resources>
-        <Style BasedOn="{StaticResource MetroFlatButton}" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="{StaticResource BaseColorBrush}"/>
-        </Style>
+        <ResourceDictionary>
+            <Style BasedOn="{StaticResource MetroFlatButton}" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="{DynamicResource WhiteBrush}"/>
+                <Setter Property="Margin" Value="2 0"/>
+            </Style>
+            <System:Double x:Key="InactiveOpacity">0.5</System:Double>
+        </ResourceDictionary>
     </FrameworkElement.Resources>
+    <Metro:MetroWindow.TitleTemplate>
+        <DataTemplate>
+            <TextBlock Margin="8 -1 1 0"
+                               VerticalAlignment="Center"
+                               FontFamily="{DynamicResource HeaderFontFamily}"
+                               FontSize="{DynamicResource WindowTitleFontSize}"
+                               Text="{TemplateBinding Content}"
+                               TextTrimming="CharacterEllipsis" />
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Path=IsActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Metro:MetroWindow}}" Value="False">
+                    <Setter Property="Opacity" Value="{StaticResource InactiveOpacity}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Metro:MetroWindow.TitleTemplate>
+    <Metro:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <Rectangle Fill="{StaticResource DocdownIcon}" 
+                       Height="20" 
+                       Width="13">
+                <Rectangle.Style>
+                    <Style TargetType="{x:Type Rectangle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Metro:MetroWindow}}" Value="False">
+                                <Setter Property="Opacity" Value="{StaticResource InactiveOpacity}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Rectangle.Style>
+            </Rectangle>
+        </DataTemplate>
+    </Metro:MetroWindow.IconTemplate>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -30,26 +70,86 @@
             <ColumnDefinition Width="4"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.ColumnSpan="5" Grid.Row="1" Orientation="Horizontal" Background="{StaticResource BaseColorBrush}">
-            <Button Command="{Binding SaveSelectedItemCommand}" ToolTip="{Binding SelectedItemName, StringFormat='Save {0}'}">
-                <Rectangle Fill="{StaticResource Save}" Height="16" Width="16"/>
+        <Menu Grid.ColumnSpan="5" Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="Open Workspace" Command="{Binding SearchWorkspaceCommand}">
+                    <MenuItem.Icon>
+                        <Rectangle Fill="{StaticResource OpenFolderIcon}" Height="16" Width="16"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Last Workspaces" ItemsSource="{Binding Settings.LastWorkspaces}">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="{x:Type MenuItem}">
+                            <Setter Property="Command" Value="{Binding OpenWorkspaceCommand}"/>
+                            <Setter Property="Padding" Value="0 4"/>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
+                <Separator Margin="6 0"/>
+                <MenuItem Header="Exit" Click="MenuItemExitClicked">
+                    <MenuItem.Icon>
+                        <Rectangle Fill="{StaticResource CloseIcon}" Height="16" Width="16"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        <StackPanel Grid.ColumnSpan="5" Grid.Row="1" 
+                    Orientation="Horizontal" 
+                    Background="{DynamicResource WhiteBrush}"
+                    Margin="4 0 4 2">
+            <Button Command="{Binding OpenWorkspaceCommand}" ToolTip="Open Workspace" Height="20" Width="20">
+                <Rectangle Fill="{StaticResource OpenFolderIcon}" Height="16" Width="16"/>
             </Button>
-            <Button Command="{Binding SaveAllItemsCommand}">
-                <Rectangle Fill="{StaticResource SaveAll}" Height="16" Width="16"/>
+            <Button Command="{Binding SaveSelectedItemCommand}" Height="20" Width="24">
+                <Button.ToolTip>
+                    <ToolTip Content="{Binding SelectedItemName}"
+                             ContentStringFormat="Save {0}"
+                             Visibility="{Binding SelectedItem, Converter={StaticResource StringToVisibilityConverter}}"/>
+                </Button.ToolTip>
+                <Rectangle Fill="{StaticResource SaveIcon}" Height="16" Width="16"/>
             </Button>
-            <Button IsEnabled="{Binding CanConvert}" Click="Button_Click">
-                <Rectangle Fill="{StaticResource Run}" Height="16" Width="16"/>
+            <Button Command="{Binding SaveAllItemsCommand}" ToolTip="Save all" Height="20" Width="24">
+                <Rectangle Fill="{StaticResource SaveAllIcon}" Height="16" Width="16"/>
             </Button>
-            <!--<Button Grid.Column="0" Grid.Row="0" Content="Start" Click="Button_Click" Style="{StaticResource MetroFlatButton}"/>-->
+            <Rectangle Width="1" Margin="0 2" Fill="{DynamicResource GrayBrush1}"/>
+            <Button IsEnabled="{Binding CanConvert}" Command="{Binding ConvertCommand}" Height="20">
+                <Button.ToolTip>
+                    <ToolTip Content="{Binding ToType}"
+                             ContentStringFormat="Convert to {0}"/>
+                </Button.ToolTip>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Fill="{StaticResource RunIcon}" Height="16" Width="16"/>
+                    <TextBlock Text="Start" FontSize="12" Foreground="{DynamicResource BlackBrush}" Margin="4 0"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding PrintCommand}" ToolTip="Print File" Height="20" Width="24">
+                <Rectangle Fill="{StaticResource PrintIcon}" Height="16" Width="16"/>
+            </Button>
         </StackPanel>
-        
-        <Controls:WorkspaceView x:Name="WorkspaceView" Grid.Column="0" Grid.Row="2"/>
-        <Rectangle Grid.Column="1" Grid.Row="2" Fill="#80D0D0D0" HorizontalAlignment="Stretch"/>
-        <Controls:Editor x:Name="Editor" Grid.Column="2" Grid.Row="2"/>
-        <Rectangle Grid.Column="3" Grid.Row="2" Fill="#80D0D0D0" HorizontalAlignment="Stretch"/>
-        <Controls:DocumentViewer x:Name="Viewer" Grid.Column="4" Grid.Row="2"/>
 
-        <Grid Grid.Row="3" Grid.ColumnSpan="5" Height="23" Background="{StaticResource AccentBaseColorBrush}">
+        <Grid Grid.Column="0" Grid.Row="2"
+              Margin="4 2 0 4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0"
+                Margin="0 0 0 2"
+                BorderThickness="1"
+                BorderBrush="{DynamicResource GrayBrush1}">
+                <Controls:WorkspaceView x:Name="WorkspaceView"/>
+            </Border>
+            <Border Grid.Row="1"
+                Margin="0 2 0 0"
+                BorderThickness="1"
+                BorderBrush="{DynamicResource GrayBrush1}">
+                <Controls:OutlineView x:Name="OutlineView"/>
+            </Border>
+        </Grid>
+        
+        <Controls:SelectorView Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="3" Margin="0 2 4 4"/>
+
+        <Grid Grid.Row="3" Grid.ColumnSpan="5" Height="23" Background="{DynamicResource AccentBaseColorBrush}">
             
         </Grid>
     </Grid>

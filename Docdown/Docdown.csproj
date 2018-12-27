@@ -41,14 +41,14 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\Images\ppidoc.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Images\docdown.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommonMark, Version=0.1.0.0, Culture=neutral, PublicKeyToken=001ef8810438905d, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonMark.NET.0.15.1\lib\net45\CommonMark.dll</HintPath>
     </Reference>
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
     <Reference Include="Costura, Version=3.2.1.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.3.2.1\lib\net40\Costura.dll</HintPath>
@@ -60,7 +60,7 @@
       <HintPath>..\packages\AvalonEdit.5.0.4\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net46\MahApps.Metro.dll</HintPath>
+      <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net47\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAPICodePack-Core.1.1.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
@@ -76,7 +76,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -98,6 +98,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\EditorAndViewer.xaml.cs">
+      <DependentUpon>EditorAndViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Markdown\AbstractSyntaxTree.cs" />
     <Compile Include="Controls\Markdown\BlockBackgroundRenderer.cs" />
     <Compile Include="Controls\Markdown\Highlight.cs" />
@@ -105,27 +108,58 @@
     <Compile Include="Controls\Markdown\MarkdownHighlightColorizer.cs" />
     <Compile Include="Controls\Markdown\Parser.cs" />
     <Compile Include="Controls\Markdown\Theme.cs" />
+    <Compile Include="Controls\OutlineView.xaml.cs">
+      <DependentUpon>OutlineView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SelectorView.cs" />
     <Compile Include="Controls\WebViewer.xaml.cs">
       <DependentUpon>WebViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\WorkspaceView.xaml.cs">
       <DependentUpon>WorkspaceView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\PathToPdfConverter.cs" />
     <Compile Include="Converters\StringToResourceConverter.cs" />
+    <Compile Include="Converters\StringToVisibilityConverter.cs" />
+    <Compile Include="Model\ConverterType.cs" />
+    <Compile Include="Model\Outline.cs" />
+    <Compile Include="Model\OutlineItem.cs" />
     <Compile Include="Model\Workspace.cs" />
     <Compile Include="Model\WorkspaceItem.cs" />
+    <Compile Include="Util\ErrorUtility.cs" />
     <Compile Include="Util\IOUtility.cs" />
+    <Compile Include="Util\ResourceUtility.cs" />
+    <Compile Include="Util\TextUtility.cs" />
     <Compile Include="Util\UIUtility.cs" />
     <Compile Include="Util\WebUtility.cs" />
-    <Compile Include="ViewModel\ActionCommand.cs" />
+    <Compile Include="ViewModel\Commands\ActionCommand.cs" />
+    <Compile Include="ViewModel\ChangeListenerAttribute.cs" />
+    <Compile Include="ViewModel\Commands\CreateNewFileCommand.cs" />
+    <Compile Include="ViewModel\Commands\DelegateCommand.cs" />
+    <Compile Include="ViewModel\Commands\PrintCommand.cs" />
+    <Compile Include="ViewModel\Commands\SearchWorkspaceCommand.cs" />
     <Compile Include="ViewModel\ObservableObject.cs" />
+    <Compile Include="ViewModel\OutlineItemViewModel.cs" />
+    <Compile Include="ViewModel\OutlineViewModel.cs" />
+    <Compile Include="ViewModel\SettingsViewModel.cs" />
     <Compile Include="ViewModel\WorkspaceItemViewModel.cs" />
     <Compile Include="ViewModel\WorkspaceViewModel.cs" />
+    <Compile Include="Windows\SplashWindow.xaml.cs">
+      <DependentUpon>SplashWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="Controls\DocumentViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Editor.xaml">
+    <Page Include="Controls\MarkdownEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\EditorAndViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\OutlineView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -148,18 +182,26 @@
     <Compile Include="Controls\DocumentViewer.xaml.cs">
       <DependentUpon>DocumentViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Editor.xaml.cs">
-      <DependentUpon>Editor.xaml</DependentUpon>
+    <Compile Include="Controls\MarkdownEditor.xaml.cs">
+      <DependentUpon>MarkdownEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Resources\BluePPI.xaml">
+    <Page Include="Resources\Styles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Themes\BluePPI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\Converters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Themes\Dark.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -179,7 +221,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resources\Spinner.xaml">
+    <Page Include="Resources\Themes\Light.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Animation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Windows.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\SplashWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -218,9 +272,8 @@
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Resource Include="Resources\Images\ppidoc.ico" />
+    <Resource Include="Resources\Images\docdown.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PdfiumViewer.Wpf\PdfiumViewer.Wpf.csproj">

@@ -1,6 +1,18 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <Storyboard x:Key="StartSpinnerAnimation">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="00:00:00.3"/>
+    </Storyboard>
+    
+    <Storyboard x:Key="DecreaseOpacityAnimation">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.3" Duration="00:00:00.3"/>
+    </Storyboard>
+
+    <Storyboard x:Key="IncreaseOpacityAnimation">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1.0" Duration="00:00:00.3"/>
+    </Storyboard>
+
     <Color x:Key="FilledColor" A="255" B="155" R="155" G="155"/>
     <Color x:Key="UnfilledColor" A="0" B="155" R="155" G="155"/>
 
