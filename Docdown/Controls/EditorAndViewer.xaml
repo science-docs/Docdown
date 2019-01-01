@@ -13,12 +13,12 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Border Grid.Column="0"
-                BorderThickness="1"
+                BorderThickness="0 0 1 0"
                 BorderBrush="{DynamicResource GrayBrush1}">
             <local:MarkdownEditor x:Name="Editor" TextChanged="EditorTextChanged"/>
         </Border>
         <Border Grid.Column="2"
-                BorderThickness="1"
+                BorderThickness="1 0 0 0"
                 BorderBrush="{DynamicResource GrayBrush1}">
             <local:DocumentViewer x:Name="Viewer"/>
         </Border>

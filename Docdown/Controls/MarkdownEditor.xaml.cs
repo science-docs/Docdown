@@ -249,9 +249,9 @@ namespace Docdown.Controls
                     blockBackgroundRenderer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
                     var headers = EnumerateHeader(AbstractSyntaxTree);
                     outline = new Outline(headers);
-                    if (DataContext is WorkspaceViewModel workspace)
+                    if (DataContext is WorkspaceItemViewModel workspaceItem)
                     {
-                        workspace.Outline = new OutlineViewModel(outline, JumpToLocation);
+                        workspaceItem.Outline = new OutlineViewModel(outline, JumpToLocation);
                     }
                     // The block nature of markdown causes edge cases in the syntax hightlighting.
                     // This is the nuclear option but it doesn't seem to cause issues.

@@ -6,6 +6,18 @@ namespace Docdown.Model
     public class Outline
     {
         public List<OutlineItem> Children { get; } = new List<OutlineItem>();
+        public IEnumerable<Block> Source
+        {
+            get => source;
+            set
+            {
+                source = value;
+                CreateOutline();
+            }
+        }
+
+
+        private IEnumerable<Block> source;
 
         public Outline()
         {
@@ -14,7 +26,13 @@ namespace Docdown.Model
 
         public Outline(IEnumerable<Block> headers)
         {
-            Children.AddRange(OutlineItem.FromFlatList(headers));
+            Source = headers;
+        }
+
+        private void CreateOutline()
+        {
+            Children.Clear();
+            Children.AddRange(OutlineItem.FromFlatList(Source));
         }
     }
 }

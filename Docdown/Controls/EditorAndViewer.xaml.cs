@@ -9,7 +9,6 @@ namespace Docdown.Controls
     {
         public EditorAndViewer()
         {
-            this.AddHandler(nameof(WorkspaceViewModel.SelectedItemText), WorkspaceTextChanged);
             InitializeComponent();
         }
 
@@ -19,15 +18,20 @@ namespace Docdown.Controls
             Editor.Redraw();
         }
 
+        public string GetText()
+        {
+            return Editor.Text;
+        }
+
         private void EditorTextChanged(object sender, EventArgs e)
         {
-            var workspace = DataContext as WorkspaceViewModel;
-            workspace.SelectedItemText = Editor.Text;
+            //var workspace = DataContext as WorkspaceViewModel;
+            //workspace.SelectedItemText = Editor.Text;
         }
 
         private void WorkspaceTextChanged()
         {
-            if (DataContext is WorkspaceViewModel workspace)
+            if (DataContext is WorkspaceViewModel workspace && workspace.SelectedItem != null)
             {
                 Editor.FileName = workspace.SelectedItem.Data.FileSystemInfo.FullName;
                 Editor.Text = workspace.SelectedItemText;

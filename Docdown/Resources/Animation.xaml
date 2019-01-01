@@ -82,6 +82,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsVisible" Value="True">
                             <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource StartSpinnerAnimation}"/>
                                 <BeginStoryboard Storyboard="{StaticResource Animation0}" x:Name="Storyboard0" />
                                 <BeginStoryboard Storyboard="{StaticResource Animation1}" x:Name="Storyboard1"/>
                                 <BeginStoryboard Storyboard="{StaticResource Animation2}" x:Name="Storyboard2"/>

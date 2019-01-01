@@ -13,8 +13,8 @@ namespace Docdown.Controls
     {
         public DocumentViewer()
         {
-            this.AddHandler(nameof(WorkspaceViewModel.SelectedPdfPath), PdfPathChanged);
-            this.AddHandler(nameof(WorkspaceViewModel.IsConverting), ConvertingChanged);
+            //this.AddHandler(nameof(WorkspaceItemViewModel.PdfPath), PdfPathChanged);
+            //this.AddHandler(nameof(WorkspaceItemViewModel.IsConverting), ConvertingChanged);
             InitializeComponent();
         }
         
@@ -36,17 +36,24 @@ namespace Docdown.Controls
         
         private void PdfPathChanged()
         {
-            if (DataContext is WorkspaceViewModel workspace)
+            if (DataContext is WorkspaceItemViewModel item)
             {
-                Navigate(workspace.SelectedPdfPath);
+                try
+                {
+                    Navigate(item.PdfPath);
+                }
+                catch (Exception e)
+                {
+                    item.ErrorMessage = ErrorUtility.GetErrorMessage(e);
+                }
             }
         }
 
         private void ConvertingChanged()
         {
-            if (DataContext is WorkspaceViewModel workspace)
+            if (DataContext is WorkspaceItemViewModel item)
             {
-                if (workspace.IsConverting)
+                if (item.IsConverting)
                 {
                     Viewer.BeginStoryboard(ResourceUtility.TryFindResource<Storyboard>("DecreaseOpacityAnimation"));
                     Spinner.BeginStoryboard(ResourceUtility.TryFindResource<Storyboard>("StartSpinnerAnimation"));

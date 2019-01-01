@@ -4,17 +4,17 @@
                     xmlns:options="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
                     mc:Ignorable="options">
 
-    <Color x:Key="HighlightColor">#FF12A1DD</Color>
+    <Color x:Key="HighlightColor">#FF1C97EA</Color>
 
-    <Color x:Key="AccentBaseColor">#FF1178BE</Color>
+    <Color x:Key="AccentBaseColor">#FF007ACC</Color>
     <!--  80%  -->
-    <Color x:Key="AccentColor">#CC1178BE</Color>
+    <Color x:Key="AccentColor">#CC007ACC</Color>
     <!--  60%  -->
-    <Color x:Key="AccentColor2">#991178BE</Color>
+    <Color x:Key="AccentColor2">#99007ACC</Color>
     <!--  40%  -->
-    <Color x:Key="AccentColor3">#661178BE</Color>
+    <Color x:Key="AccentColor3">#66007ACC</Color>
     <!--  20%  -->
-    <Color x:Key="AccentColor4">#331178BE</Color>
+    <Color x:Key="AccentColor4">#33007ACC</Color>
 
     <!--  re-set brushes too  -->
     <SolidColorBrush x:Key="HighlightBrush" Color="{StaticResource HighlightColor}" options:Freeze="True" />

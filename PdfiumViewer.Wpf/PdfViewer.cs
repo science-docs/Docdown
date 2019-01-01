@@ -47,7 +47,7 @@ namespace PdfiumViewer.Wpf
 
         public PdfViewer()
         {
-            Style = ResourceUtility.TryFindResource<Style>("PdfViewerStyle");
+            Template = ResourceUtility.TryFindResource<ControlTemplate>("PdfViewerTemplate");
         }
 
         private static void DocumentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

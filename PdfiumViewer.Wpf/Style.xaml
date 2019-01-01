@@ -5,28 +5,23 @@
 
     <Util:ScrollBarVisibilityConverter x:Key="SBV"/>
 
-    <Style x:Key="PdfViewerStyle" TargetType="{x:Type local:PdfViewer}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:PdfViewer}">
-                    <ScrollViewer VerticalScrollBarVisibility="{Binding Path=Orientation, Converter={StaticResource SBV}, ConverterParameter='Vertical', RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:PdfViewer}}" 
-                                  HorizontalScrollBarVisibility="{Binding Path=Orientation, Converter={StaticResource SBV}, ConverterParameter='Horizontal', RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:PdfViewer}}">
-                        <ItemsControl>
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="{Binding Path=Orientation, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:PdfViewer}}"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type local:PageViewModel}">
-                                    <local:PageView/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
+    <ControlTemplate x:Key="PdfViewerTemplate" TargetType="{x:Type local:PdfViewer}">
+        <ScrollViewer x:Name="PART_ScrollViewer" 
+                      VerticalScrollBarVisibility="{Binding Path=Orientation, Converter={StaticResource SBV}, ConverterParameter='Vertical', RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:PdfViewer}}" 
+                      HorizontalScrollBarVisibility="{Binding Path=Orientation, Converter={StaticResource SBV}, ConverterParameter='Horizontal', RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:PdfViewer}}">
+            <ItemsControl x:Name="PART_Pages">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="{Binding Path=Orientation, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:PdfViewer}}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:PageViewModel}">
+                        <local:PageView/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </ControlTemplate>
+    
 </ResourceDictionary>

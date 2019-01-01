@@ -62,6 +62,11 @@ namespace PdfiumViewer.Wpf
                 alreadySet = true;
                 BeginSetImage();
             }
+            else if (alreadySet && !PageIsVisible())
+            {
+                alreadySet = false;
+                UnsetImage();
+            }
         }
 
         private bool HasSizeChanged(Size constraint)
@@ -102,19 +107,29 @@ namespace PdfiumViewer.Wpf
         {
             if (DataContext is PageViewModel page)
             {
-                Task.Run(() =>
-                {
-                    SetImage(page.Render());
-                });
+                page.Render().ContinueWith(SetImage);
+               
+                //Task.Run(() =>
+                //{
+                //    SetImage(page.Render());
+                //});
             }
         }
 
-        private void SetImage(BitmapSource image)
+        private void SetImage(Task<BitmapSource> image)
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
-                Img.Source = image;
+                Img.Source = image.Result;
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
             }));
+        }
+
+        private void UnsetImage()
+        {
+            Img.Source = null;
         }
     }
 }

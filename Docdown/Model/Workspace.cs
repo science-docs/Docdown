@@ -18,30 +18,6 @@ namespace Docdown.Model
             Item = new WorkspaceItem(path);
         }
 
-        public string Convert()
-        {
-            if (SelectedItem == null)
-                throw new NullReferenceException(nameof(SelectedItem));
-
-            var folder = Path.GetDirectoryName(SelectedItem.FileSystemInfo.FullName);
-            
-            var req = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(), WebUtility.UserAgent, 
-                MultipartFormParameter.ApiParameter(FromType, ToType, Template).Concat(
-                MultipartFormParameter.FromWorkspaceItem(SelectedItem)).ToArray());
-
-            string temp = IOUtility.GetTempFile();
-
-            using (var rs = req.GetResponseStream())
-            {
-                using (var fs = File.OpenWrite(temp))
-                {
-                    rs.CopyTo(fs);
-                }
-            }
-            
-            return temp;
-        }
-
         private ConverterType FromSelectedItem()
         {
             if (SelectedItem == null)

@@ -2,7 +2,7 @@
 
 namespace Docdown.ViewModel
 {
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
     public class ChangeListenerAttribute : Attribute
     {
         public string Property { get; set; }

@@ -112,6 +112,9 @@
       <DependentUpon>OutlineView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SelectorView.cs" />
+    <Compile Include="Controls\TabView.xaml.cs">
+      <DependentUpon>TabView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\WebViewer.xaml.cs">
       <DependentUpon>WebViewer.xaml</DependentUpon>
     </Compile>
@@ -127,6 +130,7 @@
     <Compile Include="Model\OutlineItem.cs" />
     <Compile Include="Model\Workspace.cs" />
     <Compile Include="Model\WorkspaceItem.cs" />
+    <Compile Include="Util\DependencyPropertyUtility.cs" />
     <Compile Include="Util\ErrorUtility.cs" />
     <Compile Include="Util\IOUtility.cs" />
     <Compile Include="Util\ResourceUtility.cs" />
@@ -164,6 +168,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\TabView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\WebViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -194,7 +202,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resources\Themes\BluePPI.xaml">
+    <Page Include="Resources\Themes\Blue.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

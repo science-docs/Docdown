@@ -1,5 +1,6 @@
 ﻿using PdfiumViewer.Wpf.Util;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
@@ -28,10 +29,9 @@ namespace PdfiumViewer.Wpf
             return Size;
         }
 
-        public BitmapSource Render()
+        public async Task<BitmapSource> Render()
         {
-            var image = Document.Render(Page, (int)RenderSize.Width, (int)RenderSize.Height, 
-                (float)BitmapUtility.DpiX, (float)BitmapUtility.DpiY, PdfRenderFlags.Annotations);
+            var image = await QueueRender(this);
             return BitmapUtility.ToBitmapSource(image);
         }
 
@@ -49,6 +49,12 @@ namespace PdfiumViewer.Wpf
             var newSize = new WpfSize((int)(size.Width / ratio), (int)(size.Height / ratio));
             renderSize = BitmapUtility.ConvertSize(newSize);
             return newSize;
+        }
+        
+        private static async Task<System.Drawing.Image> QueueRender(PageViewModel p)
+        {
+            return await TaskUtility.Enqueue(() => p.Document.Render(p.Page, (int)p.RenderSize.Width, (int)p.RenderSize.Height,
+                (float)BitmapUtility.DpiX, (float)BitmapUtility.DpiY, PdfRenderFlags.Annotations));
         }
     }
 }

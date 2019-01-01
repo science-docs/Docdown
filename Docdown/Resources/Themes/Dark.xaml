@@ -68,12 +68,14 @@
     <SolidColorBrush x:Key="ContextMenuBorderBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="SubMenuBorderBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />
 
-    <SolidColorBrush x:Key="MenuItemSelectionFill" Color="#DEDEDE" options:Freeze="True" />
-    <SolidColorBrush x:Key="MenuItemSelectionStroke" Color="#DEDEDE" options:Freeze="True" />
+    <SolidColorBrush x:Key="MenuItemSelectionFill" Color="{StaticResource EditorBackgroundColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MenuItemSelectionStroke" Color="{StaticResource EditorBackgroundColor}" options:Freeze="True" />
 
-    <SolidColorBrush x:Key="TopMenuItemPressedFill" Color="#DEDEDE" options:Freeze="True" />
+    <SolidColorBrush x:Key="TopMenuItemPressedFill" Color="{StaticResource EditorBackgroundColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="TopMenuItemPressedStroke" Color="#E0717070" options:Freeze="True" />
     <SolidColorBrush x:Key="TopMenuItemSelectionStroke" Color="#90717070" options:Freeze="True" />
+
+    <SolidColorBrush x:Key="OverlayBrush" Color="#20FFFFFF" options:Freeze="True"/>
 
     <!--  original #FF9A9A9A"  -->
     <SolidColorBrush x:Key="DisabledMenuItemForeground" Color="{StaticResource Gray2}" options:Freeze="True" />

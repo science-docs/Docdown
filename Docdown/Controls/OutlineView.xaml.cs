@@ -17,7 +17,10 @@ namespace Docdown.Controls
             if (DataContext is WorkspaceViewModel workspace && 
                 e.NewValue is OutlineItemViewModel outlineItem)
             {
-                workspace.SelectedOutlineItem = outlineItem;
+                if (workspace.SelectedItem != null)
+                {
+                    workspace.SelectedItem.SelectedOutlineItem = outlineItem;
+                }
             }
         }
 
@@ -25,8 +28,8 @@ namespace Docdown.Controls
         {
             if (DataContext is WorkspaceViewModel workspace)
             {
-                var selectedItem = workspace.SelectedOutlineItem;
-                var outline = workspace.Outline;
+                var selectedItem = workspace?.SelectedItem?.SelectedOutlineItem;
+                var outline = workspace?.SelectedItem?.Outline;
                 if (outline != null && selectedItem != null)
                 {
                     outline?.JumpTo(selectedItem.Data.TextPosition);

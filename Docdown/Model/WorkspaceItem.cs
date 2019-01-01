@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Docdown.Properties;
+using Docdown.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Docdown.Model
 {
@@ -24,6 +27,8 @@ namespace Docdown.Model
         public WorkspaceItemType Type { get; set; }
         public List<WorkspaceItem> Children { get; } = new List<WorkspaceItem>();
         public WorkspaceItem Parent { get; private set; }
+        public ConverterType FromType => FromFileType();
+        public ConverterType ToType { get; set; } = ConverterType.Pdf;
 
         public WorkspaceItem()
         {
@@ -107,6 +112,27 @@ namespace Docdown.Model
             }
         }
 
+        public string Convert()
+        {
+            var folder = Path.GetDirectoryName(FileSystemInfo.FullName);
+
+            var req = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(), WebUtility.UserAgent,
+                MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template).Concat(
+                MultipartFormParameter.FromWorkspaceItem(this)).ToArray());
+
+            string temp = IOUtility.GetTempFile();
+
+            using (var rs = req.GetResponseStream())
+            {
+                using (var fs = File.OpenWrite(temp))
+                {
+                    rs.CopyTo(fs);
+                }
+            }
+
+            return temp;
+        }
+
         public WorkspaceItem CreateNewFile(string name, string autoExtension = null, string content = null)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -174,6 +200,19 @@ namespace Docdown.Model
         public override string ToString()
         {
             return FileSystemInfo?.FullName ?? base.ToString();
+        }
+
+        private ConverterType FromFileType()
+        {
+            switch (Type)
+            {
+                case WorkspaceItemType.Markdown:
+                    return ConverterType.Markdown;
+                case WorkspaceItemType.Latex:
+                    return ConverterType.Latex;
+                default:
+                    return ConverterType.Text;
+            }
         }
 
         private static IEnumerable<WorkspaceItem> FromDirectory(DirectoryInfo directoryInfo, WorkspaceItem parent)

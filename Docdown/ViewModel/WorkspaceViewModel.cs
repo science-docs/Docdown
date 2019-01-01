@@ -3,6 +3,7 @@ using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,20 +13,53 @@ namespace Docdown.ViewModel
 {
     public class WorkspaceViewModel : ObservableObject<Workspace>
     {
+        [ChangeListener(nameof(Data))]
         public WorkspaceItemViewModel Item
         {
-            get => new WorkspaceItemViewModel(Data.Item);
+            get
+            {
+                if (item == null || item.Data != Data.Item)
+                {
+                    item = new WorkspaceItemViewModel(this, Data.Item);
+                }
+                return item;
+            }
         }
+
+        [ChangeListener(nameof(Data))]
+        public ObservableCollection<WorkspaceItemViewModel> OpenItems
+        {
+            get; set;
+        } = new ObservableCollection<WorkspaceItemViewModel>();
+
+
+        [ChangeListener(nameof(Data))]
         public WorkspaceItemViewModel SelectedItem
         {
-            get => new WorkspaceItemViewModel(Data.SelectedItem);
+            get
+            {
+                if (selectedItem == null)
+                {
+                    selectedItem = new WorkspaceItemViewModel(this, Data.SelectedItem);
+                }
+                return selectedItem;
+            }
             set
             {
-                Data.SelectedItem = value.Data;
-                if (!Data.SelectedItem.IsDirectory())
-                    SendPropertyUpdate();
+                if (value != null && !value.Data.IsDirectory() && !OpenItems.Contains(value))
+                {
+                    OpenItems.Add(value);
+                }
 
-                if (Data.SelectedItem.IsPlainText())
+                selectedItem = value;
+                Data.SelectedItem = value?.Data;
+                var item = Data.SelectedItem;
+
+                if (item == null || !item.IsDirectory())
+                {
+                    SendPropertyUpdate();
+                }
+                if (item != null && item.IsPlainText())
                 {
                     CanConvert = true;
                     SendPropertyUpdate(nameof(SelectedItemText));
@@ -60,10 +94,7 @@ namespace Docdown.ViewModel
         }
 
         [ChangeListener(nameof(Data))]
-        public IEnumerable<WorkspaceItemViewModel> Children
-            => Data.Item.Children
-                .OrderByDescending(e => e.IsDirectory())
-                .Select(e => new WorkspaceItemViewModel(e));
+        public IEnumerable<WorkspaceItemViewModel> Children => Item.Children;
 
         [ChangeListener(nameof(SelectedItem))]
         public ConverterType FromType => Data.FromType;
@@ -123,7 +154,7 @@ namespace Docdown.ViewModel
             get => pdfPath;
             set => Set(ref pdfPath, value);
         }
-
+        
         public bool CanConvert
         {
             get => canConvert && !isConverting;
@@ -160,6 +191,8 @@ namespace Docdown.ViewModel
         private string pdfPath;
         private string errorMessage;
         private OutlineViewModel outline;
+        private WorkspaceItemViewModel item;
+        private WorkspaceItemViewModel selectedItem;
         private Dictionary<string, string> textCache = new Dictionary<string, string>();
         
         public WorkspaceViewModel(Workspace workspace) : base(workspace)
@@ -170,19 +203,14 @@ namespace Docdown.ViewModel
         
         private void SaveSelectedItem()
         {
-            var selectedItem = Data.SelectedItem;
-            if (selectedItem != null)
-            {
-                string fullName = selectedItem.FileSystemInfo.FullName;
-                File.WriteAllText(fullName, textCache[fullName]);
-            }
+            SelectedItem?.Save();
         }
 
         private void SaveAllItems()
         {
-            foreach (var pair in textCache)
+            foreach (var item in OpenItems)
             {
-                File.WriteAllText(pair.Key, pair.Value);
+                item.Save();
             }
         }
 
@@ -191,35 +219,24 @@ namespace Docdown.ViewModel
             if (newWorkspace == null)
                 return;
 
-            Task.Run(() =>
+            Settings.WorkspacePath = newWorkspace;
+            Settings.Save();
+            Data = new Workspace(newWorkspace)
             {
-                Settings.WorkspacePath = newWorkspace;
-                Settings.Save();
-                Data = new Workspace(newWorkspace)
-                {
-                    ToType = ConverterType.Pdf
-                };
-            });
+                ToType = ConverterType.Pdf
+            };
         }
 
         private void Convert()
         {
-            IsConverting = true;
-            Task.Run(() =>
-            {
-                try
-                {
-                    var path = Data.Convert();
-                    SelectedPdfPath = path;
-                    ErrorMessage = "";
-                }
-                catch (Exception e)
-                {
-                    ErrorMessage = ErrorUtility.GetErrorMessage(e);
-                }
-                
-                IsConverting = false;
-            });
+            SelectedItem?.Convert();
+        }
+
+        [ChangeListener(nameof(Data))]
+        private void DataChanged()
+        {
+            SelectedItem = null;
+            OpenItems.Clear();
         }
 
         //private OutlineViewModel BuildOutline()

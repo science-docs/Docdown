@@ -30,13 +30,7 @@
                 </DataTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="Metro:MetroWindow.IconTemplate">
-            <Setter.Value>
-                <DataTemplate>
-                    <Rectangle/>
-                </DataTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Metro:MetroWindow.IconTemplate" Value="{x:Null}"/>
     </Style>
     <DataTemplate x:Key="WindowTitleTemplate">
         <TextBlock FontSize="13.333" FontFamily="Segoe UI SemiBold" Foreground="#C1C1C1" Text="{Binding}"/>

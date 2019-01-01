@@ -1,6 +1,55 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <DrawingBrush x:Key="MarkdownIcon">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                    <GeometryDrawing Brush="#FFEFEFEF" Geometry="M1.391 10.847V4.966H3.121L4.851 7.128 6.58 4.966H8.31V10.847H6.58V7.474L4.851 9.636 3.121 7.474V10.847ZM12.202 10.847 9.607 7.993H11.337V4.966H13.067V7.993H14.796Z" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    
+    <DrawingBrush x:Key="PdfIcon">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                    <GeometryDrawing Brush="#FFEFEFEF" Geometry="M14.301 10.356C13.979 10.451 13.506 10.462 12.998 10.388 12.454 10.309 11.899 10.143 11.353 9.898 12.326 9.756 13.081 9.8 13.727 10.028 13.88 10.083 14.131 10.228 14.301 10.356M8.872 9.463C8.832 9.474 8.793 9.484 8.754 9.495 8.492 9.566 8.238 9.636 7.992 9.698L7.661 9.782C6.995 9.95 6.314 10.122 5.642 10.327 5.898 9.711 6.135 9.088 6.368 8.479 6.54 8.028 6.715 7.567 6.897 7.112 6.989 7.265 7.086 7.417 7.186 7.57 7.642 8.265 8.215 8.907 8.872 9.463M7.178 2.514C7.221 3.274 7.057 4.006 6.816 4.707 6.52 3.839 6.382 2.881 6.752 2.108 6.847 1.909 6.925 1.803 6.976 1.748 7.054 1.869 7.156 2.138 7.178 2.514M3.701 12.147C3.535 12.445 3.365 12.724 3.191 12.987 2.77 13.621 2.082 14.299 1.729 14.299 1.694 14.299 1.652 14.294 1.591 14.229 1.551 14.187 1.545 14.158 1.547 14.117 1.558 13.884 1.867 13.469 2.314 13.084 2.72 12.735 3.179 12.425 3.701 12.147M15.426 10.389C15.372 9.613 14.066 9.115 14.053 9.11 13.548 8.931 12.999 8.844 12.375 8.844 11.708 8.844 10.988 8.941 10.064 9.156 9.241 8.573 8.531 7.844 8 7.035 7.766 6.679 7.555 6.322 7.371 5.974 7.82 4.902 8.223 3.749 8.15 2.458 8.091 1.422 7.624.727 6.989.727 6.554.727 6.179 1.049 5.874 1.686 5.33 2.822 5.473 4.274 6.298 6.008 6.001 6.706 5.725 7.43 5.457 8.131 5.125 9.003 4.782 9.902 4.395 10.758 3.311 11.187 2.421 11.707 1.679 12.345 1.193 12.763.607 13.401.574 14.067.558 14.381.665 14.669.884 14.899 1.116 15.144 1.408 15.273 1.729 15.273 2.788 15.273 3.808 13.817 4.002 13.525 4.391 12.938 4.756 12.283 5.113 11.528 6.012 11.203 6.971 10.961 7.9 10.726L8.233 10.641C8.483 10.578 8.743 10.507 9.009 10.434 9.292 10.358 9.582 10.279 9.877 10.204 10.831 10.811 11.857 11.206 12.858 11.352 13.7 11.474 14.449 11.403 14.956 11.139 15.412 10.902 15.437 10.535 15.426 10.389" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="ImageIcon">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M1,1L1,10 2,9.073 2,2 14,2 14,11.098 15,12 15,1z" />
+                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M1,1L1,10 2,9.073 2,2 14,2 14,11.098 15,12 15,1z" />
+                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M1,10L5,6.293 10,11.293 12,9.293 15,12 15,14 1,14z" />
+                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M11.5,3C10.672,3 10,3.672 10,4.5 10,5.328 10.672,6 11.5,6 12.328,6 13,5.328 13,4.5 13,3.672 12.328,3 11.5,3" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="VideoIcon">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M16,4L16,12C16,13.103,15.103,14,14,14L2,14C0.897,14,0,13.103,0,12L0,4C0,2.897,0.897,2,2,2L14,2C15.103,2,16,2.897,16,4" />
+                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M6,11L6,5 10.954,8z M14,3L2,3C1.448,3,1,3.448,1,4L1,12C1,12.552,1.448,13,2,13L14,13C14.552,13,15,12.552,15,12L15,4C15,3.448,14.552,3,14,3" />
+                    <GeometryDrawing Brush="{DynamicResource WhiteBrush}" Geometry="F1M6,5L10.954,8 6,11z" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
     <DrawingBrush x:Key="PrintIcon">
         <DrawingBrush.Drawing>
             <DrawingGroup>
@@ -97,11 +146,10 @@
             <DrawingGroup>
                 <DrawingGroup.Children>
                     <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
-                    <GeometryDrawing Brush="#FF388934" Geometry="F1M3,-0.0002L3,16 13.6677,8z" />
+                    <GeometryDrawing Brush="#FF388934" Geometry="F1M3,0L3,16 13.6677,8z" />
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
-
 
 </ResourceDictionary>

@@ -3,12 +3,12 @@ using Docdown.Util;
 using Docdown.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Docdown.Controls
 {
+    // TODO: Remove in near future
+    [Obsolete]
     public class SelectorView : ContentControl
     {
         public SelectorView()
@@ -23,18 +23,25 @@ namespace Docdown.Controls
         {
             var workspace = DataContext as WorkspaceViewModel;
             var selectedItem = workspace.Data.SelectedItem;
-            switch (selectedItem.Type)
+            if (selectedItem != null)
             {
-                case WorkspaceItemType.Pdf:
-                    ShowPdf(workspace, selectedItem);
-                    break;
-                case WorkspaceItemType.Latex:
-                case WorkspaceItemType.Markdown:
-                    ShowMdEditorAndPdf(workspace, selectedItem);
-                    break;
-                default:
-                    Content = null;
-                    break;
+                switch (selectedItem.Type)
+                {
+                    case WorkspaceItemType.Pdf:
+                        ShowPdf(workspace, selectedItem);
+                        break;
+                    case WorkspaceItemType.Latex:
+                    case WorkspaceItemType.Markdown:
+                        ShowMdEditorAndPdf(workspace, selectedItem);
+                        break;
+                    default:
+                        Content = null;
+                        break;
+                }
+            }
+            else
+            {
+                Content = null;
             }
         }
 
