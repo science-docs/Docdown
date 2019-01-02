@@ -20,7 +20,7 @@ namespace Docdown.Model
         {
             Text = block.InlineContent.LiteralContent;
             Level = block.Heading.Level;
-            TextPosition = block.SourcePosition;
+            TextPosition = block.SourcePosition + block.SourceLength;
         }
 
         public static IEnumerable<OutlineItem> FromFlatList(IEnumerable<Block> headers)

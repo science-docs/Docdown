@@ -28,17 +28,17 @@ namespace Docdown.ViewModel
             {
                 if (child.IsExpanded)
                 {
-                    var other = SearchInOther(others, child.Data.Text);
-                    if (other != null)
+                    var searchResult = SearchTreeByName(others, child.Data.Text);
+                    if (searchResult != null)
                     {
-                        other.IsExpanded = true;
+                        searchResult.IsExpanded = true;
                     }
                     Exchange(child.Children, others);
                 }
             }
         }
 
-        private OutlineItemViewModel SearchInOther(IEnumerable<OutlineItemViewModel> others, string name)
+        private OutlineItemViewModel SearchTreeByName(IEnumerable<OutlineItemViewModel> others, string name)
         {
             OutlineItemViewModel found = null;
             foreach (var item in others)
@@ -49,7 +49,7 @@ namespace Docdown.ViewModel
                 }
                 else
                 {
-                    found = SearchInOther(item.Children, name);
+                    found = SearchTreeByName(item.Children, name);
                 }
             }
             return found;

@@ -17,16 +17,21 @@ namespace Docdown.Util
         private static Dictionary<INotifyPropertyChanged, List<PropertyChangedEventHandler>> propertyChangedHandlers
             = new Dictionary<INotifyPropertyChanged, List<PropertyChangedEventHandler>>();
 
+        // TODO: remove those
+
+        [Obsolete]
         public static void AddHandler(this FrameworkElement frameworkElement, Action action)
         {
             AddHandler(frameworkElement, null, action);
         }
 
+        [Obsolete]
         public static void AddHandler(this FrameworkElement frameworkElement, string name, Action action)
         {
             AddHandler(frameworkElement, name, (sender, e) => action());
         }
 
+        [Obsolete]
         public static void AddHandler(this FrameworkElement frameworkElement, string name, PropertyChangedEventHandler eventHandler)
         {
             if (name == null)
@@ -58,17 +63,13 @@ namespace Docdown.Util
             }
         }
 
+        [Obsolete]
         public static void RemoveHandlers(this INotifyPropertyChanged frameworkElement)
         {
             throw new NotImplementedException();
-
-            var list = GetHandlers(frameworkElement);
-            foreach (var handler in list)
-            {
-
-            }
         }
 
+        [Obsolete]
         private static List<PropertyChangedEventHandler> GetHandlers(INotifyPropertyChanged element)
         {
             if (propertyChangedHandlers.TryGetValue(element, out var list))
