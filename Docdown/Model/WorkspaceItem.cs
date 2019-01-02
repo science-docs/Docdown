@@ -10,6 +10,7 @@ namespace Docdown.Model
     public enum WorkspaceItemType
     {
         Other,
+        Bibliography,
         Markdown,
         Latex,
         Pdf,
@@ -104,6 +105,10 @@ namespace Docdown.Model
                     case ".flac":
                     case ".ogg":
                         Type = WorkspaceItemType.Audio;
+                        break;
+                    case ".bib":
+                    case ".bibtex":
+                        Type = WorkspaceItemType.Bibliography;
                         break;
                     default:
                         Type = WorkspaceItemType.Other;

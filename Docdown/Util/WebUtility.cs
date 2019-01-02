@@ -139,6 +139,7 @@ namespace Docdown.Util
 
         private const string cType = "application/octet-stream";
         private const string MainFile = "content";
+        private const string BibliographyFile = "bibliography";
 
         private MultipartFormParameter() { }
 
@@ -207,9 +208,13 @@ namespace Docdown.Util
             {
                 yield break;
             }
-            if (item == root)
+            else if (item == root)
             {
                 yield return CreateFile(MainFile, item.FileSystemInfo.FullName);
+            }
+            else if (item.Type == WorkspaceItemType.Bibliography)
+            {
+                yield return CreateFile(BibliographyFile, item.FileSystemInfo.FullName);
             }
             else if (item.Type == WorkspaceItemType.Directory)
             {
