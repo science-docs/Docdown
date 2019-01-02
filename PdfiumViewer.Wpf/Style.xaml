@@ -7,12 +7,12 @@
 
     <ControlTemplate x:Key="PdfViewerTemplate" TargetType="{x:Type local:PdfViewer}">
         <ScrollViewer x:Name="PART_ScrollViewer" 
-                      VerticalScrollBarVisibility="{Binding Path=Orientation, Converter={StaticResource SBV}, ConverterParameter='Vertical', RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:PdfViewer}}" 
-                      HorizontalScrollBarVisibility="{Binding Path=Orientation, Converter={StaticResource SBV}, ConverterParameter='Horizontal', RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:PdfViewer}}">
+                      VerticalScrollBarVisibility="{Binding Path=Orientation, Converter={StaticResource SBV}, ConverterParameter='Vertical', RelativeSource={RelativeSource TemplatedParent}}" 
+                      HorizontalScrollBarVisibility="{Binding Path=Orientation, Converter={StaticResource SBV}, ConverterParameter='Horizontal', RelativeSource={RelativeSource TemplatedParent}}">
             <ItemsControl x:Name="PART_Pages">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="{Binding Path=Orientation, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:PdfViewer}}"/>
+                        <StackPanel x:Name="PART_StackPanel" Orientation="{Binding Path=Orientation, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:PdfViewer}}"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
