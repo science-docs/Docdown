@@ -38,7 +38,7 @@ namespace Docdown.ViewModel
         {
             get
             {
-                if (selectedItem == null)
+                if (selectedItem == null && Data.SelectedItem != null)
                 {
                     selectedItem = new WorkspaceItemViewModel(this, Data.SelectedItem);
                 }
@@ -59,39 +59,11 @@ namespace Docdown.ViewModel
                 {
                     SendPropertyUpdate();
                 }
-                if (item != null && item.IsPlainText())
-                {
-                    CanConvert = true;
-                    SendPropertyUpdate(nameof(SelectedItemText));
-                }
-                else
-                {
-                    CanConvert = false;
-                }
             }
         }
 
         [ChangeListener(nameof(SelectedItem))]
         public string SelectedItemName => Data?.SelectedItem?.FileSystemInfo?.Name ?? "";
-
-        [ChangeListener(nameof(SelectedItem))]
-        public OutlineViewModel Outline
-        {
-            get => outline;
-            set
-            {
-                if (outline != null && value != null)
-                    outline.Exchange(value);
-                outline = value;
-                SendPropertyUpdate();
-            }
-        }
-
-        public OutlineItemViewModel SelectedOutlineItem
-        {
-            get;
-            set;
-        }
 
         [ChangeListener(nameof(Data))]
         public IEnumerable<WorkspaceItemViewModel> Children => Item.Children;
@@ -119,57 +91,6 @@ namespace Docdown.ViewModel
                 SendPropertyUpdate();
             }
         }
-        
-        public string SelectedItemText
-        {
-            get
-            {
-                var selectedItem = Data.SelectedItem;
-                if (selectedItem != null)
-                {
-                    string fullName = selectedItem.FileSystemInfo.FullName;
-                    if (!textCache.TryGetValue(fullName, out string cachedText)
-                        && selectedItem.IsPlainText())
-                    {
-                        cachedText = File.ReadAllText(fullName);
-                        textCache[fullName] = cachedText;
-                    }
-                    return cachedText;
-                }
-                return string.Empty;
-            }
-            set
-            {
-                var selectedItem = Data.SelectedItem;
-                if (selectedItem != null)
-                {
-                    string fullName = selectedItem.FileSystemInfo.FullName;
-                    textCache[fullName] = value;
-                }
-            }
-        }
-
-        public string SelectedPdfPath
-        {
-            get => pdfPath;
-            set => Set(ref pdfPath, value);
-        }
-        
-        public bool CanConvert
-        {
-            get => canConvert && !isConverting;
-            set => Set(ref canConvert, value);
-        }
-
-        public bool IsConverting
-        {
-            get => isConverting;
-            set
-            {
-                Set(ref isConverting, value);
-                SendPropertyUpdate(nameof(CanConvert));
-            }
-        }
 
         public string ErrorMessage
         {
@@ -181,19 +102,11 @@ namespace Docdown.ViewModel
 
         public ICommand SaveSelectedItemCommand => new ActionCommand(SaveSelectedItem);
         public ICommand SaveAllItemsCommand => new ActionCommand(SaveAllItems);
-        public ICommand ConvertCommand => new ActionCommand(Convert);
         public ICommand SearchWorkspaceCommand => new SearchWorkspaceCommand(Settings.WorkspacePath, ChangeWorkspace);
-        [ChangeListener(nameof(SelectedPdfPath))]
-        public ICommand PrintCommand => new PrintCommand(SelectedItemName, SelectedPdfPath);
-
-        private bool canConvert;
-        private bool isConverting;
-        private string pdfPath;
+        
         private string errorMessage;
-        private OutlineViewModel outline;
         private WorkspaceItemViewModel item;
         private WorkspaceItemViewModel selectedItem;
-        private Dictionary<string, string> textCache = new Dictionary<string, string>();
         
         public WorkspaceViewModel(Workspace workspace) : base(workspace)
         {
@@ -225,11 +138,6 @@ namespace Docdown.ViewModel
             {
                 ToType = ConverterType.Pdf
             };
-        }
-
-        private void Convert()
-        {
-            SelectedItem?.Convert();
         }
 
         [ChangeListener(nameof(Data))]

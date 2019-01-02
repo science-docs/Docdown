@@ -4,6 +4,7 @@ using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ namespace Docdown.ViewModel
 {
     public class WorkspaceItemViewModel : ObservableObject<WorkspaceItem>
     {
+        public string Name => Data.FileSystemInfo.Name;
+
         [ChangeListener(nameof(IsExpanded))]
         public string IconName
         {
@@ -82,6 +85,9 @@ namespace Docdown.ViewModel
                 .Select(e => new WorkspaceItemViewModel(Workspace, e));
 
         public ICommand CloseCommand => new ActionCommand(Close);
+        public ICommand ConvertCommand => new ActionCommand(Convert);
+        [ChangeListener(nameof(PdfPath))]
+        public ICommand PrintCommand => new PrintCommand(Name, PdfPath);
 
         public object View
         {
@@ -124,6 +130,8 @@ namespace Docdown.ViewModel
         public WorkspaceItemViewModel(WorkspaceViewModel workspaceViewModel, WorkspaceItem workspaceItem) : base(workspaceItem)
         {
             Workspace = workspaceViewModel;
+
+            CanConvert = workspaceItem.IsPlainText();
         }
 
         public void Convert()
@@ -156,8 +164,22 @@ namespace Docdown.ViewModel
 
         public void Close()
         {
-            Workspace.OpenItems.Remove(this);
-            view = null;
+            if (Workspace.OpenItems.Contains(this))
+            {
+                bool isSelected = Workspace.SelectedItem == this;
+                if (isSelected)
+                {
+                    Workspace.SelectedItem = null; 
+                }
+
+                Workspace.OpenItems.Remove(this);
+
+                if (isSelected)
+                {
+                    Workspace.SelectedItem = Workspace.OpenItems.LastOrDefault();
+                }
+                view = null;
+            }
         }
 
         private object BuildView()

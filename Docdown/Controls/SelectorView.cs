@@ -73,7 +73,6 @@ namespace Docdown.Controls
             }
             var editorAndViewer = view as EditorAndViewer;
             Content = editorAndViewer;
-            this.Delay(100, () => editorAndViewer.SetText(workspace.SelectedItemText));
         }
     }
 }

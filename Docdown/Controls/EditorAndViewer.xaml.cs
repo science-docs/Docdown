@@ -28,14 +28,5 @@ namespace Docdown.Controls
             //var workspace = DataContext as WorkspaceViewModel;
             //workspace.SelectedItemText = Editor.Text;
         }
-
-        private void WorkspaceTextChanged()
-        {
-            if (DataContext is WorkspaceViewModel workspace && workspace.SelectedItem != null)
-            {
-                Editor.FileName = workspace.SelectedItem.Data.FileSystemInfo.FullName;
-                Editor.Text = workspace.SelectedItemText;
-            }
-        }
     }
 }

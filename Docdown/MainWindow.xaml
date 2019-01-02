@@ -1,4 +1,4 @@
-<Metro:MetroWindow x:Class="Docdown.MainWindow"
+﻿<Metro:MetroWindow x:Class="Docdown.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -124,7 +124,7 @@
             </Button>
             <Button Command="{Binding SaveSelectedItemCommand}" Height="20" Width="24">
                 <Button.ToolTip>
-                    <ToolTip Content="{Binding SelectedItemName}"
+                    <ToolTip Content="{Binding SelectedItem.Name, FallbackValue={x:Null}}"
                              ContentStringFormat="Save {0}"
                              Visibility="{Binding SelectedItem, Converter={StaticResource StringToVisibilityConverter}}"/>
                 </Button.ToolTip>
@@ -134,18 +134,28 @@
                 <Rectangle Fill="{StaticResource SaveAllIcon}" Height="16" Width="16"/>
             </Button>
             <Rectangle Width="1" Margin="0 2" Fill="{DynamicResource GrayBrush1}"/>
-            <Button IsEnabled="{Binding CanConvert}" Command="{Binding ConvertCommand}" Height="20">
+            <Button IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}" 
+                    Command="{Binding SelectedItem.ConvertCommand, FallbackValue={x:Null}}" 
+                    Height="20">
                 <Button.ToolTip>
                     <ToolTip Content="{Binding ToType}"
                              ContentStringFormat="Convert to {0}"/>
                 </Button.ToolTip>
                 <StackPanel Orientation="Horizontal">
-                    <Rectangle Fill="{StaticResource RunIcon}" Height="16" Width="16"/>
-                    <TextBlock Text="Start" FontSize="{StaticResource DefaultFontSize}" Foreground="{DynamicResource BlackBrush}" Margin="4 0 4 0"/>
+                    <Rectangle Fill="{StaticResource RunIcon}" 
+                               Height="16" 
+                               Width="16"/>
+                    <TextBlock Text="Start" 
+                               FontSize="{StaticResource DefaultFontSize}" 
+                               Foreground="{DynamicResource BlackBrush}" 
+                               Margin="4 0 4 0"/>
                 </StackPanel>
             </Button>
-            <Button Command="{Binding PrintCommand}" ToolTip="Print File" Height="20" Width="24"
-                    IsEnabled="{Binding SelectedPdfPath, Converter={StaticResource StringLengthToBooleanConverter}}">
+            <Button Command="{Binding SelectedItem.PrintCommand, FallbackValue={x:Null}}" 
+                    ToolTip="Print File" 
+                    Height="20" 
+                    Width="24"
+                    IsEnabled="{Binding SelectedItem.PdfPath, Converter={StaticResource StringLengthToBooleanConverter}, FallbackValue=False}">
                 <Rectangle Fill="{StaticResource PrintIcon}" Height="16" Width="16"/>
             </Button>
         </StackPanel>
