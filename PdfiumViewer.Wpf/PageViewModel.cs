@@ -1,4 +1,5 @@
 ﻿using PdfiumViewer.Wpf.Util;
+using System;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -12,6 +13,7 @@ namespace PdfiumViewer.Wpf
     {
         public IPdfDocument Document { get; }
         public int Page { get; }
+        public double MaxScale { get; set; }
         public WpfSize Size { get; private set; }
         public WpfSize RenderSize { get; private set; }
         public Orientation Orientation { get; set; }
@@ -40,13 +42,17 @@ namespace PdfiumViewer.Wpf
             double ratio;
             if (Orientation == Orientation.Vertical)
             {
-                ratio = size.Width / availableSize.Width;
+                ratio = availableSize.Width / size.Width;
             }
             else
             {
-                ratio = size.Height / availableSize.Height;
+                ratio = availableSize.Height / size.Height;
             }
-            var newSize = new WpfSize((int)(size.Width / ratio), (int)(size.Height / ratio));
+            if (!double.IsNaN(MaxScale))
+            {
+                ratio = Math.Min(ratio, MaxScale);
+            }
+            var newSize = new WpfSize((int)(size.Width * ratio), (int)(size.Height * ratio));
             renderSize = BitmapUtility.ConvertSize(newSize);
             return newSize;
         }
