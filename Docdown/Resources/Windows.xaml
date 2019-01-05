@@ -1,13 +1,27 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls">
+                    xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
+                    xmlns:System="clr-namespace:System;assembly=mscorlib">
 
+    <DrawingBrush x:Key="DocdownIcon">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#FF006EB2" Geometry="M0,0 0,20 11,27 11,7 M4,7.285 4,17.8 7,19.72 7,9.194 M0,23 12,31 12,37 0,27z" />
+                    <GeometryDrawing Brush="#FF007ACC" Geometry="M13,7 24,0 24,4.74 17,9.194 17,19.72 24,15.26 24,20 13,27 M24,23 11.99,31 11.99,37 24,27z" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <System:Double x:Key="InactiveOpacity">0.5</System:Double>
+    
     <Style x:Key="CleanWindowStyleKey" TargetType="{x:Type Metro:MetroWindow}">
         <Setter Property="Metro:MetroWindow.TitleAlignment" Value="Center"/>
         <Setter Property="Metro:MetroWindow.TitleForeground" Value="{DynamicResource BlackBrush}"/>
         <Setter Property="Metro:MetroWindow.WindowTitleBrush" Value="{DynamicResource TransparentWhiteBrush}"/>
         <Setter Property="Metro:MetroWindow.NonActiveWindowTitleBrush" Value="{DynamicResource TransparentWhiteBrush}"/>
-        <Setter Property="Metro:MetroWindow.OverrideDefaultWindowCommandsBrush" Value="{DynamicResource WhiteBrush}"/>
+        <!--<Setter Property="Metro:MetroWindow.OverrideDefaultWindowCommandsBrush" Value="{DynamicResource WhiteBrush}"/>-->
     </Style>
     
     <Style x:Key="SlimWindowStyle" TargetType="{x:Type Metro:MetroWindow}"
@@ -20,21 +34,82 @@
         <Setter Property="Metro:MetroWindow.NonActiveGlowBrush" Value="{DynamicResource GrayHoverBrush}"/>
         <Setter Property="Control.Background" Value="{DynamicResource WhiteBrush}"/>
         <Setter Property="Metro:MetroWindow.TitleAlignment" Value="Left"/>
+        <Setter Property="Metro:MetroWindow.TitleCharacterCasing" Value="Normal"/>
         <Setter Property="Metro:MetroWindow.ShowSystemMenuOnRightClick" Value="false"/>
         <Setter Property="Metro:MetroWindow.WindowTransitionsEnabled" Value="false"/>
-        <Setter Property="Metro:MetroWindow.TitleTemplate">
-            <Setter.Value>
-                <DataTemplate>
-                    <TextBlock FontSize="13.333" FontFamily="Segoe UI SemiBold" Foreground="{DynamicResource GrayBrush5}"
-                         Text="{Binding}"/>
-                </DataTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Metro:MetroWindow.TitleTemplate" Value="{StaticResource DefaultTitleTemplate}"/>
         <Setter Property="Metro:MetroWindow.IconTemplate" Value="{x:Null}"/>
     </Style>
-    <DataTemplate x:Key="WindowTitleTemplate">
-        <TextBlock FontSize="13.333" FontFamily="Segoe UI SemiBold" Foreground="#C1C1C1" Text="{Binding}"/>
+    
+    <DataTemplate x:Key="DefaultTitleTemplate">
+        <TextBlock x:Name="PART_Title"
+                   Margin="8 -1 1 0"
+                   VerticalAlignment="Center"
+                   FontFamily="{DynamicResource HeaderFontFamily}"
+                   FontSize="{DynamicResource WindowTitleFontSize}"
+                   Text="{TemplateBinding Content}"
+                   TextTrimming="CharacterEllipsis"/>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Path=IsActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Metro:MetroWindow}}" Value="False">
+                <Setter Property="Opacity" Value="{StaticResource InactiveOpacity}"/>
+            </DataTrigger>
+        </DataTemplate.Triggers>
     </DataTemplate>
+    
     <DataTemplate x:Key="EmptyWindowTitleTemplate"/>
+
+    <DataTemplate x:Key="DefaultIconTemplate">
+        <Rectangle Fill="{StaticResource DocdownIcon}" 
+                       Height="20" 
+                       Width="13">
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Metro:MetroWindow}}" Value="False">
+                            <Setter Property="Opacity" Value="{StaticResource InactiveOpacity}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+    </DataTemplate>
+
+    <Style x:Key="HeaderStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="TextBlock.FontSize" Value="24"/>
+        <Setter Property="TextBlock.FontFamily" Value="Segoe UI SemiBold"/>
+        <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+        <Setter Property="TextBlock.Foreground" Value="White"/>
+    </Style>
+    <Style x:Key="DefaultInformationStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="TextBlock.FontSize" Value="14"/>
+        <Setter Property="TextBlock.FontFamily" Value="Segoe UI Light"/>
+        <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+        <Setter Property="TextBlock.Foreground" Value="{DynamicResource BlackBrush}"/>
+    </Style>
+    <Style x:Key="VersionTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="TextBlock.FontSize" Value="14"/>
+        <Setter Property="TextBlock.FontFamily" Value="Segoe UI SemiBold"/>
+        <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+        <Setter Property="TextBlock.Foreground" Value="DarkRed"/>
+    </Style>
+    <Style x:Key="SectionHeaderTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="TextBlock.FontFamily" Value="Segoe UI SemiBold"/>
+        <Setter Property="TextBlock.FontSize" Value="18"/>
+        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0"/>
+        <Setter Property="TextBlock.Foreground" Value="#303030"/>
+    </Style>
+    <Style x:Key="SectionSubHeaderTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="TextBlock.FontFamily" Value="Segoe UI"/>
+        <Setter Property="TextBlock.FontSize" Value="16"/>
+        <Setter Property="FrameworkElement.Margin" Value="0,0,0,10"/>
+        <Setter Property="TextBlock.Foreground" Value="{DynamicResource GrayBrush2}"/>
+        <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+    </Style>
+    <Style x:Key="FieldHeaderTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="TextBlock.FontFamily" Value="Segoe UI SemiBold"/>
+        <Setter Property="TextBlock.FontSize" Value="16"/>
+        <Setter Property="FrameworkElement.Margin" Value="0,10,0,2"/>
+        <Setter Property="TextBlock.Foreground" Value="#505050"/>
+    </Style>
 
 </ResourceDictionary>

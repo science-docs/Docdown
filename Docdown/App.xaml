@@ -22,17 +22,6 @@
                 <ResourceDictionary Source="Resources/Images/Markdown.xaml"/>
                 <ResourceDictionary Source="Resources/Images/VS.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-
-            <DrawingBrush x:Key="DocdownIcon">
-                <DrawingBrush.Drawing>
-                    <DrawingGroup>
-                        <DrawingGroup.Children>
-                            <GeometryDrawing Brush="#FF006EB2" Geometry="M0,0 0,20 11,27 11,7 M4,7.285 4,17.8 7,19.72 7,9.194 M0,23 12,31 12,37 0,27z" />
-                            <GeometryDrawing Brush="#FF007ACC" Geometry="M13,7 24,0 24,4.74 17,9.194 17,19.72 24,15.26 24,20 13,27 M24,23 11.99,31 11.99,37 24,27z" />
-                        </DrawingGroup.Children>
-                    </DrawingGroup>
-                </DrawingBrush.Drawing>
-            </DrawingBrush>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

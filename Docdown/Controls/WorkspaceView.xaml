@@ -21,7 +21,11 @@
                        Margin="4 2"
                        FontSize="{StaticResource DefaultFontSize}"/>
         </Border>
-        <TreeView Grid.Row="1" Background="Transparent" ItemsSource="{Binding Children, IsAsync=True}" SelectedItemChanged="ViewSelectedItemChanged" MouseDoubleClick="TreeView_MouseDoubleClick">
+        <TreeView Grid.Row="1" 
+                  Background="Transparent" 
+                  ItemsSource="{Binding Children, IsAsync=True}" 
+                  SelectedItemChanged="ViewSelectedItemChanged" 
+                  MouseDoubleClick="ViewSelectedMouseDoubleClick">
             <TreeView.Resources>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="{x:Type ViewModel:WorkspaceItemViewModel}">
                     <StackPanel Orientation="Horizontal">

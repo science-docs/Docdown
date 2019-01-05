@@ -1,5 +1,6 @@
 ﻿using Docdown.ViewModel;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Docdown.Controls
 {
@@ -21,9 +22,10 @@ namespace Docdown.Controls
             }
         }
 
-        private void TreeView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ViewSelectedMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (DataContext is WorkspaceViewModel workspace)
+            if (e.ChangedButton == MouseButton.Left && 
+                DataContext is WorkspaceViewModel workspace)
             {
                 workspace.SelectedItem = current;
             }

@@ -1,6 +1,7 @@
 ﻿using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
+using Docdown.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -81,13 +82,13 @@ namespace Docdown.ViewModel
             }
         }
 
-        public string Template
+        public Template Template
         {
-            get => Data.Template;
+            get => Data.SelectedTemplate;
             set
             {
-                Data.Template = value;
-                Settings.Template = value;
+                Data.SelectedTemplate = value;
+                Settings.Template = value.Name;
                 SendPropertyUpdate();
             }
         }
@@ -102,8 +103,10 @@ namespace Docdown.ViewModel
 
         public ICommand SaveSelectedItemCommand => new ActionCommand(SaveSelectedItem);
         public ICommand SaveAllItemsCommand => new ActionCommand(SaveAllItems);
+        public ICommand CloseAllItemsCommand => new ActionCommand(CloseAll);
         public ICommand SearchWorkspaceCommand => new SearchWorkspaceCommand(Settings.WorkspacePath, ChangeWorkspace);
-        
+        public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(this, null);
+
         private string errorMessage;
         private WorkspaceItemViewModel item;
         private WorkspaceItemViewModel selectedItem;
@@ -111,7 +114,13 @@ namespace Docdown.ViewModel
         public WorkspaceViewModel(Workspace workspace) : base(workspace)
         {
             Settings = new SettingsViewModel(ChangeWorkspace);
-            Template = Settings.Template;
+            Data.SelectTemplate(Settings.Template);
+        }
+
+        public void CloseAll()
+        {
+            SelectedItem = null;
+            OpenItems.Clear();
         }
         
         private void SaveSelectedItem()
@@ -146,29 +155,5 @@ namespace Docdown.ViewModel
             SelectedItem = null;
             OpenItems.Clear();
         }
-
-        //private OutlineViewModel BuildOutline()
-        //{
-        //    var text = SelectedItemText;
-        //    if (text != null)
-        //    {
-        //        var ast = AbstractSyntaxTree.GenerateAbstractSyntaxTree(text);
-        //        var header = AbstractSyntaxTree.EnumerateHeader(ast);
-
-        //        var outline = new Outline(header);
-        //        return new OutlineViewModel(outline);
-        //    }
-        //    else
-        //    {
-        //        return new OutlineViewModel(new Outline());
-        //    }
-        //}
-
-        //private void BuildOutlineDiff(Outline newOutline)
-        //{
-
-
-        //    outline = newOutline;
-        //}
     }
 }

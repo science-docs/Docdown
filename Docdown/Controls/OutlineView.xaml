@@ -21,8 +21,8 @@
         </Border>
         <TreeView Grid.Row="1" Background="Transparent" ItemsSource="{Binding SelectedItem.Outline.Children, IsAsync=True}" 
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  SelectedItemChanged="TreeView_SelectedItemChanged" 
-                  MouseDoubleClick="TreeView_MouseDoubleClick">
+                  SelectedItemChanged="OutlineSelectedItemChanged" 
+                  MouseDoubleClick="OutlineMouseDoubleClick">
             <TreeView.Resources>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="{x:Type ViewModel:OutlineItemViewModel}">
                     <TextBlock Text="{Binding Data.Text}"

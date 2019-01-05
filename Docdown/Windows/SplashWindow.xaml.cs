@@ -41,6 +41,7 @@ namespace Docdown.Windows
                     {
                         ToType = ConverterType.Pdf
                     };
+                    Workspace.LoadTemplates();
                     Dispatcher.BeginInvoke((Action)(() =>
                     {
                         DialogResult = true;

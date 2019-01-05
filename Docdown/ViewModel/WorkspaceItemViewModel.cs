@@ -84,6 +84,7 @@ namespace Docdown.ViewModel
                 .OrderByDescending(e => e.IsDirectory())
                 .Select(e => new WorkspaceItemViewModel(Workspace, e));
 
+        public ICommand SaveCommand => new ActionCommand(Save);
         public ICommand CloseCommand => new ActionCommand(Close);
         public ICommand ConvertCommand => new ActionCommand(Convert);
         [ChangeListener(nameof(PdfPath))]

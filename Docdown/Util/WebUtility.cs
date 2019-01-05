@@ -17,9 +17,25 @@ namespace Docdown.Util
 
         public static string BuildConvertUrl()
         {
-            var settings = Settings.Default;
-            var api = settings.API;
-            return $"{api}/convert";
+            return $"{Settings.Default.API}/convert";
+        }
+
+        public static string BuildTemplatesUrl()
+        {
+            return $"{Settings.Default.API}/templates";
+        }
+
+        public static HttpWebResponse SimpleGetRequest(string url)
+        {
+            var request = WebRequest.Create(url) as HttpWebRequest
+                ?? throw new NullReferenceException("request is not a http request");
+
+            request.Method = "GET";
+            request.UserAgent = UserAgent;
+            request.CookieContainer = new CookieContainer();
+            request.Timeout = 60_000;
+
+            return request.GetResponse() as HttpWebResponse;
         }
 
         /// <summary>
@@ -30,14 +46,14 @@ namespace Docdown.Util
         /// <param name="postParameters"></param>
         /// <returns></returns>
         /// <exception cref="WebException"/>
-        public static HttpWebResponse MultipartFormDataPost(string postUrl, string userAgent, params MultipartFormParameter[] postParameters)
+        public static HttpWebResponse MultipartFormDataPost(string postUrl, params MultipartFormParameter[] postParameters)
         {
             string formDataBoundary = $"----------{Guid.NewGuid()}";
             string contentType = "multipart/form-data; boundary=" + formDataBoundary;
 
             byte[] formData = GetMultipartFormData(postParameters, formDataBoundary);
             string text = Encoding.UTF8.GetString(formData);
-            return PostForm(postUrl, userAgent, contentType, formData);
+            return PostForm(postUrl, UserAgent, contentType, formData);
         }
 
         /// <summary>
@@ -74,23 +90,21 @@ namespace Docdown.Util
         private static byte[] GetMultipartFormData(IEnumerable<MultipartFormParameter> postParameters, string boundary)
         {
             bool needsCLRF = false;
-            const string CLRF = "\r\n";
+            string CRLF = Environment.NewLine;
 
             using (var formDataStream = new MemoryStream())
             {
                 foreach (var param in postParameters)
                 {
-                    // Thanks to feedback from commenters, add a CRLF to allow multiple parameters to be added.
-                    // Skip it on the first parameter, add it to subsequent parameters.
                     if (needsCLRF)
-                        Write(formDataStream, CLRF);
+                        Write(formDataStream, CRLF);
 
                     needsCLRF = true;
 
                     if (param.Type == MultipartFormParameterType.File)
                     {
                         // Add just the first part of this param, since we will write the file data directly to the Stream
-                        string header = $"--{boundary}{CLRF}Content-Disposition: form-data; name=\"{param.Name}\"; filename=\"{param.FileName}\"{CLRF}Content-Type: {param.ContentType}{CLRF}{CLRF}";
+                        string header = $"--{boundary}{CRLF}Content-Disposition: form-data; name=\"{param.Name}\"; filename=\"{param.FileName}\"{CRLF}Content-Type: {param.ContentType}{CRLF}{CRLF}";
 
                         Write(formDataStream, header);
 
@@ -99,13 +113,13 @@ namespace Docdown.Util
                     }
                     else if (param.Type == MultipartFormParameterType.Field)
                     {
-                        string postData = $"--{boundary}{CLRF}Content-Disposition: form-data; name=\"{param.Name}\"{CLRF}{CLRF}{param.Value}";
+                        string postData = $"--{boundary}{CRLF}Content-Disposition: form-data; name=\"{param.Name}\"{CRLF}{CRLF}{param.Value}";
                         Write(formDataStream, postData);
                     }
                 }
 
                 // Add the end of the request.  Start with a newline
-                Write(formDataStream, $"{CLRF}--{boundary}--{CLRF}");
+                Write(formDataStream, $"{CRLF}--{boundary}--{CRLF}");
 
                 return formDataStream.ToArray();
             }
@@ -145,6 +159,11 @@ namespace Docdown.Util
 
         public static MultipartFormParameter CreateField(string name, string value)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             return new MultipartFormParameter
             {
                 Name = name,
@@ -177,6 +196,15 @@ namespace Docdown.Util
 
         public static MultipartFormParameter CreateFile(string name, string fileName, byte[] file, string contentType)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+            if (fileName == null)
+                throw new ArgumentNullException(nameof(fileName));
+            if (file == null)
+                throw new ArgumentNullException(nameof(file));
+            if (contentType == null)
+                throw new ArgumentNullException(nameof(contentType));
+
             return new MultipartFormParameter
             {
                 Name = name,

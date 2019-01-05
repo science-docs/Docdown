@@ -12,7 +12,7 @@ namespace Docdown.Controls
             InitializeComponent();
         }
 
-        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void OutlineSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (DataContext is WorkspaceViewModel workspace && 
                 e.NewValue is OutlineItemViewModel outlineItem)
@@ -24,9 +24,10 @@ namespace Docdown.Controls
             }
         }
 
-        private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void OutlineMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (DataContext is WorkspaceViewModel workspace)
+            if (e.ChangedButton == MouseButton.Left && 
+                DataContext is WorkspaceViewModel workspace)
             {
                 var selectedItem = workspace?.SelectedItem?.SelectedOutlineItem;
                 var outline = workspace?.SelectedItem?.Outline;
