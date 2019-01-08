@@ -6,6 +6,7 @@ namespace Docdown.Model
     public class Template
     {
         public string Name { get; set; }
+        public string Icon { get; set; }
 
         public static Template Empty { get; } = new Template();
 
@@ -19,7 +20,8 @@ namespace Docdown.Model
             {
                 var template = new Template
                 {
-                    Name = (string)token.SelectToken("name")
+                    Name = (string)token.SelectToken("name"),
+                    Icon = (string)token.SelectToken("icon")
                 };
                 templates.Add(template);
             }

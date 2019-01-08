@@ -6,5 +6,6 @@
     <Converters:PathToPdfConverter x:Key="PathToPdfConverter"/>
     <Converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     <Converters:StringLengthToBooleanConverter x:Key="StringLengthToBooleanConverter"/>
+    <Converters:SvgToBrushConverter x:Key="SvgToBrushConverter"/>
 
 </ResourceDictionary>
