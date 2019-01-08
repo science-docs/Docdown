@@ -4,7 +4,6 @@ using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -202,7 +201,8 @@ namespace Docdown.ViewModel
             var docViewer = new DocumentViewer();
             try
             {
-                docViewer.Navigate(Data.FileSystemInfo.FullName);
+                PdfPath = Data.FileSystemInfo.FullName;
+                //docViewer.Navigate(Data.FileSystemInfo.FullName);
             }
             catch (Exception e)
             {

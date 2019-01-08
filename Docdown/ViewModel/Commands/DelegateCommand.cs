@@ -26,6 +26,11 @@ namespace Docdown.ViewModel.Commands
             return true;
         }
 
+        public void Execute()
+        {
+            Execute(null);
+        }
+
         public void Execute(object parameter)
         {
             var param = parameters;
