@@ -124,10 +124,10 @@
     <Compile Include="Controls\WorkspaceView.xaml.cs">
       <DependentUpon>WorkspaceView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\PathToPdfConverter.cs" />
     <Compile Include="Converters\StringLengthToBooleanConverter.cs" />
     <Compile Include="Converters\StringToResourceConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
+    <Compile Include="Converters\SvgToBrushConverter.cs" />
     <Compile Include="Model\ConverterType.cs" />
     <Compile Include="Model\Outline.cs" />
     <Compile Include="Model\OutlineItem.cs" />
