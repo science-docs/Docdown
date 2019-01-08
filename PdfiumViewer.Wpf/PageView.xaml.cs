@@ -57,12 +57,13 @@ namespace PdfiumViewer.Wpf
 
         private void Update()
         {
-            if (!alreadySet && PageIsVisible())
+            var isVisible = PageIsVisible();
+            if (!alreadySet && isVisible)
             {
                 alreadySet = true;
                 BeginSetImage();
             }
-            else if (alreadySet && !PageIsVisible())
+            else if (alreadySet && !isVisible)
             {
                 alreadySet = false;
                 UnsetImage();
@@ -108,11 +109,6 @@ namespace PdfiumViewer.Wpf
             if (DataContext is PageViewModel page)
             {
                 page.Render().ContinueWith(SetImage);
-               
-                //Task.Run(() =>
-                //{
-                //    SetImage(page.Render());
-                //});
             }
         }
 
@@ -121,9 +117,6 @@ namespace PdfiumViewer.Wpf
             Dispatcher.BeginInvoke((Action)(() =>
             {
                 Img.Source = image.Result;
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                GC.Collect();
             }));
         }
 
