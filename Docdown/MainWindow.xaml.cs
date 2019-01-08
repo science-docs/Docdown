@@ -13,8 +13,7 @@ namespace Docdown
             if (splash.ShowDialog().Value)
             {
                 InitializeComponent();
-                workspaceViewModel = new WorkspaceViewModel(splash.Workspace);
-                DataContext = workspaceViewModel;
+                DataContext = workspaceViewModel = splash.ViewModel.Data;
             }
             else
             {

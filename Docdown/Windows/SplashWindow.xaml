@@ -19,7 +19,6 @@
         </Grid.RowDefinitions>
         <Rectangle Width="200" Height="308" Fill="{StaticResource DocdownIcon}"/>
 
-
         <StackPanel Grid.Row="1" 
                     Orientation="Vertical"
                     VerticalAlignment="Center">
