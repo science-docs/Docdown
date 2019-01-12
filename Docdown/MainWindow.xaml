@@ -1,4 +1,4 @@
-<Metro:MetroWindow x:Class="Docdown.MainWindow"
+﻿<Metro:MetroWindow x:Class="Docdown.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -20,8 +20,10 @@
         <ResourceDictionary>
             <Style BasedOn="{StaticResource MetroFlatButton}" TargetType="{x:Type Button}">
                 <Setter Property="Background" Value="{DynamicResource WhiteBrush}"/>
-                <Setter Property="Margin" Value="2 0"/>
+                <Setter Property="Margin" Value="1 0"/>
                 <Setter Property="Padding" Value="0"/>
+                <Setter Property="Height" Value="20"/>
+                <Setter Property="Width" Value="24"/>
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
                         <Setter Property="Background" Value="{DynamicResource OverlayBrush}"/>
@@ -36,6 +38,10 @@
             </Style>
         </ResourceDictionary>
     </FrameworkElement.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveSelectedItemCommand}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{Binding SaveAllItemsCommand}"/>
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -90,10 +96,10 @@
                     Orientation="Horizontal" 
                     Background="{DynamicResource WhiteBrush}"
                     Margin="4 0 4 2">
-            <Button Command="{Binding SearchWorkspaceCommand}" ToolTip="Open Workspace" Height="20" Width="20">
+            <Button Command="{Binding SearchWorkspaceCommand}" ToolTip="Open Workspace">
                 <Rectangle Fill="{StaticResource OpenFolderIcon}" Height="16" Width="16"/>
             </Button>
-            <Button Command="{Binding SelectedItem.SaveCommand, FallbackValue={x:Null}}" Height="20" Width="24">
+            <Button Command="{Binding SelectedItem.SaveCommand, FallbackValue={x:Null}}">
                 <Button.ToolTip>
                     <ToolTip Content="{Binding SelectedItem.Name, FallbackValue={x:Null}}"
                              ContentStringFormat="Save {0}"
@@ -101,13 +107,14 @@
                 </Button.ToolTip>
                 <Rectangle Fill="{StaticResource SaveIcon}" Height="16" Width="16"/>
             </Button>
-            <Button Command="{Binding SaveAllItemsCommand}" ToolTip="Save all" Height="20" Width="24">
+            <Button Command="{Binding SaveAllItemsCommand}" ToolTip="Save all">
                 <Rectangle Fill="{StaticResource SaveAllIcon}" Height="16" Width="16"/>
             </Button>
             <Rectangle Width="1" Margin="0 2" Fill="{DynamicResource GrayBrush1}"/>
             <Button IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}" 
                     Command="{Binding SelectedItem.ConvertCommand, FallbackValue={x:Null}}" 
-                    Height="20">
+                    Height="20" 
+                    Width="50">
                 <Button.ToolTip>
                     <ToolTip Content="{Binding ToType}"
                              ContentStringFormat="Convert to {0}"/>
@@ -124,8 +131,6 @@
             </Button>
             <Button Command="{Binding SelectedItem.PrintCommand, FallbackValue={x:Null}}" 
                     ToolTip="Print File" 
-                    Height="20" 
-                    Width="24"
                     IsEnabled="{Binding SelectedItem.PdfPath, Converter={StaticResource StringLengthToBooleanConverter}, FallbackValue=False}">
                 <Rectangle Fill="{StaticResource PrintIcon}" Height="16" Width="16"/>
             </Button>

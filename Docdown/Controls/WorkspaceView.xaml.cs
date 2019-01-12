@@ -28,6 +28,7 @@ namespace Docdown.Controls
                 DataContext is WorkspaceViewModel workspace)
             {
                 workspace.SelectedItem = current;
+                Keyboard.ClearFocus();
             }
         }
     }

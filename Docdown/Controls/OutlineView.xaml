@@ -21,6 +21,7 @@
         </Border>
         <TreeView Grid.Row="1" Background="Transparent" ItemsSource="{Binding SelectedItem.Outline.Children, IsAsync=True}" 
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  ItemContainerStyle="{StaticResource WorkspaceTreeViewItem}"
                   SelectedItemChanged="OutlineSelectedItemChanged" 
                   MouseDoubleClick="OutlineMouseDoubleClick">
             <TreeView.Resources>
@@ -29,18 +30,12 @@
                                TextWrapping="Wrap" 
                                FontSize="{StaticResource DefaultFontSize}"/>
                     <!--<StackPanel Orientation="Horizontal">
-                        --><!--<Rectangle Height="16" Width="16" Margin="4 0" Fill="{Binding IconName, Converter={StaticResource StringToResourceConverter}}"/>--><!--
+                        -->
+                    <!--<Rectangle Height="16" Width="16" Margin="4 0" Fill="{Binding IconName, Converter={StaticResource StringToResourceConverter}}"/>-->
+                    <!--
                         
                     </StackPanel>-->
                 </HierarchicalDataTemplate>
-                <Style BasedOn="{StaticResource MetroTreeViewItem}" TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Metro:ItemHelper.ActiveSelectionBackgroundBrush" Value="{DynamicResource AccentColorBrush}"/>
-                    <Setter Property="Metro:ItemHelper.HoverBackgroundBrush" Value="{x:Null}" />
-                    <Setter Property="Metro:ItemHelper.HoverSelectedBackgroundBrush" Value="{DynamicResource AccentColorBrush}" />
-                    <Setter Property="Metro:ItemHelper.SelectedBackgroundBrush" Value="{DynamicResource GrayBrush1}" />
-                </Style>
             </TreeView.Resources>
         </TreeView>
     </Grid>

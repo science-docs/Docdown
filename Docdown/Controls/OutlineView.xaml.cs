@@ -33,6 +33,7 @@ namespace Docdown.Controls
                 var outline = workspace?.SelectedItem?.Outline;
                 if (outline != null && selectedItem != null)
                 {
+                    Keyboard.ClearFocus();
                     outline?.JumpTo(selectedItem.Data.TextPosition);
                     e.Handled = true;
                 }

@@ -24,6 +24,7 @@
         <TreeView Grid.Row="1" 
                   Background="Transparent" 
                   ItemsSource="{Binding Children, IsAsync=True}" 
+                  ItemContainerStyle="{StaticResource WorkspaceTreeViewItem}"
                   SelectedItemChanged="ViewSelectedItemChanged" 
                   MouseDoubleClick="ViewSelectedMouseDoubleClick">
             <TreeView.Resources>
@@ -34,14 +35,6 @@
                                    FontSize="{StaticResource DefaultFontSize}"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
-                <Style BasedOn="{StaticResource MetroTreeViewItem}" TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Metro:ItemHelper.ActiveSelectionBackgroundBrush" Value="{DynamicResource AccentColorBrush}"/>
-                    <Setter Property="Metro:ItemHelper.HoverBackgroundBrush" Value="{x:Null}" />
-                    <Setter Property="Metro:ItemHelper.HoverSelectedBackgroundBrush" Value="{DynamicResource AccentColorBrush}" />
-                    <Setter Property="Metro:ItemHelper.SelectedBackgroundBrush" Value="{DynamicResource GrayBrush1}" />
-                </Style>
             </TreeView.Resources>
         </TreeView>
     </Grid>
