@@ -11,8 +11,19 @@
         TitleTemplate="{StaticResource DefaultTitleTemplate}"
         IconTemplate="{StaticResource DefaultIconTemplate}"
         WindowStartupLocation="CenterOwner" Background="{DynamicResource WhiteBrush}">
-    <Border Padding="10" Margin="0 20 0 0" Background="{DynamicResource BlackBrush}">
-        <StackPanel Orientation="Vertical">
+    <Grid Background="{DynamicResource BlackBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="24"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Background="{DynamicResource WhiteBrush}">
+            <TextBlock Style="{StaticResource VersionTextBlockStyle}"
+                       VerticalAlignment="Center"
+                       Margin="12 0"
+                       Text="{Binding Version, StringFormat='Version {0}'}"/>
+        </Grid>
+        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="10">
             <StackPanel.Resources>
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>
@@ -20,15 +31,65 @@
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
             </StackPanel.Resources>
+            <CheckBox x:Name="OfflineCompilerCheck"
+                      Content="Use offline compiler"
+                      Style="{StaticResource DefaultCheckStyle}"
+                      Margin="0 2"
+                      IsChecked="{Binding Settings.UseOfflineCompiler}"/>
+            <TextBlock Text="Server URL"
+                       Margin="0 2"
+                       Style="{StaticResource DefaultInformationStyle}"
+                       IsEnabled="{Binding ElementName=OfflineCompilerCheck, Path=IsChecked, Converter={StaticResource InvertBooleanConverter}}"/>
+            <TextBox Text="{Binding Settings.Api, UpdateSourceTrigger=PropertyChanged}"
+                     Metro:TextBoxHelper.ButtonCommand="{Binding Settings.TestConnectionCommand}"
+                     Margin="0 2"
+                     IsEnabled="{Binding ElementName=OfflineCompilerCheck, Path=IsChecked, Converter={StaticResource InvertBooleanConverter}}">
+                <TextBox.Style>
+                    <Style BasedOn="{StaticResource DefaultButtonTextBoxStyle}" TargetType="TextBox">
+                        <Setter Property="Metro:TextBoxHelper.ButtonContent">
+                            <Setter.Value>
+                                <Rectangle Height="18" Width="18" Fill="{StaticResource ConnectIcon}"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Settings.ConnectionStatus}" Value="Connected">
+                                <Setter Property="Metro:TextBoxHelper.ButtonContent">
+                                    <Setter.Value>
+                                        <Rectangle Height="18" Width="18" Fill="{StaticResource PassIcon}"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Settings.ConnectionStatus}" Value="Disconnected">
+                                <Setter Property="Metro:TextBoxHelper.ButtonContent">
+                                    <Setter.Value>
+                                        <Rectangle Height="18" Width="18" Fill="{StaticResource FailIcon}"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Settings.ConnectionStatus}" Value="Connecting">
+                                <Setter Property="Metro:TextBoxHelper.ButtonContent">
+                                    <Setter.Value>
+                                        <Viewbox Height="18" Width="18" Stretch="UniformToFill" StretchDirection="Both">
+                                            <Control Style="{StaticResource BusyAnimationStyle}"/>
+                                        </Viewbox>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
             <TextBlock Text="Templates"
+                       Margin="0 2"
                        Style="{StaticResource DefaultInformationStyle}"/>
-            <ComboBox ItemsSource="{Binding Data.Templates}"
+            <ComboBox ItemsSource="{Binding Templates}"
                       SelectedItem="{Binding Template}"
-                      Margin="0 4 0 0">
+                      IsEnabled="{Binding Settings.IsConnected}"
+                      Margin="0 2">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <Rectangle Fill="{Binding Icon, Converter={StaticResource SvgToBrushConverter}}" 
+                            <Rectangle Fill="{Binding Icon, Mode=OneTime, Converter={StaticResource SvgToBrushConverter}}" 
                                        Height="16" 
                                        Width="16"
                                        Margin="2 0 8 0"/>
@@ -38,6 +99,27 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+            <Button Content="Upload Template"
+                    Command="{Binding Settings.UploadTemplateCommand}"
+                    Style="{StaticResource MetroFlatButton}"
+                    IsEnabled="{Binding Settings.IsConnected}"
+                    Margin="0 2"/>
         </StackPanel>
-    </Border>
+        <Grid Grid.Row="2" Background="{DynamicResource WhiteBrush}">
+            <Grid.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource MetroFlatButton}">
+                    <Setter Property="Margin" Value="4 8"/>
+                </Style>
+            </Grid.Resources>
+            <Button Command="{Binding Settings.RestoreCommand}"
+                    HorizontalAlignment="Left" 
+                    Content="Default" 
+                    Margin="8"/>
+            <StackPanel HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <Button Content="Save" Command="{Binding Settings.SaveCommand}"/>
+                <Button Content="Close" Margin="4 8 8 8" Click="CloseButtonClick"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
 </Metro:MetroWindow>

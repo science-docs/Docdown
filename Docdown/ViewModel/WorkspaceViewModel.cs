@@ -87,11 +87,17 @@ namespace Docdown.ViewModel
             get => Data.SelectedTemplate;
             set
             {
+                if (value == null)
+                {
+                    value = Template.Empty;
+                }
                 Data.SelectedTemplate = value;
                 Settings.Template = value.Name;
                 SendPropertyUpdate();
             }
         }
+
+        public Template[] Templates => Data.Templates;
 
         public string ErrorMessage
         {
@@ -115,7 +121,7 @@ namespace Docdown.ViewModel
         
         public WorkspaceViewModel(Workspace workspace) : base(workspace)
         {
-            Settings = new SettingsViewModel(ChangeWorkspace);
+            Settings = new SettingsViewModel(this);
             Data.SelectTemplate(Settings.Template);
         }
 
@@ -138,7 +144,7 @@ namespace Docdown.ViewModel
             }
         }
 
-        private void ChangeWorkspace(string newWorkspace)
+        public void ChangeWorkspace(string newWorkspace)
         {
             if (newWorkspace == null)
                 return;

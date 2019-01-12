@@ -38,6 +38,24 @@ namespace Docdown.Util
             return request.GetResponse() as HttpWebResponse;
         }
 
+        public static ConnectionStatus Ping()
+        {
+            try
+            {
+                SimpleGetRequest(Settings.Default.API).Dispose();
+            }
+            catch
+            {
+                return ConnectionStatus.Disconnected;
+            }
+            return ConnectionStatus.Connected;
+        }
+
+        public static HttpWebResponse MultipartFormDataPost(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
+        {
+            return MultipartFormDataPost(postUrl, postParameters.ToArray());
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -157,6 +175,11 @@ namespace Docdown.Util
 
         private MultipartFormParameter() { }
 
+        public override string ToString()
+        {
+            return Name;
+        }
+
         public static MultipartFormParameter CreateField(string name, string value)
         {
             if (name == null)
@@ -225,6 +248,12 @@ namespace Docdown.Util
                 yield return CreateField("template", template);
         }
 
+        public static IEnumerable<MultipartFormParameter> FromFolder(string folderPath)
+        {
+            var item = new WorkspaceItem(folderPath);
+            return CreateFormData(item, item, null).Where(e => e != null);
+        }
+
         public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(WorkspaceItem workspaceItem)
         {
             return CreateFormData(workspaceItem.Parent, workspaceItem, null).Where(e => e != null);
@@ -236,20 +265,12 @@ namespace Docdown.Util
             {
                 yield break;
             }
-            else if (item == root)
-            {
-                yield return CreateFile(MainFile, item.FileSystemInfo.FullName);
-            }
-            else if (item.Type == WorkspaceItemType.Bibliography)
-            {
-                yield return CreateFile(BibliographyFile, item.FileSystemInfo.FullName);
-            }
-            else if (item.Type == WorkspaceItemType.Directory)
+            else if (item.IsDirectory())
             {
                 string folder = item.FileSystemInfo.Name;
                 if (!string.IsNullOrWhiteSpace(current))
                     folder = Path.Combine(current, folder);
-                if (item == root.Parent)
+                if (item == root || item == root.Parent)
                     folder = null;
 
                 foreach (var child in item.Children)
@@ -259,6 +280,14 @@ namespace Docdown.Util
                         yield return data;
                     }
                 }
+            }
+            else if (item == root)
+            {
+                yield return CreateFile(MainFile, item.FileSystemInfo.FullName);
+            }
+            else if (item.Type == WorkspaceItemType.Bibliography)
+            {
+                yield return CreateFile(BibliographyFile, item.FileSystemInfo.FullName);
             }
             else
             {

@@ -81,5 +81,17 @@ namespace Docdown.Properties {
                 this["LastWorkspaces"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseOfflineCompiler {
+            get {
+                return ((bool)(this["UseOfflineCompiler"]));
+            }
+            set {
+                this["UseOfflineCompiler"] = value;
+            }
+        }
     }
 }

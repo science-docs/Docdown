@@ -27,8 +27,8 @@
     <Style x:Key="SlimWindowStyle" TargetType="{x:Type Metro:MetroWindow}"
              BasedOn="{StaticResource CleanWindowStyleKey}">
         <Setter Property="ResizeMode" Value="NoResize"/>
-        <Setter Property="Width" Value="450"/>
-        <Setter Property="Height" Value="650"/>
+        <Setter Property="Width" Value="350"/>
+        <Setter Property="Height" Value="500"/>
         <Setter Property="Background" Value="{DynamicResource WhiteBrush}"/>
         <Setter Property="Metro:MetroWindow.GlowBrush" Value="{DynamicResource AccentColorBrush}"/>
         <Setter Property="Metro:MetroWindow.NonActiveGlowBrush" Value="{DynamicResource GrayHoverBrush}"/>
@@ -86,11 +86,24 @@
         <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
         <Setter Property="TextBlock.Foreground" Value="{DynamicResource BlackBrush}"/>
     </Style>
+    <Style x:Key="DefaultCheckStyle" TargetType="{x:Type CheckBox}" BasedOn="{StaticResource MetroCheckBox}">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="Segoe UI Light"/>
+        <Setter Property="Foreground" Value="{DynamicResource BlackBrush}"/>
+    </Style>
+    <Style x:Key="DefaultTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MetroTextBox}">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="Segoe UI Light"/>
+        <Setter Property="Foreground" Value="{DynamicResource BlackBrush}"/>
+    </Style>
+    <Style x:Key="DefaultButtonTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MetroButtonTextBox}">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="Segoe UI Light"/>
+        <Setter Property="Foreground" Value="{DynamicResource BlackBrush}"/>
+    </Style>
     <Style x:Key="VersionTextBlockStyle" TargetType="{x:Type TextBlock}">
-        <Setter Property="TextBlock.FontSize" Value="14"/>
-        <Setter Property="TextBlock.FontFamily" Value="Segoe UI SemiBold"/>
-        <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
-        <Setter Property="TextBlock.Foreground" Value="DarkRed"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="{DynamicResource AccentColorBrush}"/>
     </Style>
     <Style x:Key="SectionHeaderTextBlockStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="TextBlock.FontFamily" Value="Segoe UI SemiBold"/>

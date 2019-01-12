@@ -1,4 +1,4 @@
-using Docdown.Model;
+﻿using Docdown.Model;
 using Docdown.Properties;
 using Docdown.ViewModel.Commands;
 using System;
@@ -35,9 +35,14 @@ namespace Docdown.ViewModel
                     {
                         ToType = ConverterType.Pdf
                     };
-                    workspace.LoadTemplates();
+                    var workspaceViewModel = new WorkspaceViewModel(workspace);
+                    workspaceViewModel.Settings.TestConnection();
+                    if (workspaceViewModel.Settings.IsConnected)
+                    {
+                        workspace.LoadTemplates();
+                    }
 
-                    Data = new WorkspaceViewModel(workspace);
+                    Data = workspaceViewModel;
 
                     setDialogResult?.Invoke(true);
                 });

@@ -1,4 +1,4 @@
-﻿using Docdown.Properties;
+using Docdown.Properties;
 using Docdown.Util;
 using System;
 using System.Collections.Generic;
@@ -121,13 +121,13 @@ namespace Docdown.Model
         {
             var folder = Path.GetDirectoryName(FileSystemInfo.FullName);
 
-            var req = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
+            var res = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
                 MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template).Concat(
-                MultipartFormParameter.FromWorkspaceItem(this)).ToArray());
+                MultipartFormParameter.FromWorkspaceItem(this)));
 
             string temp = IOUtility.GetTempFile();
 
-            using (var rs = req.GetResponseStream())
+            using (var rs = res.GetResponseStream())
             {
                 using (var fs = File.OpenWrite(temp))
                 {
@@ -136,6 +136,25 @@ namespace Docdown.Model
             }
 
             return temp;
+        }
+
+        public void Rename(string newName)
+        {
+            if (string.IsNullOrWhiteSpace(newName))
+                throw new ArgumentException("Invalid name");
+
+            string oldName = FileSystemInfo.FullName;
+            string parentName = Path.GetDirectoryName(oldName);
+            string fullNewName = Path.Combine(parentName, newName);
+
+            if (IsDirectory())
+            {
+                Directory.Move(oldName, fullNewName);
+            }
+            else
+            {
+                File.Move(oldName, fullNewName);
+            }
         }
 
         public WorkspaceItem CreateNewFile(string name, string autoExtension = null, string content = null)

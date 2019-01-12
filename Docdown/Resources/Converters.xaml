@@ -2,8 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:Converters="clr-namespace:Docdown.Converters">
 
+    <Converters:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
     <Converters:StringToResourceConverter x:Key="StringToResourceConverter"/>
-    <Converters:PathToPdfConverter x:Key="PathToPdfConverter"/>
     <Converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     <Converters:StringLengthToBooleanConverter x:Key="StringLengthToBooleanConverter"/>
     <Converters:SvgToBrushConverter x:Key="SvgToBrushConverter"/>

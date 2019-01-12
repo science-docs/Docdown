@@ -1,4 +1,4 @@
-﻿using Docdown.Controls;
+using Docdown.Controls;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -14,6 +14,7 @@ namespace Docdown.ViewModel
     public class WorkspaceItemViewModel : ObservableObject<WorkspaceItem>
     {
         public string Name => Data.FileSystemInfo.Name;
+        public string FullName => Data.FileSystemInfo.FullName;
 
         [ChangeListener(nameof(IsExpanded))]
         public string IconName

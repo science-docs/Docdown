@@ -1,5 +1,4 @@
-﻿using Docdown.Util;
-using Newtonsoft.Json.Linq;
+using Docdown.Util;
 using System;
 using System.IO;
 using System.Linq;
@@ -39,9 +38,7 @@ namespace Docdown.Model
         public void LoadTemplates()
         {
             string templatesUrl = WebUtility.BuildTemplatesUrl();
-
-            var response = WebUtility.SimpleGetRequest(templatesUrl);
-
+            
             string text;
             try
             {
@@ -61,7 +58,24 @@ namespace Docdown.Model
                 text = "[]";
             }
 
-            Templates = Template.FromJson(text);
+            Templates = Template.FromJson(text).OrderBy(e => e.Name).ToArray();
+        }
+
+        public void UploadTemplate(string path)
+        {
+            var nameParam = MultipartFormParameter.CreateField("name", Path.GetFileName(path));
+            var parameter = MultipartFormParameter.FromFolder(path)
+                .Concat(new MultipartFormParameter[] { nameParam });
+            try
+            {
+                WebUtility.MultipartFormDataPost(WebUtility.BuildTemplatesUrl(), parameter).Dispose();
+
+                LoadTemplates();
+            }
+            catch
+            {
+
+            }
         }
 
         public void SelectTemplate(string name)
