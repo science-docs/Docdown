@@ -4,8 +4,45 @@ using System.Windows.Input;
 
 namespace Docdown.ViewModel.Commands
 {
+    public class DelegateCommand<T> : DelegateCommand
+    {
+        public new T Result
+        {
+            get
+            {
+                if (base.Result is T value)
+                {
+                    return value;
+                }
+                return default;
+            }
+        }
+
+        public DelegateCommand(Delegate del, params object[] parameters) : base(del, parameters)
+        {
+            CheckReturnType(del);
+        }
+
+        public T ExecuteWithResult()
+        {
+            Execute();
+            return Result;
+        }
+
+        private void CheckReturnType(Delegate del)
+        {
+            var returnType = del.Method.ReturnType;
+            if (!typeof(T).IsAssignableFrom(returnType))
+            {
+                throw new InvalidCastException();
+            }
+        }
+    }
+
     public class DelegateCommand : ICommand
     {
+        public object Result { get; private set; }
+
         private readonly Delegate del;
         private readonly object[] parameters;
         private bool usesAdditionalParameter = false;
@@ -38,7 +75,13 @@ namespace Docdown.ViewModel.Commands
             {
                 param = param.Concat(new object[] { parameter }).ToArray();
             }
-            del?.DynamicInvoke(param);
+            Result = del?.DynamicInvoke(param);
+        }
+
+        public static void Run<T>(params object[] args) where T : DelegateCommand
+        {
+            var command = Activator.CreateInstance(typeof(T), args) as DelegateCommand;
+            command.Execute();
         }
 
         private void CheckDelegateParameters()
@@ -72,7 +115,7 @@ namespace Docdown.ViewModel.Commands
 
                 if (!methodParamType.IsAssignableFrom(providedParamType))
                 {
-                    throw new Exception($"Cannot assign value of type {providedParamType} to type {methodParamType}");
+                    throw new InvalidCastException($"Cannot assign value of type {providedParamType} to type {methodParamType}");
                 }
             }
         }

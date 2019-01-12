@@ -13,11 +13,11 @@ namespace Docdown.ViewModel.Commands
         {
         }
 
-        public OpenWindowCommand(object dataContext, Action<bool?> callback) : base((Action<object, Action<bool?>>)OpenWindow, dataContext, callback)
+        public OpenWindowCommand(object dataContext, Action<bool?> callback = null) : base((Func<object, Action<bool?>, bool?>)OpenWindow, dataContext, callback)
         {
         }
 
-        private static void OpenWindow(object dataContext, Action<bool?> callback)
+        private static bool? OpenWindow(object dataContext, Action<bool?> callback)
         {
             var window = new T
             {
@@ -26,6 +26,7 @@ namespace Docdown.ViewModel.Commands
             };
             var result = window.ShowDialog();
             callback?.Invoke(result);
+            return result;
         }
     }
 }

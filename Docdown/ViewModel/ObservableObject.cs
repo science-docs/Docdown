@@ -53,7 +53,7 @@ namespace Docdown.ViewModel
             SendPropertyUpdate(property);
         }
 
-        protected void SendPropertyUpdate([CallerMemberName]string property = null)
+        protected internal void SendPropertyUpdate([CallerMemberName]string property = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
@@ -63,6 +63,15 @@ namespace Docdown.ViewModel
         protected virtual void OnPropertyChanged(string name)
         {
 
+        }
+
+        protected internal void ForceUpdate()
+        {
+            var properties = GetType().GetProperties();
+            foreach (var prop in properties)
+            {
+                SendPropertyUpdate(prop.Name);
+            }
         }
     
         public ObservableObject()

@@ -105,7 +105,7 @@ namespace Docdown.ViewModel
         public ICommand SaveAllItemsCommand => new ActionCommand(SaveAllItems);
         public ICommand CloseAllItemsCommand => new ActionCommand(CloseAll);
         [ChangeListener(nameof(Data))]
-        public ICommand SearchWorkspaceCommand => new SearchWorkspaceCommand(Settings.WorkspacePath, ChangeWorkspace);
+        public ICommand SearchWorkspaceCommand => new SearchFolderCommand(Settings.WorkspacePath, "Select workspace", ChangeWorkspace);
         public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(this);
         public ICommand OpenWizardCommand => new OpenWindowCommand<WizardWindow>(this);
 

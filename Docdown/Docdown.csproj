@@ -147,7 +147,7 @@
     <Compile Include="ViewModel\Commands\DelegateCommand.cs" />
     <Compile Include="ViewModel\Commands\OpenWindowCommand.cs" />
     <Compile Include="ViewModel\Commands\PrintCommand.cs" />
-    <Compile Include="ViewModel\Commands\SearchWorkspaceCommand.cs" />
+    <Compile Include="ViewModel\Commands\SearchFolderCommand.cs" />
     <Compile Include="ViewModel\ObservableObject.cs" />
     <Compile Include="ViewModel\OutlineItemViewModel.cs" />
     <Compile Include="ViewModel\OutlineViewModel.cs" />

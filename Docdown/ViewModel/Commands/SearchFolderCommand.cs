@@ -5,35 +5,37 @@ using System.Windows;
 
 namespace Docdown.ViewModel.Commands
 {
-    public class SearchWorkspaceCommand : DelegateCommand
+    public class SearchFolderCommand : DelegateCommand<string>
     {
-        public SearchWorkspaceCommand(string oldWorkspace, Action<string> callback) : 
-            base((Action<string, Action<string>>)OpenFolderDialog, oldWorkspace, callback)
+        public SearchFolderCommand(string initialDirectory, string title, Action<string> callback = null) : 
+            base((Func<string, string, Action<string>, string>)OpenFolderDialog, initialDirectory, title, callback)
         {
         }
 
-        private static void OpenFolderDialog(string oldWorkspace, Action<string> callback)
+        private static string OpenFolderDialog(string initialDirectory, string title, Action<string> callback)
         {
             var dialog = new CommonOpenFileDialog
             {
                 IsFolderPicker = true,
                 Multiselect = false,
-                Title = "Select workspace",
+                Title = title,
                 EnsurePathExists = true
             };
 
-            if (Directory.Exists(oldWorkspace))
+            if (Directory.Exists(initialDirectory))
             {
-                dialog.InitialDirectory = oldWorkspace;
+                dialog.InitialDirectory = initialDirectory;
             }
 
             if (dialog.ShowDialog(Application.Current.MainWindow) == CommonFileDialogResult.Ok)
             {
                 callback?.Invoke(dialog.FileName);
+                return dialog.FileName;
             }
             else
             {
                 callback?.Invoke(null);
+                return null;
             }
         }
     }

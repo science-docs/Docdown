@@ -1,4 +1,4 @@
-﻿using Docdown.Model;
+using Docdown.Model;
 using Docdown.Properties;
 using Docdown.ViewModel.Commands;
 using System;
@@ -22,11 +22,7 @@ namespace Docdown.ViewModel
             var workspacePath = settings.WorkspacePath;
             if (string.IsNullOrEmpty(workspacePath) || !Directory.Exists(workspacePath))
             {
-                var command = new SearchWorkspaceCommand(null, path =>
-                {
-                    workspacePath = path;
-                });
-                command.Execute();
+                workspacePath = new SearchFolderCommand(null, "Select workspace").ExecuteWithResult();
             }
             if (workspacePath != null)
             {
