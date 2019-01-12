@@ -48,7 +48,8 @@ namespace Docdown.Controls.Markdown
             {InlineTag.Strong, t => t.HighlightStrongEmphasis},
             {InlineTag.Link, t => t.HighlightLink},
             {InlineTag.Image, t => t.HighlightImage},
-            {InlineTag.RawHtml, t => t.HighlightBlockCode}
+            {InlineTag.RawHtml, t => t.HighlightBlockCode},
+            {InlineTag.Tex, t => t.HighlightTex}
         };
 
         public static IEnumerable<Block> EnumerateHeader(Block ast)

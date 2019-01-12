@@ -26,6 +26,7 @@ namespace Docdown.Controls.Markdown
         private Highlight _highlightLink = new Highlight { Name = "Link", Foreground = "#2aa198", Underline = true };
         private Highlight _highlightImage = new Highlight { Name = "Image", Foreground = "#6F8F3F", FontWeight = "bold" };
         private Highlight _highlightComment = new Highlight { Name = "Comment", Foreground = "#5F5A60" };
+        private Highlight _highlightTex = new Highlight { Name = "Tex", Foreground = "#3786D4" };
 
         public string Name
         {
@@ -109,6 +110,12 @@ namespace Docdown.Controls.Markdown
         {
             get => _highlightComment;
             set => Set(ref _highlightComment, value);
+        }
+
+        public Highlight HighlightTex
+        {
+            get => _highlightTex;
+            set => Set(ref _highlightTex, value);
         }
 
         public string SpellCheckError
