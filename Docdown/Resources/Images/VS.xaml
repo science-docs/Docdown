@@ -1,5 +1,17 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <DrawingBrush x:Key="WizardIcon">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M8,8L0,8 0,0 8,0z" />
+                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M2.9736,7.0532C2.9736,7.0532,2.8146,3.5652,5.6656,3.5652L5.6696,3.5662C2.8176,3.5662 2.9676,0.0452000000000004 2.9676,0.0452000000000004 2.9676,0.0452000000000004 3.1266,3.5342 0.2756,3.5342L0.2786,3.5332C3.1306,3.5332,2.9736,7.0532,2.9736,7.0532" />
+                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M5.6836,8.2612C5.6836,8.2612,5.5886,6.2022,7.2726,6.2022L7.2756,6.2022C5.5906,6.2022 5.6796,4.1222 5.6796,4.1222 5.6796,4.1222 5.7736,6.1822 4.0896,6.1822L4.0916,6.1822C5.7756,6.1822,5.6836,8.2612,5.6836,8.2612" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
 
     <DrawingBrush x:Key="ProcessServicesIcon">
         <DrawingBrush.Drawing>

@@ -1,4 +1,4 @@
-﻿using Docdown.Model;
+using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
@@ -107,6 +107,7 @@ namespace Docdown.ViewModel
         [ChangeListener(nameof(Data))]
         public ICommand SearchWorkspaceCommand => new SearchWorkspaceCommand(Settings.WorkspacePath, ChangeWorkspace);
         public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(this);
+        public ICommand OpenWizardCommand => new OpenWindowCommand<WizardWindow>(this);
 
         private string errorMessage;
         private WorkspaceItemViewModel item;
