@@ -1,7 +1,8 @@
-using Docdown.Model;
+﻿using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
+using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -99,6 +100,12 @@ namespace Docdown.ViewModel
 
         public Template[] Templates => Data.Templates;
 
+        public bool IsChanging
+        {
+            get => Data.IsChanging;
+            set => Data.IsChanging = value;
+        }
+
         public string ErrorMessage
         {
             get => errorMessage;
@@ -123,6 +130,8 @@ namespace Docdown.ViewModel
         {
             Settings = new SettingsViewModel(this);
             Data.SelectTemplate(Settings.Template);
+
+            workspace.WorkspaceChanged += OnWorkspaceChanged;
         }
 
         public void CloseAll()
@@ -162,6 +171,47 @@ namespace Docdown.ViewModel
         {
             SelectedItem = null;
             OpenItems.Clear();
+        }
+
+        private async void OnWorkspaceChanged(object sender, EventArgs args)
+        {
+            var result = await DialogCoordinator.Instance.ShowMessageAsync(this, "Workspace changed", "Your workspace was changed externally. Do you want to reload your workspace?", MessageDialogStyle.AffirmativeAndNegative);
+            if (result == MessageDialogResult.Affirmative)
+            {
+                var openItems = OpenItems.Select(e => e.FullName).ToArray();
+                var selectedItemName = SelectedItem?.FullName;
+                Data = new Workspace(Data.Item.FileSystemInfo.FullName)
+                {
+                    ToType = Data.ToType
+                };
+                RestoreWorkspace(Item, openItems, selectedItemName);
+            }
+        }
+
+        private void RestoreWorkspace(WorkspaceItemViewModel item, IEnumerable<string> openItems, string selectedItemName)
+        {
+            foreach (var child in item.Children)
+            {
+                if (child.Data.IsDirectory())
+                {
+                    RestoreWorkspace(child, openItems, null);
+                }
+                else if (openItems.Contains(child.FullName))
+                {
+                    OpenItems.Add(child);
+                }
+            }
+            if (selectedItemName != null)
+            {
+                foreach (var i in OpenItems)
+                {
+                    if (i.FullName == selectedItemName)
+                    {
+                        SelectedItem = i;
+                        break;
+                    }
+                }
+            }
         }
     }
 }

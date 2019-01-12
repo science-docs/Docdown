@@ -1,4 +1,4 @@
-using Docdown.Controls;
+﻿using Docdown.Controls;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -157,10 +157,12 @@ namespace Docdown.ViewModel
 
         public void Save()
         {
+            Workspace.IsChanging = true;
             if (view is EditorAndViewer editorAndViewer)
             {
                 File.WriteAllText(Data.FileSystemInfo.FullName, editorAndViewer.GetText());
             }
+            Workspace.IsChanging = false;
         }
 
         public void Close()
