@@ -27,8 +27,8 @@
     <Style x:Key="SlimWindowStyle" TargetType="{x:Type Metro:MetroWindow}"
              BasedOn="{StaticResource CleanWindowStyleKey}">
         <Setter Property="ResizeMode" Value="NoResize"/>
-        <Setter Property="Width" Value="350"/>
-        <Setter Property="Height" Value="500"/>
+        <Setter Property="Width" Value="450"/>
+        <Setter Property="Height" Value="650"/>
         <Setter Property="Background" Value="{DynamicResource WhiteBrush}"/>
         <Setter Property="Metro:MetroWindow.GlowBrush" Value="{DynamicResource AccentColorBrush}"/>
         <Setter Property="Metro:MetroWindow.NonActiveGlowBrush" Value="{DynamicResource GrayHoverBrush}"/>

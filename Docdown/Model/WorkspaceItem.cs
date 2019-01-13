@@ -120,13 +120,11 @@ namespace Docdown.Model
         public string Convert()
         {
             var folder = Path.GetDirectoryName(FileSystemInfo.FullName);
-
-            var res = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
-                MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template).Concat(
-                MultipartFormParameter.FromWorkspaceItem(this)));
-
+            
             string temp = IOUtility.GetTempFile();
-
+            using (var res = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
+                MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template).Concat(
+                MultipartFormParameter.FromWorkspaceItem(this))))
             using (var rs = res.GetResponseStream())
             {
                 using (var fs = File.OpenWrite(temp))

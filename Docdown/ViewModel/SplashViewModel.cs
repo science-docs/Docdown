@@ -39,7 +39,7 @@ namespace Docdown.ViewModel
                     workspaceViewModel.Settings.TestConnection();
                     if (workspaceViewModel.Settings.IsConnected)
                     {
-                        workspace.LoadTemplates();
+                        workspaceViewModel.Settings.LoadTemplates();
                     }
 
                     Data = workspaceViewModel;

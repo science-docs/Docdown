@@ -35,13 +35,13 @@
                       Content="Use offline compiler"
                       Style="{StaticResource DefaultCheckStyle}"
                       Margin="0 2"
-                      IsChecked="{Binding Settings.UseOfflineCompiler}"/>
+                      IsChecked="{Binding UseOfflineCompiler}"/>
             <TextBlock Text="Server URL"
                        Margin="0 2"
                        Style="{StaticResource DefaultInformationStyle}"
                        IsEnabled="{Binding ElementName=OfflineCompilerCheck, Path=IsChecked, Converter={StaticResource InvertBooleanConverter}}"/>
-            <TextBox Text="{Binding Settings.Api, UpdateSourceTrigger=PropertyChanged}"
-                     Metro:TextBoxHelper.ButtonCommand="{Binding Settings.TestConnectionCommand}"
+            <TextBox Text="{Binding Api, UpdateSourceTrigger=PropertyChanged}"
+                     Metro:TextBoxHelper.ButtonCommand="{Binding TestConnectionCommand}"
                      Margin="0 2"
                      IsEnabled="{Binding ElementName=OfflineCompilerCheck, Path=IsChecked, Converter={StaticResource InvertBooleanConverter}}">
                 <TextBox.Style>
@@ -52,21 +52,21 @@
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Settings.ConnectionStatus}" Value="Connected">
+                            <DataTrigger Binding="{Binding ConnectionStatus}" Value="Connected">
                                 <Setter Property="Metro:TextBoxHelper.ButtonContent">
                                     <Setter.Value>
                                         <Rectangle Height="18" Width="18" Fill="{StaticResource PassIcon}"/>
                                     </Setter.Value>
                                 </Setter>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Settings.ConnectionStatus}" Value="Disconnected">
+                            <DataTrigger Binding="{Binding ConnectionStatus}" Value="Disconnected">
                                 <Setter Property="Metro:TextBoxHelper.ButtonContent">
                                     <Setter.Value>
                                         <Rectangle Height="18" Width="18" Fill="{StaticResource FailIcon}"/>
                                     </Setter.Value>
                                 </Setter>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Settings.ConnectionStatus}" Value="Connecting">
+                            <DataTrigger Binding="{Binding ConnectionStatus}" Value="Connecting">
                                 <Setter Property="Metro:TextBoxHelper.ButtonContent">
                                     <Setter.Value>
                                         <Viewbox Height="18" Width="18" Stretch="UniformToFill" StretchDirection="Both">
@@ -83,8 +83,8 @@
                        Margin="0 2"
                        Style="{StaticResource DefaultInformationStyle}"/>
             <ComboBox ItemsSource="{Binding Templates}"
-                      SelectedItem="{Binding Template}"
-                      IsEnabled="{Binding Settings.IsConnected}"
+                      SelectedItem="{Binding SelectedTemplate}"
+                      IsEnabled="{Binding IsConnected}"
                       Margin="0 2">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -100,9 +100,9 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <Button Content="Upload Template"
-                    Command="{Binding Settings.UploadTemplateCommand}"
+                    Command="{Binding UploadTemplateCommand}"
                     Style="{StaticResource MetroFlatButton}"
-                    IsEnabled="{Binding Settings.IsConnected}"
+                    IsEnabled="{Binding IsConnected}"
                     Margin="0 2"/>
         </StackPanel>
         <Grid Grid.Row="2" Background="{DynamicResource WhiteBrush}">
@@ -111,13 +111,13 @@
                     <Setter Property="Margin" Value="4 8"/>
                 </Style>
             </Grid.Resources>
-            <Button Command="{Binding Settings.RestoreCommand}"
+            <Button Command="{Binding RestoreCommand}"
                     HorizontalAlignment="Left" 
                     Content="Default" 
                     Margin="8"/>
             <StackPanel HorizontalAlignment="Right"
                         Orientation="Horizontal">
-                <Button Content="Save" Command="{Binding Settings.SaveCommand}"/>
+                <Button Content="Save" Command="{Binding SaveCommand}"/>
                 <Button Content="Close" Margin="4 8 8 8" Click="CloseButtonClick"/>
             </StackPanel>
         </Grid>

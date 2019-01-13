@@ -39,14 +39,25 @@ namespace Docdown.ViewModel
             }
         }
 
-        public string Template
+        public Template SelectedTemplate
         {
-            get => settings.Template;
+            get => Templates.SingleOrDefault(e => e.Name == selectedTemplateName) ?? Template.Empty;
             set
             {
-                settings.Template = value;
+                if (value == null)
+                {
+                    value = Template.Empty;
+                }
+                selectedTemplateName = value.Name;
+                settings.Template = value.Name;
                 SendPropertyUpdate();
             }
+        }
+
+        public Template[] Templates
+        {
+            get => templates;
+            set => Set(ref templates, value);
         }
 
         public bool UseOfflineCompiler
@@ -75,6 +86,8 @@ namespace Docdown.ViewModel
 
         private readonly Settings settings;
         private readonly WorkspaceViewModel workspace;
+        private Template[] templates;
+        private string selectedTemplateName;
         private ConnectionStatus connectionStatus;
 
         public SettingsViewModel(WorkspaceViewModel workspace)
@@ -90,9 +103,9 @@ namespace Docdown.ViewModel
         public void Restore()
         {
             settings.Reset();
+            selectedTemplateName = string.Empty;
+            connectionStatus = ConnectionStatus.Undefined;
             ForceUpdate();
-            workspace.Template = null;
-            workspace.ForceUpdate();
         }
 
         public void Save()
@@ -108,9 +121,51 @@ namespace Docdown.ViewModel
                 ConnectionStatus = WebUtility.Ping();
                 if (IsConnected)
                 {
-                    workspace.Data.LoadTemplates();
-                    workspace.SendPropertyUpdate(nameof(WorkspaceViewModel.Templates));
+                    LoadTemplates();
                 }
+            }
+        }
+
+        public void LoadTemplates()
+        {
+            string templatesUrl = WebUtility.BuildTemplatesUrl();
+
+            string text;
+            try
+            {
+                using (var res = WebUtility.SimpleGetRequest(templatesUrl))
+                {
+                    using (var rs = res.GetResponseStream())
+                    {
+                        using (var sr = new StreamReader(rs))
+                        {
+                            text = sr.ReadToEnd();
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                text = "[]";
+            }
+
+            Templates = Template.FromJson(text).OrderBy(e => e.Name).ToArray();
+        }
+
+        public void UploadTemplate(string path)
+        {
+            var nameParam = MultipartFormParameter.CreateField("name", Path.GetFileName(path));
+            var parameter = MultipartFormParameter.FromFolder(path)
+                .Concat(new MultipartFormParameter[] { nameParam });
+            try
+            {
+                WebUtility.MultipartFormDataPost(WebUtility.BuildTemplatesUrl(), parameter).Dispose();
+
+                LoadTemplates();
+            }
+            catch
+            {
+
             }
         }
 
@@ -124,8 +179,7 @@ namespace Docdown.ViewModel
             {
                 Task.Run(() =>
                 {
-                    workspace.Data.UploadTemplate(templateFolder);
-                    workspace.SendPropertyUpdate(nameof(WorkspaceViewModel.Templates));
+                    UploadTemplate(templateFolder);
                 });
             }
         }
@@ -178,8 +232,6 @@ namespace Docdown.ViewModel
             public string Text => $"{Index} {Location}";
             public int Index { get; }
             public WorkspaceViewModel Workspace { get; }
-
-            private readonly Action<string> changeWorkspace;
 
             public LastWorkspaceViewModel(string location, WorkspaceViewModel workspace, int index)
             {

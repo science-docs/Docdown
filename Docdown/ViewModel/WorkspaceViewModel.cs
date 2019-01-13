@@ -1,4 +1,4 @@
-﻿using Docdown.Model;
+using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
@@ -119,7 +119,7 @@ namespace Docdown.ViewModel
         public ICommand CloseAllItemsCommand => new ActionCommand(CloseAll);
         [ChangeListener(nameof(Data))]
         public ICommand SearchWorkspaceCommand => new SearchFolderCommand(Settings.WorkspacePath, "Select workspace", ChangeWorkspace);
-        public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(this);
+        public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(Settings);
         public ICommand OpenWizardCommand => new OpenWindowCommand<WizardWindow>(this);
 
         private string errorMessage;
@@ -129,8 +129,6 @@ namespace Docdown.ViewModel
         public WorkspaceViewModel(Workspace workspace) : base(workspace)
         {
             Settings = new SettingsViewModel(this);
-            Data.SelectTemplate(Settings.Template);
-
             workspace.WorkspaceChanged += OnWorkspaceChanged;
         }
 
