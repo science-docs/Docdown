@@ -1,4 +1,4 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
                     xmlns:System="clr-namespace:System;assembly=mscorlib"
@@ -130,13 +130,11 @@
                             <Setter TargetName="PART_ContentRightCol" Property="Width" Value="Auto" />
                             <Setter TargetName="PART_ContentTopRow" Property="Height" Value="Auto" />
                         </Trigger>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="CloseButton" Property="Visibility" Value="Visible"/>
-                        </Trigger>
                         <Trigger SourceName="Border" Property="IsMouseOver" Value="True">
                             <Setter TargetName="CloseButton" Property="Visibility" Value="Visible"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
+                            <Setter TargetName="CloseButton" Property="Visibility" Value="Visible"/>
                             <Setter Property="Background" Value="{DynamicResource AccentBaseColorBrush}" />
                         </Trigger>
                         <MultiTrigger>

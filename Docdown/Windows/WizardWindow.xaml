@@ -11,8 +11,8 @@
         TitleTemplate="{StaticResource DefaultTitleTemplate}"
         IconTemplate="{StaticResource DefaultIconTemplate}"
         WindowStartupLocation="CenterOwner" Background="{DynamicResource WhiteBrush}"
-        Height="550"
-        Width="600">
+        Height="600"
+        Width="680">
     <Grid Margin="0 20 0 0" Background="{DynamicResource WhiteBrush}">
         <Grid.Resources>
             <ResourceDictionary>
