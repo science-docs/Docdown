@@ -148,10 +148,12 @@ namespace Docdown.Model
             if (IsDirectory())
             {
                 Directory.Move(oldName, fullNewName);
+                FileSystemInfo = new DirectoryInfo(fullNewName);
             }
             else
             {
                 File.Move(oldName, fullNewName);
+                FileSystemInfo = new FileInfo(fullNewName);
             }
         }
 

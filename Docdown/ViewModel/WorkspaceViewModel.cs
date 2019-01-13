@@ -63,6 +63,8 @@ namespace Docdown.ViewModel
             }
         }
 
+        public WorkspaceItemViewModel SelectedWorkspaceItem { get; set; }
+
         [ChangeListener(nameof(Data))]
         public IEnumerable<WorkspaceItemViewModel> Children => Item.Children;
 
@@ -100,6 +102,7 @@ namespace Docdown.ViewModel
         public ICommand SearchWorkspaceCommand => new SearchFolderCommand(Settings.WorkspacePath, "Select workspace", ChangeWorkspace);
         public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(Settings);
         public ICommand OpenWizardCommand => new OpenWindowCommand<WizardWindow>(this);
+        public ICommand ChangeSelectedItemNameCommand => new ActionCommand(ChangeSelectedItemName);
 
         private string errorMessage;
         private WorkspaceItemViewModel item;
@@ -152,7 +155,7 @@ namespace Docdown.ViewModel
 
         private async void OnWorkspaceChanged(object sender, EventArgs args)
         {
-            var result = await ShowMessage(
+            var result = await ShowMessageAsync(
                 "Workspace changed", 
                 "Your workspace was changed externally. Do you want to reload your workspace?", 
                 MessageDialogStyle.AffirmativeAndNegative);
@@ -195,6 +198,20 @@ namespace Docdown.ViewModel
                         SelectedItem = i;
                         break;
                     }
+                }
+            }
+        }
+
+        private async void ChangeSelectedItemName()
+        {
+            if (SelectedWorkspaceItem != null)
+            {
+                var newName = await ShowInputAsync("", "");
+                if (newName != null)
+                {
+                    IsChanging = true;
+                    SelectedWorkspaceItem.Rename(newName);
+                    IsChanging = false;
                 }
             }
         }

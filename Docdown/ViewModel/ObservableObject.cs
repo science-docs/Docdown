@@ -76,9 +76,14 @@ namespace Docdown.ViewModel
             }
         }
 
-        protected async Task<MessageDialogResult> ShowMessage(string title, string message, MessageDialogStyle style = MessageDialogStyle.Affirmative, MetroDialogSettings settings = null)
+        protected async Task<MessageDialogResult> ShowMessageAsync(string title, string message, MessageDialogStyle style = MessageDialogStyle.Affirmative, MetroDialogSettings settings = null)
         {
             return await DialogCoordinator.Instance.ShowMessageAsync(this, title, message, style, settings);
+        }
+
+        protected async Task<string> ShowInputAsync(string title, string message, MetroDialogSettings settings = null)
+        {
+            return await DialogCoordinator.Instance.ShowInputAsync(this, title, message, settings);
         }
     
         public ObservableObject()

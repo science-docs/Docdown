@@ -87,11 +87,20 @@ namespace Docdown.ViewModel
             set => Set(ref pdfPath, value);
         }
 
-        public IEnumerable<WorkspaceItemViewModel> Children 
-            => Data?.Children
-                .OrderByDescending(e => e.IsDirectory())
-                .Select(e => new WorkspaceItemViewModel(Workspace, e));
-
+        public IEnumerable<WorkspaceItemViewModel> Children
+        {
+            get
+            {
+                if (childrenCache == null)
+                {
+                    childrenCache = Data?.Children
+                        .OrderByDescending(e => e.IsDirectory())
+                        .Select(e => new WorkspaceItemViewModel(Workspace, e))
+                        .ToArray();
+                }
+                return childrenCache;
+            }
+        }
         public ICommand SaveCommand => new ActionCommand(Save);
         public ICommand CloseCommand => new ActionCommand(Close);
         public ICommand ConvertCommand => new ActionCommand(Convert);
@@ -135,6 +144,7 @@ namespace Docdown.ViewModel
         private bool isConverting;
         private bool hasChanged;
         private object view;
+        private WorkspaceItemViewModel[] childrenCache;
         private OutlineViewModel outline;
 
         public WorkspaceItemViewModel(WorkspaceViewModel workspaceViewModel, WorkspaceItem workspaceItem) : base(workspaceItem)
@@ -162,6 +172,14 @@ namespace Docdown.ViewModel
 
                 IsConverting = false;
             });
+        }
+
+        public void Rename(string newName)
+        {
+            Data.Rename(newName);
+            SendPropertyUpdate(nameof(TabName));
+            SendPropertyUpdate(nameof(Name));
+            SendPropertyUpdate(nameof(FullName));
         }
 
         public void Save()

@@ -6,8 +6,6 @@ namespace Docdown.Controls
 {
     public partial class WorkspaceView
     {
-        private WorkspaceItemViewModel current;
-
         public WorkspaceView()
         {
             InitializeComponent();
@@ -18,7 +16,7 @@ namespace Docdown.Controls
             if (DataContext is WorkspaceViewModel workspace && 
                 e.NewValue is WorkspaceItemViewModel workspaceItem)
             {
-                current = workspaceItem;
+                workspace.SelectedWorkspaceItem = workspaceItem;
             }
         }
 
@@ -27,7 +25,7 @@ namespace Docdown.Controls
             if (e.ChangedButton == MouseButton.Left && 
                 DataContext is WorkspaceViewModel workspace)
             {
-                workspace.SelectedItem = current;
+                workspace.SelectedItem = workspace.SelectedWorkspaceItem;
                 Keyboard.ClearFocus();
             }
         }
