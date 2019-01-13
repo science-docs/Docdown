@@ -57,7 +57,7 @@ namespace Docdown.Controls
         private string _fileName;
         private bool _isModified;
         private int _previousLineCount = -1;
-        private Outline outline;
+        private bool firstChange = false;
 
         public event EventHandler TextChanged;
         public event EventHandler<ThemeChangedEventArgs> ThemeChanged;
@@ -184,11 +184,7 @@ namespace Docdown.Controls
             set => SetValue(AbstractSyntaxTreeProperty, value);
         }
 
-        public Outline Outline
-        {
-            get => outline;
-            set => outline = value;
-        }
+        public Outline Outline { get; set; }
 
         //public MyEncodingInfo Encoding
         //{
@@ -248,11 +244,16 @@ namespace Docdown.Controls
                     colorizer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
                     blockBackgroundRenderer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
                     var headers = EnumerateHeader(AbstractSyntaxTree);
-                    outline = new Outline(headers);
+                    Outline = new Outline(headers);
                     if (DataContext is WorkspaceItemViewModel workspaceItem)
                     {
-                        workspaceItem.Outline = new OutlineViewModel(outline, JumpToLocation);
+                        if (firstChange)
+                        {
+                            workspaceItem.HasChanged = true;
+                        }
+                        workspaceItem.Outline = new OutlineViewModel(Outline, JumpToLocation);
                     }
+                    firstChange = true;
                     // The block nature of markdown causes edge cases in the syntax hightlighting.
                     // This is the nuclear option but it doesn't seem to cause issues.
                     EditBox.TextArea.TextView.Redraw();

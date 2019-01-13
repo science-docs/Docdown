@@ -13,8 +13,16 @@ namespace Docdown.ViewModel
 {
     public class WorkspaceItemViewModel : ObservableObject<WorkspaceItem>
     {
+        [ChangeListener(nameof(HasChanged))]
+        public string TabName => HasChanged ? Name + "*" : Name;
         public string Name => Data.FileSystemInfo.Name;
         public string FullName => Data.FileSystemInfo.FullName;
+
+        public bool HasChanged
+        {
+            get => hasChanged;
+            set => Set(ref hasChanged, value);
+        }
 
         [ChangeListener(nameof(IsExpanded))]
         public string IconName
@@ -125,6 +133,7 @@ namespace Docdown.ViewModel
         private bool isExpanded = false;
         private bool canConvert;
         private bool isConverting;
+        private bool hasChanged;
         private object view;
         private OutlineViewModel outline;
 
@@ -157,6 +166,7 @@ namespace Docdown.ViewModel
 
         public void Save()
         {
+            HasChanged = false;
             Workspace.IsChanging = true;
             if (view is EditorAndViewer editorAndViewer)
             {

@@ -16,7 +16,7 @@
                                BorderBrush="{DynamicResource GrayBrush1}">
             <Metro:MetroTabControl.ItemContainerStyle>
                 <Style BasedOn="{StaticResource VSTabItem}" TargetType="Metro:MetroTabItem">
-                    <Setter Property="Header" Value="{Binding Data.FileSystemInfo.Name}"/>
+                    <Setter Property="Header" Value="{Binding TabName}"/>
                     <Setter Property="Content" Value="{Binding View, FallbackValue={x:Null}}"/>
                     <Setter Property="Util:DependencyPropertyUtility.CloseCommand" Value="{Binding CloseCommand, FallbackValue={x:Null}}"/>
                 </Style>
