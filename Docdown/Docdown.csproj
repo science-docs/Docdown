@@ -140,6 +140,7 @@
     <Compile Include="Util\Enumerable.cs" />
     <Compile Include="Util\ErrorUtility.cs" />
     <Compile Include="Util\IOUtility.cs" />
+    <Compile Include="Util\ReflectionUtility.cs" />
     <Compile Include="Util\ResourceUtility.cs" />
     <Compile Include="Util\TextUtility.cs" />
     <Compile Include="Util\UIUtility.cs" />

@@ -1,9 +1,16 @@
-﻿using System;
+﻿using Docdown.Util;
+using System;
 using System.Linq;
 using System.Windows.Input;
 
 namespace Docdown.ViewModel.Commands
 {
+    [AttributeUsage(AttributeTargets.Method)]
+    public class DelegateAttribute : Attribute
+    {
+
+    }
+
     public class DelegateCommand<T> : DelegateCommand
     {
         public new T Result
@@ -16,6 +23,11 @@ namespace Docdown.ViewModel.Commands
                 }
                 return default;
             }
+        }
+
+        public DelegateCommand(params object[] parameters) : base(typeof(T), parameters)
+        {
+
         }
 
         public DelegateCommand(Delegate del, params object[] parameters) : base(del, parameters)
@@ -50,6 +62,18 @@ namespace Docdown.ViewModel.Commands
 #pragma warning disable CS0067 // Unused Event
         public event EventHandler CanExecuteChanged;
 #pragma warning restore CS0067
+
+        public DelegateCommand(params object[] parameters) : this(typeof(void), parameters)
+        {
+
+        }
+
+        public DelegateCommand(Type returnType, params object[] parameters)
+        {
+            del = ReflectionUtility.CreateDelegate(GetType(), this);
+            this.parameters = parameters ?? new object[0];
+            CheckDelegateParameters();
+        }
 
         public DelegateCommand(Delegate del, params object[] parameters)
         {

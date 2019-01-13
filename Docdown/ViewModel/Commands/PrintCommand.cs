@@ -7,10 +7,11 @@ namespace Docdown.ViewModel.Commands
 {
     public class PrintCommand : DelegateCommand
     {
-        public PrintCommand(string fileName, string pdfPath) : base((Action<string, string>)Print, fileName, pdfPath)
+        public PrintCommand(string fileName, string pdfPath) : base(fileName, pdfPath)
         {
         }
 
+        [Delegate]
         private static void Print(string fileName, string pdfPath)
         {
             var dialog = new CommonSaveFileDialog

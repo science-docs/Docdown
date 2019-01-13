@@ -8,10 +8,11 @@ namespace Docdown.ViewModel.Commands
     public class SearchFolderCommand : DelegateCommand<string>
     {
         public SearchFolderCommand(string initialDirectory, string title, Action<string> callback = null) : 
-            base((Func<string, string, Action<string>, string>)OpenFolderDialog, initialDirectory, title, callback)
+            base(initialDirectory, title, callback)
         {
         }
 
+        [Delegate]
         private static string OpenFolderDialog(string initialDirectory, string title, Action<string> callback)
         {
             var dialog = new CommonOpenFileDialog

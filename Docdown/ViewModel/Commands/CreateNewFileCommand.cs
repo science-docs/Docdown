@@ -4,11 +4,11 @@ namespace Docdown.ViewModel.Commands
 {
     public class CreateNewFileCommand : DelegateCommand
     {
-        public CreateNewFileCommand(WorkspaceItemViewModel workspaceItem) : 
-            base((Action<WorkspaceItemViewModel>)OpenCreateNewFileWindow, workspaceItem)
+        public CreateNewFileCommand(WorkspaceItemViewModel workspaceItem) : base(workspaceItem)
         {
         }
 
+        [Delegate]
         private static void OpenCreateNewFileWindow(WorkspaceItemViewModel workspaceItem)
         {
 

@@ -155,8 +155,7 @@ namespace Docdown.ViewModel
         public void UploadTemplate(string path)
         {
             var nameParam = MultipartFormParameter.CreateField("name", Path.GetFileName(path));
-            var parameter = MultipartFormParameter.FromFolder(path)
-                .Concat(new MultipartFormParameter[] { nameParam });
+            var parameter = MultipartFormParameter.FromFolder(path).Concat(new[] { nameParam });
             try
             {
                 WebUtility.MultipartFormDataPost(WebUtility.BuildTemplatesUrl(), parameter).Dispose();
