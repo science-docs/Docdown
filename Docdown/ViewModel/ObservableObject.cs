@@ -1,7 +1,9 @@
-﻿using System;
+﻿using MahApps.Metro.Controls.Dialogs;
+using System;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Docdown.ViewModel
 {
@@ -72,6 +74,11 @@ namespace Docdown.ViewModel
             {
                 SendPropertyUpdate(prop.Name);
             }
+        }
+
+        protected async Task<MessageDialogResult> ShowMessage(string title, string message, MessageDialogStyle style = MessageDialogStyle.Affirmative, MetroDialogSettings settings = null)
+        {
+            return await DialogCoordinator.Instance.ShowMessageAsync(this, title, message, style, settings);
         }
     
         public ObservableObject()

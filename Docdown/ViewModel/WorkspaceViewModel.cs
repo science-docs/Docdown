@@ -1,4 +1,4 @@
-using Docdown.Model;
+﻿using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
@@ -6,9 +6,7 @@ using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Docdown.ViewModel
@@ -48,14 +46,15 @@ namespace Docdown.ViewModel
             }
             set
             {
-                if (value != null && !value.Data.IsDirectory() && !OpenItems.Contains(value))
+                if (value != null && 
+                    !value.Data.IsDirectory() && 
+                    !OpenItems.Contains(value))
                 {
                     OpenItems.Add(value);
                 }
 
                 selectedItem = value;
-                Data.SelectedItem = value?.Data;
-                var item = Data.SelectedItem;
+                var item = Data.SelectedItem = value?.Data;
 
                 if (item == null || !item.IsDirectory())
                 {
@@ -63,9 +62,6 @@ namespace Docdown.ViewModel
                 }
             }
         }
-
-        [ChangeListener(nameof(SelectedItem))]
-        public string SelectedItemName => Data?.SelectedItem?.FileSystemInfo?.Name ?? "";
 
         [ChangeListener(nameof(Data))]
         public IEnumerable<WorkspaceItemViewModel> Children => Item.Children;
@@ -82,23 +78,6 @@ namespace Docdown.ViewModel
                 SendPropertyUpdate();
             }
         }
-
-        public Template Template
-        {
-            get => Data.SelectedTemplate;
-            set
-            {
-                if (value == null)
-                {
-                    value = Template.Empty;
-                }
-                Data.SelectedTemplate = value;
-                Settings.Template = value.Name;
-                SendPropertyUpdate();
-            }
-        }
-
-        public Template[] Templates => Data.Templates;
 
         public bool IsChanging
         {
@@ -173,10 +152,13 @@ namespace Docdown.ViewModel
 
         private async void OnWorkspaceChanged(object sender, EventArgs args)
         {
-            var result = await DialogCoordinator.Instance.ShowMessageAsync(this, "Workspace changed", "Your workspace was changed externally. Do you want to reload your workspace?", MessageDialogStyle.AffirmativeAndNegative);
+            var result = await ShowMessage(
+                "Workspace changed", 
+                "Your workspace was changed externally. Do you want to reload your workspace?", 
+                MessageDialogStyle.AffirmativeAndNegative);
             if (result == MessageDialogResult.Affirmative)
             {
-                var openItems = OpenItems.Select(e => e.FullName).ToArray();
+                var openItems = OpenItems.ToArray();
                 var selectedItemName = SelectedItem?.FullName;
                 Data = new Workspace(Data.Item.FileSystemInfo.FullName)
                 {
@@ -186,7 +168,7 @@ namespace Docdown.ViewModel
             }
         }
 
-        private void RestoreWorkspace(WorkspaceItemViewModel item, IEnumerable<string> openItems, string selectedItemName)
+        private void RestoreWorkspace(WorkspaceItemViewModel item, IEnumerable<WorkspaceItemViewModel> openItems, string selectedItemName)
         {
             foreach (var child in item.Children)
             {
@@ -194,11 +176,16 @@ namespace Docdown.ViewModel
                 {
                     RestoreWorkspace(child, openItems, null);
                 }
-                else if (openItems.Contains(child.FullName))
+                else if (openItems.Any(e => e.FullName == child.FullName))
                 {
                     OpenItems.Add(child);
                 }
             }
+            Children.Restore(openItems,
+                e => e.IsExpanded,
+                e => e.Children,
+                (a, b) => a.FullName == b.FullName,
+                e => e.IsExpanded = true);
             if (selectedItemName != null)
             {
                 foreach (var i in OpenItems)

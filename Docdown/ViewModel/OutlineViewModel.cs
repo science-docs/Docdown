@@ -1,6 +1,6 @@
 ﻿using Docdown.Model;
+using Docdown.Util;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Docdown.ViewModel
@@ -19,40 +19,11 @@ namespace Docdown.ViewModel
 
         public void Exchange(OutlineViewModel other)
         {
-            Exchange(Children, other.Children);
-        }
-
-        private void Exchange(IEnumerable<OutlineItemViewModel> own, IEnumerable<OutlineItemViewModel> others)
-        {
-            foreach (var child in own)
-            {
-                if (child.IsExpanded)
-                {
-                    var searchResult = SearchTreeByName(others, child.Data.Text);
-                    if (searchResult != null)
-                    {
-                        searchResult.IsExpanded = true;
-                    }
-                    Exchange(child.Children, others);
-                }
-            }
-        }
-
-        private OutlineItemViewModel SearchTreeByName(IEnumerable<OutlineItemViewModel> others, string name)
-        {
-            OutlineItemViewModel found = null;
-            foreach (var item in others)
-            {
-                if (item.Data.Text == name)
-                {
-                    return item;
-                }
-                else
-                {
-                    found = SearchTreeByName(item.Children, name);
-                }
-            }
-            return found;
+            Children.Restore(other.Children,
+                e => e.IsExpanded,
+                e => e.Children,
+                (a, b) => a.Data.Text == b.Data.Text,
+                e => e.IsExpanded = true);
         }
     }
 }
