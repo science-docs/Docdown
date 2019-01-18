@@ -19,11 +19,7 @@ namespace Docdown.ViewModel
 
         public void Exchange(OutlineViewModel other)
         {
-            Children.Restore(other.Children,
-                e => e.IsExpanded,
-                e => e.Children,
-                (a, b) => a.Data.Text == b.Data.Text,
-                e => e.IsExpanded = true);
+            Children.Restore(other.Children);
         }
     }
 }

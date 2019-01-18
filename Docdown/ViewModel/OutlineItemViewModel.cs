@@ -1,12 +1,14 @@
 ﻿using Docdown.Model;
+using Docdown.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Docdown.ViewModel
 {
-    public class OutlineItemViewModel : ObservableObject<OutlineItem>
+    public class OutlineItemViewModel : ObservableObject<OutlineItem>, IExpandable<OutlineItemViewModel>, IComparable<OutlineItemViewModel>
     {
-        public OutlineItemViewModel[] Children { get; }
+        public IEnumerable<OutlineItemViewModel> Children { get; }
         
         public bool IsExpanded
         {
@@ -18,7 +20,15 @@ namespace Docdown.ViewModel
 
         public OutlineItemViewModel(OutlineItem outlineItem) : base(outlineItem)
         {
+            if (outlineItem == null)
+                throw new ArgumentNullException(nameof(outlineItem));
+
             Children = Data.Children.Select(e => new OutlineItemViewModel(e)).ToArray();
+        }
+
+        public int CompareTo(OutlineItemViewModel other)
+        {
+            return Data.Text.CompareTo(other?.Data.Text);
         }
     }
 }

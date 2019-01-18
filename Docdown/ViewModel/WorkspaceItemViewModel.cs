@@ -1,4 +1,4 @@
-﻿using Docdown.Controls;
+using Docdown.Controls;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace Docdown.ViewModel
 {
-    public class WorkspaceItemViewModel : ObservableObject<WorkspaceItem>
+    public class WorkspaceItemViewModel : ObservableObject<WorkspaceItem>, IExpandable<WorkspaceItemViewModel>, IComparable<WorkspaceItemViewModel>
     {
         [ChangeListener(nameof(HasChanged))]
         public string TabName => HasChanged ? Name + "*" : Name;
@@ -248,6 +248,11 @@ namespace Docdown.ViewModel
             string allText = File.ReadAllText(Data.FileSystemInfo.FullName);
             editorAndViewer.Delay(100, () => editorAndViewer.SetText(allText));
             return editorAndViewer;
+        }
+
+        public int CompareTo(WorkspaceItemViewModel other)
+        {
+            return FullName.CompareTo(other?.FullName);
         }
     }
 }

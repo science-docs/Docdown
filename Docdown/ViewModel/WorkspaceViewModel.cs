@@ -1,4 +1,4 @@
-﻿using Docdown.Model;
+using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
@@ -184,11 +184,7 @@ namespace Docdown.ViewModel
                     OpenItems.Add(child);
                 }
             }
-            Children.Restore(openItems,
-                e => e.IsExpanded,
-                e => e.Children,
-                (a, b) => a.FullName == b.FullName,
-                e => e.IsExpanded = true);
+            Children.Restore(openItems);
             if (selectedItemName != null)
             {
                 foreach (var i in OpenItems)
