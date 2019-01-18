@@ -1,9 +1,10 @@
-using Docdown.Controls;
+﻿using Docdown.Controls;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,11 @@ namespace Docdown.ViewModel
     {
         [ChangeListener(nameof(HasChanged))]
         public string TabName => HasChanged ? Name + "*" : Name;
-        public string Name => Data.FileSystemInfo.Name;
+        public string Name
+        {
+            get => tempName ?? Data.FileSystemInfo.Name;
+            set => tempName = value;
+        }
         public string FullName => Data.FileSystemInfo.FullName;
 
         public bool HasChanged
@@ -75,6 +80,12 @@ namespace Docdown.ViewModel
             }
         }
 
+        public bool IsNameChanging
+        {
+            get => isNameChanging;
+            set => Set(ref isNameChanging, value);
+        }
+
         public string ErrorMessage
         {
             get => errorMessage;
@@ -106,6 +117,7 @@ namespace Docdown.ViewModel
         public ICommand ConvertCommand => new ActionCommand(Convert);
         [ChangeListener(nameof(PdfPath))]
         public ICommand PrintCommand => new PrintCommand(Name, PdfPath);
+        public ICommand NameChangeEndCommand => new ActionCommand(NameChangeEnd);
 
         public object View
         {
@@ -143,6 +155,8 @@ namespace Docdown.ViewModel
         private bool canConvert;
         private bool isConverting;
         private bool hasChanged;
+        private bool isNameChanging;
+        private string tempName;
         private object view;
         private WorkspaceItemViewModel[] childrenCache;
         private OutlineViewModel outline;
@@ -156,6 +170,7 @@ namespace Docdown.ViewModel
 
         public void Convert()
         {
+            ErrorMessage = "";
             IsConverting = true;
             Save();
             Task.Run(() =>
@@ -176,7 +191,16 @@ namespace Docdown.ViewModel
 
         public void Rename(string newName)
         {
-            Data.Rename(newName);
+            Workspace.IsChanging = true;
+            try
+            {
+                Data.Rename(newName);
+            }
+            catch
+            {
+                Trace.WriteLine("Could not rename file to: " + newName);
+            }
+            Workspace.IsChanging = false;
             SendPropertyUpdate(nameof(TabName));
             SendPropertyUpdate(nameof(Name));
             SendPropertyUpdate(nameof(FullName));
@@ -213,6 +237,13 @@ namespace Docdown.ViewModel
             }
         }
 
+        private void NameChangeEnd()
+        {
+            Rename(tempName);
+            tempName = null;
+            IsNameChanging = false;
+        }
+
         private object BuildView()
         {
             switch (Data?.Type)
@@ -232,7 +263,7 @@ namespace Docdown.ViewModel
             var docViewer = new DocumentViewer();
             try
             {
-                PdfPath = Data.FileSystemInfo.FullName;
+                PdfPath = FullName;
                 //docViewer.Navigate(Data.FileSystemInfo.FullName);
             }
             catch (Exception e)
@@ -245,7 +276,7 @@ namespace Docdown.ViewModel
         private EditorAndViewer ShowMdEditorAndPdf()
         {
             var editorAndViewer = new EditorAndViewer();
-            string allText = File.ReadAllText(Data.FileSystemInfo.FullName);
+            string allText = File.ReadAllText(FullName);
             editorAndViewer.Delay(100, () => editorAndViewer.SetText(allText));
             return editorAndViewer;
         }

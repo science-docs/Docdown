@@ -138,9 +138,12 @@ namespace Docdown.Model
 
         public void Rename(string newName)
         {
-            if (string.IsNullOrWhiteSpace(newName))
+            if (string.IsNullOrWhiteSpace(newName) ||
+                !IOUtility.IsValidFileName(newName))
                 throw new ArgumentException("Invalid name");
-
+            if (newName == FileSystemInfo.Name)
+                return;
+            
             string oldName = FileSystemInfo.FullName;
             string parentName = Path.GetDirectoryName(oldName);
             string fullNewName = Path.Combine(parentName, newName);
@@ -149,11 +152,28 @@ namespace Docdown.Model
             {
                 Directory.Move(oldName, fullNewName);
                 FileSystemInfo = new DirectoryInfo(fullNewName);
+                Children.ForEach(e => e.Update());
             }
             else
             {
                 File.Move(oldName, fullNewName);
                 FileSystemInfo = new FileInfo(fullNewName);
+            }
+        }
+
+        public void Update()
+        {
+            var name = FileSystemInfo.Name;
+            var parentDirectory = Parent.FileSystemInfo.FullName;
+            var newName = Path.Combine(parentDirectory, name);
+            if (Directory.Exists(newName))
+            {
+                FileSystemInfo = new DirectoryInfo(newName);
+                Children.ForEach(e => e.Update());
+            }
+            else
+            {
+                FileSystemInfo = new FileInfo(newName);
             }
         }
 

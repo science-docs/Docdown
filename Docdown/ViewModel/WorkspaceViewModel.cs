@@ -1,4 +1,4 @@
-using Docdown.Model;
+﻿using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
@@ -198,17 +198,11 @@ namespace Docdown.ViewModel
             }
         }
 
-        private async void ChangeSelectedItemName()
+        private void ChangeSelectedItemName()
         {
             if (SelectedWorkspaceItem != null)
             {
-                var newName = await ShowInputAsync("", "");
-                if (newName != null)
-                {
-                    IsChanging = true;
-                    SelectedWorkspaceItem.Rename(newName);
-                    IsChanging = false;
-                }
+                SelectedWorkspaceItem.IsNameChanging = true;
             }
         }
     }

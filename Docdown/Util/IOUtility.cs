@@ -1,13 +1,13 @@
-﻿using Docdown.Properties;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Docdown.Util
 {
     public static class IOUtility
     {
+        private static readonly Regex InvalidFileNameRegex = new Regex("[" + new string(Path.GetInvalidFileNameChars()) + "]", RegexOptions.Compiled);
+
         public static string GetTempFile()
         {
             string temp = Path.GetTempPath();
@@ -17,6 +17,11 @@ namespace Docdown.Util
             string dir = Path.Combine(temp, docdown);
             Directory.CreateDirectory(dir);
             return file;
+        }
+
+        public static bool IsValidFileName(string fileName)
+        {
+            return !InvalidFileNameRegex.IsMatch(fileName);
         }
     }
 }
