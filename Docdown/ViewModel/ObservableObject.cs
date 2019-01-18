@@ -1,9 +1,11 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Docdown.ViewModel
 {
@@ -46,6 +48,8 @@ namespace Docdown.ViewModel
     {
         private static readonly string VersionString 
             = typeof(ObservableObject).Assembly.GetName().Version.ToString();
+        private static readonly Dictionary<Type, List<PropertyChangedEventHandler>> eventHandlerCache
+            = new Dictionary<Type, List<PropertyChangedEventHandler>>();
         
         public string Version { get; } = VersionString;
 
@@ -78,11 +82,13 @@ namespace Docdown.ViewModel
 
         protected async Task<MessageDialogResult> ShowMessageAsync(string title, string message, MessageDialogStyle style = MessageDialogStyle.Affirmative, MetroDialogSettings settings = null)
         {
+            DialogParticipation.SetRegister(Application.Current.MainWindow, this);
             return await DialogCoordinator.Instance.ShowMessageAsync(this, title, message, style, settings);
         }
 
         protected async Task<string> ShowInputAsync(string title, string message, MetroDialogSettings settings = null)
         {
+            DialogParticipation.SetRegister(Application.Current.MainWindow, this);
             return await DialogCoordinator.Instance.ShowInputAsync(this, title, message, settings);
         }
     
@@ -94,18 +100,31 @@ namespace Docdown.ViewModel
 
         private void InspectChangeListener()
         {
-            foreach (var methodInfo in GetType()
-                .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+            var type = GetType();
+            if (eventHandlerCache.TryGetValue(type, out var cache))
             {
-                RegisterListener(methodInfo);
+                foreach (var handler in cache)
+                {
+                    PropertyChanged += handler;
+                }
             }
-            foreach (var propertyInfo in GetType().GetProperties())
+            else
             {
-                RegisterListener(propertyInfo);
+                cache = new List<PropertyChangedEventHandler>();
+                foreach (var methodInfo in type
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+                {
+                    RegisterListener(methodInfo, cache);
+                }
+                foreach (var propertyInfo in type.GetProperties())
+                {
+                    RegisterListener(propertyInfo, cache);
+                }
+                eventHandlerCache[type] = cache;
             }
         }
 
-        private void RegisterListener(PropertyInfo property)
+        private void RegisterListener(PropertyInfo property, List<PropertyChangedEventHandler> cache)
         {
             var listenerAttribute = property.GetCustomAttribute<ChangeListenerAttribute>();
 
@@ -113,7 +132,9 @@ namespace Docdown.ViewModel
             {
                 string emitterProperty = listenerAttribute.Property;
                 string listenerProperty = property.Name;
-                PropertyChanged += AttributePropertyChanged;
+                PropertyChangedEventHandler handler = AttributePropertyChanged;
+                cache.Add(handler);
+                PropertyChanged += handler;
 
                 void AttributePropertyChanged(object sender, PropertyChangedEventArgs e)
                 {
@@ -125,7 +146,7 @@ namespace Docdown.ViewModel
             }
         }
 
-        private void RegisterListener(MethodInfo method)
+        private void RegisterListener(MethodInfo method, List<PropertyChangedEventHandler> cache)
         {
             var listenerAttribute = method.GetCustomAttribute<ChangeListenerAttribute>();
 
@@ -137,7 +158,9 @@ namespace Docdown.ViewModel
                     throw new IndexOutOfRangeException("Only methods without parameters are supported");
 
                 string emitterProperty = listenerAttribute.Property;
-                PropertyChanged += CallListenerMethod;
+                PropertyChangedEventHandler handler = CallListenerMethod;
+                cache.Add(handler);
+                PropertyChanged += handler;
 
                 void CallListenerMethod(object sender, PropertyChangedEventArgs e)
                 {

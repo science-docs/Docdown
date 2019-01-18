@@ -13,7 +13,7 @@ namespace Docdown.ViewModel.Commands
         {
         }
 
-        public OpenWindowCommand(object dataContext, Action<bool?> callback = null) : base(dataContext, callback)
+        public OpenWindowCommand(object dataContext, Action<bool?> callback) : base(dataContext, callback)
         {
         }
 

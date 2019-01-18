@@ -1,5 +1,6 @@
 ﻿using Docdown.ViewModel.Commands;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -8,8 +9,16 @@ namespace Docdown.Util
 {
     public static class ReflectionUtility
     {
+        private static readonly Dictionary<Type, Delegate> staticDelegateCache
+            = new Dictionary<Type, Delegate>();
+
         public static Delegate CreateDelegate(Type type, object instance)
         {
+            if (staticDelegateCache.TryGetValue(type, out Delegate del))
+            {
+                return del;
+            }
+
             var methods = type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
             foreach (var method in methods)
             {
@@ -31,7 +40,7 @@ namespace Docdown.Util
 
                     if (method.IsStatic)
                     {
-                        return Delegate.CreateDelegate(delType, method);
+                        return staticDelegateCache[type] = Delegate.CreateDelegate(delType, method);
                     }
                     else
                     {
