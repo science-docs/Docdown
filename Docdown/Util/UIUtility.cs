@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -14,76 +10,6 @@ namespace Docdown.Util
 {
     public static class UIUtility
     {
-        private static Dictionary<INotifyPropertyChanged, List<PropertyChangedEventHandler>> propertyChangedHandlers
-            = new Dictionary<INotifyPropertyChanged, List<PropertyChangedEventHandler>>();
-
-        // TODO: remove those
-
-        [Obsolete]
-        public static void AddHandler(this FrameworkElement frameworkElement, Action action)
-        {
-            AddHandler(frameworkElement, null, action);
-        }
-
-        [Obsolete]
-        public static void AddHandler(this FrameworkElement frameworkElement, string name, Action action)
-        {
-            AddHandler(frameworkElement, name, (sender, e) => action());
-        }
-
-        [Obsolete]
-        public static void AddHandler(this FrameworkElement frameworkElement, string name, PropertyChangedEventHandler eventHandler)
-        {
-            if (name == null)
-            {
-                frameworkElement.DataContextChanged += (_, __) => eventHandler?.Invoke(frameworkElement.DataContext, null);
-                return;
-            }
-
-            frameworkElement.DataContextChanged += DataContextChanged;
-
-            void DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-            {
-                if (sender is FrameworkElement fe && fe.DataContext is INotifyPropertyChanged propertyChanged)
-                {
-                    propertyChanged.PropertyChanged += DataContextPropertyChanged;
-                    //GetHandlers(propertyChanged).Add(DataContextPropertyChanged);
-                }
-            }
-
-            void DataContextPropertyChanged(object sender, PropertyChangedEventArgs e)
-            {
-                if (e.PropertyName == name)
-                {
-                    frameworkElement.Dispatcher.BeginInvoke((Action)(() =>
-                    {
-                        eventHandler?.Invoke(sender, e);
-                    }));
-                }
-            }
-        }
-
-        [Obsolete]
-        public static void RemoveHandlers(this INotifyPropertyChanged frameworkElement)
-        {
-            throw new NotImplementedException();
-        }
-
-        [Obsolete]
-        private static List<PropertyChangedEventHandler> GetHandlers(INotifyPropertyChanged element)
-        {
-            if (propertyChangedHandlers.TryGetValue(element, out var list))
-            {
-                return list;
-            }
-            else
-            {
-                var newList = new List<PropertyChangedEventHandler>();
-                propertyChangedHandlers[element] = newList;
-                return newList;
-            }
-        }
-
         public static void Delay(this DispatcherObject dispatcherObject, int milliseconds, Action syncAction)
         {
             dispatcherObject.Delay(MillisecondDelay, syncAction);
@@ -132,12 +58,6 @@ namespace Docdown.Util
                 brush.Freeze();
                 return brush;
             });
-        }
-
-        public static ContentControl BuildPresenter(string templateName)
-        {
-            var template = Application.Current.TryFindResource(templateName) as ControlTemplate;
-            return new ContentControl { Template = template };
         }
 
         public static string AssemblyFolder()

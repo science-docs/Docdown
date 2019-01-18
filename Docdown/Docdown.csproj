@@ -114,7 +114,6 @@
     <Compile Include="Controls\OutlineView.xaml.cs">
       <DependentUpon>OutlineView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SelectorView.cs" />
     <Compile Include="Controls\TabView.xaml.cs">
       <DependentUpon>TabView.xaml</DependentUpon>
     </Compile>
