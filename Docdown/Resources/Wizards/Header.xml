@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Wizard xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="Wizard.xsd" Name="Header">
+  <Content>
+    # New large header
+  </Content>
+  <Preview>
+    <Span FontSize="24" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">New large header</Span>
+  </Preview>
+</Wizard>

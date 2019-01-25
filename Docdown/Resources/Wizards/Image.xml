@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Wizard xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="Wizard.xsd" Name="Image">
+  <Content>
+    ![Docdown Logo](Docdown/Logo.png)
+  </Content>
+  <Preview>
+    <BlockUIContainer xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+      <StackPanel Orientation="Vertical">
+        <Rectangle Height="308"
+                   Width="200"
+                   Margin="12"
+                   Fill="{StaticResource DocdownIcon}"
+                   HorizontalAlignment="Center"/>
+        <TextBlock Text="Figure 1: Docdown Logo"
+                   HorizontalAlignment="Center"/>
+      </StackPanel>
+    </BlockUIContainer>
+  </Preview>
+</Wizard>

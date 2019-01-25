@@ -15,7 +15,7 @@
         <Border Grid.Column="0"
                 BorderThickness="0 0 1 0"
                 BorderBrush="{DynamicResource GrayBrush1}">
-            <local:MarkdownEditor x:Name="Editor" TextChanged="EditorTextChanged"/>
+            <local:MarkdownEditor x:Name="MdEditor"/>
         </Border>
         <Border Grid.Column="2"
                 BorderThickness="1 0 0 0"

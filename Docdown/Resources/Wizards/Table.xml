@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Wizard xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="Wizard.xsd" Name="Table">
+  <Content>
+| Right | Left | Default | Center |
+|------:|:-----|---------|:------:|
+|   12  |  12  |    12   |    12  |
+|  123  |  123 |   123   |   123  |
+|    1  |    1 |     1   |     1  |
+
+  : Demonstration of pipe table syntax
+  </Content>
+  <Preview>
+    <Section xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+      <Table>
+        <TableRowGroup>
+          <TableRow>
+            <TableCell>
+              <Paragraph TextAlignment="Right">
+                <Bold>Right</Bold>
+              </Paragraph>
+            </TableCell>
+            <TableCell>
+              <Paragraph TextAlignment="Left">
+                <Bold>Left</Bold>
+              </Paragraph>
+            </TableCell>
+            <TableCell>
+              <Paragraph TextAlignment="Justify">
+                <Bold>Default</Bold>
+              </Paragraph>
+            </TableCell>
+            <TableCell>
+              <Paragraph TextAlignment="Center">
+                <Bold>Center</Bold>
+              </Paragraph>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell TextAlignment="Right">
+              <Paragraph>12</Paragraph>
+            </TableCell>
+            <TableCell TextAlignment="Left">
+              <Paragraph>12</Paragraph>
+            </TableCell>
+            <TableCell TextAlignment="Justify">
+              <Paragraph>12</Paragraph>
+            </TableCell>
+            <TableCell TextAlignment="Center">
+              <Paragraph>12</Paragraph>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell TextAlignment="Right">
+              <Paragraph>123</Paragraph>
+            </TableCell>
+            <TableCell TextAlignment="Left">
+              <Paragraph>123</Paragraph>
+            </TableCell>
+            <TableCell TextAlignment="Justify">
+              <Paragraph>123</Paragraph>
+            </TableCell>
+            <TableCell TextAlignment="Center">
+              <Paragraph>123</Paragraph>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell TextAlignment="Right">
+              <Paragraph>1</Paragraph>
+            </TableCell>
+            <TableCell TextAlignment="Left">
+              <Paragraph>1</Paragraph>
+            </TableCell>
+            <TableCell TextAlignment="Justify">
+              <Paragraph>1</Paragraph>
+            </TableCell>
+            <TableCell TextAlignment="Center">
+              <Paragraph>1</Paragraph>
+            </TableCell>
+          </TableRow>
+        </TableRowGroup>
+      </Table>
+      <Paragraph TextAlignment="Center">
+        <Span>Table 1: Demonstration of pipe table syntax</Span>
+      </Paragraph>
+    </Section>
+  </Preview>
+</Wizard>

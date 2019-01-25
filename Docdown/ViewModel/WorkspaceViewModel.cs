@@ -94,6 +94,7 @@ namespace Docdown.ViewModel
         }
 
         public SettingsViewModel Settings { get; }
+        public WizardViewModel Wizard { get; }
 
         public ICommand SaveSelectedItemCommand => new ActionCommand(SaveSelectedItem);
         public ICommand SaveAllItemsCommand => new ActionCommand(SaveAllItems);
@@ -101,7 +102,7 @@ namespace Docdown.ViewModel
         [ChangeListener(nameof(Data))]
         public ICommand SearchWorkspaceCommand => new SearchFolderCommand(Settings.WorkspacePath, "Select workspace", ChangeWorkspace);
         public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(Settings);
-        public ICommand OpenWizardCommand => new OpenWindowCommand<WizardWindow>(this);
+        public ICommand OpenWizardCommand => new OpenWindowCommand<WizardWindow>(Wizard);
         public ICommand ChangeSelectedItemNameCommand => new ActionCommand(ChangeSelectedItemName);
 
         private string errorMessage;
@@ -111,6 +112,7 @@ namespace Docdown.ViewModel
         public WorkspaceViewModel(Workspace workspace) : base(workspace)
         {
             Settings = new SettingsViewModel(this);
+            Wizard = new WizardViewModel(this);
             workspace.WorkspaceChanged += OnWorkspaceChanged;
         }
 

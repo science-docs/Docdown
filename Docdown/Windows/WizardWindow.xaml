@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Docdown.Windows"
         xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:Controls="clr-namespace:Docdown.Controls"
+        xmlns:ViewModel="clr-namespace:Docdown.ViewModel"
         mc:Ignorable="d"
         Title="Wizard"
         Style="{StaticResource SlimWindowStyle}"
@@ -13,14 +15,53 @@
         WindowStartupLocation="CenterOwner" Background="{DynamicResource WhiteBrush}"
         Height="600"
         Width="680">
-    <Grid Margin="0 20 0 0" Background="{DynamicResource WhiteBrush}">
-        <Grid.Resources>
-            <ResourceDictionary>
-                <ResourceDictionary.MergedDictionaries>
-                    <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml"/>
-                </ResourceDictionary.MergedDictionaries>
-            </ResourceDictionary>
-        </Grid.Resources>
-        
+    <Grid Margin="0 20 0 0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml"/>
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <ListBox Grid.Column="0"
+                 ItemsSource="{Binding Items}"
+                 SelectedItem="{Binding SelectedItem}"
+                 Background="{DynamicResource WhiteBrush}"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Controls:BindedRichTextBox Grid.Column="2" 
+                                        Padding="8"
+                                        Background="{DynamicResource WhiteBrush}"
+                                        Document="{Binding SelectedItem.Preview}"/>
+        </Grid>
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Content="Insert"
+                    Command="{Binding SelectedItem.InsertTextCommand}"
+                    Margin="4 8"
+                    Height="32"
+                    Style="{StaticResource MetroFlatButton}"/>
+            <Button Content="Close"
+                    Margin="4 8 8 8"
+                    Height="32"
+                    Style="{StaticResource MetroFlatButton}"
+                    Click="CloseButtonClicked"/>
+        </StackPanel>
     </Grid>
 </Metro:MetroWindow>

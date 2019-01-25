@@ -3,6 +3,7 @@ using Docdown.Controls.Markdown;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel;
+using ICSharpCode.AvalonEdit;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +16,7 @@ using static Docdown.Controls.Markdown.AbstractSyntaxTree;
 
 namespace Docdown.Controls
 {
-    public partial class MarkdownEditor : INotifyPropertyChanged
+    public partial class MarkdownEditor : INotifyPropertyChanged, IEditor
     {
         public static readonly DependencyProperty AutoSaveProperty = DependencyProperty.Register(
              nameof(AutoSave), typeof(bool), typeof(MarkdownEditor), new PropertyMetadata(default(bool)));
@@ -72,6 +73,8 @@ namespace Docdown.Controls
 
         //public FindReplaceDialog FindReplaceDialog
         //    => _findReplaceDialog ?? (_findReplaceDialog = new FindReplaceDialog(new FindReplaceSettings()));
+
+        public TextEditor Editor => EditBox;
 
         public string Text
         {

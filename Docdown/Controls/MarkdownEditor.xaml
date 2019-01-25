@@ -9,6 +9,7 @@
     <Grid>
         <AvalonEdit:TextEditor 
             Name="EditBox"
+            x:FieldModifier="private"
             Padding="3 1 1 1" 
             ShowLineNumbers="True"
             WordWrap="True" 

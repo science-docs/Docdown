@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Wizard xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="Wizard.xsd" Name="Pagebreak">
+  <Content>
+    \pagebreak
+  </Content>
+  <Preview>
+    <Span xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">You should know what a pagebreak is</Span>
+  </Preview>
+</Wizard>

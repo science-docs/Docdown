@@ -117,6 +117,7 @@ namespace Docdown.ViewModel
         public ICommand ConvertCommand => new ActionCommand(Convert);
         [ChangeListener(nameof(PdfPath))]
         public ICommand PrintCommand => new PrintCommand(Name, PdfPath);
+        public ICommand CancelNameChangeCommand => new ActionCommand(CancelNameChange);
         public ICommand NameChangeEndCommand => new ActionCommand(NameChangeEnd);
 
         public object View
@@ -163,9 +164,23 @@ namespace Docdown.ViewModel
 
         public WorkspaceItemViewModel(WorkspaceViewModel workspaceViewModel, WorkspaceItem workspaceItem) : base(workspaceItem)
         {
-            Workspace = workspaceViewModel;
+            if (workspaceItem == null)
+                throw new ArgumentNullException(nameof(workspaceItem));
+
+            Workspace = workspaceViewModel ?? throw new ArgumentNullException(nameof(workspaceViewModel));
 
             CanConvert = workspaceItem.IsPlainText();
+        }
+
+        public void InsertTextAtPosition(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return;
+
+            if (view is IEditor editorWrapper)
+            {
+                editorWrapper.Editor.TextArea.Selection.ReplaceSelectionWithText(text);
+            }
         }
 
         public void Convert()
@@ -210,9 +225,9 @@ namespace Docdown.ViewModel
         {
             HasChanged = false;
             Workspace.IsChanging = true;
-            if (view is EditorAndViewer editorAndViewer)
+            if (view is IEditor editorWrapper)
             {
-                File.WriteAllText(Data.FileSystemInfo.FullName, editorAndViewer.GetText());
+                File.WriteAllText(Data.FileSystemInfo.FullName, editorWrapper.Editor.Text);
             }
             Workspace.IsChanging = false;
         }
@@ -237,11 +252,16 @@ namespace Docdown.ViewModel
             }
         }
 
+        private void CancelNameChange()
+        {
+            tempName = null;
+            IsNameChanging = false;
+        }
+
         private void NameChangeEnd()
         {
             Rename(tempName);
-            tempName = null;
-            IsNameChanging = false;
+            CancelNameChange();
         }
 
         private object BuildView()
@@ -277,7 +297,7 @@ namespace Docdown.ViewModel
         {
             var editorAndViewer = new EditorAndViewer();
             string allText = File.ReadAllText(FullName);
-            editorAndViewer.Delay(100, () => editorAndViewer.SetText(allText));
+            editorAndViewer.Delay(100, () => editorAndViewer.Editor.Text = allText);
             return editorAndViewer;
         }
 

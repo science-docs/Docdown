@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Costura.Fody.3.2.2\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.3.2.2\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -101,9 +101,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\BindedRichTextBox.xaml.cs">
+      <DependentUpon>BindedRichTextBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\EditorAndViewer.xaml.cs">
       <DependentUpon>EditorAndViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\IEditor.cs" />
     <Compile Include="Controls\Markdown\AbstractSyntaxTree.cs" />
     <Compile Include="Controls\Markdown\BlockBackgroundRenderer.cs" />
     <Compile Include="Controls\Markdown\Highlight.cs" />
@@ -144,6 +148,7 @@
     <Compile Include="Util\TextUtility.cs" />
     <Compile Include="Util\UIUtility.cs" />
     <Compile Include="Util\WebUtility.cs" />
+    <Compile Include="Util\XamlUtility.cs" />
     <Compile Include="ViewModel\Commands\ActionCommand.cs" />
     <Compile Include="ViewModel\ChangeListenerAttribute.cs" />
     <Compile Include="ViewModel\Commands\CreateNewFileCommand.cs" />
@@ -156,6 +161,8 @@
     <Compile Include="ViewModel\OutlineViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
     <Compile Include="ViewModel\SplashViewModel.cs" />
+    <Compile Include="ViewModel\WizardItemViewModel.cs" />
+    <Compile Include="ViewModel\WizardViewModel.cs" />
     <Compile Include="ViewModel\WorkspaceItemViewModel.cs" />
     <Compile Include="ViewModel\WorkspaceViewModel.cs" />
     <Compile Include="Windows\SettingsWindow.xaml.cs">
@@ -167,6 +174,10 @@
     <Compile Include="Windows\WizardWindow.xaml.cs">
       <DependentUpon>WizardWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\BindedRichTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\DocumentViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -293,6 +304,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <EmbeddedResource Include="Resources\Wizards\Wizard.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>
@@ -312,6 +326,33 @@
       <Project>{068ec25f-b400-4fa0-a006-41ce018f1b65}</Project>
       <Name>PdfiumViewer.Wpf</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Wizards\Bold.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Wizards\Italic.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Wizards\Codeblock.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Wizards\Table.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Wizards\Header.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Wizards\List.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Wizards\Pagebreak.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Wizards\Image.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Wizards\Abbreviations.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

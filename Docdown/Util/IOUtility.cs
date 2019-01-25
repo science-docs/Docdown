@@ -23,5 +23,10 @@ namespace Docdown.Util
         {
             return !InvalidFileNameRegex.IsMatch(fileName);
         }
+
+        public static Stream LoadResource(string name)
+        {
+            return typeof(IOUtility).Assembly.GetManifestResourceStream(name);
+        }
     }
 }

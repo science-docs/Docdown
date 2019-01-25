@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Wizard xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="Wizard.xsd" Name="Abbreviations">
+  <Content>
+\section*{List of Abbreviations}
+\addcontentsline{toc}{section}{List of Abbreviations}
+\markright{List of Abbreviations}
+    
+\begin{acronym}[List of Abbreviations]
+  \acro{SE}{Software Engineering}
+  \acro{JSON}{Java Script Object Notation}
+  \acro{HTML}{Hypertext Markup Language}
+\end{acronym}
+  </Content>
+  <Preview>
+    <Section xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+      <Paragraph Margin="0" 
+                 FontSize="20">
+        List of abbreviations
+      </Paragraph>
+      <Table>
+        <TableRowGroup>
+          <TableRow>
+            <TableCell>
+              <Paragraph TextAlignment="Left">SE</Paragraph>
+            </TableCell>
+            <TableCell>
+              <Paragraph TextAlignment="Right">Software Engineering</Paragraph>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <Paragraph TextAlignment="Left">JSON</Paragraph>
+            </TableCell>
+            <TableCell>
+              <Paragraph TextAlignment="Right">Java Script Object Notation</Paragraph>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <Paragraph TextAlignment="Left">HTML</Paragraph>
+            </TableCell>
+            <TableCell>
+              <Paragraph TextAlignment="Right">Hypertext Markup Language</Paragraph>
+            </TableCell>
+          </TableRow>
+        </TableRowGroup>
+      </Table>
+    </Section>
+  </Preview>
+</Wizard>

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Docdown.Controls.WorkspaceView"
+<UserControl x:Class="Docdown.Controls.WorkspaceView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -47,6 +47,7 @@
                                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}">
                                         <TextBox.InputBindings>
                                             <KeyBinding Key="Return" Command="{Binding NameChangeEndCommand}"/>
+                                            <KeyBinding Key="Esc" Command="{Binding CancelNameChangeCommand}"/>
                                         </TextBox.InputBindings>
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="LostFocus">

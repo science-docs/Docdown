@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Wizard xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="Wizard.xsd" Name="List">
+  <Content>
+* List item 1
+* List item 2
+  * List item 2.1
+  * List item 2.2
+* List item 3
+  * List item 3.1
+    * List item 3.1.1
+  </Content>
+  <Preview>
+    <List Margin="0" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+      <ListItem>
+        <Paragraph>
+          List item 1
+        </Paragraph>
+      </ListItem>
+      <ListItem>
+        <Paragraph>
+          List item 2
+        </Paragraph>
+        <List Margin="0">
+          <ListItem>
+            <Paragraph>
+              List item 2.1
+            </Paragraph>
+          </ListItem>
+          <ListItem>
+            <Paragraph>
+              List item 2.2
+            </Paragraph>
+          </ListItem>
+        </List>
+      </ListItem>
+      <ListItem>
+        <Paragraph>
+          List item 3
+        </Paragraph>
+        <List Margin="0">
+          <ListItem>
+            <Paragraph>
+              List item 3.1
+            </Paragraph>
+            <List Margin="0">
+              <ListItem>
+                <Paragraph>
+                  List item 3.1.1
+                </Paragraph>
+              </ListItem>
+            </List>
+          </ListItem>
+        </List>
+      </ListItem>
+    </List>
+  </Preview>
+</Wizard>
