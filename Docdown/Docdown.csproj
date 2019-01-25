@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Costura.Fody.3.2.2\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.3.2.2\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -146,6 +146,7 @@
     <Compile Include="Util\ReflectionUtility.cs" />
     <Compile Include="Util\ResourceUtility.cs" />
     <Compile Include="Util\TextUtility.cs" />
+    <Compile Include="Util\TypeCache.cs" />
     <Compile Include="Util\UIUtility.cs" />
     <Compile Include="Util\WebUtility.cs" />
     <Compile Include="Util\XamlUtility.cs" />

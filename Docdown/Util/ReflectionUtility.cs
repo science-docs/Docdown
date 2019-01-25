@@ -1,6 +1,5 @@
 ﻿using Docdown.ViewModel.Commands;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -9,8 +8,7 @@ namespace Docdown.Util
 {
     public static class ReflectionUtility
     {
-        private static readonly Dictionary<Type, Delegate> staticDelegateCache
-            = new Dictionary<Type, Delegate>();
+        private static readonly TypeCache<Delegate> staticDelegateCache = new TypeCache<Delegate>();
 
         public static Delegate CreateDelegate(Type type, object instance)
         {

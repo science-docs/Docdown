@@ -1,6 +1,6 @@
-﻿using MahApps.Metro.Controls.Dialogs;
+﻿using Docdown.Util;
+using MahApps.Metro.Controls.Dialogs;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -48,10 +48,23 @@ namespace Docdown.ViewModel
     {
         private static readonly string VersionString 
             = typeof(ObservableObject).Assembly.GetName().Version.ToString();
-        private static readonly Dictionary<Type, List<PropertyChangedEventHandler>> eventHandlerCache
-            = new Dictionary<Type, List<PropertyChangedEventHandler>>();
+        private static readonly ListTypeCache<PropertyChangedEventHandler> eventHandlerCache
+            = new ListTypeCache<PropertyChangedEventHandler>();
         
-        public string Version { get; } = VersionString;
+        public string Version => VersionString;
+        
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public ObservableObject()
+        {
+            PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
+            InspectChangeListener();
+        }
+
+        protected virtual void OnPropertyChanged(string name)
+        {
+
+        }
 
         protected void Set<T>(ref T field, T value, [CallerMemberName]string property = null)
         {
@@ -62,13 +75,6 @@ namespace Docdown.ViewModel
         protected internal void SendPropertyUpdate([CallerMemberName]string property = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string name)
-        {
-
         }
 
         protected internal void ForceUpdate()
@@ -92,11 +98,7 @@ namespace Docdown.ViewModel
             return await DialogCoordinator.Instance.ShowInputAsync(this, title, message, settings);
         }
     
-        public ObservableObject()
-        {
-            PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
-            InspectChangeListener();
-        }
+        
 
         private void InspectChangeListener()
         {
@@ -110,43 +112,32 @@ namespace Docdown.ViewModel
             }
             else
             {
-                cache = new List<PropertyChangedEventHandler>();
                 foreach (var methodInfo in type
                     .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
                 {
-                    RegisterListener(methodInfo, cache);
+                    RegisterListener(methodInfo);
                 }
                 foreach (var propertyInfo in type.GetProperties())
                 {
-                    RegisterListener(propertyInfo, cache);
+                    RegisterListener(propertyInfo);
                 }
-                eventHandlerCache[type] = cache;
             }
         }
 
-        private void RegisterListener(PropertyInfo property, List<PropertyChangedEventHandler> cache)
+        private void RegisterListener(PropertyInfo property)
         {
             var listenerAttribute = property.GetCustomAttribute<ChangeListenerAttribute>();
 
             if (listenerAttribute != null)
             {
                 string emitterProperty = listenerAttribute.Property;
-                string listenerProperty = property.Name;
-                PropertyChangedEventHandler handler = AttributePropertyChanged;
-                cache.Add(handler);
+                PropertyChangedEventHandler handler = CreatePropertyListenerHandler(emitterProperty, property);
+                eventHandlerCache.Add(GetType(), handler);
                 PropertyChanged += handler;
-
-                void AttributePropertyChanged(object sender, PropertyChangedEventArgs e)
-                {
-                    if (e.PropertyName == emitterProperty)
-                    {
-                        PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(listenerProperty));
-                    }
-                }
             }
         }
 
-        private void RegisterListener(MethodInfo method, List<PropertyChangedEventHandler> cache)
+        private void RegisterListener(MethodInfo method)
         {
             var listenerAttribute = method.GetCustomAttribute<ChangeListenerAttribute>();
 
@@ -158,16 +149,36 @@ namespace Docdown.ViewModel
                     throw new IndexOutOfRangeException("Only methods without parameters are supported");
 
                 string emitterProperty = listenerAttribute.Property;
-                PropertyChangedEventHandler handler = CallListenerMethod;
-                cache.Add(handler);
+                PropertyChangedEventHandler handler = CreateCallListenerHandler(emitterProperty, method);
+                eventHandlerCache.Add(GetType(), handler);
                 PropertyChanged += handler;
+            }
+        }
 
-                void CallListenerMethod(object sender, PropertyChangedEventArgs e)
+        private static PropertyChangedEventHandler CreatePropertyListenerHandler(string emitter, PropertyInfo listener)
+        {
+            string listenerName = listener.Name;
+            return AttributePropertyChanged;
+
+            void AttributePropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == emitter &&
+                    sender is ObservableObject observableObject)
                 {
-                    if (e.PropertyName == emitterProperty)
-                    {
-                        method.Invoke(this, new object[0]);
-                    }
+                    observableObject.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(listenerName));
+                }
+            }
+        }
+
+        private static PropertyChangedEventHandler CreateCallListenerHandler(string emitter, MethodInfo listener)
+        {
+            return CallListenerMethod;
+
+            void CallListenerMethod(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == emitter)
+                {
+                    listener.Invoke(sender, new object[0]);
                 }
             }
         }
