@@ -106,7 +106,7 @@ namespace Docdown.ViewModel
                 {
                     childrenCache = Data?.Children
                         .OrderByDescending(e => e.IsDirectory())
-                        .Select(e => new WorkspaceItemViewModel(Workspace, e))
+                        .Select(e => new WorkspaceItemViewModel(Workspace, this, e))
                         .ToArray();
                 }
                 return childrenCache;
@@ -149,6 +149,7 @@ namespace Docdown.ViewModel
         }
 
         public WorkspaceViewModel Workspace { get; }
+        public WorkspaceItemViewModel Parent { get; }
 
         private string errorMessage;
         private string pdfPath;
@@ -162,12 +163,13 @@ namespace Docdown.ViewModel
         private WorkspaceItemViewModel[] childrenCache;
         private OutlineViewModel outline;
 
-        public WorkspaceItemViewModel(WorkspaceViewModel workspaceViewModel, WorkspaceItem workspaceItem) : base(workspaceItem)
+        public WorkspaceItemViewModel(WorkspaceViewModel workspaceViewModel, WorkspaceItemViewModel parent, WorkspaceItem workspaceItem) : base(workspaceItem)
         {
             if (workspaceItem == null)
                 throw new ArgumentNullException(nameof(workspaceItem));
 
             Workspace = workspaceViewModel ?? throw new ArgumentNullException(nameof(workspaceViewModel));
+            Parent = parent;
 
             CanConvert = workspaceItem.IsPlainText();
         }
@@ -202,6 +204,39 @@ namespace Docdown.ViewModel
 
                 IsConverting = false;
             });
+        }
+
+        public void Delete()
+        {
+            RemoveFromOpenItems();
+            Workspace.IsChanging = true;
+            Data.Delete();
+            Workspace.IsChanging = false;
+            if (Parent != null)
+            {
+                Parent.childrenCache = Parent.childrenCache.Where(e => e != this).ToArray();
+            }
+            Workspace.SendPropertyUpdate(nameof(Children));
+        }
+
+        private void RemoveFromOpenItems()
+        {
+            if (Workspace.SelectedItem == this)
+            {
+                Workspace.SelectedItem = null;
+            }
+            if (Workspace.SelectedWorkspaceItem == this)
+            {
+                Workspace.SelectedWorkspaceItem = null;
+            }
+            Workspace.OpenItems.Remove(this);
+            if (childrenCache != null)
+            {
+                foreach (var child in Children)
+                {
+                    child.RemoveFromOpenItems();
+                }
+            }
         }
 
         public void Rename(string newName)

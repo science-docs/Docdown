@@ -11,6 +11,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.InputBindings>
         <KeyBinding Key="F2" Command="{Binding ChangeSelectedItemNameCommand}"/>
+        <KeyBinding Key="Delete" Command="{Binding DeleteSelectedItemCommand}"/>
     </UserControl.InputBindings>
     <Grid Background="{DynamicResource EditorBackground}">
         <Grid.RowDefinitions>

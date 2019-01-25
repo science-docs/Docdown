@@ -20,7 +20,7 @@ namespace Docdown.ViewModel
             {
                 if (item == null || item.Data != Data.Item)
                 {
-                    item = new WorkspaceItemViewModel(this, Data.Item);
+                    item = new WorkspaceItemViewModel(this, null, Data.Item);
                 }
                 return item;
             }
@@ -31,8 +31,7 @@ namespace Docdown.ViewModel
         {
             get; set;
         } = new ObservableCollection<WorkspaceItemViewModel>();
-
-
+        
         [ChangeListener(nameof(Data))]
         public WorkspaceItemViewModel SelectedItem
         {
@@ -40,7 +39,7 @@ namespace Docdown.ViewModel
             {
                 if (selectedItem == null && Data.SelectedItem != null)
                 {
-                    selectedItem = new WorkspaceItemViewModel(this, Data.SelectedItem);
+                    selectedItem = SearchForSelectedItem(Item, Data.SelectedItem);
                 }
                 return selectedItem;
             }
@@ -104,12 +103,13 @@ namespace Docdown.ViewModel
         public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(Settings);
         public ICommand OpenWizardCommand => new OpenWindowCommand<WizardWindow>(Wizard);
         public ICommand ChangeSelectedItemNameCommand => new ActionCommand(ChangeSelectedItemName);
+        public ICommand DeleteSelectedItemCommand => new ActionCommand(DeleteSelectedItem);
 
         private string errorMessage;
         private WorkspaceItemViewModel item;
         private WorkspaceItemViewModel selectedItem;
         
-        public WorkspaceViewModel(Workspace workspace) : base(workspace)
+        public WorkspaceViewModel(Workspace workspace) : base(workspace ?? throw new ArgumentNullException(nameof(workspace)))
         {
             Settings = new SettingsViewModel(this);
             Wizard = new WizardViewModel(this);
@@ -157,6 +157,7 @@ namespace Docdown.ViewModel
 
         private async void OnWorkspaceChanged(object sender, EventArgs args)
         {
+            IsChanging = true;
             var result = await ShowMessageAsync(
                 "Workspace changed", 
                 "Your workspace was changed externally. Do you want to reload your workspace?", 
@@ -171,6 +172,7 @@ namespace Docdown.ViewModel
                 };
                 RestoreWorkspace(Item, openItems, selectedItemName);
             }
+            IsChanging = false;
         }
 
         private void RestoreWorkspace(WorkspaceItemViewModel item, IEnumerable<WorkspaceItemViewModel> openItems, string selectedItemName)
@@ -205,6 +207,34 @@ namespace Docdown.ViewModel
             if (SelectedWorkspaceItem != null)
             {
                 SelectedWorkspaceItem.IsNameChanging = true;
+            }
+        }
+
+        private void DeleteSelectedItem()
+        {
+            if (SelectedWorkspaceItem != null)
+            {
+                SelectedWorkspaceItem.Delete();
+            }
+        }
+
+        private WorkspaceItemViewModel SearchForSelectedItem(WorkspaceItemViewModel vm, WorkspaceItem item)
+        {
+            if (vm.Data == item)
+            {
+                return vm;
+            }
+            else
+            {
+                foreach (var child in vm.Children)
+                {
+                    var found = SearchForSelectedItem(child, item);
+                    if (found != null)
+                    {
+                        return found;
+                    }
+                }
+                return null;
             }
         }
     }

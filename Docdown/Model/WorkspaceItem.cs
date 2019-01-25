@@ -136,6 +136,23 @@ namespace Docdown.Model
             return temp;
         }
 
+        public void Delete()
+        {
+            string fullName = FileSystemInfo.FullName;
+
+            if (IsDirectory())
+            {
+                Directory.Delete(fullName, true);
+            }
+            else
+            {
+                File.Delete(fullName);
+            }
+
+            Parent.Children.Remove(this);
+            Parent = null;
+        }
+
         public void Rename(string newName)
         {
             if (string.IsNullOrWhiteSpace(newName) ||
