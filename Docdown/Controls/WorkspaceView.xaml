@@ -22,6 +22,7 @@
                 BorderBrush="{DynamicResource GrayBrush1}" 
                 BorderThickness="0 0 0 1">
             <TextBlock Text="Workspace Explorer" 
+                       Focusable="False"
                        Foreground="{DynamicResource BlackBrush}" 
                        Margin="4 2"
                        FontSize="{StaticResource DefaultFontSize}"/>
@@ -38,8 +39,19 @@
                         <Rectangle Height="16" Width="16" Margin="4 0" Fill="{Binding IconName, Converter={StaticResource StringToResourceConverter}}"/>
                         <ContentControl x:Name="PART_Content">
                             <TextBlock Text="{Binding Name}"
-                                   FontSize="{StaticResource DefaultFontSize}"/>
+                                       Focusable="False"
+                                       FontSize="{StaticResource DefaultFontSize}"/>
                         </ContentControl>
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Open" Visibility="{Binding IsFile, Converter={StaticResource BooleanToVisibilityConverter}}" Command="{Binding SelectItemCommand}"/>
+                                <MenuItem Header="New" Visibility="{Binding IsDirectory, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <MenuItem Header="File" Command="{Binding NewFileCommand}" CommandParameter="{StaticResource False}"/>
+                                    <MenuItem Header="Folder" Command="{Binding NewFileCommand}" CommandParameter="{StaticResource True}"/>
+                                </MenuItem>
+                                <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
                     </StackPanel>
                     <HierarchicalDataTemplate.Triggers>
                         <DataTrigger Binding="{Binding IsNameChanging}" Value="True">

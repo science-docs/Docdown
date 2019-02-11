@@ -11,7 +11,7 @@ namespace Docdown.ViewModel
 
         public Action<int> JumpTo { get; set; }
 
-        public OutlineViewModel(Outline outline, Action<int> jumpTo) : base(outline)
+        public OutlineViewModel(Outline outline, Action<int> jumpTo) : base(outline ?? throw new ArgumentNullException(nameof(outline)))
         {
             JumpTo = jumpTo;
             Children = Data.Children.Select(e => new OutlineItemViewModel(e)).ToArray();

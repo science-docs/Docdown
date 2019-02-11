@@ -97,7 +97,8 @@ namespace Docdown.ViewModel.Commands
             var param = parameters;
             if (usesAdditionalParameter)
             {
-                param = param.Concat(new object[] { parameter }).ToArray();
+                CheckAdditionalParameter(ref parameter);
+                param = param.Concat(new [] { parameter }).ToArray();
             }
             Result = del?.DynamicInvoke(param);
         }
@@ -106,6 +107,33 @@ namespace Docdown.ViewModel.Commands
         {
             var command = Activator.CreateInstance(typeof(T), args) as DelegateCommand;
             command.Execute();
+        }
+
+        private void CheckAdditionalParameter(ref object parameter)
+        {
+            var addParam = del.Method.GetParameters().Last();
+            var methodParamType = addParam.ParameterType;
+            if (parameter == null)
+            {
+                if (methodParamType.IsValueType &&
+                    Nullable.GetUnderlyingType(methodParamType) == null &&
+                    !addParam.HasDefaultValue)
+                {
+                    throw new Exception("Cannot assign null to non-optional value type");
+                }
+                else
+                {
+                    parameter = addParam.DefaultValue;
+                }
+                return;
+            }
+
+            var providedParamType = parameter.GetType();
+
+            if (!methodParamType.IsAssignableFrom(providedParamType))
+            {
+                throw new InvalidCastException($"Cannot assign value of type {providedParamType} to type {methodParamType}");
+            }
         }
 
         private void CheckDelegateParameters()

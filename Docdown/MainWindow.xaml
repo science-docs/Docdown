@@ -136,6 +136,7 @@
             </Button>
             <Rectangle Width="1" Margin="0 2" Fill="{DynamicResource GrayBrush1}"/>
             <Button Command="{Binding OpenWizardCommand, FallbackValue={x:Null}}" 
+                    CommandParameter="{StaticResource True}"
                     ToolTip="Open Markdown Wizard" 
                     IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}">
                 <Rectangle Fill="{StaticResource WizardIcon}" Height="16" Width="16"/>

@@ -8,7 +8,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Image = System.Windows.Controls.Image;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace Docdown.ViewModel
 {
@@ -119,6 +121,9 @@ namespace Docdown.ViewModel
         public ICommand PrintCommand => new PrintCommand(Name, PdfPath);
         public ICommand CancelNameChangeCommand => new ActionCommand(CancelNameChange);
         public ICommand NameChangeEndCommand => new ActionCommand(NameChangeEnd);
+        public ICommand SelectItemCommand => new ActionCommand(SelectItem);
+        public ICommand DeleteCommand => new ActionCommand(Delete);
+        public ICommand NewFileCommand => new CreateNewFileCommand(this);
 
         public object View
         {
@@ -148,6 +153,9 @@ namespace Docdown.ViewModel
             get; set;
         }
 
+        public bool IsDirectory => Data.IsDirectory();
+        public bool IsFile => !IsDirectory;
+
         public WorkspaceViewModel Workspace { get; }
         public WorkspaceItemViewModel Parent { get; }
 
@@ -163,11 +171,9 @@ namespace Docdown.ViewModel
         private WorkspaceItemViewModel[] childrenCache;
         private OutlineViewModel outline;
 
-        public WorkspaceItemViewModel(WorkspaceViewModel workspaceViewModel, WorkspaceItemViewModel parent, WorkspaceItem workspaceItem) : base(workspaceItem)
+        public WorkspaceItemViewModel(WorkspaceViewModel workspaceViewModel, WorkspaceItemViewModel parent, WorkspaceItem workspaceItem) 
+            : base(workspaceItem ?? throw new ArgumentNullException(nameof(workspaceItem)))
         {
-            if (workspaceItem == null)
-                throw new ArgumentNullException(nameof(workspaceItem));
-
             Workspace = workspaceViewModel ?? throw new ArgumentNullException(nameof(workspaceViewModel));
             Parent = parent;
 
@@ -183,6 +189,26 @@ namespace Docdown.ViewModel
             {
                 editorWrapper.Editor.TextArea.Selection.ReplaceSelectionWithText(text);
             }
+        }
+
+        public void AddChild(WorkspaceItem child)
+        {
+            if (child == null)
+                throw new ArgumentNullException(nameof(child));
+
+            AddChild(new WorkspaceItemViewModel(Workspace, this, child));
+        }
+
+        public void AddChild(WorkspaceItemViewModel child)
+        {
+            if (child == null || child.Data == null)
+            {
+                throw new ArgumentNullException(nameof(child));
+            }
+
+            Data.Children.Add(child.Data);
+            childrenCache = childrenCache.Concat(new [] { child }).OrderByDescending(e => e.IsDirectory).ToArray();
+            SendPropertyUpdate(nameof(Children));
         }
 
         public void Convert()
@@ -209,12 +235,12 @@ namespace Docdown.ViewModel
         public void Delete()
         {
             RemoveFromOpenItems();
-            Workspace.IsChanging = true;
+            Workspace.IgnoreChange = true;
             Data.Delete();
-            Workspace.IsChanging = false;
+            Workspace.IgnoreChange = false;
             if (Parent != null)
             {
-                Parent.childrenCache = Parent.childrenCache.Where(e => e != this).ToArray();
+                Parent.childrenCache = Parent.childrenCache.Except(this).ToArray();
             }
             Workspace.SendPropertyUpdate(nameof(Children));
         }
@@ -241,7 +267,7 @@ namespace Docdown.ViewModel
 
         public void Rename(string newName)
         {
-            Workspace.IsChanging = true;
+            Workspace.IgnoreChange = true;
             try
             {
                 Data.Rename(newName);
@@ -250,7 +276,7 @@ namespace Docdown.ViewModel
             {
                 Trace.WriteLine("Could not rename file to: " + newName);
             }
-            Workspace.IsChanging = false;
+            Workspace.IgnoreChange = false;
             SendPropertyUpdate(nameof(TabName));
             SendPropertyUpdate(nameof(Name));
             SendPropertyUpdate(nameof(FullName));
@@ -259,12 +285,12 @@ namespace Docdown.ViewModel
         public void Save()
         {
             HasChanged = false;
-            Workspace.IsChanging = true;
+            Workspace.IgnoreChange = true;
             if (view is IEditor editorWrapper)
             {
                 File.WriteAllText(Data.FileSystemInfo.FullName, editorWrapper.Editor.Text);
             }
-            Workspace.IsChanging = false;
+            Workspace.IgnoreChange = false;
         }
 
         public void Close()
@@ -308,6 +334,11 @@ namespace Docdown.ViewModel
                 case WorkspaceItemType.Latex:
                 case WorkspaceItemType.Markdown:
                     return ShowMdEditorAndPdf();
+                case WorkspaceItemType.Bibliography:
+                case WorkspaceItemType.Text:
+                    return ShowEditor();
+                case WorkspaceItemType.Image:
+                    return ShowImage();
                 default:
                     return null;
             }
@@ -334,6 +365,30 @@ namespace Docdown.ViewModel
             string allText = File.ReadAllText(FullName);
             editorAndViewer.Delay(100, () => editorAndViewer.Editor.Text = allText);
             return editorAndViewer;
+        }
+
+        private MarkdownEditor ShowEditor()
+        {
+            var editor = new MarkdownEditor();
+            string allText = File.ReadAllText(FullName);
+            editor.Delay(100, () => editor.Editor.Text = allText);
+            return editor;
+        }
+
+        private Image ShowImage()
+        {
+            var image = new Image();
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(FullName, UriKind.Absolute);
+            bitmap.EndInit();
+            image.Source = bitmap;
+            return image;
+        }
+
+        private void SelectItem()
+        {
+            Workspace.SelectedItem = this;
         }
 
         public int CompareTo(WorkspaceItemViewModel other)

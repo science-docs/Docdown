@@ -1,4 +1,4 @@
-﻿using System.Windows;
+﻿using System;
 
 namespace Docdown.Windows
 {
@@ -7,11 +7,6 @@ namespace Docdown.Windows
         public WizardWindow()
         {
             InitializeComponent();
-        }
-
-        private void CloseButtonClicked(object sender, RoutedEventArgs e)
-        {
-            DialogResult = true;
         }
     }
 }

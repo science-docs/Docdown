@@ -50,7 +50,14 @@ namespace Docdown.ViewModel
             = typeof(ObservableObject).Assembly.GetName().Version.ToString();
         private static readonly ListTypeCache<PropertyChangedEventHandler> eventHandlerCache
             = new ListTypeCache<PropertyChangedEventHandler>();
-        
+        public static ObservableObject MainViewModel
+        {
+            get => mainViewModel;
+            set => DialogParticipation.SetRegister(Application.Current.MainWindow, mainViewModel = value);
+        }
+
+        private static ObservableObject mainViewModel;
+
         public string Version => VersionString;
         
         public event PropertyChangedEventHandler PropertyChanged;
@@ -88,14 +95,12 @@ namespace Docdown.ViewModel
 
         protected async Task<MessageDialogResult> ShowMessageAsync(string title, string message, MessageDialogStyle style = MessageDialogStyle.Affirmative, MetroDialogSettings settings = null)
         {
-            DialogParticipation.SetRegister(Application.Current.MainWindow, this);
-            return await DialogCoordinator.Instance.ShowMessageAsync(this, title, message, style, settings);
+            return await DialogCoordinator.Instance.ShowMessageAsync(MainViewModel, title, message, style, settings);
         }
 
         protected async Task<string> ShowInputAsync(string title, string message, MetroDialogSettings settings = null)
         {
-            DialogParticipation.SetRegister(Application.Current.MainWindow, this);
-            return await DialogCoordinator.Instance.ShowInputAsync(this, title, message, settings);
+            return await DialogCoordinator.Instance.ShowInputAsync(MainViewModel, title, message, settings);
         }
     
         

@@ -8,10 +8,5 @@ namespace Docdown.Windows
         {
             InitializeComponent();
         }
-
-        private void CloseButtonClick(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
-        }
     }
 }

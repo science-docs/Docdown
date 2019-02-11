@@ -46,7 +46,7 @@ namespace Docdown.ViewModel
             set
             {
                 if (value != null && 
-                    !value.Data.IsDirectory() && 
+                    value.IsFile && 
                     !OpenItems.Contains(value))
                 {
                     OpenItems.Add(value);
@@ -80,10 +80,13 @@ namespace Docdown.ViewModel
             }
         }
 
-        public bool IsChanging
+        /// <summary>
+        /// Indicates whether the workspace is currently being changed programmatically in order to ignore the change message.
+        /// </summary>
+        public bool IgnoreChange
         {
-            get => Data.IsChanging;
-            set => Data.IsChanging = value;
+            get => Data.IgnoreChange;
+            set => Data.IgnoreChange = value;
         }
 
         public string ErrorMessage
@@ -157,7 +160,7 @@ namespace Docdown.ViewModel
 
         private async void OnWorkspaceChanged(object sender, EventArgs args)
         {
-            IsChanging = true;
+            IgnoreChange = true;
             var result = await ShowMessageAsync(
                 "Workspace changed", 
                 "Your workspace was changed externally. Do you want to reload your workspace?", 
@@ -172,14 +175,14 @@ namespace Docdown.ViewModel
                 };
                 RestoreWorkspace(Item, openItems, selectedItemName);
             }
-            IsChanging = false;
+            IgnoreChange = false;
         }
 
         private void RestoreWorkspace(WorkspaceItemViewModel item, IEnumerable<WorkspaceItemViewModel> openItems, string selectedItemName)
         {
             foreach (var child in item.Children)
             {
-                if (child.Data.IsDirectory())
+                if (child.IsDirectory)
                 {
                     RestoreWorkspace(child, openItems, null);
                 }

@@ -58,10 +58,10 @@
                     Height="32"
                     Style="{StaticResource MetroFlatButton}"/>
             <Button Content="Close"
+                    IsCancel="True"
                     Margin="4 8 8 8"
                     Height="32"
-                    Style="{StaticResource MetroFlatButton}"
-                    Click="CloseButtonClicked"/>
+                    Style="{StaticResource MetroFlatButton}"/>
         </StackPanel>
     </Grid>
 </Metro:MetroWindow>

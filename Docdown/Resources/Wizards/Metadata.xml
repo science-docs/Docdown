@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Wizard xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="Wizard.xsd" Name="Metadata Block">
+  <Content>
+---
+title: "Vinaque sanguine metuenti cuiquam Alcyone fixus"
+author: [Author Name]
+date: "2017-02-20"
+lang: en-GB
+...
+  </Content>
+  <Preview>
+    <Paragraph xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xml:space="preserve">---
+title: "Vinaque sanguine metuenti cuiquam Alcyone fixus"
+author: [Author Name]
+date: "2017-02-20"
+lang: en-GB
+...</Paragraph>
+  </Preview>
+</Wizard>

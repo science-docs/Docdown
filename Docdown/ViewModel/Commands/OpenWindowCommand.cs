@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Docdown.Util;
+using System;
 using System.Windows;
 
 namespace Docdown.ViewModel.Commands
 {
     public class OpenWindowCommand<T> : DelegateCommand where T : Window, new()
     {
+        private static TypeCache<T> windows = new TypeCache<T>();
+
         public OpenWindowCommand() : this(null, null)
         {
         }
@@ -18,16 +21,30 @@ namespace Docdown.ViewModel.Commands
         }
 
         [Delegate]
-        private static bool? OpenWindow(object dataContext, Action<bool?> callback)
+        private static bool? OpenWindow(object dataContext, Action<bool?> callback, bool keep = false)
         {
-            var window = new T
+            if (!windows.TryGetValue(typeof(T), out var window))
             {
-                Owner = Application.Current.MainWindow,
-                DataContext = dataContext
-            };
+                window = new T
+                {
+                    Owner = Application.Current.MainWindow,
+                    DataContext = dataContext
+                };
+                if (keep)
+                {
+                    windows.Add(typeof(T), window);
+                    window.Closing += WizardWindow_Closing;
+                }
+            }
             var result = window.ShowDialog();
             callback?.Invoke(result);
             return result;
+        }
+
+        private static void WizardWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+            (sender as Window).Hide();
         }
     }
 }

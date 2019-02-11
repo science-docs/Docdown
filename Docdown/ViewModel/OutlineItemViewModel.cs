@@ -18,11 +18,8 @@ namespace Docdown.ViewModel
 
         private bool isExpanded = false;
 
-        public OutlineItemViewModel(OutlineItem outlineItem) : base(outlineItem)
+        public OutlineItemViewModel(OutlineItem outlineItem) : base(outlineItem ?? throw new ArgumentNullException(nameof(outlineItem)))
         {
-            if (outlineItem == null)
-                throw new ArgumentNullException(nameof(outlineItem));
-
             Children = Data.Children.Select(e => new OutlineItemViewModel(e)).ToArray();
         }
 

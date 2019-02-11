@@ -14,7 +14,7 @@ namespace Docdown.Model
         public WorkspaceItem SelectedItem { get; set; }
         public ConverterType FromType => FromSelectedItem();
         public ConverterType ToType { get; set; }
-        public bool IsChanging
+        public bool IgnoreChange
         {
             get => !watcher.EnableRaisingEvents;
             set => watcher.EnableRaisingEvents = !value;

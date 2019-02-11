@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Docdown.Util
 {
@@ -11,6 +12,11 @@ namespace Docdown.Util
 
     public static class Enumerable
     {
+        public static IEnumerable<T> Except<T>(this IEnumerable<T> source, T item)
+        {
+            return source.Where(e => !e.Equals(item));
+        }
+
         public static void Restore<T>(this IEnumerable<T> own, IEnumerable<T> other) where T : class, IExpandable<T>, IComparable<T>
         {
             Restore(own, other, (a, b) => a.CompareTo(b));

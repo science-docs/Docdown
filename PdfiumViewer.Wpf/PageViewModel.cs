@@ -33,7 +33,7 @@ namespace PdfiumViewer.Wpf
 
         public async Task<BitmapSource> Render()
         {
-            var image = await QueueRender(this);
+            var image = await QueueRender();
             return BitmapUtility.ToBitmapSource(image);
         }
 
@@ -57,9 +57,9 @@ namespace PdfiumViewer.Wpf
             return newSize;
         }
         
-        private static async Task<System.Drawing.Image> QueueRender(PageViewModel p)
+        private async Task<System.Drawing.Image> QueueRender()
         {
-            return await TaskUtility.Enqueue(() => p.Document.Render(p.Page, (int)p.RenderSize.Width, (int)p.RenderSize.Height,
+            return await TaskUtility.Enqueue(() => Document.Render(Page, (int)RenderSize.Width, (int)RenderSize.Height,
                 (float)BitmapUtility.DpiX, (float)BitmapUtility.DpiY, PdfRenderFlags.Annotations));
         }
     }

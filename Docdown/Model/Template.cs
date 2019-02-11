@@ -13,7 +13,6 @@ namespace Docdown.Model
         public static Template[] FromJson(string json)
         {
             List<Template> templates = new List<Template> { Empty };
-
             JArray array = JArray.Parse(json);
 
             foreach (var token in array)

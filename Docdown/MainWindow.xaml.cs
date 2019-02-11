@@ -1,4 +1,4 @@
-﻿using Docdown.ViewModel;
+using Docdown.ViewModel;
 using Docdown.Windows;
 
 namespace Docdown
@@ -13,7 +13,7 @@ namespace Docdown
             if (splash.ShowDialog().Value)
             {
                 InitializeComponent();
-                DataContext = workspaceViewModel = splash.ViewModel.Data;
+                DataContext = ObservableObject.MainViewModel = workspaceViewModel = splash.ViewModel.Data;
             }
             else
             {

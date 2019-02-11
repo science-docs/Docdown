@@ -149,7 +149,15 @@ namespace Docdown.ViewModel
                 text = "[]";
             }
 
-            Templates = Template.FromJson(text).OrderBy(e => e.Name).ToArray();
+            try
+            {
+                Templates = Template.FromJson(text).OrderBy(e => e.Name).ToArray();
+            }
+            catch
+            {
+                Templates = new Template[] { Template.Empty };
+                SelectedTemplate = null;
+            }
         }
 
         public void UploadTemplate(string path)

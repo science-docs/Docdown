@@ -16,6 +16,7 @@
                 BorderBrush="{DynamicResource GrayBrush1}" 
                 BorderThickness="0 0 0 1">
             <TextBlock Text="Outline" 
+                       Focusable="False"
                        Foreground="{DynamicResource BlackBrush}" 
                        Margin="4 2" FontSize="{StaticResource DefaultFontSize}"/>
         </Border>
@@ -28,6 +29,7 @@
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="{x:Type ViewModel:OutlineItemViewModel}">
                     <TextBlock Text="{Binding Data.Text}"
                                TextWrapping="Wrap" 
+                               Focusable="False"
                                FontSize="{StaticResource DefaultFontSize}"/>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>

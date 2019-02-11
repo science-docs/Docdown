@@ -57,6 +57,11 @@ namespace Docdown.Util
         {
             return await Application.Current.Dispatcher.InvokeAsync(() =>
             {
+                if (string.IsNullOrEmpty(xamlString))
+                {
+                    return null;
+                }
+
                 try
                 {
                     var item = XamlReader.Parse(xamlString);
@@ -88,12 +93,12 @@ namespace Docdown.Util
 
         public static async Task<FlowDocument> ParseDocumentAsync(XmlNode xamlNode)
         {
-            return await ParseDocumentAsync(xamlNode.OuterXml);
+            return await ParseDocumentAsync(xamlNode?.OuterXml);
         }
 
         public static async Task<FlowDocument> ParseDocumentAsync(XNode xamlNode)
         {
-            return await ParseDocumentAsync(xamlNode.ToString());
+            return await ParseDocumentAsync(xamlNode?.ToString());
         }
     }
 }

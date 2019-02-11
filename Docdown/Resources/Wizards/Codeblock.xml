@@ -2,11 +2,11 @@
 <Wizard xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="Wizard.xsd" Name="Codeblock">
   <Content>
-    ```java
-    public static void main(String[] args) {
-        System.out.println("Lorem Ipsum");
-    }
-    ```
+```java
+public static void main(String[] args) {
+    System.out.println("Lorem Ipsum");
+}
+```
   </Content>
   <Preview>
     <Paragraph xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
