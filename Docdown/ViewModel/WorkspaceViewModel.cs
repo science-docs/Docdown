@@ -21,7 +21,10 @@ namespace Docdown.ViewModel
             {
                 if (item == null || item.Data != Data.Item)
                 {
-                    item = new WorkspaceItemViewModel(this, null, Data.Item);
+                    item = new WorkspaceItemViewModel(this, null, Data.Item)
+                    {
+                        IsExpanded = true
+                    };
                 }
                 return item;
             }
@@ -66,7 +69,7 @@ namespace Docdown.ViewModel
         public WorkspaceItemViewModel SelectedWorkspaceItem { get; set; }
 
         [ChangeListener(nameof(Data))]
-        public IEnumerable<WorkspaceItemViewModel> Children => Item.Children;
+        public IEnumerable<WorkspaceItemViewModel> Children => new[] { Item };
 
         [ChangeListener(nameof(SelectedItem))]
         public ConverterType FromType => Data.FromType;
