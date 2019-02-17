@@ -8,10 +8,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Image = System.Windows.Controls.Image;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows;
+
+using Image = System.Windows.Controls.Image;
 
 namespace Docdown.ViewModel
 {
@@ -121,7 +122,7 @@ namespace Docdown.ViewModel
         public ICommand CloseCommand => new ActionCommand(Close);
         public ICommand ConvertCommand => new ActionCommand(Convert);
         [ChangeListener(nameof(PdfPath))]
-        public ICommand PrintCommand => new PrintCommand(Name, PdfPath);
+        public ICommand PrintCommand => new PrintCommand(Workspace, Name, PdfPath);
         public ICommand CancelNameChangeCommand => new ActionCommand(CancelNameChange);
         public ICommand NameChangeEndCommand => new ActionCommand(NameChangeEnd);
         public ICommand SelectItemCommand => new ActionCommand(SelectItem);

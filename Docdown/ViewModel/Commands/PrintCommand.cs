@@ -7,12 +7,12 @@ namespace Docdown.ViewModel.Commands
 {
     public class PrintCommand : DelegateCommand
     {
-        public PrintCommand(string fileName, string pdfPath) : base(fileName, pdfPath)
+        public PrintCommand(WorkspaceViewModel workspace, string fileName, string pdfPath) : base(workspace, fileName, pdfPath)
         {
         }
 
         [Delegate]
-        private static void Print(string fileName, string pdfPath)
+        private static void Print(WorkspaceViewModel workspace, string fileName, string pdfPath)
         {
             var dialog = new CommonSaveFileDialog
             {
@@ -27,7 +27,14 @@ namespace Docdown.ViewModel.Commands
 
             if (dialog.ShowDialog(Application.Current.MainWindow) == CommonFileDialogResult.Ok)
             {
-                File.Copy(pdfPath, dialog.FileName);
+                try
+                {
+                    File.Copy(pdfPath, dialog.FileName);
+                }
+                catch
+                {
+                    workspace.Messages.Error("Could not save file", "");
+                }
             }
         }
     }
