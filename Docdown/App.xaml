@@ -26,6 +26,7 @@
 
             <s:Boolean x:Key="True">True</s:Boolean>
             <s:Boolean x:Key="False">False</s:Boolean>
+            <Visibility x:Key="VisibilityCollapsed">Collapsed</Visibility>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -1,4 +1,4 @@
-using Docdown.Controls;
+﻿using Docdown.Controls;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -100,6 +100,8 @@ namespace Docdown.ViewModel
             get => pdfPath;
             set => Set(ref pdfPath, value);
         }
+        
+        public SearchViewModel Search { get; private set; }
 
         public IEnumerable<WorkspaceItemViewModel> Children
         {
@@ -133,6 +135,10 @@ namespace Docdown.ViewModel
                 if (view == null)
                 {
                     view = BuildView();
+                    if (view is IEditor editor)
+                    {
+                        Search = new SearchViewModel(editor);
+                    }
                 }
                 return view;
             }
