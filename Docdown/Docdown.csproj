@@ -367,6 +367,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Wizards\Metadata.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Wizards\Footnote.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Wizards\Citation.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

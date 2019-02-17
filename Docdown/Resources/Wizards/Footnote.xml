@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Wizard xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="Wizard.xsd" Name="Footnote">
+  <Content>
+[^footnote1]
+
+[^footnote1]: This is a footnote!
+</Content>
+  <Preview>
+    <Paragraph xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+      <Span>Hey this is a cited text.</Span>
+      <Span><Run BaselineAlignment="Superscript">1</Run></Span>
+      <LineBreak/>
+      <LineBreak/>
+      <Span><Run BaselineAlignment="Superscript">1</Run>This is a footnote</Span>
+    </Paragraph>
+  </Preview>
+</Wizard>
