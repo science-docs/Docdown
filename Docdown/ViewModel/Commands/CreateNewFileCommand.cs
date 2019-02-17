@@ -1,7 +1,6 @@
 ﻿using Docdown.Model;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace Docdown.ViewModel.Commands
 {

@@ -31,7 +31,7 @@ namespace Docdown.ViewModel
         }
 
         public MessageBoxResult Result { get; set; } = MessageBoxResult.None;
-        
+
         private int Index => (int)button;
 
         private MessageBoxButton button;

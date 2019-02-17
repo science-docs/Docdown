@@ -85,7 +85,7 @@ namespace Docdown.Util
         /// <exception cref="WebException"/>
         private static HttpWebResponse PostForm(string postUrl, string userAgent, string contentType, byte[] formData)
         {
-            var request = WebRequest.Create(postUrl) as HttpWebRequest 
+            var request = WebRequest.Create(postUrl) as HttpWebRequest
                 ?? throw new NullReferenceException("request is not a http request");
 
             // Set up the request properties.

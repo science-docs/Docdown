@@ -9,7 +9,7 @@ namespace Docdown.ViewModel
     public class OutlineItemViewModel : ObservableObject<OutlineItem>, IExpandable<OutlineItemViewModel>, IComparable<OutlineItemViewModel>
     {
         public IEnumerable<OutlineItemViewModel> Children { get; }
-        
+
         public bool IsExpanded
         {
             get => isExpanded;

@@ -7,7 +7,7 @@ namespace Docdown.ViewModel.Commands
 {
     public class SearchFolderCommand : DelegateCommand<string>
     {
-        public SearchFolderCommand(string initialDirectory, string title, Action<string> callback = null) : 
+        public SearchFolderCommand(string initialDirectory, string title, Action<string> callback = null) :
             base(initialDirectory, title, callback)
         {
         }

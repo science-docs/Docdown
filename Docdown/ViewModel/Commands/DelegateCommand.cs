@@ -98,7 +98,7 @@ namespace Docdown.ViewModel.Commands
             if (usesAdditionalParameter)
             {
                 CheckAdditionalParameter(ref parameter);
-                param = param.Concat(new [] { parameter }).ToArray();
+                param = param.Concat(new[] { parameter }).ToArray();
             }
             Result = del?.DynamicInvoke(param);
         }
@@ -155,7 +155,7 @@ namespace Docdown.ViewModel.Commands
 
                 if (providedParam == null)
                 {
-                    if (methodParamType.IsValueType && 
+                    if (methodParamType.IsValueType &&
                         Nullable.GetUnderlyingType(methodParamType) == null)
                     {
                         throw new Exception("Cannot assign null to value type");

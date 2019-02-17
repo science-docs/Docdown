@@ -50,7 +50,7 @@ namespace Docdown.Model
 
         public WorkspaceItem(FileSystemInfo fileSystemInfo, bool recursively)
         {
-            FileSystemInfo = fileSystemInfo ?? 
+            FileSystemInfo = fileSystemInfo ??
                 throw new ArgumentNullException(nameof(fileSystemInfo));
 
             if (fileSystemInfo is DirectoryInfo directoryInfo)
@@ -120,7 +120,7 @@ namespace Docdown.Model
         public string Convert()
         {
             var folder = Path.GetDirectoryName(FileSystemInfo.FullName);
-            
+
             string temp = IOUtility.GetTempFile();
             using (var res = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
                 MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template).Concat(
@@ -160,7 +160,7 @@ namespace Docdown.Model
                 throw new ArgumentException("Invalid name");
             if (newName == FileSystemInfo.Name)
                 return;
-            
+
             string oldName = FileSystemInfo.FullName;
             string parentName = Path.GetDirectoryName(oldName);
             string fullNewName = Path.Combine(parentName, newName);

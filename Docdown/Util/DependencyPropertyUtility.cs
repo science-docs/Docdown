@@ -7,7 +7,7 @@ namespace Docdown.Util
     {
         public static readonly DependencyProperty CloseCommandProperty
             = DependencyProperty.RegisterAttached("CloseCommand", typeof(ICommand), typeof(DependencyPropertyUtility));
-        
+
         public static void SetCloseCommand(DependencyObject dependencyObject, ICommand value)
         {
             dependencyObject.SetValue(CloseCommandProperty, value);

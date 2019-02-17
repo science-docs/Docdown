@@ -46,7 +46,7 @@ namespace Docdown.ViewModel
 
     public abstract class ObservableObject : INotifyPropertyChanged
     {
-        private static readonly string VersionString 
+        private static readonly string VersionString
             = typeof(ObservableObject).Assembly.GetName().Version.ToString();
         private static readonly ListTypeCache<PropertyChangedEventHandler> eventHandlerCache
             = new ListTypeCache<PropertyChangedEventHandler>();
@@ -59,7 +59,7 @@ namespace Docdown.ViewModel
         private static ObservableObject mainViewModel;
 
         public string Version => VersionString;
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ObservableObject()
@@ -107,8 +107,8 @@ namespace Docdown.ViewModel
         {
             return await DialogCoordinator.Instance.ShowInputAsync(MainViewModel, title, message, settings);
         }
-    
-        
+
+
 
         private void InspectChangeListener()
         {

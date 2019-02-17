@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Docdown.Util
 {
-    public interface IExpandable<T> where T: IExpandable<T>
+    public interface IExpandable<T> where T : IExpandable<T>
     {
         bool IsExpanded { get; set; }
         IEnumerable<T> Children { get; }
@@ -23,16 +23,16 @@ namespace Docdown.Util
         }
 
         public static void Restore<T>(this IEnumerable<T> own,
-            IEnumerable<T> other, Comparison<T> comparer) where T: class, IExpandable<T>
+            IEnumerable<T> other, Comparison<T> comparer) where T : class, IExpandable<T>
         {
             Restore(own, other, e => e.IsExpanded, e => e.Children, comparer, e => e.IsExpanded = true);
         }
 
-        public static void Restore<T>(this IEnumerable<T> own, 
-            IEnumerable<T> other, 
-            Func<T, bool> filter, 
+        public static void Restore<T>(this IEnumerable<T> own,
+            IEnumerable<T> other,
+            Func<T, bool> filter,
             Func<T, IEnumerable<T>> children,
-            Comparison<T> comparer, 
+            Comparison<T> comparer,
             Action<T> foundAction) where T : class
         {
             if (own == null)

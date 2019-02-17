@@ -36,7 +36,7 @@ namespace Docdown.Util
                 syncAction?.Invoke();
             }
         }
-        
+
         public static T Convert<T>(string value, Func<string, T> func)
         {
             if (string.IsNullOrWhiteSpace(value)) return default;

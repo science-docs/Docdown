@@ -34,8 +34,8 @@ namespace Docdown.Model
             watcher.Created += OnWorkspaceChanged;
             watcher.Deleted += OnWorkspaceChanged;
             watcher.Renamed += OnWorkspaceChanged;
-            watcher.NotifyFilter = NotifyFilters.LastWrite | 
-                                   NotifyFilters.DirectoryName | 
+            watcher.NotifyFilter = NotifyFilters.LastWrite |
+                                   NotifyFilters.DirectoryName |
                                    NotifyFilters.FileName;
             watcher.EnableRaisingEvents = true;
 
