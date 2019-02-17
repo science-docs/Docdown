@@ -14,11 +14,17 @@ namespace Docdown
             {
                 InitializeComponent();
                 DataContext = ObservableObject.MainViewModel = workspaceViewModel = splash.ViewModel.Data;
+                Closing += OnClosing;
             }
             else
             {
                 Close();
             }
+        }
+
+        private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            workspaceViewModel.OnClosing(e);
         }
 
         private void MenuItemExitClicked(object sender, System.Windows.RoutedEventArgs e)

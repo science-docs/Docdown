@@ -154,6 +154,29 @@ namespace Docdown.ViewModel
             };
         }
 
+        public void OnClosing(CancelEventArgs args)
+        {
+            if (OpenItems.Any(e => e.HasChanged))
+            {
+                switch (ShowMessage("Save files", "Do you want to save your files before closing?", MessageBoxButton.YesNoCancel))
+                {
+                    case MessageBoxResult.Yes:
+                        foreach (var openItem in OpenItems)
+                        {
+                            if (openItem.HasChanged)
+                            {
+                                openItem.Save();
+                            }
+                        }
+                        break;
+                    case MessageBoxResult.None:
+                    case MessageBoxResult.Cancel:
+                        args.Cancel = true;
+                        break;
+                }
+            }
+        }
+
         [ChangeListener(nameof(Data))]
         private void DataChanged()
         {
