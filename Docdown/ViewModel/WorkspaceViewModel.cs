@@ -1,4 +1,4 @@
-﻿using Docdown.Model;
+using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Docdown.ViewModel
@@ -158,14 +159,14 @@ namespace Docdown.ViewModel
             OpenItems.Clear();
         }
 
-        private async void OnWorkspaceChanged(object sender, EventArgs args)
+        private void OnWorkspaceChanged(object sender, EventArgs args)
         {
             IgnoreChange = true;
-            var result = await ShowMessageAsync(
+            var result = ShowMessage(
                 "Workspace changed", 
                 "Your workspace was changed externally. Do you want to reload your workspace?", 
-                MessageDialogStyle.AffirmativeAndNegative);
-            if (result == MessageDialogResult.Affirmative)
+                MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
             {
                 var openItems = OpenItems.ToArray();
                 var selectedItemName = SelectedItem?.FullName;

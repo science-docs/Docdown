@@ -93,6 +93,11 @@ namespace Docdown.ViewModel
             }
         }
 
+        protected MessageBoxResult ShowMessage(string title, string message, MessageBoxButton button)
+        {
+            return Util.MessageBox.Show(title, message, button);
+        }
+
         protected async Task<MessageDialogResult> ShowMessageAsync(string title, string message, MessageDialogStyle style = MessageDialogStyle.Affirmative, MetroDialogSettings settings = null)
         {
             return await DialogCoordinator.Instance.ShowMessageAsync(MainViewModel, title, message, style, settings);

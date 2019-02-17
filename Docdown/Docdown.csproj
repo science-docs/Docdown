@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Costura.Fody.3.2.2\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.3.2.2\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -143,6 +143,7 @@
     <Compile Include="Util\Enumerable.cs" />
     <Compile Include="Util\ErrorUtility.cs" />
     <Compile Include="Util\IOUtility.cs" />
+    <Compile Include="Util\MessageBox.cs" />
     <Compile Include="Util\ReflectionUtility.cs" />
     <Compile Include="Util\ResourceUtility.cs" />
     <Compile Include="Util\TextUtility.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="ViewModel\Commands\OpenWindowCommand.cs" />
     <Compile Include="ViewModel\Commands\PrintCommand.cs" />
     <Compile Include="ViewModel\Commands\SearchFolderCommand.cs" />
+    <Compile Include="ViewModel\MessageBoxViewModel.cs" />
     <Compile Include="ViewModel\ObservableObject.cs" />
     <Compile Include="ViewModel\OutlineItemViewModel.cs" />
     <Compile Include="ViewModel\OutlineViewModel.cs" />
@@ -166,6 +168,9 @@
     <Compile Include="ViewModel\WizardViewModel.cs" />
     <Compile Include="ViewModel\WorkspaceItemViewModel.cs" />
     <Compile Include="ViewModel\WorkspaceViewModel.cs" />
+    <Compile Include="Windows\MessageWindow.xaml.cs">
+      <DependentUpon>MessageWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -266,6 +271,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\Windows.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\MessageWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

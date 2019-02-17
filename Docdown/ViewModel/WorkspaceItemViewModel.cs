@@ -1,4 +1,4 @@
-﻿using Docdown.Controls;
+using Docdown.Controls;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Image = System.Windows.Controls.Image;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows;
 
 namespace Docdown.ViewModel
 {
@@ -234,15 +235,18 @@ namespace Docdown.ViewModel
 
         public void Delete()
         {
-            RemoveFromOpenItems();
-            Workspace.IgnoreChange = true;
-            Data.Delete();
-            Workspace.IgnoreChange = false;
-            if (Parent != null)
+            if (!IsNameChanging && ShowMessage("Delete file", $"Are you sure you want to delete \"{Name}\"?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                Parent.childrenCache = Parent.childrenCache.Except(this).ToArray();
+                RemoveFromOpenItems();
+                Workspace.IgnoreChange = true;
+                Data.Delete();
+                Workspace.IgnoreChange = false;
+                if (Parent != null)
+                {
+                    Parent.childrenCache = Parent.childrenCache.Except(this).ToArray();
+                }
+                Workspace.SendPropertyUpdate(nameof(Children));
             }
-            Workspace.SendPropertyUpdate(nameof(Children));
         }
 
         private void RemoveFromOpenItems()
@@ -390,7 +394,7 @@ namespace Docdown.ViewModel
         {
             Workspace.SelectedItem = this;
         }
-
+        
         public int CompareTo(WorkspaceItemViewModel other)
         {
             return FullName.CompareTo(other?.FullName);
