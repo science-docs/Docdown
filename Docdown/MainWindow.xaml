@@ -6,6 +6,7 @@
         xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         xmlns:Controls="clr-namespace:Docdown.Controls"
+        xmlns:ViewModel="clr-namespace:Docdown.ViewModel"
         mc:Ignorable="d"
         TitleCharacterCasing="Normal"
         Title="Docdown - Document Converter" Height="450" Width="800"
@@ -41,6 +42,7 @@
     <Window.InputBindings>
         <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveSelectedItemCommand}"/>
         <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{Binding SaveAllItemsCommand}"/>
+        <KeyBinding Key="F5" Command="{Binding SelectedItem.ConvertCommand}"/>
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -167,8 +169,49 @@
             <Controls:TabView/>
         </Grid>
 
-        <Grid Grid.Row="3" Grid.ColumnSpan="3" Height="23" Background="{DynamicResource AccentBaseColorBrush}">
-            
+        <Grid x:Name="StatusGrid" DataContext="{Binding Messages}" Grid.Row="3" Grid.ColumnSpan="3" Height="23">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Background" Value="{DynamicResource AccentBaseColorBrush}"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding NewestMessage.Type}">
+                            <DataTrigger.Value>
+                                <ViewModel:MessageType>Success</ViewModel:MessageType>
+                            </DataTrigger.Value>
+                            <Setter Property="Background" Value="Green"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding NewestMessage.Type}">
+                            <DataTrigger.Value>
+                                <ViewModel:MessageType>Warning</ViewModel:MessageType>
+                            </DataTrigger.Value>
+                            <Setter Property="Background" Value="Goldenrod"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding NewestMessage.Type}">
+                            <DataTrigger.Value>
+                                <ViewModel:MessageType>Error</ViewModel:MessageType>
+                            </DataTrigger.Value>
+                            <Setter Property="Background" Value="Red"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding NewestMessage.Type}">
+                            <DataTrigger.Value>
+                                <ViewModel:MessageType>Working</ViewModel:MessageType>
+                            </DataTrigger.Value>
+                            <Setter Property="Background" Value="Orange"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="23"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Margin="3"/>
+            <TextBlock Grid.Column="1"
+                       x:Name="StatusIndicator"
+                       Foreground="{StaticResource BlackBrush}"
+                       VerticalAlignment="Center"
+                       Margin="8 0 0 0"
+                       Text="{Binding NewestMessage.ShortMessage}"/>
         </Grid>
     </Grid>
 </Metro:MetroWindow>

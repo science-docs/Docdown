@@ -214,6 +214,10 @@ namespace Docdown.ViewModel
 
         public void Convert()
         {
+            if (!CanConvert)
+                return;
+
+            Workspace.Messages.Working("Compiling...", "");
             ErrorMessage = "";
             IsConverting = true;
             Save();
@@ -223,10 +227,12 @@ namespace Docdown.ViewModel
                 {
                     PdfPath = Data.Convert();
                     ErrorMessage = "";
+                    Workspace.Messages.Success("Succesfully compiled", "");
                 }
                 catch (Exception e)
                 {
                     ErrorMessage = ErrorUtility.GetErrorMessage(e);
+                    Workspace.Messages.Error(ErrorMessage, ErrorMessage);
                 }
 
                 IsConverting = false;
@@ -359,6 +365,7 @@ namespace Docdown.ViewModel
             catch (Exception e)
             {
                 ErrorMessage = ErrorUtility.GetErrorMessage(e);
+                Workspace.Messages.Error(ErrorMessage, ErrorMessage);
             }
             return docViewer;
         }

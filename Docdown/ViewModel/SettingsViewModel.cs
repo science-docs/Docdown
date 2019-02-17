@@ -122,6 +122,12 @@ namespace Docdown.ViewModel
                 if (IsConnected)
                 {
                     LoadTemplates();
+                    workspace.Messages.Success("Connected to server", "Connected to server");
+                }
+                else
+                {
+                    Templates = new[] { Template.Empty };
+                    workspace.Messages.Error("Could not connect to server", "Could not connect to server");
                 }
             }
         }

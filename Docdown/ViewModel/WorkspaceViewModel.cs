@@ -98,6 +98,7 @@ namespace Docdown.ViewModel
 
         public SettingsViewModel Settings { get; }
         public WizardViewModel Wizard { get; }
+        public MessageQueue Messages { get; }
 
         public ICommand SaveSelectedItemCommand => new ActionCommand(SaveSelectedItem);
         public ICommand SaveAllItemsCommand => new ActionCommand(SaveAllItems);
@@ -117,6 +118,7 @@ namespace Docdown.ViewModel
         {
             Settings = new SettingsViewModel(this);
             Wizard = new WizardViewModel(this);
+            Messages = new MessageQueue();
             workspace.WorkspaceChanged += OnWorkspaceChanged;
         }
 

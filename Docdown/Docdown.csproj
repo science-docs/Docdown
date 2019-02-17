@@ -159,6 +159,9 @@
     <Compile Include="ViewModel\Commands\PrintCommand.cs" />
     <Compile Include="ViewModel\Commands\SearchFolderCommand.cs" />
     <Compile Include="ViewModel\MessageBoxViewModel.cs" />
+    <Compile Include="ViewModel\MessageQueue.cs" />
+    <Compile Include="ViewModel\Message.cs" />
+    <Compile Include="ViewModel\ObservableList.cs" />
     <Compile Include="ViewModel\ObservableObject.cs" />
     <Compile Include="ViewModel\OutlineItemViewModel.cs" />
     <Compile Include="ViewModel\OutlineViewModel.cs" />

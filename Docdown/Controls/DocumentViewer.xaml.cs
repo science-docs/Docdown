@@ -45,6 +45,7 @@ namespace Docdown.Controls
                 catch (Exception e)
                 {
                     item.ErrorMessage = ErrorUtility.GetErrorMessage(e);
+                    item.Workspace.Messages.Error(item.ErrorMessage, item.ErrorMessage);
                 }
             }
         }
