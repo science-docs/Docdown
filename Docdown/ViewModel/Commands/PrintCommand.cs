@@ -7,7 +7,8 @@ namespace Docdown.ViewModel.Commands
 {
     public class PrintCommand : DelegateCommand
     {
-        public PrintCommand(WorkspaceViewModel workspace, string fileName, string pdfPath) : base(workspace, fileName, pdfPath)
+        public PrintCommand(WorkspaceViewModel workspace, string fileName, string pdfPath) 
+            : base(workspace ?? throw new ArgumentNullException(nameof(workspace)), fileName, pdfPath)
         {
         }
 
@@ -29,7 +30,14 @@ namespace Docdown.ViewModel.Commands
             {
                 try
                 {
-                    File.Copy(pdfPath, dialog.FileName);
+                    if (File.Exists(dialog.FileName))
+                    {
+                        File.Replace(pdfPath, dialog.FileName, null);
+                    }
+                    else
+                    {
+                        File.Copy(pdfPath, dialog.FileName);
+                    }
                 }
                 catch
                 {

@@ -27,7 +27,7 @@
                     <Setter Property="FocusVisualStyle"      Value="{x:Null}"/>
                     <Setter Property="SelectionForeground"   Value="{x:Null}"/>
                     <Setter Property="SelectionCornerRadius" Value="0.0"/>
-                    <Setter Property="SelectionBrush" Value="{StaticResource AccentColorBrush3}"/>
+                    <Setter Property="SelectionBrush" Value="{StaticResource AccentColorBrush}"/>
                     <Setter Property="SelectionBorder" Value="{x:Null}"/>
                 </Style>
             </AvalonEdit:TextEditor.Resources>

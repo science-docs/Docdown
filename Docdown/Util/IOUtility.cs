@@ -28,5 +28,15 @@ namespace Docdown.Util
         {
             return typeof(IOUtility).Assembly.GetManifestResourceStream(name);
         }
+
+        public static bool IsParent(string parent, string file)
+        {
+            if (string.IsNullOrEmpty(parent))
+                return false;
+
+            parent = parent.Replace('/', '\\');
+            file = file.Replace('/', '\\');
+            return file.StartsWith(parent);
+        }
     }
 }

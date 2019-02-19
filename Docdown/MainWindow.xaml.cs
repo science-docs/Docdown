@@ -1,11 +1,14 @@
 using Docdown.ViewModel;
 using Docdown.Windows;
+using System.IO;
 
 namespace Docdown
 {
     public partial class MainWindow
     {
         WorkspaceViewModel workspaceViewModel;
+
+        
 
         public MainWindow()
         {

@@ -1,4 +1,5 @@
-﻿using MahApps.Metro;
+﻿using Docdown.ViewModel;
+using MahApps.Metro;
 using System;
 using System.Windows;
 
@@ -12,7 +13,7 @@ namespace Docdown
             ThemeManager.AddAppTheme("DarkDoc", GetResourceUri("Resources/Themes/Dark.xaml"));
             ThemeManager.AddAppTheme("LightDoc", GetResourceUri("Resources/Themes/Light.xaml"));
             ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent("BlueDoc"), ThemeManager.GetAppTheme("DarkDoc"));
-            
+            SplashViewModel.Args = e.Args;
             base.OnStartup(e);
         }
 

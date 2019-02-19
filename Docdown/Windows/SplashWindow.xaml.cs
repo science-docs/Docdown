@@ -7,6 +7,8 @@ namespace Docdown.Windows
     {
         public SplashViewModel ViewModel { get; }
 
+        private bool run = false;
+
         public SplashWindow()
         {
             InitializeComponent();
@@ -15,7 +17,11 @@ namespace Docdown.Windows
 
         private void SplashInitialized(object sender, EventArgs e)
         {
-            ViewModel.Initialize();
+            if (!run)
+            {
+                run = true;
+                ViewModel.Initialize();
+            }
         }
 
         private void SetDialogResult(bool? dialogResult)

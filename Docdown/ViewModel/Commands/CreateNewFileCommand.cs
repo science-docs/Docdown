@@ -1,12 +1,12 @@
 ﻿using Docdown.Model;
 using System;
-using System.IO;
 
 namespace Docdown.ViewModel.Commands
 {
     public class CreateNewFileCommand : DelegateCommand
     {
-        public CreateNewFileCommand(WorkspaceItemViewModel workspaceItem) : base(workspaceItem)
+        public CreateNewFileCommand(WorkspaceItemViewModel workspaceItem) 
+            : base(workspaceItem ?? throw new ArgumentNullException(nameof(workspaceItem)))
         {
         }
 
@@ -19,28 +19,24 @@ namespace Docdown.ViewModel.Commands
             }
 
             var workspace = workspaceItem.Workspace;
-
+            workspace.IgnoreChange = true;
             var fullPath = workspaceItem.FullName;
-            FileSystemInfo fsi;
+            WorkspaceItem newItem;
             if (isDirectory)
             {
-                var newDir = Path.Combine(fullPath, "New Folder");
-                Directory.CreateDirectory(newDir);
-                fsi = new DirectoryInfo(newDir);
+                newItem = workspaceItem.Data.CreateNewDirectory("New Folder");
             }
             else
             {
-                var newFile = Path.Combine(fullPath, "NewFile.md");
-                File.Create(newFile).Close();
-                fsi = new FileInfo(newFile);
+                newItem = workspaceItem.Data.CreateNewFile("NewFile", ".md");
             }
-            var item = new WorkspaceItem(fsi, false);
-            var vm = new WorkspaceItemViewModel(workspace, workspaceItem, item);
+            var vm = new WorkspaceItemViewModel(workspace, workspaceItem, newItem);
             if (isDirectory)
             {
                 vm.IsNameChanging = true;
             }
             workspaceItem.AddChild(vm);
+            workspace.IgnoreChange = false;
         }
     }
 }

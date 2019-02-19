@@ -40,24 +40,15 @@ namespace Docdown.ViewModel
             {
                 switch (Data?.Type)
                 {
-                    case WorkspaceItemType.Directory:
-                        return IsExpanded ? "FolderOpenIcon" : "FolderIcon";
-                    case WorkspaceItemType.Audio:
-                        return "AudioIcon";
-                    case WorkspaceItemType.Docx:
-                        return "WordIcon";
-                    case WorkspaceItemType.Image:
-                        return "ImageIcon";
-                    case WorkspaceItemType.Latex:
-                        return "TexIcon";
-                    case WorkspaceItemType.Pdf:
-                        return "PdfIcon";
-                    case WorkspaceItemType.Video:
-                        return "VideoIcon";
-                    case WorkspaceItemType.Markdown:
-                        return "MarkdownIcon";
-                    default:
-                        return "DocumentIcon";
+                    case WorkspaceItemType.Directory: return IsExpanded ? "FolderOpenIcon" : "FolderIcon";
+                    case WorkspaceItemType.Audio: return "AudioIcon";
+                    case WorkspaceItemType.Docx: return "WordIcon";
+                    case WorkspaceItemType.Image: return "ImageIcon";
+                    case WorkspaceItemType.Latex: return "TexIcon";
+                    case WorkspaceItemType.Pdf: return "PdfIcon";
+                    case WorkspaceItemType.Video: return "VideoIcon";
+                    case WorkspaceItemType.Markdown: return "MarkdownIcon";
+                    default: return "DocumentIcon";
                 }
             }
         }
@@ -123,6 +114,7 @@ namespace Docdown.ViewModel
         public ICommand ConvertCommand => new ActionCommand(Convert);
         [ChangeListener(nameof(PdfPath))]
         public ICommand PrintCommand => new PrintCommand(Workspace, Name, PdfPath);
+        public ICommand RenameCommand => new ActionCommand(() => IsNameChanging = true);
         public ICommand CancelNameChangeCommand => new ActionCommand(CancelNameChange);
         public ICommand NameChangeEndCommand => new ActionCommand(NameChangeEnd);
         public ICommand SelectItemCommand => new ActionCommand(SelectItem);
@@ -232,9 +224,11 @@ namespace Docdown.ViewModel
             {
                 try
                 {
+                    var watch = Stopwatch.StartNew();
                     PdfPath = Data.Convert();
                     ErrorMessage = "";
-                    Workspace.Messages.Success("Succesfully compiled", "");
+                    watch.Stop();
+                    Workspace.Messages.Success($"Succesfully compiled in {watch.Elapsed.Seconds}s {watch.Elapsed.Milliseconds}ms", "");
                 }
                 catch (Exception e)
                 {

@@ -49,6 +49,7 @@
                                     <MenuItem Header="File" Command="{Binding NewFileCommand}" CommandParameter="{StaticResource False}"/>
                                     <MenuItem Header="Folder" Command="{Binding NewFileCommand}" CommandParameter="{StaticResource True}"/>
                                 </MenuItem>
+                                <MenuItem Header="Rename" Command="{Binding RenameCommand}"/>
                                 <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
                             </ContextMenu>
                         </StackPanel.ContextMenu>

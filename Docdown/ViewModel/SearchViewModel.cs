@@ -40,7 +40,7 @@ namespace Docdown.ViewModel
             Editor.Editor.TextChanged += TextChanged;
         }
 
-        private void TextChanged(object sender, System.EventArgs e)
+        private void TextChanged(object sender, EventArgs e)
         {
             fullText = null;
             SearchIndex = 0;
@@ -98,6 +98,7 @@ namespace Docdown.ViewModel
 
         private void ShowSearch()
         {
+            Visible = false;
             Visible = true;
             SelectSearchText();
         }
@@ -106,6 +107,16 @@ namespace Docdown.ViewModel
         {
             Visible = false;
             Editor.Editor.Focus();
+        }
+
+        [ChangeListener(nameof(SearchText))]
+        private void SearchChanged()
+        {
+            actualSearch = SearchText;
+            if (!CaseSensitive)
+            {
+                actualSearch = actualSearch.ToLower();
+            }
         }
     }
 }

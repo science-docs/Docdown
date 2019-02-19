@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -157,6 +158,25 @@ namespace Docdown.ViewModel
             };
         }
 
+        public void OpenItem(string fullPath)
+        {
+            var item = SearchForSelectedItem(Item, fullPath);
+            if (item != null)
+            {
+                OpenItems.Add(item);
+                SelectedItem = item;
+            }
+            else
+            {
+                var parent = Path.GetDirectoryName(fullPath);
+                Data = new Workspace(parent)
+                {
+                    ToType = Data.ToType
+                };
+                OpenItem(fullPath);
+            }
+        }
+
         public void OnClosing(CancelEventArgs args)
         {
             if (OpenItems.Any(e => e.HasChanged))
@@ -189,6 +209,7 @@ namespace Docdown.ViewModel
 
         private void OnWorkspaceChanged(object sender, EventArgs args)
         {
+            // in order to ignore multiple messages, simply ignore changes until the message has been answered
             IgnoreChange = true;
             var result = ShowMessage(
                 "Workspace changed", 
@@ -261,6 +282,26 @@ namespace Docdown.ViewModel
                 foreach (var child in vm.Children)
                 {
                     var found = SearchForSelectedItem(child, item);
+                    if (found != null)
+                    {
+                        return found;
+                    }
+                }
+                return null;
+            }
+        }
+
+        private WorkspaceItemViewModel SearchForSelectedItem(WorkspaceItemViewModel vm, string fullPath)
+        {
+            if (vm.FullName == fullPath)
+            {
+                return vm;
+            }
+            else
+            {
+                foreach (var child in vm.Children)
+                {
+                    var found = SearchForSelectedItem(child, fullPath);
                     if (found != null)
                     {
                         return found;
