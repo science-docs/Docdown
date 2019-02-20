@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Docdown.Util
 {
@@ -51,7 +52,7 @@ namespace Docdown.Util
             return ConnectionStatus.Connected;
         }
 
-        public static HttpWebResponse MultipartFormDataPost(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
+        public static HttpWebRequest MultipartFormDataPost(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
         {
             return MultipartFormDataPost(postUrl, postParameters.ToArray());
         }
@@ -64,7 +65,7 @@ namespace Docdown.Util
         /// <param name="postParameters"></param>
         /// <returns></returns>
         /// <exception cref="WebException"/>
-        public static HttpWebResponse MultipartFormDataPost(string postUrl, params MultipartFormParameter[] postParameters)
+        public static HttpWebRequest MultipartFormDataPost(string postUrl, params MultipartFormParameter[] postParameters)
         {
             string formDataBoundary = $"----------{Guid.NewGuid()}";
             string contentType = "multipart/form-data; boundary=" + formDataBoundary;
@@ -83,10 +84,9 @@ namespace Docdown.Util
         /// <param name="formData"></param>
         /// <returns></returns>
         /// <exception cref="WebException"/>
-        private static HttpWebResponse PostForm(string postUrl, string userAgent, string contentType, byte[] formData)
+        private static HttpWebRequest PostForm(string postUrl, string userAgent, string contentType, byte[] formData)
         {
-            var request = WebRequest.Create(postUrl) as HttpWebRequest
-                ?? throw new NullReferenceException("request is not a http request");
+            var request = WebRequest.CreateHttp(postUrl);
 
             // Set up the request properties.
             request.Method = "POST";
@@ -102,7 +102,7 @@ namespace Docdown.Util
                 requestStream.Write(formData, 0, formData.Length);
             }
 
-            return request.GetResponse() as HttpWebResponse;
+            return request;
         }
 
         private static byte[] GetMultipartFormData(IEnumerable<MultipartFormParameter> postParameters, string boundary)

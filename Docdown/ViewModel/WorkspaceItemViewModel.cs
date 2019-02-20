@@ -112,6 +112,7 @@ namespace Docdown.ViewModel
         public ICommand SaveCommand => new ActionCommand(Save);
         public ICommand CloseCommand => new ActionCommand(Close);
         public ICommand ConvertCommand => new ActionCommand(Convert);
+        public ICommand StopConvertCommand => new ActionCommand(StopConvert);
         [ChangeListener(nameof(PdfPath))]
         public ICommand PrintCommand => new PrintCommand(Workspace, Name, PdfPath);
         public ICommand RenameCommand => new ActionCommand(() => IsNameChanging = true);
@@ -170,6 +171,7 @@ namespace Docdown.ViewModel
         private object view;
         private WorkspaceItemViewModel[] childrenCache;
         private OutlineViewModel outline;
+        private CancelToken converterToken;
 
         public WorkspaceItemViewModel(WorkspaceViewModel workspaceViewModel, WorkspaceItemViewModel parent, WorkspaceItem workspaceItem) 
             : base(workspaceItem ?? throw new ArgumentNullException(nameof(workspaceItem)))
@@ -211,30 +213,44 @@ namespace Docdown.ViewModel
             SendPropertyUpdate(nameof(Children));
         }
 
+        public void StopConvert()
+        {
+            if (!IsConverting || converterToken == null)
+                return;
+
+            converterToken.Cancel();
+            ErrorMessage = "";
+            Workspace.Messages.Warning("Compilation cancelled", "");
+        }
+
         public void Convert()
         {
             if (!CanConvert)
                 return;
-
+            
+            converterToken = new CancelToken();
             Workspace.Messages.Working("Compiling...", "");
             ErrorMessage = "";
             IsConverting = true;
             Save();
             Task.Run(() =>
             {
+                var watch = Stopwatch.StartNew();
                 try
                 {
-                    var watch = Stopwatch.StartNew();
-                    PdfPath = Data.Convert();
+                    PdfPath = Data.Convert(converterToken);
                     ErrorMessage = "";
-                    watch.Stop();
                     Workspace.Messages.Success($"Succesfully compiled in {watch.Elapsed.Seconds}s {watch.Elapsed.Milliseconds}ms", "");
                 }
                 catch (Exception e)
                 {
-                    ErrorMessage = ErrorUtility.GetErrorMessage(e);
-                    Workspace.Messages.Error(ErrorMessage, ErrorMessage);
+                    if (!converterToken.IsCanceled)
+                    {
+                        ErrorMessage = ErrorUtility.GetErrorMessage(e);
+                        Workspace.Messages.Error(ErrorMessage, ErrorMessage);
+                    }
                 }
+                watch.Stop();
 
                 IsConverting = false;
             });

@@ -117,8 +117,8 @@
                     Margin="8"/>
             <StackPanel HorizontalAlignment="Right"
                         Orientation="Horizontal">
-                <Button Content="Save" Command="{Binding SaveCommand}"/>
-                <Button Content="Close" Margin="4 8 8 8" IsCancel="True"/>
+                <Button Content="Save" Command="{Binding SaveCommand}" Click="CloseClick"/>
+                <Button Content="Close" Margin="4 8 8 8" Click="CloseClick"/>
             </StackPanel>
         </Grid>
     </Grid>

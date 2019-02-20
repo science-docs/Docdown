@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace PdfiumViewer.Wpf.Util
+namespace Docdown.Util
 {
     public static class ResourceUtility
     {

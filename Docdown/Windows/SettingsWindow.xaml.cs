@@ -8,5 +8,10 @@ namespace Docdown.Windows
         {
             InitializeComponent();
         }
+
+        private void CloseClick(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
     }
 }

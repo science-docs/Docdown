@@ -39,6 +39,7 @@ namespace Docdown.ViewModel
             }
         }
 
+        [ChangeListener(nameof(Templates))]
         public Template SelectedTemplate
         {
             get => Templates.SingleOrDefault(e => e.Name == selectedTemplateName) ?? Template.Empty;
@@ -97,6 +98,7 @@ namespace Docdown.ViewModel
             if (settings.LastWorkspaces == null)
                 settings.LastWorkspaces = new StringCollection();
 
+            selectedTemplateName = settings.Template;
             SetLastWorkspaces(settings.LastWorkspaces.OfType<string>());
         }
 
@@ -161,8 +163,8 @@ namespace Docdown.ViewModel
             }
             catch
             {
-                Templates = new Template[] { Template.Empty };
                 SelectedTemplate = null;
+                Templates = new Template[] { Template.Empty };
             }
         }
 
@@ -172,8 +174,7 @@ namespace Docdown.ViewModel
             var parameter = MultipartFormParameter.FromFolder(path).Concat(new[] { nameParam });
             try
             {
-                WebUtility.MultipartFormDataPost(WebUtility.BuildTemplatesUrl(), parameter).Dispose();
-
+                WebUtility.MultipartFormDataPost(WebUtility.BuildTemplatesUrl(), parameter).GetResponse().Dispose();
                 LoadTemplates();
             }
             catch

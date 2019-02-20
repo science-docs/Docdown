@@ -143,6 +143,7 @@
     <Compile Include="Model\Template.cs" />
     <Compile Include="Model\Workspace.cs" />
     <Compile Include="Model\WorkspaceItem.cs" />
+    <Compile Include="Util\CancelToken.cs" />
     <Compile Include="Util\DependencyPropertyUtility.cs" />
     <Compile Include="Util\Enumerable.cs" />
     <Compile Include="Util\ErrorUtility.cs" />

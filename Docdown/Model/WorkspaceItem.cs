@@ -117,14 +117,22 @@ namespace Docdown.Model
             }
         }
 
-        public string Convert()
+        public string Convert(CancelToken cancelToken)
         {
             var folder = Path.GetDirectoryName(FileSystemInfo.FullName);
 
             string temp = IOUtility.GetTempFile();
-            using (var res = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
+
+            var req = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
                 MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template).Concat(
-                MultipartFormParameter.FromWorkspaceItem(this))))
+                MultipartFormParameter.FromWorkspaceItem(this)));
+
+            if (cancelToken != null)
+            {
+                cancelToken.Canceled += AbortRequest;
+            }
+
+            using (var res = req.GetResponse())
             using (var rs = res.GetResponseStream())
             {
                 using (var fs = File.OpenWrite(temp))
@@ -134,6 +142,11 @@ namespace Docdown.Model
             }
 
             return temp;
+
+            void AbortRequest(object sender, EventArgs e)
+            {
+                req.Abort();
+            }
         }
 
         public void Delete()
