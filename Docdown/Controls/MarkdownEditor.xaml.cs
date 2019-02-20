@@ -4,6 +4,7 @@ using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Folding;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,6 +60,8 @@ namespace Docdown.Controls
         private bool _isModified;
         private int _previousLineCount = -1;
         private bool firstChange = false;
+        private MarkdownFoldingStrategy foldingStrategy;
+        private FoldingManager foldingManager;
 
         public event EventHandler TextChanged;
         public event EventHandler<ThemeChangedEventArgs> ThemeChanged;
@@ -239,6 +242,9 @@ namespace Docdown.Controls
             var colorizer = new MarkdownHighlightingColorizer();
             var blockBackgroundRenderer = new BlockBackgroundRenderer();
 
+            foldingManager = FoldingManager.Install(EditBox.TextArea);
+            foldingStrategy = new MarkdownFoldingStrategy();
+
             TextChanged += (s, e) =>
             {
                 try
@@ -246,6 +252,7 @@ namespace Docdown.Controls
                     AbstractSyntaxTree = GenerateAbstractSyntaxTree(Text);
                     colorizer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
                     blockBackgroundRenderer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
+                    foldingStrategy.UpdateFoldings(foldingManager, AbstractSyntaxTree, EditBox.Text);
                     var headers = EnumerateHeader(AbstractSyntaxTree);
                     Outline = new Outline(headers);
                     if (DataContext is WorkspaceItemViewModel workspaceItem)
