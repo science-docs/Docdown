@@ -1,4 +1,5 @@
-﻿using CommonMark.Syntax;
+﻿using PandocMark.Syntax;
+using Docdown.Util;
 using ICSharpCode.AvalonEdit.Folding;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,10 @@ namespace Docdown.Controls.Markdown
                     break;
                 case BlockTag.FencedCode:
                     var data = block.FencedCodeData;
-                    Name = new string(data.FenceChar, 3) + data.Info;
+                    Name = new string(data.FenceChar, 3) + data.Info + "...";
+                    break;
+                case BlockTag.Meta:
+                    Name = "Metadata...";
                     break;
             }
         }
@@ -66,14 +70,30 @@ namespace Docdown.Controls.Markdown
                     case BlockTag.HtmlBlock:
                         if (block.StringContent.Length > 33)
                         {
-                            yield return new MarkdownFolding(block);
+                            yield return GenerateDefaultFolding(block, text);
                         }
                         break;
                     case BlockTag.FencedCode:
-                        yield return new MarkdownFolding(block);
+                        yield return GenerateDefaultFolding(block, text);
+                        break;
+                    case BlockTag.Meta:
+                        yield return GenerateDefaultFolding(block, text);
                         break;
                 }
             }
+        }
+
+        private MarkdownFolding GenerateDefaultFolding(Block block, string text)
+        {
+            var folding = new MarkdownFolding(block);
+            int end = folding.EndOffset;
+            while (TextUtility.IsBlank(text[end]))
+            {
+                end -= 1;
+            }
+            end += 1;
+            folding.EndOffset = end;
+            return folding;
         }
 
         private MarkdownFolding GenerateHeaderFolding(int index, Block[] blocks, string text)
@@ -91,11 +111,12 @@ namespace Docdown.Controls.Markdown
                     int newLevel = newHeader.Heading.Level;
                     if (newLevel <= level)
                     {
-                        end = newHeader.SourcePosition - NewLineLength + 1;
-                        if (text[end] == '\n')
+                        end = newHeader.SourcePosition - NewLineLength;
+                        while (TextUtility.IsBlank(text[end]))
                         {
                             end -= 1;
                         }
+                        end += 1;
                         break;
                     }
                 }

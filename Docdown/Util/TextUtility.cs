@@ -28,5 +28,18 @@ namespace Docdown.Util
             }
             return sb.ToString();
         }
+
+        public static bool IsBlank(char value)
+        {
+            switch (value)
+            {
+                case ' ':
+                case '\n':
+                case '\r':
+                case '\t':
+                    return true;
+            }
+            return false;
+        }
     }
 }

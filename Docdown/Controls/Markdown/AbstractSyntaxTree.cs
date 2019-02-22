@@ -1,5 +1,5 @@
-﻿using CommonMark;
-using CommonMark.Syntax;
+﻿using PandocMark;
+using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,11 +9,11 @@ namespace Docdown.Controls.Markdown
 {
     public static class AbstractSyntaxTree
     {
-        private static readonly CommonMarkSettings CommonMarkSettings;
+        private static readonly PandocMarkSettings CommonMarkSettings;
 
         static AbstractSyntaxTree()
         {
-            CommonMarkSettings = CommonMarkSettings.Default.Clone();
+            CommonMarkSettings = PandocMarkSettings.Default.Clone();
             CommonMarkSettings.TrackSourcePosition = true;
         }
 
@@ -21,8 +21,8 @@ namespace Docdown.Controls.Markdown
         {
             using (var reader = new StringReader(Normalize(text)))
             {
-                var ast = CommonMarkConverter.ProcessStage1(reader, CommonMarkSettings);
-                CommonMarkConverter.ProcessStage2(ast, CommonMarkSettings);
+                var ast = PandocMarkConverter.ProcessStage1(reader, CommonMarkSettings);
+                PandocMarkConverter.ProcessStage2(ast, CommonMarkSettings);
                 return ast;
             }
         }

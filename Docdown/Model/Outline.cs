@@ -1,4 +1,4 @@
-﻿using CommonMark.Syntax;
+﻿using PandocMark.Syntax;
 using System.Collections.Generic;
 
 namespace Docdown.Model

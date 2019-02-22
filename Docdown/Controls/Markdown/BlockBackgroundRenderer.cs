@@ -1,4 +1,4 @@
-﻿using CommonMark.Syntax;
+﻿using PandocMark.Syntax;
 using ICSharpCode.AvalonEdit.Rendering;
 using System;
 using System.Collections.Generic;

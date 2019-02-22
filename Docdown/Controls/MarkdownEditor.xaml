@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Docdown.Controls"
              xmlns:AvalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+             xmlns:AvalonFolding="clr-namespace:ICSharpCode.AvalonEdit.Folding;assembly=ICSharpCode.AvalonEdit"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.InputBindings>
@@ -27,8 +28,14 @@
                     <Setter Property="FocusVisualStyle"      Value="{x:Null}"/>
                     <Setter Property="SelectionForeground"   Value="{x:Null}"/>
                     <Setter Property="SelectionCornerRadius" Value="0.0"/>
-                    <Setter Property="SelectionBrush" Value="{StaticResource AccentColorBrush}"/>
-                    <Setter Property="SelectionBorder" Value="{x:Null}"/>
+                    <Setter Property="SelectionBrush"        Value="{StaticResource AccentColorBrush}"/>
+                    <Setter Property="SelectionBorder"       Value="{x:Null}"/>
+                </Style>
+                <Style TargetType="{x:Type AvalonFolding:FoldingMargin}">
+                    <Setter Property="FoldingMarkerBrush"                   Value="{DynamicResource BlackBrush}"/>
+                    <Setter Property="FoldingMarkerBackgroundBrush"         Value="{DynamicResource WhiteBrush}"/>
+                    <Setter Property="SelectedFoldingMarkerBrush"           Value="{DynamicResource BlackBrush}"/>
+                    <Setter Property="SelectedFoldingMarkerBackgroundBrush" Value="{DynamicResource GrayBrush2}"/>
                 </Style>
             </AvalonEdit:TextEditor.Resources>
         </AvalonEdit:TextEditor>
