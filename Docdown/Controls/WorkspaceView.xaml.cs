@@ -1,5 +1,6 @@
 ﻿using Docdown.ViewModel;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Docdown.Controls
@@ -13,19 +14,19 @@ namespace Docdown.Controls
 
         private void ViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (DataContext is WorkspaceViewModel workspace && 
-                e.NewValue is WorkspaceItemViewModel workspaceItem)
+            if (DataContext is Explorer explorer && 
+                e.NewValue is Explorer explorerItem)
             {
-                workspace.SelectedWorkspaceItem = workspaceItem;
+                explorer.Workspace.PreSelectedItem = explorerItem.WorkspaceItem;
             }
         }
 
         private void ViewSelectedMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left && 
-                DataContext is WorkspaceViewModel workspace)
+                DataContext is Explorer explorer)
             {
-                workspace.SelectedItem = workspace.SelectedWorkspaceItem;
+                explorer.Workspace.SelectedItem = explorer.Workspace.PreSelectedItem;
                 Keyboard.ClearFocus();
             }
         }

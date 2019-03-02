@@ -1,4 +1,4 @@
-﻿using Docdown.Model;
+using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
@@ -67,7 +67,7 @@ namespace Docdown.ViewModel
             }
         }
 
-        public WorkspaceItemViewModel SelectedWorkspaceItem { get; set; }
+        public WorkspaceItemViewModel PreSelectedItem { get; set; }
 
         [ChangeListener(nameof(Data))]
         public IEnumerable<WorkspaceItemViewModel> Children => new[] { Item };
@@ -103,6 +103,11 @@ namespace Docdown.ViewModel
         public SettingsViewModel Settings { get; }
         public WizardViewModel Wizard { get; }
         public MessageQueue Messages { get; }
+        public Explorer Explorer
+        {
+            get => explorer;
+            private set => Set(ref explorer, value);
+        }
 
         public ICommand SaveSelectedItemCommand => new ActionCommand(SaveSelectedItem);
         public ICommand SaveAllItemsCommand => new ActionCommand(SaveAllItems);
@@ -115,6 +120,7 @@ namespace Docdown.ViewModel
         public ICommand DeleteSelectedItemCommand => new ActionCommand(DeleteSelectedItem);
 
         private string errorMessage;
+        private Explorer explorer;
         private WorkspaceItemViewModel item;
         private WorkspaceItemViewModel selectedItem;
         
@@ -124,6 +130,7 @@ namespace Docdown.ViewModel
             Wizard = new WizardViewModel(this);
             Messages = new MessageQueue();
             workspace.WorkspaceChanged += OnWorkspaceChanged;
+            Explorer = new Explorer(this);
         }
 
         public void CloseAll()
@@ -205,6 +212,7 @@ namespace Docdown.ViewModel
         {
             SelectedItem = null;
             OpenItems.Clear();
+            RefreshExplorer();
         }
 
         private void OnWorkspaceChanged(object sender, EventArgs args)
@@ -257,18 +265,23 @@ namespace Docdown.ViewModel
 
         private void ChangeSelectedItemName()
         {
-            if (SelectedWorkspaceItem != null)
+            if (PreSelectedItem != null)
             {
-                SelectedWorkspaceItem.IsNameChanging = true;
+                PreSelectedItem.IsNameChanging = true;
             }
         }
 
         private void DeleteSelectedItem()
         {
-            if (SelectedWorkspaceItem != null)
+            if (PreSelectedItem != null)
             {
-                SelectedWorkspaceItem.Delete();
+                PreSelectedItem.Delete();
             }
+        }
+
+        public void RefreshExplorer()
+        {
+            Explorer = new Explorer(this);
         }
 
         private WorkspaceItemViewModel SearchForSelectedItem(WorkspaceItemViewModel vm, WorkspaceItem item)

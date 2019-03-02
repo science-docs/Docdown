@@ -1,4 +1,4 @@
-﻿using Docdown.Controls;
+using Docdown.Controls;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -120,6 +120,8 @@ namespace Docdown.ViewModel
         public ICommand NameChangeEndCommand => new ActionCommand(NameChangeEnd);
         public ICommand SelectItemCommand => new ActionCommand(SelectItem);
         public ICommand DeleteCommand => new ActionCommand(Delete);
+        [ChangeListener(nameof(FullName))]
+        public ICommand OpenInExplorerCommand => new OpenExplorerCommand(FullName);
         public ICommand NewFileCommand => new CreateNewFileCommand(this);
 
         public object View
@@ -210,6 +212,7 @@ namespace Docdown.ViewModel
 
             Data.Children.Add(child.Data);
             childrenCache = childrenCache.Concat(new [] { child }).OrderByDescending(e => e.IsDirectory).ToArray();
+            Workspace.RefreshExplorer();
             SendPropertyUpdate(nameof(Children));
         }
 
@@ -268,6 +271,7 @@ namespace Docdown.ViewModel
                 {
                     Parent.childrenCache = Parent.childrenCache.Except(this).ToArray();
                 }
+                Workspace.RefreshExplorer();
                 Workspace.SendPropertyUpdate(nameof(Children));
             }
         }
@@ -278,9 +282,9 @@ namespace Docdown.ViewModel
             {
                 Workspace.SelectedItem = null;
             }
-            if (Workspace.SelectedWorkspaceItem == this)
+            if (Workspace.PreSelectedItem == this)
             {
-                Workspace.SelectedWorkspaceItem = null;
+                Workspace.PreSelectedItem = null;
             }
             Workspace.OpenItems.Remove(this);
             if (childrenCache != null)
@@ -324,6 +328,18 @@ namespace Docdown.ViewModel
         {
             if (Workspace.OpenItems.Contains(this))
             {
+                if (HasChanged)
+                {
+                     switch (ShowMessage("Save file", "Do you want to save your file before closing?", MessageBoxButton.YesNoCancel))
+                     {
+                        case MessageBoxResult.Yes:
+                            Save();
+                            break;
+                        case MessageBoxResult.Cancel:
+                            return;
+                     }
+                }
+
                 bool isSelected = Workspace.SelectedItem == this;
                 if (isSelected)
                 {

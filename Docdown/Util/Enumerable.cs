@@ -12,6 +12,15 @@ namespace Docdown.Util
 
     public static class Enumerable
     {
+        public static IEnumerable<T> Concat<T>(this IEnumerable<T> source, T item)
+        {
+            foreach (var value in source)
+            {
+                yield return value;
+            }
+            yield return item;
+        }
+
         public static IEnumerable<T> Except<T>(this IEnumerable<T> source, T item)
         {
             return source.Where(e => !e.Equals(item));
