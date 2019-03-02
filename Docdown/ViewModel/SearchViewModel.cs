@@ -1,6 +1,7 @@
 ﻿using Docdown.Controls;
 using Docdown.ViewModel.Commands;
 using System;
+using System.Text.RegularExpressions;
 using System.Windows.Input;
 
 namespace Docdown.ViewModel
@@ -21,6 +22,18 @@ namespace Docdown.ViewModel
             set => Set(ref searchText, value);
         }
 
+        public string ReplaceText
+        {
+            get => replaceText;
+            set => Set(ref replaceText, value);
+        }
+
+        public bool IsExpanded
+        {
+            get => expanded;
+            set => Set(ref expanded, value);
+        }
+
         public int SearchIndex { get; private set; }
 
         public bool CaseSensitive { get; set; }
@@ -28,11 +41,15 @@ namespace Docdown.ViewModel
         public ICommand SearchCommand => new ActionCommand(Search);
         public ICommand ShowCommand => new ActionCommand(ShowSearch);
         public ICommand HideCommand => new ActionCommand(HideSearch);
+        public ICommand ReplaceCommand => new ActionCommand(Replace);
+        public ICommand ReplaceAllCommand => new ActionCommand(ReplaceAll);
 
         private string searchText;
+        private string replaceText;
         private string actualSearch;
         private string fullText;
         private bool visible;
+        private bool expanded;
 
         public SearchViewModel(IEditor editor)
         {
@@ -43,7 +60,7 @@ namespace Docdown.ViewModel
         private void TextChanged(object sender, EventArgs e)
         {
             fullText = null;
-            SearchIndex = 0;
+            SearchIndex = -1;
         }
 
         public void SelectSearchText()
@@ -55,23 +72,30 @@ namespace Docdown.ViewModel
                 SearchText = text;
                 SearchIndex = Editor.Editor.SelectionStart + SearchText.Length;
             }
+            else
+            {
+                SearchIndex = -1;
+            }
         }
 
         private void Search()
         {
+            if (string.IsNullOrEmpty(actualSearch))
+            {
+                return;
+            }
+
             if (fullText == null)
             {
                 fullText = Editor.Editor.Text;
-                actualSearch = SearchText;
 
                 if (!CaseSensitive)
                 {
                     fullText = fullText.ToLower();
-                    actualSearch = actualSearch.ToLower();
                 }
             }
 
-            int index = fullText.IndexOf(actualSearch, SearchIndex);
+            int index = fullText.IndexOf(actualSearch, SearchIndex == -1 ? 0 : SearchIndex);
 
             if (index > -1)
             {
@@ -87,6 +111,34 @@ namespace Docdown.ViewModel
             }
         }
 
+        private void Replace()
+        {
+            if (string.IsNullOrEmpty(actualSearch))
+            {
+                return;
+            }
+
+            if (SearchIndex == -1)
+            {
+                Search();
+            }
+            else
+            {
+                ReplaceSelection();
+                Search();
+            }
+        }
+
+        private void ReplaceAll()
+        {
+            if (string.IsNullOrEmpty(actualSearch))
+            {
+                return;
+            }
+
+            Editor.Editor.Text = Regex.Replace(Editor.Editor.Text, actualSearch, replaceText, CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase);
+        }
+
         private void SetSelection(int index)
         {
             SearchIndex = index + actualSearch.Length;
@@ -94,6 +146,11 @@ namespace Docdown.ViewModel
             Editor.Editor.SelectionLength = actualSearch.Length;
             Editor.Editor.TextArea.Caret.Offset = index;
             Editor.Editor.TextArea.Caret.BringCaretToView();
+        }
+
+        private void ReplaceSelection()
+        {
+            Editor.Editor.TextArea.Selection.ReplaceSelectionWithText(ReplaceText);
         }
 
         private void ShowSearch()
@@ -112,7 +169,7 @@ namespace Docdown.ViewModel
         [ChangeListener(nameof(SearchText))]
         private void SearchChanged()
         {
-            actualSearch = SearchText;
+            actualSearch = SearchText ?? string.Empty;
             if (!CaseSensitive)
             {
                 actualSearch = actualSearch.ToLower();

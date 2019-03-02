@@ -10,6 +10,8 @@
     <UserControl.InputBindings>
         <KeyBinding Key="Return" Command="{Binding Search.SearchCommand}"/>
         <KeyBinding Key="Esc" Command="{Binding Search.HideCommand}"/>
+        <KeyBinding Modifiers="Alt" Key="R" Command="{Binding Search.ReplaceCommand}"/>
+        <KeyBinding Modifiers="Alt" Key="A" Command="{Binding Search.ReplaceAllCommand}"/>
     </UserControl.InputBindings>
     <Grid Background="{DynamicResource WhiteBrush}"
           DataContext="{Binding Search}">
@@ -29,12 +31,42 @@
             <RowDefinition Height="3"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
+        <ToggleButton Grid.Row="0" Grid.Column="0" Background="#20FFFFFF" IsChecked="{Binding IsExpanded}" Width="25" Height="25">
+            <ToggleButton.Style>
+                <Style TargetType="{x:Type ToggleButton}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                <Grid x:Name="PART_Grid" Background="{TemplateBinding Background}">
+                                    <ContentPresenter x:Name="PART_ContentPresenter"
+                                                      Margin="{TemplateBinding Padding}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                      Opacity="0.75"
+                                                      RecognizesAccessKey="True"
+                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="PART_Grid" Property="Opacity" Value="1"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="False">
+                                        <Setter TargetName="PART_Grid" Property="Opacity" Value="0"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ToggleButton.Style>
+        </ToggleButton>
         <TextBox Grid.Row="0" 
-                 Grid.Column="0" 
+                 Grid.Column="1" 
                  x:Name="SearchBox"
                  BorderThickness="0" 
                  MinHeight="0"
@@ -45,8 +77,20 @@
                  Background="{StaticResource GrayBrush1}" 
                  Margin="2" 
                  FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"/>
+        <TextBox Grid.Row="1" 
+                 Grid.Column="1" 
+                 x:Name="ReplaceBox"
+                 BorderThickness="0" 
+                 MinHeight="0"
+                 Height="22"
+                 FontSize="11"
+                 Width="120" 
+                 Text="{Binding ReplaceText, UpdateSourceTrigger=PropertyChanged}"
+                 Background="{StaticResource GrayBrush1}" 
+                 Margin="2"
+                 Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <Button Grid.Row="0"
-                Grid.Column="1" 
+                Grid.Column="2" 
                 ToolTip="Search (Enter)"
                 Content="🔍"
                 Style="{StaticResource ChromelessButtonStyle}" 
@@ -57,8 +101,17 @@
                 <ScaleTransform ScaleX="-1" CenterX="12.5"/>
             </Button.RenderTransform>
         </Button>
-        <Button Grid.Row="0" 
+        <Button Grid.Row="1"
                 Grid.Column="2" 
+                ToolTip="Replace next (Alt+R)"
+                Content="R"
+                Style="{StaticResource ChromelessButtonStyle}" 
+                Command="{Binding ReplaceCommand}"
+                Margin="1" 
+                Width="25"
+                Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <Button Grid.Row="0" 
+                Grid.Column="3" 
                 Width="25" 
                 ToolTip="Close (Esc)"
                 Command="{Binding HideCommand}"
@@ -69,6 +122,15 @@
                       Fill="{StaticResource GrayBrush10}"/>
             </Button.Content>
         </Button>
-        <Rectangle Grid.Row="3" Grid.ColumnSpan="3" Fill="{DynamicResource GrayBrush1}"/>
+        <Button Grid.Row="1"
+                Grid.Column="3" 
+                ToolTip="Replace all (Alt+A)"
+                Content="RA"
+                Style="{StaticResource ChromelessButtonStyle}" 
+                Command="{Binding ReplaceAllCommand}"
+                Margin="1" 
+                Width="25"
+                Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <Rectangle Grid.Row="3" Grid.ColumnSpan="4" Fill="{DynamicResource GrayBrush1}"/>
     </Grid>
 </UserControl>
