@@ -77,6 +77,10 @@ namespace PdfiumViewer.Wpf
 
         private static void OnDocumentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            if (e.OldValue is IPdfDocument oldDoc)
+            {
+                oldDoc.Dispose();
+            }
             if (e.NewValue is IPdfDocument document && d is PdfViewer viewer)
             {
                 viewer.DisplayPdf(document);
@@ -88,8 +92,20 @@ namespace PdfiumViewer.Wpf
             if (d is PdfViewer pdfViewer)
             {
                 var path = e.NewValue as string;
-                IPdfDocument doc = !string.IsNullOrWhiteSpace(path) && File.Exists(path) 
-                                        ? PdfDocument.Load(path) : null;
+                IPdfDocument doc;
+                if (!string.IsNullOrWhiteSpace(path) && File.Exists(path))
+                {
+                    using (var fs = File.Open(path, FileMode.Open))
+                    {
+                        var ms = new MemoryStream();
+                        fs.CopyTo(ms);
+                        doc = PdfDocument.Load(ms);
+                    }
+                }
+                else
+                {
+                    doc = null;
+                }
                 pdfViewer.Document = doc;
             }
         }
