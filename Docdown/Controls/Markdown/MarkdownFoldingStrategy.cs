@@ -1,4 +1,4 @@
-﻿using PandocMark.Syntax;
+using PandocMark.Syntax;
 using Docdown.Util;
 using ICSharpCode.AvalonEdit.Folding;
 using System;
@@ -19,6 +19,7 @@ namespace Docdown.Controls.Markdown
             const int MaxHeaderLength = 30;
             switch (block.Tag)
             {
+                case BlockTag.SetextHeading:
                 case BlockTag.AtxHeading:
                     string content = block.InlineContent.LiteralContent;
                     Name = new string('#', block.Heading.Level) + " ";
@@ -64,6 +65,7 @@ namespace Docdown.Controls.Markdown
                 var block = blocks[i];
                 switch (block.Tag)
                 {
+                    case BlockTag.SetextHeading:
                     case BlockTag.AtxHeading:
                         yield return GenerateHeaderFolding(i, blocks, text);
                         break;
@@ -87,7 +89,7 @@ namespace Docdown.Controls.Markdown
         {
             var folding = new MarkdownFolding(block);
             int end = folding.EndOffset;
-            while (TextUtility.IsBlank(text[end]))
+            while (text.Length <= end || TextUtility.IsBlank(text[end]))
             {
                 end -= 1;
             }
@@ -106,7 +108,7 @@ namespace Docdown.Controls.Markdown
             for (int i = index + 1; i < blocks.Length; i++)
             {
                 var newHeader = blocks[i];
-                if (newHeader.Tag == BlockTag.AtxHeading)
+                if (newHeader.Tag == BlockTag.AtxHeading || newHeader.Tag == BlockTag.SetextHeading)
                 {
                     int newLevel = newHeader.Heading.Level;
                     if (newLevel <= level)

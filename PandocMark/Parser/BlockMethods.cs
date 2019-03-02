@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Globalization;
 using PandocMark.Syntax;
 
@@ -685,7 +685,7 @@ namespace PandocMark.Parser
                     container = CreateChildBlock(container, line, BlockTag.AtxHeading, first_nonspace);
                     container.Heading = new HeadingData(level);
                 }
-                else if (!indented && (curChar == '-') && 0 != (matched = Scanner.ScanMetaDataOpen(ln, first_nonspace, ln.Length)))
+                else if (!indented && (curChar == '-') && 3 == (matched = Scanner.ScanMetaDataOpen(ln, first_nonspace, ln.Length)))
                 {
                     container = CreateChildBlock(container, line, BlockTag.Meta, first_nonspace);
                     container.MetaData = new MetaData()

@@ -40,8 +40,7 @@ namespace Docdown.Controls.Markdown
                         : block.SourceLength;
 
                     if (block.Tag == BlockTag.HtmlBlock &&
-                        block.StringContent.Length > 4 &&
-                        block.StringContent.ToString().StartsWith("<!--"))
+                        block.HtmlBlockType == HtmlBlockType.Comment)
                     {
                         highlighter = t => t.HighlightComment;
                     }

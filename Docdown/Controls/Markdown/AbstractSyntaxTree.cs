@@ -1,4 +1,4 @@
-﻿using PandocMark;
+using PandocMark;
 using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
@@ -54,7 +54,7 @@ namespace Docdown.Controls.Markdown
 
         public static IEnumerable<Block> EnumerateHeader(Block ast)
         {
-            return EnumerateBlocks(ast).Where(e => e.Tag == BlockTag.AtxHeading);
+            return EnumerateBlocks(ast).Where(e => e.Tag == BlockTag.AtxHeading || e.Tag == BlockTag.SetextHeading);
         }
 
         public static IEnumerable<Block> EnumerateSpanningBlocks(Block ast, int startOffset, int endOffset)
