@@ -1,4 +1,4 @@
-using Docdown.Model;
+﻿using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
@@ -118,6 +118,7 @@ namespace Docdown.ViewModel
         public ICommand OpenWizardCommand => new OpenWindowCommand<WizardWindow>(Wizard);
         public ICommand ChangeSelectedItemNameCommand => new ActionCommand(ChangeSelectedItemName);
         public ICommand DeleteSelectedItemCommand => new ActionCommand(DeleteSelectedItem);
+        public ICommand ImportCommand => new ImportCommand(this, "markdown");
 
         private string errorMessage;
         private Explorer explorer;
