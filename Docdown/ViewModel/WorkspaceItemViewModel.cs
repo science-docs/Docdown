@@ -1,4 +1,4 @@
-using Docdown.Controls;
+﻿using Docdown.Controls;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -406,6 +406,11 @@ namespace Docdown.ViewModel
         private EditorAndViewer ShowMdEditorAndPdf()
         {
             var editorAndViewer = new EditorAndViewer();
+            var temp = IOUtility.GetHashFile(FullName);
+            if (File.Exists(temp))
+            {
+                PdfPath = temp;
+            }
             string allText = File.ReadAllText(FullName);
             editorAndViewer.Delay(100, () => editorAndViewer.Editor.Text = allText);
             return editorAndViewer;

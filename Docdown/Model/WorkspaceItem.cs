@@ -121,7 +121,7 @@ namespace Docdown.Model
         {
             var folder = Path.GetDirectoryName(FileSystemInfo.FullName);
 
-            string temp = IOUtility.GetTempFile();
+            string temp = IOUtility.GetHashFile(FileSystemInfo.FullName);
 
             var req = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
                 MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template, Settings.Default.Csl).Concat(
