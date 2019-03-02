@@ -18,18 +18,27 @@ namespace Docdown.Util
 
         public static string BuildConvertUrl()
         {
-            return $"{Settings.Default.API}/convert";
+            return BuildUrl(Settings.Default.API, "convert");
         }
 
         public static string BuildTemplatesUrl()
         {
-            return $"{Settings.Default.API}/templates";
+            return BuildUrl(Settings.Default.API, "templates");
+        }
+
+        public static string BuildCslUrl()
+        {
+            return BuildUrl(Settings.Default.API, "csl");
+        }
+
+        public static string BuildUrl(params string[] values)
+        {
+            return Path.Combine(values).Replace('\\', '/');
         }
 
         public static HttpWebResponse SimpleGetRequest(string url)
         {
-            var request = WebRequest.Create(url) as HttpWebRequest
-                ?? throw new NullReferenceException("request is not a http request");
+            var request = WebRequest.CreateHttp(url);
 
             request.Method = "GET";
             request.UserAgent = UserAgent;
@@ -237,7 +246,7 @@ namespace Docdown.Util
             };
         }
 
-        public static IEnumerable<MultipartFormParameter> ApiParameter(ConverterType from, ConverterType to, string template)
+        public static IEnumerable<MultipartFormParameter> ApiParameter(ConverterType from, ConverterType to, string template, string csl)
         {
             if (from != ConverterType.Undefined)
                 yield return CreateField("from", from.ToString().ToLower());
@@ -245,6 +254,8 @@ namespace Docdown.Util
                 yield return CreateField("to", to.ToString().ToLower());
             if (!string.IsNullOrWhiteSpace(template))
                 yield return CreateField("template", template);
+            if (!string.IsNullOrWhiteSpace(csl))
+                yield return CreateField("csl", csl);
         }
 
         public static IEnumerable<MultipartFormParameter> FromFolder(string folderPath)

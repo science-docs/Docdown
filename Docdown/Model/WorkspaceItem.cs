@@ -124,7 +124,7 @@ namespace Docdown.Model
             string temp = IOUtility.GetTempFile();
 
             var req = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
-                MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template).Concat(
+                MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template, Settings.Default.Csl).Concat(
                 MultipartFormParameter.FromWorkspaceItem(this)));
 
             if (cancelToken != null)
@@ -251,9 +251,7 @@ namespace Docdown.Model
             Children.Add(item);
             return item;
         }
-
-
-
+        
         public bool IsDirectory()
         {
             return Type == WorkspaceItemType.Directory;
