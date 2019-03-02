@@ -27,7 +27,7 @@ namespace Docdown.Model
         public FileSystemInfo FileSystemInfo { get; set; }
         public WorkspaceItemType Type { get; set; }
         public List<WorkspaceItem> Children { get; } = new List<WorkspaceItem>();
-        public WorkspaceItem Parent { get; private set; }
+        public WorkspaceItem Parent { get; set; }
         public ConverterType FromType => FromFileType();
         public ConverterType ToType { get; set; } = ConverterType.Pdf;
 

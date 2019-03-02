@@ -32,7 +32,7 @@ namespace Docdown.Util
                     }
                     else
                     {
-                        types = types.Concat(new[] { method.ReturnType });
+                        types = types.Concat(method.ReturnType);
                         delType = Expression.GetFuncType(types.ToArray());
                     }
 

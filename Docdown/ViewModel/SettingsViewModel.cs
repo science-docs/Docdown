@@ -182,7 +182,7 @@ namespace Docdown.ViewModel
             {
                 Csls = JArray.Parse(text)
                     .Select(e => e.Value<string>())
-                    .Concat(new string[] { string.Empty })
+                    .Concat(string.Empty)
                     .OrderBy(e => e)
                     .ToArray();
                 SelectedCsl = settings.Csl;
@@ -231,15 +231,16 @@ namespace Docdown.ViewModel
         public void UploadTemplate(string path)
         {
             var nameParam = MultipartFormParameter.CreateField("name", Path.GetFileName(path));
-            var parameter = MultipartFormParameter.FromFolder(path).Concat(new[] { nameParam });
+            var parameter = MultipartFormParameter.FromFolder(path).Concat(nameParam);
             try
             {
                 WebUtility.MultipartFormDataPost(WebUtility.BuildTemplatesUrl(), parameter).GetResponse().Dispose();
                 LoadTemplates();
+                workspace.Messages.Success("Successfully uploaded template", string.Empty);
             }
             catch
             {
-
+                workspace.Messages.Error("Could not upload template", string.Empty);
             }
         }
 

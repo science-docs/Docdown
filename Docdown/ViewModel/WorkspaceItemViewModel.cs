@@ -103,6 +103,7 @@ namespace Docdown.ViewModel
                 {
                     childrenCache = Data?.Children
                         .OrderByDescending(e => e.IsDirectory())
+                        .ThenBy(e => e.FileSystemInfo.Name)
                         .Select(e => new WorkspaceItemViewModel(Workspace, this, e))
                         .ToArray();
                 }
@@ -195,12 +196,16 @@ namespace Docdown.ViewModel
             }
         }
 
-        public void AddChild(WorkspaceItem child)
+        public WorkspaceItemViewModel AddChild(WorkspaceItem child)
         {
             if (child == null)
                 throw new ArgumentNullException(nameof(child));
 
-            AddChild(new WorkspaceItemViewModel(Workspace, this, child));
+            child.Parent = Data;
+
+            var childViewModel = new WorkspaceItemViewModel(Workspace, this, child);
+            AddChild(childViewModel);
+            return childViewModel;
         }
 
         public void AddChild(WorkspaceItemViewModel child)
@@ -211,7 +216,7 @@ namespace Docdown.ViewModel
             }
 
             Data.Children.Add(child.Data);
-            childrenCache = childrenCache.Concat(new [] { child }).OrderByDescending(e => e.IsDirectory).ToArray();
+            childrenCache = childrenCache.Concat(child).OrderByDescending(e => e.IsDirectory).ThenBy(e => e.Name).ToArray();
             Workspace.RefreshExplorer();
             SendPropertyUpdate(nameof(Children));
         }

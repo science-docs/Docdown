@@ -98,7 +98,7 @@ namespace Docdown.ViewModel.Commands
             if (usesAdditionalParameter)
             {
                 CheckAdditionalParameter(ref parameter);
-                param = param.Concat(new[] { parameter }).ToArray();
+                param = param.Concat(parameter).ToArray();
             }
             Result = del?.DynamicInvoke(param);
         }

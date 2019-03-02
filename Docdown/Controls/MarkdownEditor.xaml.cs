@@ -1,10 +1,10 @@
-﻿using PandocMark.Syntax;
-using Docdown.Controls.Markdown;
+﻿using Docdown.Controls.Markdown;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
+using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

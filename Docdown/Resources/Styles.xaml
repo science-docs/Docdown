@@ -180,7 +180,7 @@
                                       IsItemsHost="true"
                                       KeyboardNavigation.TabIndex="1"/>
                         </Grid>
-                        <Rectangle Grid.Row="1" Height="1" Fill="{DynamicResource AccentBaseColorBrush}"/>
+                        <Rectangle Grid.Row="1" Height="2" Fill="{DynamicResource AccentBaseColorBrush}"/>
                         <Border x:Name="ContentPanel"
                                 Grid.Row="2"
                                 Grid.Column="0"
