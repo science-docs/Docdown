@@ -62,15 +62,23 @@ namespace PdfiumViewer.Wpf
 
         private void DisplayPdf(IPdfDocument document)
         {
+            
             var itemsControl = this.GetDescendantByType<ItemsControl>();
-            pageCache = new PageViewModel[document.PageCount];
-            for (int i = 0; i < pageCache.Length; i++)
+            if (document == null)
             {
-                pageCache[i] = new PageViewModel(document, i)
+                pageCache = new PageViewModel[0];
+            }
+            else
+            {
+                pageCache = new PageViewModel[document.PageCount];
+                for (int i = 0; i < pageCache.Length; i++)
                 {
-                    Orientation = Orientation,
-                    MaxScale = MaxScale
-                };
+                    pageCache[i] = new PageViewModel(document, i)
+                    {
+                        Orientation = Orientation,
+                        MaxScale = MaxScale
+                    };
+                }
             }
             itemsControl.ItemsSource = pageCache;
         }
@@ -81,9 +89,9 @@ namespace PdfiumViewer.Wpf
             {
                 oldDoc.Dispose();
             }
-            if (e.NewValue is IPdfDocument document && d is PdfViewer viewer)
+            if (d is PdfViewer viewer)
             {
-                viewer.DisplayPdf(document);
+                viewer.DisplayPdf(e.NewValue as IPdfDocument);
             }
         }
 
@@ -93,14 +101,25 @@ namespace PdfiumViewer.Wpf
             {
                 var path = e.NewValue as string;
                 IPdfDocument doc;
-                if (!string.IsNullOrWhiteSpace(path) && File.Exists(path))
+                if (File.Exists(path))
                 {
                     using (var fs = File.Open(path, FileMode.Open))
                     {
                         var ms = new MemoryStream();
                         fs.CopyTo(ms);
-                        doc = PdfDocument.Load(ms);
+                        try
+                        {
+                            doc = PdfDocument.Load(ms);
+                        }
+                        catch
+                        {
+                            doc = null;
+                        }
                     }
+                }
+                else if (path == "")
+                {
+                    doc = pdfViewer.Document;
                 }
                 else
                 {

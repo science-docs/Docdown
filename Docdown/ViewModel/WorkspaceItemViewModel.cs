@@ -1,4 +1,4 @@
-﻿using Docdown.Controls;
+using Docdown.Controls;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -241,6 +241,7 @@ namespace Docdown.ViewModel
                 var watch = Stopwatch.StartNew();
                 try
                 {
+                    PdfPath = string.Empty;
                     PdfPath = Data.Convert(converterToken);
                     ErrorMessage = "";
                     Workspace.Messages.Success($"Succesfully compiled in {watch.Elapsed.Seconds}s {watch.Elapsed.Milliseconds}ms", "");
@@ -270,6 +271,18 @@ namespace Docdown.ViewModel
                 if (Parent != null)
                 {
                     Parent.childrenCache = Parent.childrenCache.Except(this).ToArray();
+                }
+                string hash = IOUtility.GetHashFile(FullName);
+                if (File.Exists(hash))
+                {
+                    try
+                    {
+                        File.Delete(hash);
+                    }
+                    catch
+                    {
+                        // Could not delete temp file. This is fine
+                    }
                 }
                 Workspace.RefreshExplorer();
                 Workspace.SendPropertyUpdate(nameof(Children));
