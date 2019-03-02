@@ -2,6 +2,7 @@
 using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -39,6 +40,16 @@ namespace Docdown.ViewModel
             }
         }
 
+        public string SelectedCsl
+        {
+            get => settings.Csl;
+            set
+            {
+                settings.Csl = value;
+                SendPropertyUpdate();
+            }
+        }
+
         [ChangeListener(nameof(Templates))]
         public Template SelectedTemplate
         {
@@ -59,6 +70,12 @@ namespace Docdown.ViewModel
         {
             get => templates;
             set => Set(ref templates, value);
+        }
+
+        public string[] Csls
+        {
+            get => csls;
+            set => Set(ref csls, value);
         }
 
         public bool UseOfflineCompiler
@@ -88,6 +105,7 @@ namespace Docdown.ViewModel
         private readonly Settings settings;
         private readonly WorkspaceViewModel workspace;
         private Template[] templates;
+        private string[] csls;
         private string selectedTemplateName;
         private ConnectionStatus connectionStatus;
 
@@ -106,6 +124,7 @@ namespace Docdown.ViewModel
         {
             settings.Reset();
             selectedTemplateName = string.Empty;
+            SelectedCsl = string.Empty;
             connectionStatus = ConnectionStatus.Undefined;
             ForceUpdate();
         }
@@ -124,13 +143,54 @@ namespace Docdown.ViewModel
                 if (IsConnected)
                 {
                     LoadTemplates();
+                    LoadCsls();
                     workspace.Messages.Success("Connected to server", "Connected to server");
                 }
                 else
                 {
                     Templates = new[] { Template.Empty };
+                    Csls = new[] { string.Empty };
                     workspace.Messages.Error("Could not connect to server", "Could not connect to server");
                 }
+            }
+        }
+
+        public void LoadCsls()
+        {
+            string cslUri = WebUtility.BuildCslUrl();
+
+            string text;
+            try
+            {
+                using (var res = WebUtility.SimpleGetRequest(cslUri))
+                {
+                    using (var rs = res.GetResponseStream())
+                    {
+                        using (var sr = new StreamReader(rs))
+                        {
+                            text = sr.ReadToEnd();
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                text = "[]";
+            }
+
+            try
+            {
+                Csls = JArray.Parse(text)
+                    .Select(e => e.Value<string>())
+                    .Concat(new string[] { string.Empty })
+                    .OrderBy(e => e)
+                    .ToArray();
+                SelectedCsl = settings.Csl;
+            }
+            catch
+            {
+                SelectedCsl = string.Empty;
+                Csls = new[] { string.Empty };
             }
         }
 
@@ -164,7 +224,7 @@ namespace Docdown.ViewModel
             catch
             {
                 SelectedTemplate = null;
-                Templates = new Template[] { Template.Empty };
+                Templates = new[] { Template.Empty };
             }
         }
 

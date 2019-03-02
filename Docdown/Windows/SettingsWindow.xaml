@@ -104,6 +104,17 @@
                     Style="{StaticResource MetroFlatButton}"
                     IsEnabled="{Binding IsConnected}"
                     Margin="0 2"/>
+            <TextBlock Text="Citation Styles"
+                       Margin="0 2"
+                       Style="{StaticResource DefaultInformationStyle}"/>
+            <ComboBox ItemsSource="{Binding Csls}"
+                      SelectedItem="{Binding SelectedCsl}"
+                      IsEnabled="{Binding IsConnected}"
+                      Margin="0 2"/>
+            <Button Content="Upload Citation Style"
+                    Style="{StaticResource MetroFlatButton}"
+                    IsEnabled="False"
+                    Margin="0 2"/>
         </StackPanel>
         <Grid Grid.Row="2" Background="{DynamicResource WhiteBrush}">
             <Grid.Resources>
