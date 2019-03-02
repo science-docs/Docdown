@@ -1,4 +1,4 @@
-﻿using PandocMark.Syntax;
+using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -1078,6 +1078,73 @@ namespace PandocMark.Parser
             InlineStack.PostProcessInlineStack(subj, subj.FirstPendingInline, subj.LastPendingInline, InlineStack.InlineStackPriority.Maximum);
 
             return first;
+        }
+
+        private static readonly string[] todoConst = new[] { "todo", "fixme" };
+        private static readonly string[] todoEnd = new[] { "todo", "fixme", "\n", "-->" };
+        
+        public static Inline ParseHtmlInline(Subject subj)
+        {
+            Inline first = new Inline(InlineTag.String);
+            Inline inline = first;
+
+            int index = -1;
+            int nextIndex = -1;
+            do
+            {
+                index = IndexOfAny(subj.Buffer, todoConst, index + 1, StringComparison.InvariantCultureIgnoreCase);
+                if (index > -1)
+                {
+                    nextIndex = IndexOfAny(subj.Buffer, todoEnd, index + 1);
+                    
+                    while (subj.Buffer[nextIndex] == ' ')
+                    {
+                        nextIndex--;
+                    }
+
+                    if (nextIndex > -1)
+                    {
+                        int pos = subj.Position + index;
+                        int len = nextIndex - index;
+                        var todo = new Inline(InlineTag.Todo, subj.Buffer, pos, len)
+                        {
+                            SourcePosition = pos,
+                            SourceLength = len
+                        };
+                        if (inline.Tag == InlineTag.String)
+                        {
+                            first = todo;
+                            inline = todo;
+                        }
+                        else
+                        {
+                            inline.NextSibling = todo;
+                            inline = inline.NextSibling;
+                        }
+                    }
+                }
+            }
+            while (index > -1);
+
+            return first;
+        }
+
+        private static int IndexOfAny(string text, string[] values, int index, StringComparison stringComparison = StringComparison.CurrentCulture)
+        {
+            int ind = -1;
+            for (int i = 0; i < values.Length; i++)
+            {
+                int newIndex = text.IndexOf(values[i], index, stringComparison);
+                if (ind == -1)
+                {
+                    ind = newIndex;
+                }
+                else if (newIndex > -1)
+                {
+                    ind = Math.Min(ind, newIndex);
+                }
+            }
+            return ind;
         }
 
         // Parse zero or more space characters, including at most one newline.

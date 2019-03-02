@@ -24,9 +24,10 @@ namespace Docdown.Controls.Markdown
         private Highlight _highlightBlockCode = new Highlight { Name = "BlockCode", Foreground = "#AC884C" };
         private Highlight _highlightBlockQuote = new Highlight { Name = "BlockQuote", Foreground = "#8F9D67" };
         private Highlight _highlightLink = new Highlight { Name = "Link", Foreground = "#2aa198", Underline = true };
-        private Highlight _highlightImage = new Highlight { Name = "Image", Foreground = "#6F8F3F", FontWeight = "bold" };
+        private Highlight _highlightImage = new Highlight { Name = "Image", Foreground = "#6F8F3F" };
         private Highlight _highlightComment = new Highlight { Name = "Comment", Foreground = "#5F5A60" };
         private Highlight _highlightTex = new Highlight { Name = "Tex", Foreground = "#3786D4" };
+        private Highlight _highlightTodo = new Highlight { Name = "Todo", Foreground = "#B8D7A3" };
 
         public string Name
         {
@@ -116,6 +117,12 @@ namespace Docdown.Controls.Markdown
         {
             get => _highlightTex;
             set => Set(ref _highlightTex, value);
+        }
+
+        public Highlight HighlightTodo
+        {
+            get => _highlightTodo;
+            set => Set(ref _highlightTodo, value);
         }
 
         public string SpellCheckError

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using PandocMark.Syntax;
 
@@ -293,7 +293,10 @@ namespace PandocMark.Parser
             while (block != null)
             {
                 var tag = block.Tag;
-                if (tag == BlockTag.Paragraph || tag == BlockTag.AtxHeading || tag == BlockTag.SetextHeading)
+                if (tag == BlockTag.Paragraph || 
+                    tag == BlockTag.AtxHeading || 
+                    tag == BlockTag.SetextHeading || 
+                    (tag == BlockTag.HtmlBlock && block.HtmlBlockType == HtmlBlockType.Comment))
                 {
                     sc = block.StringContent;
                     if (sc != null)
@@ -301,9 +304,16 @@ namespace PandocMark.Parser
                         sc.FillSubject(subj);
                         delta = subj.Position;
 
-                        block.InlineContent = InlineMethods.ParseUInline(subj, parsers, specialCharacters);
-                        block.StringContent = null;
-
+                        if (tag == BlockTag.HtmlBlock)
+                        {
+                            block.InlineContent = InlineMethods.ParseHtmlInline(subj);
+                        }
+                        else
+                        {
+                            block.InlineContent = InlineMethods.ParseUInline(subj, parsers, specialCharacters);
+                            block.StringContent = null;
+                        }
+                        
                         if (sc.PositionTracker != null)
                         {
                             sc.PositionTracker.AddBlockOffset(-delta);

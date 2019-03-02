@@ -373,7 +373,6 @@
             // @"^([-][ ]*){3,}[\s]*$",
 
             var count = 0;
-            var x = '\0';
             var ipos = pos;
             while (ipos < sourceLength)
             {

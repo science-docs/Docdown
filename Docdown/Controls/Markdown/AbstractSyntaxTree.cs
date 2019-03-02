@@ -1,4 +1,4 @@
-using PandocMark;
+﻿using PandocMark;
 using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
@@ -49,7 +49,8 @@ namespace Docdown.Controls.Markdown
             {InlineTag.Link, t => t.HighlightLink},
             {InlineTag.Image, t => t.HighlightImage},
             {InlineTag.RawHtml, t => t.HighlightBlockCode},
-            {InlineTag.Tex, t => t.HighlightTex}
+            {InlineTag.Tex, t => t.HighlightTex},
+            {InlineTag.Todo, t => t.HighlightTodo}
         };
 
         public static IEnumerable<Block> EnumerateHeader(Block ast)
