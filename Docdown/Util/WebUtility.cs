@@ -178,14 +178,27 @@ namespace Docdown.Util
         public string Value { get; set; }
         public MultipartFormParameterType Type { get; set; }
 
-        private const string cType = "application/octet-stream";
-        private const string MainFile = "content";
+        private const string BinaryType = "application/octet-stream";
 
         private MultipartFormParameter() { }
 
         public override string ToString()
         {
             return Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is MultipartFormParameter parameter)
+            {
+                return Name == parameter.Name;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
         }
 
         public static MultipartFormParameter CreateField(string name, string value)
@@ -205,7 +218,7 @@ namespace Docdown.Util
 
         public static MultipartFormParameter CreateFile(string name, string fileName)
         {
-            return CreateFile(name, fileName, cType);
+            return CreateFile(name, fileName, BinaryType);
         }
 
         public static MultipartFormParameter CreateFile(string name, string fileName, string contentType)
@@ -222,7 +235,7 @@ namespace Docdown.Util
 
         public static MultipartFormParameter CreateFile(string name, string fileName, byte[] file)
         {
-            return CreateFile(name, fileName, file, cType);
+            return CreateFile(name, fileName, file, BinaryType);
         }
 
         public static MultipartFormParameter CreateFile(string name, string fileName, byte[] file, string contentType)
@@ -249,7 +262,10 @@ namespace Docdown.Util
         public static IEnumerable<MultipartFormParameter> ApiParameter(ConverterType from, ConverterType to, string template, string csl)
         {
             if (from != ConverterType.Undefined)
+            {
                 yield return CreateField("from", from.ToString().ToLower());
+                yield return CreateField("ext", from.GetExtension());
+            }
             if (to != ConverterType.Undefined)
                 yield return CreateField("to", to.ToString().ToLower());
             if (!string.IsNullOrWhiteSpace(template))
@@ -266,38 +282,34 @@ namespace Docdown.Util
 
         public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(WorkspaceItem workspaceItem)
         {
-            return CreateFormData(workspaceItem.Parent, workspaceItem, null).Where(e => e != null);
+            return CreateFormData(workspaceItem, workspaceItem.Parent, null).Where(e => e != null).Distinct();
         }
 
-        private static IEnumerable<MultipartFormParameter> CreateFormData(WorkspaceItem item, WorkspaceItem root, string current)
+        private static IEnumerable<MultipartFormParameter> CreateFormData(WorkspaceItem item, WorkspaceItem parent, string current)
         {
-            if (item == null)
+            if (parent == null)
             {
                 yield break;
             }
-            else if (item.IsDirectory())
+            else if (parent.IsDirectory())
             {
-                string folder = item.FileSystemInfo.Name;
+                string folder = parent.FileSystemInfo.Name;
                 if (!string.IsNullOrWhiteSpace(current))
                     folder = Path.Combine(current, folder);
-                if (item == root || item == root.Parent)
+                if (parent == item || parent == item.Parent)
                     folder = null;
 
-                foreach (var child in item.Children)
+                foreach (var child in parent.Children)
                 {
-                    foreach (var data in CreateFormData(child, root, folder))
+                    foreach (var data in CreateFormData(child, item, folder))
                     {
                         yield return data;
                     }
                 }
             }
-            else if (item == root)
-            {
-                yield return CreateFile(MainFile, item.FileSystemInfo.FullName);
-            }
             else
             {
-                var fsi = item.FileSystemInfo;
+                var fsi = parent.FileSystemInfo;
                 string name = fsi.Name;
 
                 if (!string.IsNullOrWhiteSpace(current))
