@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Docdown.Util
 {
@@ -179,6 +178,7 @@ namespace Docdown.Util
         public MultipartFormParameterType Type { get; set; }
 
         private const string BinaryType = "application/octet-stream";
+        private const string MainFile = "content";
 
         private MultipartFormParameter() { }
 
@@ -277,15 +277,15 @@ namespace Docdown.Util
         public static IEnumerable<MultipartFormParameter> FromFolder(string folderPath)
         {
             var item = new WorkspaceItem(folderPath);
-            return CreateFormData(item, item, null).Where(e => e != null);
+            return CreateFormData(item, item, null, false).Where(e => e != null);
         }
 
-        public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(WorkspaceItem workspaceItem)
+        public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(WorkspaceItem workspaceItem, bool onlySelected)
         {
-            return CreateFormData(workspaceItem, workspaceItem.Parent, null).Where(e => e != null).Distinct();
+            return CreateFormData(workspaceItem, workspaceItem.Parent, null, onlySelected).Where(e => e != null).Distinct();
         }
 
-        private static IEnumerable<MultipartFormParameter> CreateFormData(WorkspaceItem item, WorkspaceItem parent, string current)
+        private static IEnumerable<MultipartFormParameter> CreateFormData(WorkspaceItem item, WorkspaceItem parent, string current, bool onlySelected)
         {
             if (parent == null)
             {
@@ -301,11 +301,15 @@ namespace Docdown.Util
 
                 foreach (var child in parent.Children)
                 {
-                    foreach (var data in CreateFormData(child, item, folder))
+                    foreach (var data in CreateFormData(child, item, folder, onlySelected))
                     {
                         yield return data;
                     }
                 }
+            }
+            else if (onlySelected && item == parent)
+            {
+                yield return CreateFile(MainFile, item.FileSystemInfo.FullName);
             }
             else
             {

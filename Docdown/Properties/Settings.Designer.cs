@@ -105,5 +105,17 @@ namespace Docdown.Properties {
                 this["Csl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CompileOnlySelected {
+            get {
+                return ((bool)(this["CompileOnlySelected"]));
+            }
+            set {
+                this["CompileOnlySelected"] = value;
+            }
+        }
     }
 }

@@ -125,7 +125,7 @@ namespace Docdown.Model
 
             var req = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
                 MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template, Settings.Default.Csl).Concat(
-                MultipartFormParameter.FromWorkspaceItem(this)));
+                MultipartFormParameter.FromWorkspaceItem(this, Settings.Default.CompileOnlySelected)));
 
             if (cancelToken != null)
             {
