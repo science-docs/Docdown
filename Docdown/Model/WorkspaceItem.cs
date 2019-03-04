@@ -25,6 +25,18 @@ namespace Docdown.Model
     public class WorkspaceItem
     {
         public FileSystemInfo FileSystemInfo { get; set; }
+        public string RelativeName
+        {
+            get
+            {
+                string name = FileSystemInfo.Name;
+                if (Parent != null)
+                {
+                    name = Parent.RelativeName + "/" + name;
+                }
+                return name;
+            }
+        }
         public WorkspaceItemType Type { get; set; }
         public List<WorkspaceItem> Children { get; } = new List<WorkspaceItem>();
         public WorkspaceItem Parent { get; set; }

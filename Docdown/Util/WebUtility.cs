@@ -282,38 +282,38 @@ namespace Docdown.Util
 
         public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(WorkspaceItem workspaceItem, bool onlySelected)
         {
-            return CreateFormData(workspaceItem, workspaceItem.Parent, null, onlySelected).Where(e => e != null).Distinct();
+            return CreateFormData(workspaceItem.Parent, workspaceItem, null, onlySelected).Where(e => e != null).Distinct();
         }
 
-        private static IEnumerable<MultipartFormParameter> CreateFormData(WorkspaceItem item, WorkspaceItem parent, string current, bool onlySelected)
+        private static IEnumerable<MultipartFormParameter> CreateFormData(WorkspaceItem item, WorkspaceItem root, string current, bool onlySelected)
         {
-            if (parent == null)
+            if (item == null)
             {
                 yield break;
             }
-            else if (parent.IsDirectory())
+            else if (item.IsDirectory())
             {
-                string folder = parent.FileSystemInfo.Name;
+                string folder = item.FileSystemInfo.Name;
                 if (!string.IsNullOrWhiteSpace(current))
                     folder = Path.Combine(current, folder);
-                if (parent == item || parent == item.Parent)
+                if (item == root || item == root.Parent)
                     folder = null;
 
-                foreach (var child in parent.Children)
+                foreach (var child in item.Children)
                 {
-                    foreach (var data in CreateFormData(child, item, folder, onlySelected))
+                    foreach (var data in CreateFormData(child, root, folder, onlySelected))
                     {
                         yield return data;
                     }
                 }
             }
-            else if (onlySelected && item == parent)
+            else if (onlySelected && root == item)
             {
-                yield return CreateFile(MainFile, item.FileSystemInfo.FullName);
+                yield return CreateFile(MainFile, root.FileSystemInfo.FullName);
             }
             else
             {
-                var fsi = parent.FileSystemInfo;
+                var fsi = item.FileSystemInfo;
                 string name = fsi.Name;
 
                 if (!string.IsNullOrWhiteSpace(current))

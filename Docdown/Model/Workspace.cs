@@ -38,6 +38,7 @@ namespace Docdown.Model
                                    NotifyFilters.DirectoryName |
                                    NotifyFilters.FileName;
             watcher.EnableRaisingEvents = true;
+            watcher.IncludeSubdirectories = true;
 
             timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnChangeTick, Application.Current.Dispatcher)
             {
