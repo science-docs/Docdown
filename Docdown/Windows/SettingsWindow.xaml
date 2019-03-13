@@ -31,6 +31,10 @@
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
             </StackPanel.Resources>
+            <CheckBox Content="Only compile selected file"
+                      Style="{StaticResource DefaultCheckStyle}"
+                      Margin="0 2"
+                      IsChecked="{Binding CompileOnlySelected}"/>
             <CheckBox x:Name="OfflineCompilerCheck"
                       Content="Use offline compiler"
                       Style="{StaticResource DefaultCheckStyle}"

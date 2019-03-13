@@ -1,4 +1,4 @@
-using Docdown.Model;
+﻿using Docdown.Model;
 using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -84,6 +84,16 @@ namespace Docdown.ViewModel
             set
             {
                 settings.UseOfflineCompiler = value;
+                SendPropertyUpdate();
+            }
+        }
+
+        public bool CompileOnlySelected
+        {
+            get => settings.CompileOnlySelected;
+            set
+            {
+                settings.CompileOnlySelected = value;
                 SendPropertyUpdate();
             }
         }
