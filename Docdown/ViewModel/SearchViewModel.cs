@@ -1,4 +1,4 @@
-using Docdown.Controls;
+﻿using Docdown.Controls;
 using Docdown.ViewModel.Commands;
 using System;
 using System.Text.RegularExpressions;
@@ -141,11 +141,20 @@ namespace Docdown.ViewModel
 
         private void SetSelection(int index)
         {
-            SearchIndex = index + actualSearch.Length;
-            Editor.Editor.SelectionStart = index;
-            Editor.Editor.SelectionLength = actualSearch.Length;
-            Editor.Editor.TextArea.Caret.Offset = index;
-            Editor.Editor.TextArea.Caret.BringCaretToView();
+            try
+            {
+                SearchIndex = index + actualSearch.Length;
+                Editor.Editor.SelectionLength = 0;
+                Editor.Editor.SelectionStart = index;
+                Editor.Editor.SelectionLength = actualSearch.Length;
+                Editor.Editor.TextArea.Caret.Offset = index;
+                Editor.Editor.TextArea.Caret.BringCaretToView();
+            }
+            catch
+            {
+                // Selection errored out
+                // this is fine
+            }
         }
 
         private void ReplaceSelection()

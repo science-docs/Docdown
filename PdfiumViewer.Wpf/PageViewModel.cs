@@ -59,8 +59,18 @@ namespace PdfiumViewer.Wpf
         
         private async Task<System.Drawing.Image> QueueRender()
         {
-            return await TaskUtility.Enqueue(() => Document.Render(Page, (int)RenderSize.Width, (int)RenderSize.Height,
-                (float)BitmapUtility.DpiX, (float)BitmapUtility.DpiY, PdfRenderFlags.Annotations));
+            return await TaskUtility.Enqueue(() =>
+            {
+                try
+                {
+                    return Document.Render(Page, (int)RenderSize.Width, (int)RenderSize.Height,
+                        (float)BitmapUtility.DpiX, (float)BitmapUtility.DpiY, PdfRenderFlags.Annotations);
+                }
+                catch
+                {
+                    return null;
+                }
+            });
         }
     }
 }

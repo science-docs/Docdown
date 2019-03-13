@@ -148,7 +148,7 @@ namespace Docdown.Model
             using (var res = req.GetResponse())
             using (var rs = res.GetResponseStream())
             {
-                using (var fs = File.OpenWrite(temp))
+                using (var fs = File.Open(temp, FileMode.Create))
                 {
                     rs.CopyTo(fs);
                 }
