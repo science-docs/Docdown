@@ -1,4 +1,4 @@
-﻿using Docdown.Controls;
+using Docdown.Controls;
 using Docdown.ViewModel.Commands;
 using System;
 using System.Text.RegularExpressions;
@@ -85,7 +85,7 @@ namespace Docdown.ViewModel
                 return;
             }
 
-            if (fullText == null)
+            if (fullText is null)
             {
                 fullText = Editor.Editor.Text;
 

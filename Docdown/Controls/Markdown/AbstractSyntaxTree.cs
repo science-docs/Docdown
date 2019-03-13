@@ -67,7 +67,7 @@ namespace Docdown.Controls.Markdown
 
         public static IEnumerable<Block> EnumerateBlocks(Block block)
         {
-            if (block == null) yield break;
+            if (block is null) yield break;
             var stack = new Stack<Block>();
             stack.Push(block);
             while (stack.Any())
@@ -81,7 +81,7 @@ namespace Docdown.Controls.Markdown
 
         public static IEnumerable<Inline> EnumerateInlines(Inline inline)
         {
-            if (inline == null) yield break;
+            if (inline is null) yield break;
             var stack = new Stack<Inline>();
             stack.Push(inline);
             while (stack.Any())
@@ -95,7 +95,7 @@ namespace Docdown.Controls.Markdown
 
         public static bool PositionSafeForSmartLink(Block ast, int start, int length)
         {
-            if (ast == null) return true;
+            if (ast is null) return true;
             var end = start + length;
             var blockTags = new[] { BlockTag.FencedCode, BlockTag.HtmlBlock, BlockTag.IndentedCode, BlockTag.ReferenceDefinition };
             var inlineTags = new[] { InlineTag.Code, InlineTag.Link, InlineTag.RawHtml, InlineTag.Image };

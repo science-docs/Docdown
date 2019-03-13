@@ -36,10 +36,10 @@ namespace PandocMark.Formatters
         /// <exception cref="ArgumentNullException">when <paramref name="target"/> is <see langword="null"/></exception>
         public HtmlFormatter(TextWriter target, PandocMarkSettings settings)
         {
-            if (target == null)
+            if (target is null)
                 throw new ArgumentNullException(nameof(target));
 
-            if (settings == null)
+            if (settings is null)
                 settings = PandocMarkSettings.Default;
 
             _target = new HtmlTextWriter(target);
@@ -56,7 +56,7 @@ namespace PandocMark.Formatters
         /// </summary>
         public void WriteDocument(Block document)
         {
-            if (document == null)
+            if (document is null)
                 throw new ArgumentNullException(nameof(document));
 
             bool ignoreChildNodes;
@@ -79,7 +79,7 @@ namespace PandocMark.Formatters
                     if (ignoreChildNodes && !node.IsClosing)
                         ignoreUntilBlockCloses = node.Block;
                 }
-                else if (ignoreUntilBlockCloses == null && node.Inline != null)
+                else if (ignoreUntilBlockCloses is null && node.Inline != null)
                 {
                     if (ignoreUntilInlineCloses != null)
                     {
@@ -546,7 +546,7 @@ namespace PandocMark.Formatters
         /// </summary>
         protected void Write(string text)
         {
-            if (text == null)
+            if (text is null)
                 return;
             _target.Write(new StringPart(text, 0, text.Length));
         }
@@ -561,7 +561,7 @@ namespace PandocMark.Formatters
         /// </summary>
         protected void Write(StringContent text)
         {
-            if (text == null)
+            if (text is null)
                 return;
 
             text.WriteTo(_target);
@@ -606,7 +606,7 @@ namespace PandocMark.Formatters
         /// </summary>
         protected void WriteEncodedHtml(StringContent text)
         {
-            if (text == null)
+            if (text is null)
                 return;
 
             HtmlFormatterSlim.EscapeHtml(text, _target);
@@ -617,7 +617,7 @@ namespace PandocMark.Formatters
         /// </summary>
         protected void WriteEncodedHtml(string text)
         {
-            if (text == null)
+            if (text is null)
                 return;
 
             HtmlFormatterSlim.EscapeHtml(new StringPart(text, 0, text.Length), _target);

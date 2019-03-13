@@ -83,7 +83,7 @@
 
                 if (Inline.Tag == InlineTag.String)
                 {
-                    if (Inline.LiteralContent == null)
+                    if (Inline.LiteralContent is null)
                         r += ": <null>";
                     else if (Inline.LiteralContent.Length < 20)
                         r += ": " + Inline.LiteralContent;

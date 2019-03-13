@@ -18,10 +18,10 @@ namespace Docdown.Controls.Markdown
         protected override void ColorizeLine(DocumentLine line)
         {
             var ast = _abstractSyntaxTree;
-            if (ast == null) return;
+            if (ast is null) return;
 
             var theme = _theme;
-            if (theme == null) return;
+            if (theme is null) return;
 
             var start = line.Offset;
             var end = line.EndOffset;

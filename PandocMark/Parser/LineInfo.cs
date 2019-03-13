@@ -40,7 +40,7 @@ namespace PandocMark.Parser
         public override string ToString()
         {
             string ln;
-            if (this.Line == null)
+            if (this.Line is null)
                 ln = string.Empty;
             else if (this.Line.Length < 50)
                 ln = this.Line;

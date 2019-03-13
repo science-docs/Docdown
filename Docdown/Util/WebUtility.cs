@@ -203,9 +203,9 @@ namespace Docdown.Util
 
         public static MultipartFormParameter CreateField(string name, string value)
         {
-            if (name == null)
+            if (name is null)
                 throw new ArgumentNullException(nameof(name));
-            if (value == null)
+            if (value is null)
                 throw new ArgumentNullException(nameof(value));
 
             return new MultipartFormParameter
@@ -240,13 +240,13 @@ namespace Docdown.Util
 
         public static MultipartFormParameter CreateFile(string name, string fileName, byte[] file, string contentType)
         {
-            if (name == null)
+            if (name is null)
                 throw new ArgumentNullException(nameof(name));
-            if (fileName == null)
+            if (fileName is null)
                 throw new ArgumentNullException(nameof(fileName));
-            if (file == null)
+            if (file is null)
                 throw new ArgumentNullException(nameof(file));
-            if (contentType == null)
+            if (contentType is null)
                 throw new ArgumentNullException(nameof(contentType));
 
             return new MultipartFormParameter
@@ -287,7 +287,7 @@ namespace Docdown.Util
 
         private static IEnumerable<MultipartFormParameter> CreateFormData(WorkspaceItem item, WorkspaceItem root, string current, bool onlySelected)
         {
-            if (item == null)
+            if (item is null)
             {
                 yield break;
             }

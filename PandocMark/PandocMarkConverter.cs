@@ -66,10 +66,10 @@ namespace PandocMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)] 
         public static Syntax.Block ProcessStage1(TextReader source, PandocMarkSettings settings = null)
         {
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (settings == null)
+            if (settings is null)
                 settings = PandocMarkSettings.Default;
 
             var cur = Syntax.Block.CreateDocument();
@@ -130,13 +130,13 @@ namespace PandocMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)] 
         public static void ProcessStage2(Syntax.Block document, PandocMarkSettings settings = null)
         {
-            if (document == null)
+            if (document is null)
                 throw new ArgumentNullException(nameof(document));
 
             if (document.Tag != Syntax.BlockTag.Document)
                 throw new ArgumentException("The block element passed to this method must represent a top level document.", nameof(document));
 
-            if (settings == null)
+            if (settings is null)
                 settings = PandocMarkSettings.Default;
 
             try
@@ -166,16 +166,16 @@ namespace PandocMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)] 
         public static void ProcessStage3(Syntax.Block document, TextWriter target, PandocMarkSettings settings = null)
         {
-            if (document == null)
+            if (document is null)
                 throw new ArgumentNullException(nameof(document));
 
-            if (target == null)
+            if (target is null)
                 throw new ArgumentNullException(nameof(target));
 
             if (document.Tag != Syntax.BlockTag.Document)
                 throw new ArgumentException("The block element passed to this method must represent a top level document.", nameof(document));
 
-            if (settings == null)
+            if (settings is null)
                 settings = PandocMarkSettings.Default;
 
             try
@@ -189,7 +189,7 @@ namespace PandocMark
                         Printer.PrintBlocks(target, document, settings);
                         break;
                     case OutputFormat.CustomDelegate:
-                        if (settings.OutputDelegate == null)
+                        if (settings.OutputDelegate is null)
                             throw new PandocMarkException("If `settings.OutputFormat` is set to `CustomDelegate`, the `settings.OutputDelegate` property must be populated.");
                         settings.OutputDelegate(document, target, settings);
                         break;
@@ -222,7 +222,7 @@ namespace PandocMark
         /// <exception cref="IOException">when error occur while reading or writing the data.</exception>
         public static Syntax.Block Parse(TextReader source, PandocMarkSettings settings = null)
         {
-            if (settings == null)
+            if (settings is null)
                 settings = PandocMarkSettings.Default;
 
             var document = ProcessStage1(source, settings);
@@ -241,7 +241,7 @@ namespace PandocMark
         /// <exception cref="IOException">when error occur while reading or writing the data.</exception>
         public static Syntax.Block Parse(string source, PandocMarkSettings settings = null)
         {
-            if (source == null)
+            if (source is null)
                 return null;
 
             using (var reader = new StringReader(source))
@@ -259,7 +259,7 @@ namespace PandocMark
         /// <exception cref="IOException">when error occur while reading or writing the data.</exception>
         public static void Convert(TextReader source, TextWriter target, PandocMarkSettings settings = null)
         {
-            if (settings == null)
+            if (settings is null)
                 settings = PandocMarkSettings.Default;
 
             var document = ProcessStage1(source, settings);
@@ -276,7 +276,7 @@ namespace PandocMark
         /// <returns>The converted data.</returns>
         public static string Convert(string source, PandocMarkSettings settings = null)
         {
-            if (source == null)
+            if (source is null)
                 return null;
 
             using (var reader = new StringReader(source))

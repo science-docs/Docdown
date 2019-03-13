@@ -20,7 +20,7 @@ namespace Docdown.ViewModel
         {
             get
             {
-                if (item == null || item.Data != Data.Item)
+                if (item is null || item.Data != Data.Item)
                 {
                     item = new WorkspaceItemViewModel(this, null, Data.Item)
                     {
@@ -42,7 +42,7 @@ namespace Docdown.ViewModel
         {
             get
             {
-                if (selectedItem == null && Data.SelectedItem != null)
+                if (selectedItem is null && Data.SelectedItem != null)
                 {
                     selectedItem = SearchForSelectedItem(Item, Data.SelectedItem);
                 }
@@ -60,7 +60,7 @@ namespace Docdown.ViewModel
                 selectedItem = value;
                 var item = Data.SelectedItem = value?.Data;
 
-                if (item == null || !item.IsDirectory())
+                if (item is null || !item.IsDirectory())
                 {
                     SendPropertyUpdate();
                 }
@@ -155,7 +155,7 @@ namespace Docdown.ViewModel
 
         public void ChangeWorkspace(string newWorkspace)
         {
-            if (newWorkspace == null)
+            if (newWorkspace is null)
                 return;
 
             Settings.WorkspacePath = newWorkspace;

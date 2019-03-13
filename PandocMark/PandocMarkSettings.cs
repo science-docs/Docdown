@@ -35,7 +35,7 @@ namespace PandocMark
                 if (_outputDelegate != value)
                 {
                     _outputDelegate = value;
-                    OutputFormat = value == null ? default(OutputFormat) : OutputFormat.CustomDelegate;
+                    OutputFormat = value is null ? default(OutputFormat) : OutputFormat.CustomDelegate;
                 }
             }
         }
@@ -127,7 +127,7 @@ namespace PandocMark
             get
             {
                 var p = this._inlineParsers;
-                if (p == null)
+                if (p is null)
                 {
                     p = Parser.InlineMethods.InitializeParsers(this);
                     this._inlineParsers = p;
@@ -147,7 +147,7 @@ namespace PandocMark
             get
             {
                 var v = this._inlineParserSpecialCharacters;
-                if (v == null)
+                if (v is null)
                 {
                     var p = this.InlineParsers;
                     var vs = new List<char>(20);

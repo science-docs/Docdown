@@ -9,7 +9,7 @@ namespace PandocMark.Formatters
     {
         private static string FormatString(string s, StringBuilder buffer)
         {
-            if (s == null)
+            if (s is null)
                 return string.Empty;
 
             int pos = 0;

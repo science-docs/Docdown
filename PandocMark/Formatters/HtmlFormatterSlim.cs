@@ -37,7 +37,7 @@ namespace PandocMark.Formatters
         /// <remarks>Orig: escape_html(inp, preserve_entities)</remarks>
         internal static void EscapeUrl(string input, HtmlTextWriter target)
         {
-            if (input == null)
+            if (input is null)
                 return;
 
             char c;
@@ -381,7 +381,7 @@ namespace PandocMark.Formatters
                     block = null;
                 }
 
-                while (block == null && stack.Count > 0)
+                while (block is null && stack.Count > 0)
                 {
                     var entry = stack.Pop();
 
@@ -479,7 +479,7 @@ namespace PandocMark.Formatters
                     inline = null;
                 }
 
-                while (inline == null && stack.Count > origStackCount)
+                while (inline is null && stack.Count > origStackCount)
                 {
                     var entry = stack.Pop();
                     writer.WriteConstant(entry.Literal);
@@ -659,7 +659,7 @@ namespace PandocMark.Formatters
                     inline = null;
                 }
 
-                while (inline == null && stack.Count > 0)
+                while (inline is null && stack.Count > 0)
                 {
                     var entry = stack.Pop();
                     writer.WriteConstant(entry.Literal);

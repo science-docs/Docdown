@@ -28,7 +28,7 @@ namespace Docdown.Controls.Markdown
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
             var ast = _abstractSyntaxTree;
-            if (ast == null) return;
+            if (ast is null) return;
 
             foreach (var line in textView.VisualLines)
             {

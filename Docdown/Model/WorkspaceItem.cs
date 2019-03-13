@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Docdown.Model
 {
@@ -233,7 +234,7 @@ namespace Docdown.Model
 
             string fullName = Path.Combine(FileSystemInfo.FullName, name);
 
-            if (content == null)
+            if (content is null)
             {
                 content = string.Empty;
             }

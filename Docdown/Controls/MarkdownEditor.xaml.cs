@@ -346,7 +346,7 @@ namespace Docdown.Controls
 
         public Tuple<int, int> VisibleBlockNumber()
         {
-            if (AbstractSyntaxTree == null) return new Tuple<int, int>(1, 0);
+            if (AbstractSyntaxTree is null) return new Tuple<int, int>(1, 0);
             var textView = EditBox.TextArea.TextView;
 
             var max = GetScrollMax();
@@ -414,7 +414,7 @@ namespace Docdown.Controls
         //    if (dea.Data.GetDataPresent(DataFormats.FileDrop))
         //    {
         //        var files = dea.Data.GetData(DataFormats.FileDrop) as string[];
-        //        if (files == null) return;
+        //        if (files is null) return;
 
         //        if (Images.HasImageExtension(files[0]))
         //        {
@@ -526,7 +526,7 @@ namespace Docdown.Controls
         public void InsertHeader(int num)
         {
             var line = EditBox.Document.GetLineByOffset(EditBox.CaretOffset);
-            if (line == null) return;
+            if (line is null) return;
             var header = new string('#', num) + " ";
             EditBox.Document.Insert(line.Offset, header);
         }
@@ -614,7 +614,7 @@ namespace Docdown.Controls
             DependencyPropertyChangedEventArgs ea)
         {
             var editor = (MarkdownEditor)dependencyObject;
-            //if (editor.SpellCheckProvider == null) return;
+            //if (editor.SpellCheckProvider is null) return;
             //editor.SpellCheckProvider.Enabled = (bool)ea.NewValue;
             editor.EditBox.Document.Insert(0, " ");
             editor.EditBox.Document.UndoStack.Undo();

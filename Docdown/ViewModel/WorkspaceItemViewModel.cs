@@ -99,7 +99,7 @@ namespace Docdown.ViewModel
         {
             get
             {
-                if (childrenCache == null)
+                if (childrenCache is null)
                 {
                     childrenCache = Data?.Children
                         .OrderByDescending(e => e.IsDirectory())
@@ -129,7 +129,7 @@ namespace Docdown.ViewModel
         {
             get
             {
-                if (view == null)
+                if (view is null)
                 {
                     view = BuildView();
                     if (view is IEditor editor)
@@ -198,7 +198,7 @@ namespace Docdown.ViewModel
 
         public WorkspaceItemViewModel AddChild(WorkspaceItem child)
         {
-            if (child == null)
+            if (child is null)
                 throw new ArgumentNullException(nameof(child));
 
             child.Parent = Data;
@@ -210,7 +210,7 @@ namespace Docdown.ViewModel
 
         public void AddChild(WorkspaceItemViewModel child)
         {
-            if (child == null || child.Data == null)
+            if (child is null || child.Data is null)
             {
                 throw new ArgumentNullException(nameof(child));
             }
@@ -223,7 +223,7 @@ namespace Docdown.ViewModel
 
         public void StopConvert()
         {
-            if (!IsConverting || converterToken == null)
+            if (!IsConverting || converterToken is null)
                 return;
 
             converterToken.Cancel();

@@ -47,7 +47,7 @@ namespace PandocMark.Syntax
             private bool ShouldSkip(Inline inline)
             {
                 if (inline.Tag == InlineTag.String
-                    && inline.FirstChild == null
+                    && inline.FirstChild is null
                     && inline.LiteralContentValue.Length == 0)
                     return true;
 
@@ -79,7 +79,7 @@ namespace PandocMark.Syntax
                     if (entry.Target != null)
                     {
                         inline = entry.Target;
-                        this.Current = new EnumeratorEntry(true, inline.FirstChild == null, inline);
+                        this.Current = new EnumeratorEntry(true, inline.FirstChild is null, inline);
 
                         if (inline.FirstChild != null)
                         {
@@ -121,7 +121,7 @@ namespace PandocMark.Syntax
                     if (entry.Target != null)
                     {
                         block = entry.Target;
-                        this.Current = new EnumeratorEntry(true, block.FirstChild == null && block.InlineContent == null, block);
+                        this.Current = new EnumeratorEntry(true, block.FirstChild is null && block.InlineContent is null, block);
 
                         if (block.FirstChild != null)
                         {
@@ -130,7 +130,7 @@ namespace PandocMark.Syntax
                         }
                         else if (block.NextSibling != null && block != this._root)
                         {
-                            this._blockStack.Push(new BlockStackEntry(block.NextSibling, block.InlineContent == null ? null : block));
+                            this._blockStack.Push(new BlockStackEntry(block.NextSibling, block.InlineContent is null ? null : block));
                         }
                         else if (block.InlineContent != null)
                         {

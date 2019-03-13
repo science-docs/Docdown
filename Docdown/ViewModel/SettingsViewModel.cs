@@ -1,4 +1,4 @@
-﻿using Docdown.Model;
+using Docdown.Model;
 using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -56,7 +56,7 @@ namespace Docdown.ViewModel
             get => Templates.SingleOrDefault(e => e.Name == selectedTemplateName) ?? Template.Empty;
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     value = Template.Empty;
                 }
@@ -113,7 +113,7 @@ namespace Docdown.ViewModel
         {
             this.workspace = workspace;
             settings = Settings.Default;
-            if (settings.LastWorkspaces == null)
+            if (settings.LastWorkspaces is null)
                 settings.LastWorkspaces = new StringCollection();
 
             selectedTemplateName = settings.Template;

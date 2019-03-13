@@ -122,7 +122,7 @@
             { 
                 LiteralContentValue.Source = value; 
                 LiteralContentValue.StartIndex = 0; 
-                LiteralContentValue.Length = value == null ? 0 : value.Length;
+                LiteralContentValue.Length = value is null ? 0 : value.Length;
             }
         }
 
@@ -177,7 +177,7 @@
             get
             {
                 var x = this.NextSibling;
-                if (x == null)
+                if (x is null)
                     return this;
 
                 while (x.NextSibling != null)

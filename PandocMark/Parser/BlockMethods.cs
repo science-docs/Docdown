@@ -72,7 +72,7 @@ namespace PandocMark.Parser
                 return;
 
             var curSC = block.StringContent;
-            if (curSC == null)
+            if (curSC is null)
             {
                 block.StringContent = curSC = new StringContent();
                 if (lineInfo.IsTrackingPositions)
@@ -101,7 +101,7 @@ namespace PandocMark.Parser
 
                 block = block.LastChild;
 
-                if (block == null)
+                if (block is null)
                     return false;
             }
         }
@@ -242,7 +242,7 @@ namespace PandocMark.Parser
 
         private static void AdjustInlineSourcePosition(Inline inline, PositionTracker tracker, ref Stack<Inline> stack)
         {
-            if (stack == null)
+            if (stack is null)
                 stack = new Stack<Inline>();
 
             while (inline != null)
@@ -844,7 +844,7 @@ namespace PandocMark.Parser
                                         container.Tag != BlockTag.FencedCode &&
                                         container.Tag != BlockTag.Meta &&
                                         !(container.Tag == BlockTag.ListItem &&
-                                          container.FirstChild == null &&
+                                          container.FirstChild is null &&
                                           container.SourcePosition >= line.LineOffset);
 
             Block cont = container;
@@ -874,7 +874,7 @@ namespace PandocMark.Parser
                     Finalize(cur, line);
                     cur = cur.Parent;
 
-                    if (cur == null)
+                    if (cur is null)
                         throw new PandocMarkException("Cannot finalize container block. Last matched container tag = " + last_matched_container.Tag);
 
                 }
@@ -963,7 +963,7 @@ namespace PandocMark.Parser
                 else if (AcceptsLines(container.Tag))
                 {
 
-                    AddLine(container, line, ln, first_nonspace, remainingSpaces, isAddOffsetRequired: container.Parent == null || container.Parent.Tag == BlockTag.Document);
+                    AddLine(container, line, ln, first_nonspace, remainingSpaces, isAddOffsetRequired: container.Parent is null || container.Parent.Tag == BlockTag.Document);
 
                 }
                 else if (container.Tag != BlockTag.ThematicBreak && container.Tag != BlockTag.SetextHeading)

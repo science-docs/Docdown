@@ -72,7 +72,7 @@ namespace PdfiumViewer.Wpf
 
         private bool HasSizeChanged(Size constraint)
         {
-            if (lastSize == null)
+            if (lastSize is null)
             {
                 lastSize = constraint;
                 return false;
@@ -91,7 +91,7 @@ namespace PdfiumViewer.Wpf
         {
             var scrollViewer = this.GetParentByType<ScrollViewer>();
 
-            if (scrollViewer == null)
+            if (scrollViewer is null)
             {
                 return true;
             }

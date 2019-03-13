@@ -44,17 +44,17 @@ namespace Docdown.Util
             Comparison<T> comparer,
             Action<T> foundAction) where T : class
         {
-            if (own == null)
+            if (own is null)
                 throw new ArgumentNullException(nameof(own));
-            if (other == null)
+            if (other is null)
                 throw new ArgumentNullException(nameof(other));
-            if (filter == null)
+            if (filter is null)
                 throw new ArgumentNullException(nameof(filter));
-            if (children == null)
+            if (children is null)
                 throw new ArgumentNullException(nameof(children));
-            if (comparer == null)
+            if (comparer is null)
                 throw new ArgumentNullException(nameof(comparer));
-            if (foundAction == null)
+            if (foundAction is null)
                 throw new ArgumentNullException(nameof(foundAction));
 
             foreach (var child in own)

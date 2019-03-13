@@ -113,10 +113,10 @@ namespace Docdown.ViewModel.Commands
         {
             var addParam = del.Method.GetParameters().Last();
             var methodParamType = addParam.ParameterType;
-            if (parameter == null)
+            if (parameter is null)
             {
                 if (methodParamType.IsValueType &&
-                    Nullable.GetUnderlyingType(methodParamType) == null &&
+                    Nullable.GetUnderlyingType(methodParamType) is null &&
                     !addParam.HasDefaultValue)
                 {
                     throw new Exception("Cannot assign null to non-optional value type");
@@ -153,10 +153,10 @@ namespace Docdown.ViewModel.Commands
 
                 var methodParamType = methodParam.ParameterType;
 
-                if (providedParam == null)
+                if (providedParam is null)
                 {
                     if (methodParamType.IsValueType &&
-                        Nullable.GetUnderlyingType(methodParamType) == null)
+                        Nullable.GetUnderlyingType(methodParamType) is null)
                     {
                         throw new Exception("Cannot assign null to value type");
                     }

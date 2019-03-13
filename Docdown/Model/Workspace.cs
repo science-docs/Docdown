@@ -48,7 +48,7 @@ namespace Docdown.Model
 
         private ConverterType FromSelectedItem()
         {
-            if (SelectedItem == null)
+            if (SelectedItem is null)
                 return ConverterType.Text;
 
             switch (SelectedItem.Type)

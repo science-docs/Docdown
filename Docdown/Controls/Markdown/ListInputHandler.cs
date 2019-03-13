@@ -24,7 +24,7 @@ namespace Docdown.Controls.Markdown
         {
             var document = editor.Document;
             var line = document.GetLineByOffset(editor.SelectionStart)?.PreviousLine;
-            if (line == null) return;
+            if (line is null) return;
             var text = document.GetText(line.Offset, line.Length);
 
             // A poor mans pattern matcher
@@ -46,7 +46,7 @@ namespace Docdown.Controls.Markdown
             void atEndOfList(string symbol, Action action)
             {
                 var previous = line.PreviousLine;
-                if (previous == null || previous.Length == 0) return;
+                if (previous is null || previous.Length == 0) return;
                 var previousText = document.GetText(previous.Offset, previous.Length);
                 if (previousText.StartsWith(symbol)) action();
             }
@@ -97,7 +97,7 @@ namespace Docdown.Controls.Markdown
             DocumentLine line,
             int number)
         {
-            if (line == null) return;
+            if (line is null) return;
             while ((line = line.NextLine) != null)
             {
                 number += 1;

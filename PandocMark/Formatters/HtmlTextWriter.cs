@@ -122,7 +122,7 @@ namespace PandocMark.Formatters
 
         public void Write(char[] value, int index, int count)
         {
-            if (value == null || count == 0)
+            if (value is null || count == 0)
                 return;
 
             if (this._windowsNewLine)

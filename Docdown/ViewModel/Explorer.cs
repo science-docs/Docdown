@@ -18,7 +18,7 @@ namespace Docdown.ViewModel
             get => search;
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     value = string.Empty;
                 }

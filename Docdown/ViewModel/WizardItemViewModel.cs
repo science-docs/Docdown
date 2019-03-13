@@ -33,9 +33,9 @@ namespace Docdown.ViewModel
 
         public static WizardItemViewModel FromXml(WorkspaceViewModel workspace, XElement xml)
         {
-            if (workspace == null)
+            if (workspace is null)
                 throw new ArgumentNullException(nameof(workspace));
-            if (xml == null)
+            if (xml is null)
                 throw new ArgumentNullException(nameof(xml));
 
             var item = new WizardItemViewModel(workspace)

@@ -78,7 +78,7 @@ namespace Docdown.Util
 
         public static T GetDescendantBy<T>(this Visual element, Func<T, bool> filter) where T : Visual
         {
-            if (element == null) return default;
+            if (element is null) return default;
             if (element is T item && filter(item))
             {
                 return item;

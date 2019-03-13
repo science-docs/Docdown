@@ -60,7 +60,7 @@ namespace Docdown.Model
 
         private static bool IsChild(OutlineItem item, int level)
         {
-            if (item == null)
+            if (item is null)
                 return false;
             else
                 return item.Level < level;

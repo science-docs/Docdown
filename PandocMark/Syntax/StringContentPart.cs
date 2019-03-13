@@ -29,7 +29,7 @@
 
         public override string ToString()
         {
-            if (Source == null)
+            if (Source is null)
                 return null;
 
             return Source.Substring(StartIndex, Length);

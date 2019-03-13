@@ -39,7 +39,7 @@ namespace PdfiumViewer.Wpf.Util
         
         public static BitmapSource ToBitmapSource(Bitmap gdiBitmap)
         {
-            if (gdiBitmap == null) return null;
+            if (gdiBitmap is null) return null;
 
             System.Drawing.Imaging.BitmapData data = gdiBitmap.LockBits(new Rectangle(0, 0, 
                 gdiBitmap.Width, gdiBitmap.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, gdiBitmap.PixelFormat);

@@ -14,7 +14,7 @@
 
 //        public void Parse(BookElement parent, string markdown)
 //        {
-//            if (parent == null)
+//            if (parent is null)
 //                throw new ArgumentNullException();
 
 //            string html = Markdig.Markdown.ToHtml(markdown, Pipeline);
@@ -25,7 +25,7 @@
 
 //        public void Parse(BookElement parent, HtmlDocument markdownDocument)
 //        {
-//            if (parent == null)
+//            if (parent is null)
 //                throw new ArgumentNullException();
 
 //            parent.Children.Clear();

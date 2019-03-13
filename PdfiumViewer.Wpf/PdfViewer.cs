@@ -64,7 +64,7 @@ namespace PdfiumViewer.Wpf
         {
             
             var itemsControl = this.GetDescendantByType<ItemsControl>();
-            if (document == null)
+            if (document is null)
             {
                 pageCache = new PageViewModel[0];
             }

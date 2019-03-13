@@ -61,7 +61,7 @@ namespace PandocMark.Parser
         /// </summary>
         private static Reference LookupReference(DocumentData data, StringPart lab)
         {
-            if (data?.ReferenceMap == null)
+            if (data?.ReferenceMap is null)
                 return null;
 
             if (lab.Length > Reference.MaximumReferenceLabelLength)
@@ -178,7 +178,7 @@ namespace PandocMark.Parser
             {
                 if (s[pos] == '\n')
                 {
-                    if (sb == null)
+                    if (sb is null)
                         sb = new StringBuilder(s.Length);
 
                     // newline has to be replaced with ' '
@@ -202,7 +202,7 @@ namespace PandocMark.Parser
                     if (c == ' ' || c == '\n')
                     {
                         // multiple consecutive whitespaces
-                        if (sb == null)
+                        if (sb is null)
                             sb = new StringBuilder(s.Length);
 
                         sb.Append(s, lastPos, pos - lastPos);
@@ -220,7 +220,7 @@ namespace PandocMark.Parser
                 }
             }
 
-            if (sb == null)
+            if (sb is null)
                 return s.Substring(startIndex, count - startIndex + 1);
 
             sb.Append(s, lastPos, count - lastPos + 1);
@@ -344,7 +344,7 @@ namespace PandocMark.Parser
             }
 
             // there are two callers for this method, distinguished by the `closer` argument.
-            // if closer == null it means the method is called during the initial subject parsing and the closer
+            // if closer is null it means the method is called during the initial subject parsing and the closer
             //   characters are at the current position in the subject. The main benefit is that there is nothing
             //   parsed that is located after the matched inline element.
             // if closer != null it means the method is called when the second pass for previously unmatched
@@ -562,7 +562,7 @@ namespace PandocMark.Parser
                 var details = ParseLinkDetails(subj, supportPlaceholderBrackets);
 
                 // try lookup of the brackets themselves
-                if (details == null || details == Reference.SelfReference)
+                if (details is null || details == Reference.SelfReference)
                 {
                     var startpos = istack.StartPosition;
                     var label = new StringPart(subj.Buffer, startpos, endpos - startpos - 1);
@@ -722,7 +722,7 @@ namespace PandocMark.Parser
             {
                 if (result != null)
                 {
-                    if (builder == null)
+                    if (builder is null)
                         builder = new StringBuilder(result, s.Length);
                     else
                         builder.Append(result);
@@ -743,7 +743,7 @@ namespace PandocMark.Parser
                 }
             }
 
-            if (builder == null)
+            if (builder is null)
                 return new Inline(result);
 
             builder.Append(result);
@@ -778,7 +778,7 @@ namespace PandocMark.Parser
                     c = url[searchPos];
                     if (Utilities.IsEscapableSymbol(c))
                     {
-                        if (sb == null) sb = new StringBuilder(url.Length);
+                        if (sb is null) sb = new StringBuilder(url.Length);
                         sb.Append(url, lastPos, searchPos - lastPos - 1);
                         lastPos = searchPos;
                     }
@@ -799,7 +799,7 @@ namespace PandocMark.Parser
                             var decoded = EntityDecoder.DecodeEntity(namedEntity);
                             if (decoded != null)
                             {
-                                if (sb == null) sb = new StringBuilder(url.Length);
+                                if (sb is null) sb = new StringBuilder(url.Length);
                                 sb.Append(url, lastPos, searchPos - match - lastPos);
                                 sb.Append(decoded);
                                 lastPos = searchPos;
@@ -810,13 +810,13 @@ namespace PandocMark.Parser
                             var decoded = EntityDecoder.DecodeEntity(numericEntity);
                             if (decoded != null)
                             {
-                                if (sb == null) sb = new StringBuilder(url.Length);
+                                if (sb is null) sb = new StringBuilder(url.Length);
                                 sb.Append(url, lastPos, searchPos - match - lastPos);
                                 sb.Append(decoded);
                             }
                             else
                             {
-                                if (sb == null) sb = new StringBuilder(url.Length);
+                                if (sb is null) sb = new StringBuilder(url.Length);
                                 sb.Append(url, lastPos, searchPos - match - lastPos);
                                 sb.Append('\uFFFD');
                             }
@@ -827,7 +827,7 @@ namespace PandocMark.Parser
                 }
             }
 
-            if (sb == null)
+            if (sb is null)
                 return url;
 
             sb.Append(url, lastPos, url.Length - lastPos);
@@ -1225,7 +1225,7 @@ namespace PandocMark.Parser
 
             // parse label:
             var lab = ParseReferenceLabel(subj);
-            if (lab == null || lab.Value.Length > Reference.MaximumReferenceLabelLength)
+            if (lab is null || lab.Value.Length > Reference.MaximumReferenceLabelLength)
                 goto INVALID;
 
             if (!Scanner.HasNonWhitespace(lab.Value))

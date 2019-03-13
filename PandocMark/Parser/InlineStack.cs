@@ -77,7 +77,7 @@ namespace PandocMark.Parser
             var istack = searchBackwardsFrom;
             while (true)
             {
-                if (istack == null)
+                if (istack is null)
                 {
                     // this cannot be a closer since there is no opener available.
                     canClose = false;
@@ -117,7 +117,7 @@ namespace PandocMark.Parser
                 subj.LastPendingInline.Next = entry;
             }
 
-            if (subj.FirstPendingInline == null)
+            if (subj.FirstPendingInline is null)
                 subj.FirstPendingInline = entry;
 
             subj.LastPendingInline = entry;
@@ -133,7 +133,7 @@ namespace PandocMark.Parser
         {
             var curPriority = first.Priority;
 
-            if (last == null)
+            if (last is null)
             {
                 if (first.Previous != null)
                     first.Previous.Next = null;
@@ -167,7 +167,7 @@ namespace PandocMark.Parser
                 last = last.Previous;
             }
 
-            if (last == null || first == null)
+            if (last is null || first is null)
                 return;
 
             first.Previous = null;
