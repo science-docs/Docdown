@@ -115,7 +115,7 @@ namespace Docdown.ViewModel
         public ICommand ConvertCommand => new ActionCommand(Convert);
         public ICommand StopConvertCommand => new ActionCommand(StopConvert);
         [ChangeListener(nameof(PdfPath))]
-        public ICommand PrintCommand => new PrintCommand(Workspace, Name, PdfPath);
+        public ICommand PrintCommand => string.IsNullOrEmpty(PdfPath) ? null : new PrintCommand(Workspace, Name, PdfPath);
         public ICommand RenameCommand => new ActionCommand(() => IsNameChanging = true);
         public ICommand CancelNameChangeCommand => new ActionCommand(CancelNameChange);
         public ICommand NameChangeEndCommand => new ActionCommand(NameChangeEnd);

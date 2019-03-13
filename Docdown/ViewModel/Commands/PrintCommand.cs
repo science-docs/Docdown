@@ -1,4 +1,4 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.IO;
 using System.Windows;
@@ -38,6 +38,7 @@ namespace Docdown.ViewModel.Commands
                     {
                         File.Copy(pdfPath, dialog.FileName);
                     }
+                    workspace.Messages.Success("File saved", "");
                 }
                 catch
                 {

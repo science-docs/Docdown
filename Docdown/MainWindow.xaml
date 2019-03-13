@@ -43,6 +43,7 @@
         <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveSelectedItemCommand}"/>
         <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{Binding SaveAllItemsCommand}"/>
         <KeyBinding Key="F5" Command="{Binding SelectedItem.ConvertCommand}"/>
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{Binding SelectedItem.PrintCommand}"/>
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
