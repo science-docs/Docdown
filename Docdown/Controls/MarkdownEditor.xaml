@@ -32,12 +32,18 @@
                     <Setter Property="SelectionBorder"       Value="{x:Null}"/>
                 </Style>
                 <Style TargetType="{x:Type AvalonFolding:FoldingMargin}">
+                    <Setter Property="Cursor"                               Value="Hand"/>
                     <Setter Property="FoldingMarkerBrush"                   Value="{DynamicResource BlackBrush}"/>
                     <Setter Property="FoldingMarkerBackgroundBrush"         Value="{DynamicResource WhiteBrush}"/>
                     <Setter Property="SelectedFoldingMarkerBrush"           Value="{DynamicResource BlackBrush}"/>
                     <Setter Property="SelectedFoldingMarkerBackgroundBrush" Value="{DynamicResource GrayBrush2}"/>
                 </Style>
             </AvalonEdit:TextEditor.Resources>
+            <AvalonEdit:TextEditor.ContextMenu>
+                <ContextMenu>
+                    
+                </ContextMenu>
+            </AvalonEdit:TextEditor.ContextMenu>
         </AvalonEdit:TextEditor>
         <local:SearchControl HorizontalAlignment="Right" 
                              VerticalAlignment="Top" 
