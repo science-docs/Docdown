@@ -26,6 +26,7 @@ namespace Docdown.ViewModel
                     {
                         IsExpanded = true
                     };
+                    item.UpdateFileStatus();
                 }
                 return item;
             }

@@ -43,6 +43,7 @@ namespace Docdown.Model
         public WorkspaceItem Parent { get; set; }
         public ConverterType FromType => FromFileType();
         public ConverterType ToType { get; set; } = ConverterType.Pdf;
+        public bool IsHidden => (FileSystemInfo.Attributes & FileAttributes.Hidden) > 0;
 
         public WorkspaceItem()
         {
@@ -304,7 +305,10 @@ namespace Docdown.Model
         {
             foreach (var dir in directoryInfo.EnumerateFileSystemInfos())
             {
-                yield return new WorkspaceItem(dir, true) { Parent = parent };
+                if (dir.Name != ".git")
+                {
+                    yield return new WorkspaceItem(dir, true) { Parent = parent };
+                }
             }
         }
     }

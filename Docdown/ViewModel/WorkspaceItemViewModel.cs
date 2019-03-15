@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows;
 
 using Image = System.Windows.Controls.Image;
+using LibGit2Sharp;
 
 namespace Docdown.ViewModel
 {
@@ -93,6 +94,12 @@ namespace Docdown.ViewModel
             set => Set(ref pdfPath, value);
         }
         
+        public FileStatus FileStatus
+        {
+            get => fileStatus;
+            set => Set(ref fileStatus, value);
+        }
+
         public SearchViewModel Search { get; private set; }
 
         public IEnumerable<WorkspaceItemViewModel> Children
@@ -175,6 +182,7 @@ namespace Docdown.ViewModel
         private WorkspaceItemViewModel[] childrenCache;
         private OutlineViewModel outline;
         private CancelToken converterToken;
+        private FileStatus fileStatus;
 
         public WorkspaceItemViewModel(WorkspaceViewModel workspaceViewModel, WorkspaceItemViewModel parent, WorkspaceItem workspaceItem) 
             : base(workspaceItem ?? throw new ArgumentNullException(nameof(workspaceItem)))
@@ -183,6 +191,33 @@ namespace Docdown.ViewModel
             Parent = parent;
 
             CanConvert = workspaceItem.IsPlainText();
+        }
+
+        public void UpdateFileStatus()
+        {
+            var repo = Workspace.Data.Repository;
+            if (repo != null)
+            {
+                if (Data.Type != WorkspaceItemType.Directory)
+                {
+                    FileStatus = repo.RetrieveStatus(GitName());
+                }
+                else
+                {
+                    foreach (var child in Children)
+                    {
+                        child.UpdateFileStatus();
+                    }
+                    if (Children.All(e => e.FileStatus == FileStatus.Ignored))
+                    {
+                        FileStatus = FileStatus.Ignored;
+                    }
+                }
+            }
+            else
+            {
+                FileStatus = FileStatus.Unaltered;
+            }
         }
 
         public void InsertTextAtPosition(string text)
@@ -215,6 +250,7 @@ namespace Docdown.ViewModel
                 throw new ArgumentNullException(nameof(child));
             }
 
+            child.FileStatus = FileStatus.NewInWorkdir;
             Data.Children.Add(child.Data);
             childrenCache = childrenCache.Concat(child).OrderByDescending(e => e.IsDirectory).ThenBy(e => e.Name).ToArray();
             Workspace.RefreshExplorer();
@@ -320,6 +356,7 @@ namespace Docdown.ViewModel
             try
             {
                 Data.Rename(newName);
+                UpdateFileStatus();
             }
             catch
             {
@@ -333,13 +370,14 @@ namespace Docdown.ViewModel
 
         public void Save()
         {
-            HasChanged = false;
-            Workspace.IgnoreChange = true;
             if (view is IEditor editorWrapper)
             {
-                File.WriteAllText(Data.FileSystemInfo.FullName, editorWrapper.Editor.Text);
+                HasChanged = false;
+                Workspace.IgnoreChange = true;
+                File.WriteAllText(FullName, editorWrapper.Editor.Text);
+                Workspace.IgnoreChange = false;
+                UpdateFileStatus();
             }
-            Workspace.IgnoreChange = false;
         }
 
         public void Close()
@@ -372,6 +410,13 @@ namespace Docdown.ViewModel
                 }
                 view = null;
             }
+        }
+
+        private string GitName()
+        {
+            var rel = Data.RelativeName;
+            rel = rel.Substring(rel.IndexOf('/') + 1);
+            return rel;
         }
 
         private void CancelNameChange()

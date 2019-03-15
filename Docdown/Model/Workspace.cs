@@ -1,8 +1,6 @@
-﻿using Docdown.Util;
+﻿using LibGit2Sharp;
 using System;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -20,6 +18,8 @@ namespace Docdown.Model
             set => watcher.EnableRaisingEvents = !value;
         }
 
+        public bool GitEnabled => Repository != null;
+        public Repository Repository { get; }
         public event EventHandler WorkspaceChanged;
 
         private readonly FileSystemWatcher watcher;
@@ -27,6 +27,7 @@ namespace Docdown.Model
 
         public Workspace(string path)
         {
+            Repository = SetupGit(path);
             Item = new WorkspaceItem(path);
 
             watcher = new FileSystemWatcher(path);
@@ -76,6 +77,21 @@ namespace Docdown.Model
         {
             timer.Stop();
             WorkspaceChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private Repository SetupGit(string path)
+        {
+            if (!Directory.Exists(Path.Combine(path, ".git")))
+                return null;
+
+            try
+            {
+                return new Repository(path);
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }
