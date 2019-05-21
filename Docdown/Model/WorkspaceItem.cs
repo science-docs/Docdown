@@ -43,7 +43,7 @@ namespace Docdown.Model
         public WorkspaceItem Parent { get; set; }
         public ConverterType FromType => FromFileType();
         public ConverterType ToType { get; set; } = ConverterType.Pdf;
-        public bool IsHidden => (FileSystemInfo.Attributes & FileAttributes.Hidden) > 0;
+        public bool IsHidden => (FileSystemInfo.Attributes & FileAttributes.Hidden) > 0 || (Parent != null && Parent.IsHidden);
 
         public WorkspaceItem()
         {

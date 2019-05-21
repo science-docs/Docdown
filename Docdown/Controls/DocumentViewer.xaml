@@ -6,7 +6,7 @@
              xmlns:PdfViewer="clr-namespace:PdfiumViewer.Wpf;assembly=PdfiumViewer.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="{DynamicResource GrayBrush1}">
+    <Grid Background="{DynamicResource GrayBrush10}">
         <PdfViewer:PdfViewer x:Name="Viewer"
                              DocumentPath="{Binding PdfPath}"
                              MaxScale="2">

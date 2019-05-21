@@ -2,6 +2,8 @@
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
+using MahApps.Metro;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -86,6 +88,15 @@ namespace Docdown.ViewModel
             }
         }
 
+        public Theme Theme
+        {
+            get => theme;
+            set => Set(ref theme, value);
+        }
+
+        [ChangeListener(nameof(Theme))]
+        public string ThemeName => "Lightbulb" + theme;
+
         /// <summary>
         /// Indicates whether the workspace is currently being changed programmatically in order to ignore the change message.
         /// </summary>
@@ -120,14 +131,17 @@ namespace Docdown.ViewModel
         public ICommand ChangeSelectedItemNameCommand => new ActionCommand(ChangeSelectedItemName);
         public ICommand DeleteSelectedItemCommand => new ActionCommand(DeleteSelectedItem);
         public ICommand ImportCommand => new ImportCommand(this, ConverterType.Markdown);
+        public ICommand SwitchThemeCommand => new ActionCommand(SwitchTheme);
 
         private string errorMessage;
         private Explorer explorer;
         private WorkspaceItemViewModel item;
         private WorkspaceItemViewModel selectedItem;
+        private Theme theme;
         
         public WorkspaceViewModel(Workspace workspace) : base(workspace ?? throw new ArgumentNullException(nameof(workspace)))
         {
+            theme = (Theme)Enum.Parse(typeof(Theme), Properties.Settings.Default.Theme);
             Settings = new SettingsViewModel(this);
             Wizard = new WizardViewModel(this);
             Messages = new MessageQueue();
@@ -323,6 +337,32 @@ namespace Docdown.ViewModel
                     }
                 }
                 return null;
+            }
+        }
+
+        public void SwitchTheme()
+        {
+            if (theme == Theme.Dark)
+            {
+                Theme = Theme.Light;
+            }
+            else
+            {
+                Theme = Theme.Dark;
+            }
+            Properties.Settings.Default.Theme = Theme.ToString();
+            Properties.Settings.Default.Save();
+            ThemeManager.ChangeAppStyle(Application.Current, ThemeManager.GetAccent("BlueDoc"), ThemeManager.GetAppTheme(theme + "Doc"));
+            App.ReloadIcons();
+            UpdateIcons(Children);
+        }
+
+        private void UpdateIcons(IEnumerable<WorkspaceItemViewModel> items)
+        {
+            foreach (var item in items)
+            {
+                item.SendPropertyUpdate(nameof(WorkspaceItemViewModel.IconName));
+                UpdateIcons(item.Children);
             }
         }
     }

@@ -27,7 +27,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Border Background="{DynamicResource OverlayBrush}" 
-                BorderBrush="{DynamicResource GrayBrush1}" 
+                BorderBrush="{DynamicResource GrayBrush10}" 
                 BorderThickness="0">
             <TextBlock Text="Workspace Explorer" 
                        Focusable="False"
@@ -36,7 +36,7 @@
                        FontSize="{StaticResource DefaultFontSize}"/>
         </Border>
         <Border Background="{DynamicResource OverlayBrush}" 
-                BorderBrush="{DynamicResource GrayBrush1}" 
+                BorderBrush="{DynamicResource GrayBrush9}" 
                 BorderThickness="0 1"
                 Grid.Row="1">
             <TextBox BorderThickness="0" 

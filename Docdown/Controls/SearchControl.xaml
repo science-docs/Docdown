@@ -74,7 +74,7 @@
                  FontSize="11"
                  Width="120" 
                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                 Background="{StaticResource GrayBrush1}" 
+                 Background="{StaticResource GrayBrush9}" 
                  Margin="2" 
                  FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"/>
         <TextBox Grid.Row="1" 
@@ -86,7 +86,7 @@
                  FontSize="11"
                  Width="120" 
                  Text="{Binding ReplaceText, UpdateSourceTrigger=PropertyChanged}"
-                 Background="{StaticResource GrayBrush1}" 
+                 Background="{StaticResource GrayBrush9}" 
                  Margin="2"
                  Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <Button Grid.Row="0"
@@ -119,7 +119,7 @@
                 Margin="1">
             <Button.Content>
                 <Path Data="F1M0 0 2 0 6 3.5 10 0 12 0 7 4.5 12 9 10 9 6 5.5 2 9 0 9 5 4.5z" 
-                      Fill="{StaticResource GrayBrush10}"/>
+                      Fill="{StaticResource GrayBrush2}"/>
             </Button.Content>
         </Button>
         <Button Grid.Row="1"
@@ -131,6 +131,6 @@
                 Margin="1" 
                 Width="25"
                 Visibility="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-        <Rectangle Grid.Row="3" Grid.ColumnSpan="4" Fill="{DynamicResource GrayBrush1}"/>
+        <Rectangle Grid.Row="3" Grid.ColumnSpan="4" Fill="{DynamicResource GrayBrush9}"/>
     </Grid>
 </UserControl>

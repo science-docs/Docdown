@@ -11,7 +11,7 @@
         TitleTemplate="{StaticResource DefaultTitleTemplate}"
         IconTemplate="{StaticResource DefaultIconTemplate}"
         WindowStartupLocation="CenterOwner" Background="{DynamicResource WhiteBrush}">
-    <Grid Background="{DynamicResource BlackBrush}">
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
             <RowDefinition Height="*"/>

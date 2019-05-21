@@ -7,17 +7,24 @@
     <Color x:Key="BlackColor">#FFFFFFFF</Color>
     <Color x:Key="WhiteColor">#FF2D2D2D</Color>
 
-    <Color x:Key="Gray1">#FF3F3F3F</Color>
-    <Color x:Key="Gray2">#FF7F7F7F</Color>
-    <Color x:Key="Gray7">#FFD8D8D9</Color>
-    <Color x:Key="Gray8">#FFE0E0E0</Color>
-    <Color x:Key="Gray10">#FFF7F7F7</Color>
+    <Color x:Key="Gray1">#FFECECEC</Color>
+    <Color x:Key="Gray2">#FFD9D9D9</Color>
+    <Color x:Key="Gray3">#FFC6C6C6</Color>
+    <Color x:Key="Gray4">#FFB3B3B3</Color>
+    <Color x:Key="Gray5">#FFA0A0A0</Color>
+    <Color x:Key="Gray6">#FF8C8C8C</Color>
+    <Color x:Key="Gray7">#FF797979</Color>
+    <Color x:Key="Gray8">#FF666666</Color>
+    <Color x:Key="Gray9">#FF535353</Color>
+    <Color x:Key="Gray10">#FF404040</Color>
 
-    <Color x:Key="GrayNormal">#FFBEBEBE</Color>
-    <Color x:Key="GrayHover">#FF333333</Color>
+    <Color x:Key="GrayNormal">#FF7D7D7D</Color>
+    <Color x:Key="GrayHover">#FFAAAAAA</Color>
 
     <Color x:Key="FlyoutColor">#FFFFFFFF</Color>
 
+    <Color x:Key="BlueColor">#FF7AC0FF</Color>
+    
     <!--  re-set brushes too  -->
     <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="TextBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />
@@ -30,6 +37,8 @@
     <SolidColorBrush x:Key="ComboBoxMouseOverBorderBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="ComboBoxMouseOverInnerBorderBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />
 
+    <SolidColorBrush x:Key="BlueBrush" Color="{StaticResource BlueColor}" options:Freeze="True" />
+    
     <SolidColorBrush x:Key="ControlBackgroundBrush" Color="{StaticResource WhiteColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource WhiteColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="WhiteColorBrush" Color="{StaticResource WhiteColor}" options:Freeze="True" />
@@ -41,8 +50,13 @@
 
     <SolidColorBrush x:Key="GrayBrush1" Color="{StaticResource Gray1}" options:Freeze="True" />
     <SolidColorBrush x:Key="GrayBrush2" Color="{StaticResource Gray2}" options:Freeze="True" />
+    <SolidColorBrush x:Key="GrayBrush3" Color="{StaticResource Gray3}" options:Freeze="True" />
+    <SolidColorBrush x:Key="GrayBrush4" Color="{StaticResource Gray4}" options:Freeze="True" />
+    <SolidColorBrush x:Key="GrayBrush5" Color="{StaticResource Gray5}" options:Freeze="True" />
+    <SolidColorBrush x:Key="GrayBrush6" Color="{StaticResource Gray6}" options:Freeze="True" />
     <SolidColorBrush x:Key="GrayBrush7" Color="{StaticResource Gray7}" options:Freeze="True" />
     <SolidColorBrush x:Key="GrayBrush8" Color="{StaticResource Gray8}" options:Freeze="True" />
+    <SolidColorBrush x:Key="GrayBrush9" Color="{StaticResource Gray9}" options:Freeze="True" />
     <SolidColorBrush x:Key="GrayBrush10" Color="{StaticResource Gray10}" options:Freeze="True" />
 
     <SolidColorBrush x:Key="GrayNormalBrush" Color="{StaticResource GrayNormal}" options:Freeze="True" />

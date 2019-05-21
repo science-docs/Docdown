@@ -5,19 +5,26 @@
                     mc:Ignorable="options">
 
     <Color x:Key="BlackColor">#FF000000</Color>
-    <Color x:Key="WhiteColor">#FFE0E0E0</Color>
+    <Color x:Key="WhiteColor">#FFEFEFF2</Color>
 
-    <Color x:Key="Gray1">#FF333333</Color>
-    <Color x:Key="Gray2">#FF7F7F7F</Color>
-    <Color x:Key="Gray7">#FFD8D8D9</Color>
-    <Color x:Key="Gray8">#FFE0E0E0</Color>
-    <Color x:Key="Gray10">#FFF7F7F7</Color>
+    <Color x:Key="Gray1">#FF161616</Color>
+    <Color x:Key="Gray2">#FF2B2B2C</Color>
+    <Color x:Key="Gray3">#FF414142</Color>
+    <Color x:Key="Gray4">#FF575758</Color>
+    <Color x:Key="Gray5">#FF6D6D6E</Color>
+    <Color x:Key="Gray6">#FF828284</Color>
+    <Color x:Key="Gray7">#FF98989A</Color>
+    <Color x:Key="Gray8">#FFAEAEB0</Color>
+    <Color x:Key="Gray9">#FFC4C4C6</Color>
+    <Color x:Key="Gray10">#FFD9D9DC</Color>
 
     <Color x:Key="GrayNormal">#FFBEBEBE</Color>
     <Color x:Key="GrayHover">#FF333333</Color>
 
     <Color x:Key="FlyoutColor">#FFFFFFFF</Color>
 
+    <Color x:Key="BlueColor">#FF00529C</Color>
+    
     <!--  re-set brushes too  -->
     <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="TextBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />
@@ -30,6 +37,8 @@
     <SolidColorBrush x:Key="ComboBoxMouseOverBorderBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="ComboBoxMouseOverInnerBorderBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />
 
+    <SolidColorBrush x:Key="BlueBrush" Color="{StaticResource BlueColor}" options:Freeze="True" />
+    
     <SolidColorBrush x:Key="ControlBackgroundBrush" Color="{StaticResource WhiteColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource WhiteColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="WhiteColorBrush" Color="{StaticResource WhiteColor}" options:Freeze="True" />
