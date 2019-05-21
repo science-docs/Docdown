@@ -4,8 +4,5 @@
     <Unmanaged32Assemblies>
       git2-572e4d8
     </Unmanaged32Assemblies>
-    <Unmanaged64Assemblies>
-      git2-572e4d8
-    </Unmanaged64Assemblies>
   </Costura>
 </Weavers>
