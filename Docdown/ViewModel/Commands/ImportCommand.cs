@@ -76,7 +76,7 @@ namespace Docdown.ViewModel.Commands
             string fromName = Path.GetExtension(fileName).Substring(1);
             if (Enum.TryParse<ConverterType>(fromName, true, out var from))
             {
-                return MultipartFormParameter.ApiParameter(from, target, null, null);
+                return MultipartFormParameter.ApiParameter(from, target, null, null, true);
             }
             throw new InvalidDataException("Could not determine import file type");
         }

@@ -136,10 +136,10 @@ namespace Docdown.Model
             var folder = Path.GetDirectoryName(FileSystemInfo.FullName);
 
             string temp = IOUtility.GetHashFile(FileSystemInfo.FullName);
-
+            var onlySelected = Settings.Default.CompileOnlySelected;
             var req = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
-                MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template, Settings.Default.Csl).Concat(
-                MultipartFormParameter.FromWorkspaceItem(this, Settings.Default.CompileOnlySelected)));
+                MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template, Settings.Default.Csl, onlySelected).Concat(
+                MultipartFormParameter.FromWorkspaceItem(this, onlySelected)));
 
             if (cancelToken != null)
             {

@@ -259,12 +259,15 @@ namespace Docdown.Util
             };
         }
 
-        public static IEnumerable<MultipartFormParameter> ApiParameter(ConverterType from, ConverterType to, string template, string csl)
+        public static IEnumerable<MultipartFormParameter> ApiParameter(ConverterType from, ConverterType to, string template, string csl, bool onlySelected)
         {
             if (from != ConverterType.Undefined)
             {
                 yield return CreateField("from", from.ToString().ToLower());
-                yield return CreateField("ext", from.GetExtension());
+                if (!onlySelected)
+                {
+                    yield return CreateField("ext", from.GetExtension());
+                }
             }
             if (to != ConverterType.Undefined)
                 yield return CreateField("to", to.ToString().ToLower());

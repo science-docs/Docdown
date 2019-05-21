@@ -203,7 +203,7 @@ namespace Docdown.Controls
         {
             IsVisibleChanged -= OnIsVisibleChanged;
 
-            EditBox.Options.IndentationSize = 2;
+            EditBox.Options.IndentationSize = 4;
             EditBox.Options.EnableHyperlinks = false;
             EditBox.Options.ConvertTabsToSpaces = true;
             EditBox.Options.AllowScrollBelowDocument = true;
