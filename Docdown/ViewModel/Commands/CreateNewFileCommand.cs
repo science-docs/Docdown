@@ -20,7 +20,6 @@ namespace Docdown.ViewModel.Commands
 
             var workspace = workspaceItem.Workspace;
             workspace.IgnoreChange = true;
-            var fullPath = workspaceItem.FullName;
             WorkspaceItem newItem;
             if (isDirectory)
             {

@@ -271,7 +271,10 @@ namespace Docdown.Model
 
             Directory.CreateDirectory(fullName);
             var fileInfo = new DirectoryInfo(fullName);
-            var item = new WorkspaceItem(fileInfo);
+            var item = new WorkspaceItem(fileInfo)
+            {
+                Parent = this
+            };
             Children.Add(item);
             return item;
         }
@@ -291,7 +294,10 @@ namespace Docdown.Model
             }
 
             var fileInfo = new FileInfo(fullNewName);
-            var item = new WorkspaceItem(fileInfo);
+            var item = new WorkspaceItem(fileInfo)
+            {
+                Parent = this
+            };
             Children.Add(item);
             return item;
         }

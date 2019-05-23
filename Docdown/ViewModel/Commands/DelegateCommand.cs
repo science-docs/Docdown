@@ -25,7 +25,7 @@ namespace Docdown.ViewModel.Commands
             }
         }
 
-        public DelegateCommand(params object[] parameters) : base(typeof(T), parameters)
+        public DelegateCommand(params object[] parameters) : base(parameters)
         {
 
         }
@@ -63,12 +63,7 @@ namespace Docdown.ViewModel.Commands
         public event EventHandler CanExecuteChanged;
 #pragma warning restore CS0067
 
-        public DelegateCommand(params object[] parameters) : this(typeof(void), parameters)
-        {
-
-        }
-
-        public DelegateCommand(Type returnType, params object[] parameters)
+        public DelegateCommand(params object[] parameters)
         {
             del = ReflectionUtility.CreateDelegate(GetType(), this);
             this.parameters = parameters ?? new object[0];

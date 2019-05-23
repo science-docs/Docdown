@@ -6,7 +6,7 @@ namespace Docdown.ViewModel.Commands
 {
     public class OpenWindowCommand<T> : DelegateCommand where T : Window, new()
     {
-        private static TypeCache<T> windows = new TypeCache<T>();
+        private static readonly TypeCache<T> windows = new TypeCache<T>();
 
         public OpenWindowCommand() : this(null, null)
         {
@@ -33,7 +33,7 @@ namespace Docdown.ViewModel.Commands
                 if (keep)
                 {
                     windows.Add(typeof(T), window);
-                    window.Closing += WizardWindow_Closing;
+                    window.Closing += KeptWindowClosing;
                 }
             }
             var result = window.ShowDialog();
@@ -41,7 +41,7 @@ namespace Docdown.ViewModel.Commands
             return result;
         }
 
-        private static void WizardWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private static void KeptWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
             (sender as Window).Hide();

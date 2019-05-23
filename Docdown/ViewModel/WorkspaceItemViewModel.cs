@@ -251,8 +251,14 @@ namespace Docdown.ViewModel
                 throw new ArgumentNullException(nameof(child));
             }
 
-            child.FileStatus = FileStatus.NewInWorkdir;
-            Data.Children.Add(child.Data);
+            if (Workspace.Data.Repository != null)
+            {
+                child.FileStatus = FileStatus.NewInWorkdir;
+            }
+            if (!Data.Children.Contains(child.Data))
+            {
+                Data.Children.Add(child.Data);
+            }
             childrenCache = childrenCache.Concat(child).OrderByDescending(e => e.IsDirectory).ThenBy(e => e.Name).ToArray();
             Workspace.RefreshExplorer();
             SendPropertyUpdate(nameof(Children));
@@ -285,6 +291,7 @@ namespace Docdown.ViewModel
                 {
                     PdfPath = string.Empty;
                     PdfPath = Data.Convert(converterToken);
+                    watch.Stop();
                     ErrorMessage = "";
                     Workspace.Messages.Success($"Succesfully compiled in {watch.Elapsed.Seconds}s {watch.Elapsed.Milliseconds}ms", "");
                 }
@@ -491,11 +498,20 @@ namespace Docdown.ViewModel
         private Image ShowImage()
         {
             var image = new Image();
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(FullName, UriKind.Absolute);
-            bitmap.EndInit();
-            image.Source = bitmap;
+            try
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.UriSource = new Uri(FullName, UriKind.Absolute);
+                bitmap.EndInit();
+                image.Source = bitmap;
+            }
+            catch
+            {
+                // The image threw some exception during loading
+            }
+            
             return image;
         }
 

@@ -10,6 +10,34 @@ namespace Docdown.Util
 {
     public static class UIUtility
     {
+        public static Action Debounce(this Action func, int milliseconds = 300)
+        {
+            var action = Debounce<int>(_ => func(), milliseconds);
+            return () => action(0);
+        }
+
+        public static Action<T> Debounce<T>(this Action<T> func, int milliseconds = 300)
+        {
+            var last = long.MinValue;
+            return arg =>
+            {
+                try
+                {
+                    var current = System.Threading.Interlocked.Increment(ref last);
+                    Task.Delay(milliseconds).ContinueWith(task =>
+                    {
+                        // ReSharper disable once AccessToModifiedClosure
+                        if (current == last) func(arg);
+                        task.Dispose();
+                    });
+                }
+                catch (OverflowException)
+                {
+                    System.Threading.Interlocked.Exchange(ref last, long.MinValue);
+                }
+            };
+        }
+
         public static void Delay(this DispatcherObject dispatcherObject, int milliseconds, Action syncAction)
         {
             dispatcherObject.Delay(MillisecondDelay, syncAction);

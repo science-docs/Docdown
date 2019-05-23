@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Docdown.Model;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System;
+using System.Windows;
 
 namespace Docdown.ViewModel.Commands
 {
@@ -14,7 +13,7 @@ namespace Docdown.ViewModel.Commands
         }
 
         [Delegate]
-        private static void OpenAddFileWindow(WorkspaceItemViewModel workspaceItem)
+        private static void OpenAddExistingFileWindow(WorkspaceItemViewModel workspaceItem)
         {
             if (!workspaceItem.IsDirectory)
             {
@@ -23,22 +22,22 @@ namespace Docdown.ViewModel.Commands
 
             var workspace = workspaceItem.Workspace;
             workspace.IgnoreChange = true;
-            var fullPath = workspaceItem.FullName;
-            WorkspaceItem newItem;
-            if (isDirectory)
+            WorkspaceItem item = workspaceItem.Data;
+
+            var dialog = new CommonOpenFileDialog("Add existing files")
             {
-                newItem = workspaceItem.Data.CreateNewDirectory("New Folder");
-            }
-            else
+                Multiselect = true,
+                IsFolderPicker = false
+            };
+
+            if (dialog.ShowDialog(Application.Current.MainWindow) == CommonFileDialogResult.Ok)
             {
-                newItem = workspaceItem.Data.CreateNewFile("NewFile", ".md");
+                foreach (var name in dialog.FileNames)
+                {
+                    var newChild = item.CopyExistingItem(name);
+                    workspaceItem.AddChild(newChild);
+                }
             }
-            var vm = new WorkspaceItemViewModel(workspace, workspaceItem, newItem);
-            if (isDirectory)
-            {
-                vm.IsNameChanging = true;
-            }
-            workspaceItem.AddChild(vm);
             workspace.IgnoreChange = false;
         }
     }
