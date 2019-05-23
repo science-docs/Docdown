@@ -50,10 +50,6 @@ namespace Docdown.ViewModel.Commands
             {
                 throw new InvalidDataException("Could not determine import file type");
             }
-            else
-            {
-                from = from.Substring(1);
-            }
             string url = WebUtility.BuildConvertUrl();
             var req = WebUtility.MultipartFormDataPost(url, BuildParameters(fileName, target).Concat(MultipartFormParameter.CreateFile("content", fileName)));
             using (var res = req.GetResponse())
