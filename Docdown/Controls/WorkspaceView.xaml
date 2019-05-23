@@ -91,12 +91,15 @@
                                 <MenuItem Header="Open" 
                                           Visibility="{Binding WorkspaceItem.IsFile, Converter={StaticResource BooleanToVisibilityConverter}}" 
                                           Command="{Binding WorkspaceItem.SelectItemCommand}"/>
-                                <MenuItem Header="New" 
+                                <MenuItem Header="Add" 
                                           Visibility="{Binding WorkspaceItem.IsDirectory, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <MenuItem Header="File" 
+                                    <MenuItem Header="Existing File" 
+                                              Command="{Binding WorkspaceItem.ExistingFileCommand}" 
+                                              CommandParameter="{StaticResource False}"/>
+                                    <MenuItem Header="New File" 
                                               Command="{Binding WorkspaceItem.NewFileCommand}" 
                                               CommandParameter="{StaticResource False}"/>
-                                    <MenuItem Header="Folder" 
+                                    <MenuItem Header="New Folder" 
                                               Command="{Binding WorkspaceItem.NewFileCommand}" 
                                               CommandParameter="{StaticResource True}"/>
                                 </MenuItem>

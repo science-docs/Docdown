@@ -265,6 +265,44 @@ namespace Docdown.Model
             Children.Add(item);
             return item;
         }
+
+        public WorkspaceItem CopyExistingItem(string path)
+        {
+            var fileName = Path.GetFileName(path);
+            var fullNewName = Path.Combine(FileSystemInfo.FullName, fileName);
+
+            if (Children.Any(e => e.FileSystemInfo.Name == fileName))
+            {
+                File.Replace(path, fullNewName, null);
+            }
+            else
+            {
+                File.Copy(path, fullNewName);
+            }
+
+            var fileInfo = new FileInfo(fullNewName);
+            var item = new WorkspaceItem(fileInfo);
+            Children.Add(item);
+            return item;
+        }
+
+        public IEnumerable<WorkspaceItem> CopyExistingFolder(string path)
+        {
+            foreach (var file in Directory.GetFiles(path))
+            {
+                yield return CopyExistingItem(path);
+            }
+            foreach (var directory in Directory.GetDirectories(path))
+            {
+                var item = CreateNewDirectory(directory);
+                foreach (var copiedItem in CopyExistingFolder(directory))
+                {
+                    item.Children.Add(copiedItem);
+                    copiedItem.Parent = item;
+                }
+                yield return item;
+            }
+        }
         
         public bool IsDirectory()
         {

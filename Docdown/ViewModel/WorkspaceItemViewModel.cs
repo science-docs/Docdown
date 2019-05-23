@@ -131,6 +131,7 @@ namespace Docdown.ViewModel
         [ChangeListener(nameof(FullName))]
         public ICommand OpenInExplorerCommand => new OpenExplorerCommand(FullName);
         public ICommand NewFileCommand => new CreateNewFileCommand(this);
+        public ICommand ExistingFileCommand => new AddExistingFileCommand(this);
 
         public object View
         {
