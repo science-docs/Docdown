@@ -26,7 +26,7 @@ namespace Docdown.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:3030")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://docdown.sloppy.zone")]
         public string API {
             get {
                 return ((string)(this["API"]));

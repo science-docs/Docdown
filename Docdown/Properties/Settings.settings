@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="API" Type="(Web Service URL)" Scope="User">
-      <Value Profile="(Default)">http://localhost:3030</Value>
+      <Value Profile="(Default)">https://docdown.sloppy.zone</Value>
     </Setting>
     <Setting Name="LastTempFiles" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
