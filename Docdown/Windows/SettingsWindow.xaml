@@ -39,86 +39,115 @@
                       Content="Use offline compiler"
                       Style="{StaticResource DefaultCheckStyle}"
                       Margin="0 2"
-                      IsChecked="{Binding UseOfflineCompiler}"/>
-            <TextBlock Text="Server URL"
-                       Margin="0 2"
-                       Style="{StaticResource DefaultInformationStyle}"
-                       IsEnabled="{Binding ElementName=OfflineCompilerCheck, Path=IsChecked, Converter={StaticResource InvertBooleanConverter}}"/>
-            <TextBox Text="{Binding Api, UpdateSourceTrigger=PropertyChanged}"
-                     Metro:TextBoxHelper.ButtonCommand="{Binding TestConnectionCommand}"
-                     Margin="0 2"
-                     IsEnabled="{Binding ElementName=OfflineCompilerCheck, Path=IsChecked, Converter={StaticResource InvertBooleanConverter}}">
-                <TextBox.Style>
-                    <Style BasedOn="{StaticResource DefaultButtonTextBoxStyle}" TargetType="TextBox">
-                        <Setter Property="Metro:TextBoxHelper.ButtonContent">
-                            <Setter.Value>
-                                <Rectangle Height="18" Width="18" Fill="{StaticResource ConnectIcon}"/>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ConnectionStatus}" Value="Connected">
-                                <Setter Property="Metro:TextBoxHelper.ButtonContent">
-                                    <Setter.Value>
-                                        <Rectangle Height="18" Width="18" Fill="{StaticResource PassIcon}"/>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding ConnectionStatus}" Value="Disconnected">
-                                <Setter Property="Metro:TextBoxHelper.ButtonContent">
-                                    <Setter.Value>
-                                        <Rectangle Height="18" Width="18" Fill="{StaticResource FailIcon}"/>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding ConnectionStatus}" Value="Connecting">
-                                <Setter Property="Metro:TextBoxHelper.ButtonContent">
-                                    <Setter.Value>
-                                        <Viewbox Height="18" Width="18" Stretch="UniformToFill" StretchDirection="Both">
-                                            <Control Style="{StaticResource BusyAnimationStyle}"/>
-                                        </Viewbox>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBox.Style>
-            </TextBox>
-            <TextBlock Text="Templates"
+                      IsChecked="{Binding UseOfflineCompiler}"
+                      IsEnabled="{Binding CanCompileOffline}"/>
+            <CheckBox x:Name="InvertedOfflineCompilerCheck"
+                      Content="Use offline compiler"
+                      Style="{StaticResource DefaultCheckStyle}"
+                      Margin="0 2"
+                      Visibility="Collapsed"
+                      IsChecked="{Binding ElementName=OfflineCompilerCheck, Path=IsChecked, Converter={StaticResource InvertBooleanConverter}}"/>
+            <StackPanel Orientation="Vertical"
+                        Visibility="{Binding ElementName=OfflineCompilerCheck, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Text="Template Location"
                        Margin="0 2"
                        Style="{StaticResource DefaultInformationStyle}"/>
-            <ComboBox ItemsSource="{Binding Templates}"
+                <TextBox Margin="0 2"
+                     Style="{StaticResource MetroButtonTextBox}"
+                     Text="{Binding SelectedLocaleTemplate}"
+                     Metro:TextBoxHelper.ButtonCommand="{Binding SearchTemplateCommand}"
+                     Metro:TextBoxHelper.ButtonContent="🔍"
+                     Metro:TextBoxHelper.ButtonFontFamily="Segoe UI Symbol"/>
+                <TextBlock Text="Citation Style Location"
+                       Margin="0 2"
+                       Style="{StaticResource DefaultInformationStyle}"/>
+                <TextBox Margin="0 2"
+                     Style="{StaticResource MetroButtonTextBox}"
+                     Text="{Binding SelectedLocaleCsl}"
+                     Metro:TextBoxHelper.ButtonCommand="{Binding SearchCitationStyleCommand}"
+                     Metro:TextBoxHelper.ButtonContent="🔍"
+                     Metro:TextBoxHelper.ButtonFontFamily="Segoe UI Symbol"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical"
+                        Visibility="{Binding ElementName=InvertedOfflineCompilerCheck, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Text="Server URL"
+                       Margin="0 2"
+                       Style="{StaticResource DefaultInformationStyle}"/>
+                <TextBox Text="{Binding Api, UpdateSourceTrigger=PropertyChanged}"
+                     Metro:TextBoxHelper.ButtonCommand="{Binding TestConnectionCommand}"
+                     Margin="0 2">
+                    <TextBox.Style>
+                        <Style BasedOn="{StaticResource DefaultButtonTextBoxStyle}" TargetType="TextBox">
+                            <Setter Property="Metro:TextBoxHelper.ButtonContent">
+                                <Setter.Value>
+                                    <Rectangle Height="18" Width="18" Fill="{StaticResource ConnectIcon}"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ConnectionStatus}" Value="Connected">
+                                    <Setter Property="Metro:TextBoxHelper.ButtonContent">
+                                        <Setter.Value>
+                                            <Rectangle Height="18" Width="18" Fill="{StaticResource PassIcon}"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ConnectionStatus}" Value="Disconnected">
+                                    <Setter Property="Metro:TextBoxHelper.ButtonContent">
+                                        <Setter.Value>
+                                            <Rectangle Height="18" Width="18" Fill="{StaticResource FailIcon}"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ConnectionStatus}" Value="Connecting">
+                                    <Setter Property="Metro:TextBoxHelper.ButtonContent">
+                                        <Setter.Value>
+                                            <Viewbox Height="18" Width="18" Stretch="UniformToFill" StretchDirection="Both">
+                                                <Control Style="{StaticResource BusyAnimationStyle}"/>
+                                            </Viewbox>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+                <TextBlock Text="Templates"
+                       Margin="0 2"
+                       Style="{StaticResource DefaultInformationStyle}"/>
+                <ComboBox ItemsSource="{Binding Templates}"
                       SelectedItem="{Binding SelectedTemplate}"
                       IsEnabled="{Binding IsConnected}"
                       Margin="0 2">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <Rectangle Fill="{Binding Icon, Mode=OneTime, Converter={StaticResource SvgToBrushConverter}}" 
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Fill="{Binding Icon, Mode=OneTime, Converter={StaticResource SvgToBrushConverter}}" 
                                        Height="16" 
                                        Width="16"
                                        Margin="2 0 8 0"/>
-                            <TextBlock Text="{Binding Name}" 
+                                <TextBlock Text="{Binding Name}" 
                                    Foreground="{DynamicResource BlackBrush}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <Button Content="Upload Template"
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button Content="Upload Template"
                     Command="{Binding UploadTemplateCommand}"
                     Style="{StaticResource MetroFlatButton}"
                     IsEnabled="{Binding IsConnected}"
                     Margin="0 2"/>
-            <TextBlock Text="Citation Styles"
+                <TextBlock Text="Citation Styles"
                        Margin="0 2"
                        Style="{StaticResource DefaultInformationStyle}"/>
-            <ComboBox ItemsSource="{Binding Csls}"
+                <ComboBox ItemsSource="{Binding Csls}"
                       SelectedItem="{Binding SelectedCsl}"
                       IsEnabled="{Binding IsConnected}"
                       Margin="0 2"/>
-            <Button Content="Upload Citation Style"
+                <Button Content="Upload Citation Style"
                     Style="{StaticResource MetroFlatButton}"
                     IsEnabled="False"
                     Margin="0 2"/>
+            </StackPanel>
         </StackPanel>
         <Grid Grid.Row="2" Background="{DynamicResource WhiteBrush}">
             <Grid.Resources>

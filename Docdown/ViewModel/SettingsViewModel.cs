@@ -2,6 +2,7 @@
 using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,11 @@ namespace Docdown.ViewModel
         public ICommand RestoreCommand => new ActionCommand(Restore);
         public ICommand TestConnectionCommand => new ActionCommand(TestConnection, true);
         public ICommand UploadTemplateCommand => new ActionCommand(UploadTemplate);
+        public ICommand SearchTemplateCommand => new SearchFileCommand(null, "Search template", template => SelectedLocaleTemplate = template, TemplateFileFilter);
+        public ICommand SearchCitationStyleCommand => new SearchFileCommand(null, "Search citation style", csl => SelectedLocaleCsl = csl, CslFileFilter);
+
+        private static readonly CommonFileDialogFilter CslFileFilter = new CommonFileDialogFilter("Citation Style File", ".csl");
+        private static readonly CommonFileDialogFilter TemplateFileFilter = new CommonFileDialogFilter("LaTeX Template File", ".latex");
 
         public string WorkspacePath
         {
@@ -46,6 +52,26 @@ namespace Docdown.ViewModel
             set
             {
                 settings.Csl = value;
+                SendPropertyUpdate();
+            }
+        }
+
+        public string SelectedLocaleTemplate
+        {
+            get => settings.LocaleTemplate;
+            set
+            {
+                settings.LocaleTemplate = value;
+                SendPropertyUpdate();
+            }
+        }
+
+        public string SelectedLocaleCsl
+        {
+            get => settings.LocaleCsl;
+            set
+            {
+                settings.LocaleCsl = value;
                 SendPropertyUpdate();
             }
         }
@@ -104,6 +130,8 @@ namespace Docdown.ViewModel
             set => Set(ref connectionStatus, value);
         }
 
+        public bool CanCompileOffline { get; }
+
         [ChangeListener(nameof(ConnectionStatus))]
         public bool IsConnected => ConnectionStatus == ConnectionStatus.Connected;
 
@@ -128,6 +156,12 @@ namespace Docdown.ViewModel
 
             selectedTemplateName = settings.Template;
             SetLastWorkspaces(settings.LastWorkspaces.OfType<string>());
+
+            CanCompileOffline = PandocUtility.Exists();
+            if (!CanCompileOffline)
+            {
+                UseOfflineCompiler = false;
+            }
         }
 
         public void Restore()

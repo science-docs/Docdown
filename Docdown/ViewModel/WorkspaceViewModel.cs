@@ -142,9 +142,9 @@ namespace Docdown.ViewModel
         public WorkspaceViewModel(Workspace workspace) : base(workspace ?? throw new ArgumentNullException(nameof(workspace)))
         {
             theme = (Theme)Enum.Parse(typeof(Theme), Properties.Settings.Default.Theme);
-            Settings = new SettingsViewModel(this);
-            Wizard = new WizardViewModel(this);
             Messages = new MessageQueue();
+            Wizard = new WizardViewModel(this);
+            Settings = new SettingsViewModel(this);
             workspace.WorkspaceChanged += OnWorkspaceChanged;
             Explorer = new Explorer(this);
         }

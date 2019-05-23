@@ -41,6 +41,7 @@ namespace Docdown.Model
         public WorkspaceItemType Type { get; set; }
         public List<WorkspaceItem> Children { get; } = new List<WorkspaceItem>();
         public WorkspaceItem Parent { get; set; }
+        public WorkspaceItem TopParent => Parent ?? this;
         public ConverterType FromType => FromFileType();
         public ConverterType ToType { get; set; } = ConverterType.Pdf;
         public bool IsHidden => (FileSystemInfo.Attributes & FileAttributes.Hidden) > 0 || (Parent != null && Parent.IsHidden);
@@ -136,30 +137,39 @@ namespace Docdown.Model
             var folder = Path.GetDirectoryName(FileSystemInfo.FullName);
 
             string temp = IOUtility.GetHashFile(FileSystemInfo.FullName);
-            var onlySelected = Settings.Default.CompileOnlySelected;
-            var req = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
-                MultipartFormParameter.ApiParameter(FromType, ToType, Settings.Default.Template, Settings.Default.Csl, onlySelected).Concat(
+            var settings = Settings.Default;
+            var onlySelected = settings.CompileOnlySelected;
+
+            if (settings.UseOfflineCompiler)
+            {
+                return PandocUtility.Compile(temp, TopParent.FileSystemInfo.FullName, settings.LocaleTemplate, settings.LocaleCsl, "*.md");
+            }
+            else
+            {
+                var req = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
+                MultipartFormParameter.ApiParameter(FromType, ToType, settings.Template, settings.Csl, onlySelected).Concat(
                 MultipartFormParameter.FromWorkspaceItem(this, onlySelected)));
 
-            if (cancelToken != null)
-            {
-                cancelToken.Canceled += AbortRequest;
-            }
-
-            using (var res = req.GetResponse())
-            using (var rs = res.GetResponseStream())
-            {
-                using (var fs = File.Open(temp, FileMode.Create))
+                if (cancelToken != null)
                 {
-                    rs.CopyTo(fs);
+                    cancelToken.Canceled += AbortRequest;
                 }
-            }
 
-            return temp;
+                using (var res = req.GetResponse())
+                using (var rs = res.GetResponseStream())
+                {
+                    using (var fs = File.Open(temp, FileMode.Create))
+                    {
+                        rs.CopyTo(fs);
+                    }
+                }
 
-            void AbortRequest(object sender, EventArgs e)
-            {
-                req.Abort();
+                return temp;
+
+                void AbortRequest(object sender, EventArgs e)
+                {
+                    req.Abort();
+                }
             }
         }
 

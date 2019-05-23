@@ -30,6 +30,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>7.2</LangVersion>
+    <NoWarn>IDE0051</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -150,6 +151,8 @@
     <Compile Include="Util\ErrorUtility.cs" />
     <Compile Include="Util\IOUtility.cs" />
     <Compile Include="Util\MessageBox.cs" />
+    <Compile Include="Util\PandocUtility.cs" />
+    <Compile Include="Util\ProgramUtility.cs" />
     <Compile Include="Util\ReflectionUtility.cs" />
     <Compile Include="Util\ResourceUtility.cs" />
     <Compile Include="Util\TextUtility.cs" />
@@ -159,12 +162,14 @@
     <Compile Include="Util\XamlUtility.cs" />
     <Compile Include="ViewModel\Commands\ActionCommand.cs" />
     <Compile Include="ViewModel\ChangeListenerAttribute.cs" />
+    <Compile Include="ViewModel\Commands\AddExistingFileCommand.cs" />
     <Compile Include="ViewModel\Commands\CreateNewFileCommand.cs" />
     <Compile Include="ViewModel\Commands\DelegateCommand.cs" />
     <Compile Include="ViewModel\Commands\ImportCommand.cs" />
     <Compile Include="ViewModel\Commands\OpenExplorerCommand.cs" />
     <Compile Include="ViewModel\Commands\OpenWindowCommand.cs" />
     <Compile Include="ViewModel\Commands\PrintCommand.cs" />
+    <Compile Include="ViewModel\Commands\SearchFileCommand.cs" />
     <Compile Include="ViewModel\Commands\SearchFolderCommand.cs" />
     <Compile Include="ViewModel\Explorer.cs" />
     <Compile Include="ViewModel\MessageBoxViewModel.cs" />
