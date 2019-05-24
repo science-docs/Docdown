@@ -16,8 +16,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
 
-                <ResourceDictionary Source="Resources/Images/Markdown.xaml"/>
-                <ResourceDictionary Source="Resources/Images/VS.xaml"/>
+                <ResourceDictionary Source="Resources/Images/Icons.xaml"/>
                 <ResourceDictionary Source="Resources/Styles.xaml"/>
                 <ResourceDictionary Source="Resources/Animation.xaml"/>
                 <ResourceDictionary Source="Resources/Converters.xaml"/>

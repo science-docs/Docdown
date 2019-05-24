@@ -10,7 +10,7 @@ namespace Docdown
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            ThemeManager.AddAccent("BlueDoc", GetResourceUri("Resources/Themes/Blue.xaml"));
+            ThemeManager.AddAccent("BlueDoc", GetResourceUri("Resources/Accents/Blue.xaml"));
             ThemeManager.AddAppTheme("DarkDoc", GetResourceUri("Resources/Themes/Dark.xaml"));
             ThemeManager.AddAppTheme("LightDoc", GetResourceUri("Resources/Themes/Light.xaml"));
             var theme = Settings.Default.Theme;
