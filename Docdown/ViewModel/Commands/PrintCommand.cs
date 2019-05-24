@@ -38,11 +38,11 @@ namespace Docdown.ViewModel.Commands
                     {
                         File.Copy(pdfPath, dialog.FileName);
                     }
-                    workspace.Messages.Success("File saved", "");
+                    workspace.Messages.Success("File saved");
                 }
                 catch
                 {
-                    workspace.Messages.Error("Could not save file", "");
+                    workspace.Messages.Error("Could not save file");
                 }
             }
         }

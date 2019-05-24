@@ -61,7 +61,10 @@
                                 AllowDrop="True" 
                                 Drop="DropFromTreeViewItem" 
                                 Background="Transparent">
-                        <Rectangle Height="16" Width="16" Margin="4 0" Fill="{Binding WorkspaceItem.IconName, Converter={StaticResource StringToResourceConverter}}"/>
+                        <Rectangle Height="16" 
+                                   Width="16" 
+                                   Margin="4 0" 
+                                   Fill="{Binding WorkspaceItem.IconName, Converter={StaticResource StringToResourceConverter}}"/>
                         <ContentControl x:Name="PART_Content">
                             <TextBlock Text="{Binding WorkspaceItem.Name}"
                                        Focusable="False"
@@ -124,7 +127,8 @@
                         <DataTrigger Binding="{Binding WorkspaceItem.IsNameChanging}" Value="True">
                             <Setter TargetName="PART_Content" Property="Content">
                                 <Setter.Value>
-                                    <TextBox Text="{Binding WorkspaceItem.Name, UpdateSourceTrigger=PropertyChanged}" FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}">
+                                    <TextBox Text="{Binding WorkspaceItem.Name, UpdateSourceTrigger=PropertyChanged}" 
+                                             FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}">
                                         <TextBox.InputBindings>
                                             <KeyBinding Key="Return" Command="{Binding WorkspaceItem.NameChangeEndCommand}"/>
                                             <KeyBinding Key="Esc" Command="{Binding WorkspaceItem.CancelNameChangeCommand}"/>

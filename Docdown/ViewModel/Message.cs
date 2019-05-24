@@ -11,15 +11,9 @@
 
     public class Message : ObservableObject
     {
-        public static Message Empty { get; } = new Message(string.Empty, string.Empty, MessageType.Undefined);
+        public static Message Empty { get; } = new Message(string.Empty, MessageType.Undefined);
 
-        public string ShortMessage
-        {
-            get;
-            set;
-        }
-
-        public string LongMessage
+        public string Content
         {
             get;
             set;
@@ -36,10 +30,9 @@
 
         }
 
-        public Message(string shortMessage, string longMessage, MessageType type)
+        public Message(string shortMessage, MessageType type)
         {
-            ShortMessage = shortMessage;
-            LongMessage = longMessage;
+            Content = shortMessage;
             Type = type;
         }
     }

@@ -14,8 +14,6 @@ namespace Docdown.Controls.Markdown
         private string _editorBackground = "#404040";
         private string _editorForeground = "#ccc";
         private string _spellCheckError = "#f00";
-        private double _header1Height = 1.3;
-        private double _header2Height = 1.2;
 
         private Highlight _highlightHeading = new Highlight { Name = "Heading", Foreground = "#CF6A4C" };
         private Highlight _highlightEmphasis = new Highlight { Name = "Emphasis", Foreground = "#8F9D67" };
@@ -45,18 +43,6 @@ namespace Docdown.Controls.Markdown
         {
             get => _editorForeground;
             set => Set(ref _editorForeground, value);
-        }
-
-        public double Header1Height
-        {
-            get => _header1Height;
-            set => Set(ref _header1Height, value);
-        }
-
-        public double Header2Height
-        {
-            get => _header2Height;
-            set => Set(ref _header2Height, value);
         }
 
         public Highlight HighlightHeading

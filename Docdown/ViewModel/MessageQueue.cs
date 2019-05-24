@@ -11,34 +11,34 @@ namespace Docdown.ViewModel
             CollectionChanged += MessagesChanged;
         }
 
-        public void Add(string shortMessage, string longMessage, MessageType type)
+        public void Add(string shortMessage, MessageType type)
         {
-            Add(new Message(shortMessage, longMessage, type));
+            Add(new Message(shortMessage, type));
         }
 
-        public void Success(string shortMessage, string longMessage)
+        public void Success(string shortMessage)
         {
-            Add(shortMessage, longMessage, MessageType.Success);
+            Add(shortMessage, MessageType.Success);
         }
 
-        public void Error(string shortMessage, string longMessage)
+        public void Error(string shortMessage)
         {
-            Add(shortMessage, longMessage, MessageType.Error);
+            Add(shortMessage, MessageType.Error);
         }
 
-        public void Warning(string shortMessage, string longMessage)
+        public void Warning(string shortMessage)
         {
-            Add(shortMessage, longMessage, MessageType.Warning);
+            Add(shortMessage, MessageType.Warning);
         }
 
-        public void Info(string shortMessage, string longMessage)
+        public void Info(string shortMessage)
         {
-            Add(shortMessage, longMessage, MessageType.Undefined);
+            Add(shortMessage, MessageType.Undefined);
         }
 
-        public void Working(string shortMessage, string longMessage)
+        public void Working(string shortMessage)
         {
-            Add(shortMessage, longMessage, MessageType.Working);
+            Add(shortMessage, MessageType.Working);
         }
 
         private void MessagesChanged(object sender, NotifyCollectionChangedEventArgs e)

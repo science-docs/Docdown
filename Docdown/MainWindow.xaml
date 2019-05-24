@@ -227,7 +227,7 @@
                        Foreground="White"
                        VerticalAlignment="Center"
                        Margin="4 0 0 0"
-                       Text="{Binding NewestMessage.ShortMessage}"/>
+                       Text="{Binding NewestMessage.Content}"/>
         </Grid>
     </Grid>
 </Metro:MetroWindow>

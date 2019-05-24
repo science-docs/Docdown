@@ -116,7 +116,6 @@
     <Compile Include="Controls\Markdown\ListInputHandler.cs" />
     <Compile Include="Controls\Markdown\MarkdownFoldingStrategy.cs" />
     <Compile Include="Controls\Markdown\MarkdownHighlightColorizer.cs" />
-    <Compile Include="Controls\Markdown\Parser.cs" />
     <Compile Include="Controls\Markdown\Theme.cs" />
     <Compile Include="Controls\OutlineView.xaml.cs">
       <DependentUpon>OutlineView.xaml</DependentUpon>

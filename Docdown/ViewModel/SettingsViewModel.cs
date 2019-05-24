@@ -188,13 +188,13 @@ namespace Docdown.ViewModel
                 {
                     LoadTemplates();
                     LoadCsls();
-                    workspace.Messages.Success("Connected to server", "Connected to server");
+                    workspace.Messages.Success("Connected to server");
                 }
                 else
                 {
                     Templates = new[] { Template.Empty };
                     Csls = new[] { string.Empty };
-                    workspace.Messages.Error("Could not connect to server", "Could not connect to server");
+                    workspace.Messages.Error("Could not connect to server");
                 }
             }
         }
@@ -262,11 +262,11 @@ namespace Docdown.ViewModel
             {
                 WebUtility.MultipartFormDataPost(WebUtility.BuildTemplatesUrl(), parameter).GetResponse().Dispose();
                 LoadTemplates();
-                workspace.Messages.Success("Successfully uploaded template", string.Empty);
+                workspace.Messages.Success("Successfully uploaded template");
             }
             catch
             {
-                workspace.Messages.Error("Could not upload template", string.Empty);
+                workspace.Messages.Error("Could not upload template");
             }
         }
 

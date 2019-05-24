@@ -271,7 +271,7 @@ namespace Docdown.ViewModel
 
             converterToken.Cancel();
             ErrorMessage = "";
-            Workspace.Messages.Warning("Compilation cancelled", "");
+            Workspace.Messages.Warning("Compilation cancelled");
         }
 
         public void Convert()
@@ -280,7 +280,7 @@ namespace Docdown.ViewModel
                 return;
             
             converterToken = new CancelToken();
-            Workspace.Messages.Working("Compiling...", "");
+            Workspace.Messages.Working("Compiling...");
             ErrorMessage = "";
             IsConverting = true;
             Save();
@@ -293,14 +293,14 @@ namespace Docdown.ViewModel
                     PdfPath = Data.Convert(converterToken);
                     watch.Stop();
                     ErrorMessage = "";
-                    Workspace.Messages.Success($"Succesfully compiled in {watch.Elapsed.Seconds}s {watch.Elapsed.Milliseconds}ms", "");
+                    Workspace.Messages.Success($"Succesfully compiled in {watch.Elapsed.Seconds}s {watch.Elapsed.Milliseconds}ms");
                 }
                 catch (Exception e)
                 {
                     if (!converterToken.IsCanceled)
                     {
                         ErrorMessage = ErrorUtility.GetErrorMessage(e);
-                        Workspace.Messages.Error(ErrorMessage, ErrorMessage);
+                        Workspace.Messages.Error(ErrorMessage);
                     }
                 }
                 watch.Stop();
@@ -464,12 +464,11 @@ namespace Docdown.ViewModel
             try
             {
                 PdfPath = FullName;
-                //docViewer.Navigate(Data.FileSystemInfo.FullName);
             }
             catch (Exception e)
             {
                 ErrorMessage = ErrorUtility.GetErrorMessage(e);
-                Workspace.Messages.Error(ErrorMessage, ErrorMessage);
+                Workspace.Messages.Error(ErrorMessage);
             }
             return docViewer;
         }
@@ -509,7 +508,7 @@ namespace Docdown.ViewModel
             }
             catch
             {
-                // The image threw some exception during loading
+                Workspace.Messages.Error("Could not open image");
             }
             
             return image;

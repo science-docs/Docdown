@@ -65,11 +65,18 @@ namespace Docdown.Controls
                 var workspace = workspaceItem.Workspace;
                 workspace.IgnoreChange = true;
                 var item = workspaceItem.Data;
-                foreach (var name in files)
+                try
                 {
-                    var isFolder = Directory.Exists(name);
-                    var newChild = isFolder ? item.CopyExistingFolder(name) : item.CopyExistingItem(name);
-                    workspaceItem.AddChild(newChild);
+                    foreach (var name in files)
+                    {
+                        var isFolder = Directory.Exists(name);
+                        var newChild = isFolder ? item.CopyExistingFolder(name) : item.CopyExistingItem(name);
+                        workspaceItem.AddChild(newChild);
+                    }
+                }
+                catch
+                {
+                    workspace.Messages.Error("Something went wrong moving files");
                 }
                 workspace.IgnoreChange = false;
                 e.Handled = true;
