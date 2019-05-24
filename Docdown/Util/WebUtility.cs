@@ -47,6 +47,20 @@ namespace Docdown.Util
             return request.GetResponse() as HttpWebResponse;
         }
 
+        public static string SimpleTextRequest(string url)
+        {
+            using (var res = WebUtility.SimpleGetRequest(url))
+            {
+                using (var rs = res.GetResponseStream())
+                {
+                    using (var sr = new StreamReader(rs))
+                    {
+                        return sr.ReadToEnd();
+                    }
+                }
+            }
+        }
+
         public static ConnectionStatus Ping()
         {
             try

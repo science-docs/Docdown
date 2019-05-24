@@ -206,16 +206,7 @@ namespace Docdown.ViewModel
             string text;
             try
             {
-                using (var res = WebUtility.SimpleGetRequest(cslUri))
-                {
-                    using (var rs = res.GetResponseStream())
-                    {
-                        using (var sr = new StreamReader(rs))
-                        {
-                            text = sr.ReadToEnd();
-                        }
-                    }
-                }
+                text = WebUtility.SimpleTextRequest(cslUri);
             }
             catch
             {
@@ -245,16 +236,7 @@ namespace Docdown.ViewModel
             string text;
             try
             {
-                using (var res = WebUtility.SimpleGetRequest(templatesUrl))
-                {
-                    using (var rs = res.GetResponseStream())
-                    {
-                        using (var sr = new StreamReader(rs))
-                        {
-                            text = sr.ReadToEnd();
-                        }
-                    }
-                }
+                text = WebUtility.SimpleTextRequest(templatesUrl);
             }
             catch
             {

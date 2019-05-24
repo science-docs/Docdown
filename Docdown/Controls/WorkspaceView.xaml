@@ -48,6 +48,8 @@
             </TextBox>
         </Border>
         <TreeView Grid.Row="2" 
+                  AllowDrop="True"
+                  Drop="DropFromTreeView"
                   Background="Transparent" 
                   ItemsSource="{Binding Children, IsAsync=True}" 
                   ItemContainerStyle="{StaticResource WorkspaceTreeViewItem}"
@@ -55,7 +57,10 @@
                   MouseDoubleClick="ViewSelectedMouseDoubleClick">
             <TreeView.Resources>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="{x:Type ViewModel:Explorer}">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" 
+                                AllowDrop="True" 
+                                Drop="DropFromTreeViewItem" 
+                                Background="Transparent">
                         <Rectangle Height="16" Width="16" Margin="4 0" Fill="{Binding WorkspaceItem.IconName, Converter={StaticResource StringToResourceConverter}}"/>
                         <ContentControl x:Name="PART_Content">
                             <TextBlock Text="{Binding WorkspaceItem.Name}"

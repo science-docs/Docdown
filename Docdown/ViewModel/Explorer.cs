@@ -1,4 +1,6 @@
-﻿using Docdown.ViewModel.Commands;
+﻿using Docdown.Util;
+using Docdown.ViewModel.Commands;
+using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 
@@ -18,8 +20,15 @@ namespace Docdown.ViewModel
                 {
                     value = string.Empty;
                 }
-                Set(ref search, value);
-                Items.ForEach(e => e.Search = value);
+                search = value;
+                if (WorkspaceItem == null)
+                {
+                    debouncedSearch(value);
+                }
+                else
+                {
+                    SetSearch(value);
+                }
             }
         }
 
@@ -34,24 +43,36 @@ namespace Docdown.ViewModel
         [ChangeListener(nameof(Search))]
         public IEnumerable<Explorer> Children => SearchChildren();
 
-        public ICommand ClearSearchCommand => new ActionCommand(() => Search = string.Empty);
+        public Explorer Parent { get; }
+
+        public ICommand ClearSearchCommand => new ActionCommand(() => SetSearch(string.Empty));
 
         private string search = string.Empty;
+        private readonly Action<string> debouncedSearch;
 
         public Explorer(WorkspaceViewModel workspace)
         {
             Workspace = workspace;
-            Items.Add(new Explorer(workspace.Item));
+            Items.Add(new Explorer(this, workspace.Item));
+            debouncedSearch = UIUtility.Debounce<string>(SetSearch, 500);
         }
 
-        public Explorer(WorkspaceItemViewModel workspaceItem)
+        public Explorer(Explorer parent, WorkspaceItemViewModel workspaceItem)
         {
+            Parent = parent;
             WorkspaceItem = workspaceItem;
             Workspace = WorkspaceItem.Workspace;
             foreach (var child in WorkspaceItem.Children)
             {
-                Items.Add(new Explorer(child));
+                Items.Add(new Explorer(this, child));
             }
+        }
+
+        private void SetSearch(string value)
+        {
+            search = value;
+            SendPropertyUpdate(nameof(Search));
+            Items.ForEach(e => e.Search = search);
         }
 
         private IEnumerable<Explorer> SearchChildren()

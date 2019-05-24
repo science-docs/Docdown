@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Docdown.Model
 {
@@ -302,22 +301,22 @@ namespace Docdown.Model
             return item;
         }
 
-        public IEnumerable<WorkspaceItem> CopyExistingFolder(string path)
+        public WorkspaceItem CopyExistingFolder(string path)
         {
+            var item = CreateNewDirectory(Path.GetFileName(path));
             foreach (var file in Directory.GetFiles(path))
             {
-                yield return CopyExistingItem(path);
+                var child = CopyExistingItem(file);
+                item.Children.Add(child);
+                child.Parent = item;
             }
             foreach (var directory in Directory.GetDirectories(path))
             {
-                var item = CreateNewDirectory(directory);
-                foreach (var copiedItem in CopyExistingFolder(directory))
-                {
-                    item.Children.Add(copiedItem);
-                    copiedItem.Parent = item;
-                }
-                yield return item;
+                var child = CopyExistingFolder(directory);
+                item.Children.Add(child);
+                child.Parent = item;
             }
+            return item;
         }
         
         public bool IsDirectory()
