@@ -1,3 +1,4 @@
+using Docdown.Util;
 using Docdown.ViewModel;
 using Docdown.Windows;
 using System.IO;
@@ -33,6 +34,16 @@ namespace Docdown
         private void MenuItemExitClicked(object sender, System.Windows.RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void MarkdownHelpMenuClicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ProgramUtility.Execute("https://pandoc.org/MANUAL.html#pandocs-markdown");
+        }
+
+        private void AboutHelpMenuClicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ProgramUtility.Execute("https://github.com/Darkgaja/Docdown");
         }
     }
 }
