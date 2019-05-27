@@ -20,8 +20,8 @@ namespace Docdown.ViewModel
         public ICommand RestoreCommand => new ActionCommand(Restore);
         public ICommand TestConnectionCommand => new ActionCommand(TestConnection, true);
         public ICommand UploadTemplateCommand => new ActionCommand(UploadTemplate);
-        public ICommand SearchTemplateCommand => new SearchFileCommand(null, "Search template", template => SelectedLocaleTemplate = template, TemplateFileFilter);
-        public ICommand SearchCitationStyleCommand => new SearchFileCommand(null, "Search citation style", csl => SelectedLocaleCsl = csl, CslFileFilter);
+        public ICommand SearchTemplateCommand => new SearchFileCommand(null, "Search template", template => SelectedLocalTemplate = template, TemplateFileFilter);
+        public ICommand SearchCitationStyleCommand => new SearchFileCommand(null, "Search citation style", csl => SelectedLocalCsl = csl, CslFileFilter);
 
         private static readonly CommonFileDialogFilter CslFileFilter = new CommonFileDialogFilter("Citation Style File", ".csl");
         private static readonly CommonFileDialogFilter TemplateFileFilter = new CommonFileDialogFilter("LaTeX Template File", ".latex");
@@ -56,22 +56,22 @@ namespace Docdown.ViewModel
             }
         }
 
-        public string SelectedLocaleTemplate
+        public string SelectedLocalTemplate
         {
-            get => settings.LocaleTemplate;
+            get => settings.LocalTemplate;
             set
             {
-                settings.LocaleTemplate = value;
+                settings.LocalTemplate = value;
                 SendPropertyUpdate();
             }
         }
 
-        public string SelectedLocaleCsl
+        public string SelectedLocalCsl
         {
-            get => settings.LocaleCsl;
+            get => settings.LocalCsl;
             set
             {
-                settings.LocaleCsl = value;
+                settings.LocalCsl = value;
                 SendPropertyUpdate();
             }
         }

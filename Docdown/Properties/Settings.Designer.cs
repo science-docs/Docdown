@@ -133,24 +133,24 @@ namespace Docdown.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LocaleTemplate {
+        public string LocalTemplate {
             get {
-                return ((string)(this["LocaleTemplate"]));
+                return ((string)(this["LocalTemplate"]));
             }
             set {
-                this["LocaleTemplate"] = value;
+                this["LocalTemplate"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LocaleCsl {
+        public string LocalCsl {
             get {
-                return ((string)(this["LocaleCsl"]));
+                return ((string)(this["LocalCsl"]));
             }
             set {
-                this["LocaleCsl"] = value;
+                this["LocalCsl"] = value;
             }
         }
     }

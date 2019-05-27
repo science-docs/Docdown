@@ -141,7 +141,7 @@ namespace Docdown.Model
 
             if (settings.UseOfflineCompiler)
             {
-                return PandocUtility.Compile(temp, TopParent.FileSystemInfo.FullName, settings.LocaleTemplate, settings.LocaleCsl, "*.md");
+                return PandocUtility.Compile(temp, TopParent.FileSystemInfo.FullName, settings.LocalTemplate, settings.LocalCsl, "*.md");
             }
             else
             {

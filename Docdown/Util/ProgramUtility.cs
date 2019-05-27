@@ -4,7 +4,7 @@ namespace Docdown.Util
 {
     public static class ProgramUtility
     {
-        public static int Execute(string program, string args)
+        public static int Execute(string program, string args = null)
         {
             var process = new Process
             {

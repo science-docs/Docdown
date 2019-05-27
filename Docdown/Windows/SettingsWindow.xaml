@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Docdown.Windows"
         xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
         Title="Settings"
@@ -29,6 +28,7 @@
                     <ResourceDictionary.MergedDictionaries>
                         <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml"/>
                     </ResourceDictionary.MergedDictionaries>
+                    <SolidColorBrush x:Key="GrayBrush9" Color="#5EC9C9C9"/>
                 </ResourceDictionary>
             </StackPanel.Resources>
             <CheckBox Content="Only compile selected file"
