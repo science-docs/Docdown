@@ -132,6 +132,7 @@ namespace Docdown.ViewModel
         public ICommand DeleteSelectedItemCommand => new ActionCommand(DeleteSelectedItem);
         public ICommand ImportCommand => new ImportCommand(this, ConverterType.Markdown);
         public ICommand SwitchThemeCommand => new ActionCommand(SwitchTheme);
+        public ICommand ChangeLanguageCommand => new ChangeLanguageCommand();
 
         private string errorMessage;
         private Explorer explorer;

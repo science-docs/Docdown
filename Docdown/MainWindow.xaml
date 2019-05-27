@@ -61,7 +61,7 @@
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
         <Menu Grid.ColumnSpan="3" Grid.Row="0" Style="{StaticResource VSMenu}" ItemContainerStyle="{StaticResource VSMenuItem}">
-            <MenuItem Header="File">
+            <MenuItem Header="{DynamicResource FileMenuItem}">
                 <MenuItem Header="Open Workspace" Command="{Binding SearchWorkspaceCommand}">
                     <MenuItem.Icon>
                         <Rectangle Fill="{DynamicResource OpenFolderIcon}" Height="16" Width="16"/>
@@ -79,7 +79,7 @@
                 <MenuItem Header="Close" Command="{Binding SelectedItem.CloseCommand, FallbackValue={x:Null}}"/>
                 <MenuItem Header="Close all" Command="{Binding CloseAllItemsCommand}"/>
                 <Separator Margin="6 0"/>
-                <MenuItem Header="Import" Command="{Binding ImportCommand}"/>
+                <MenuItem Header="Import" Command="{Binding ImportCommand}" ToolTip="Imported files will be converted to markdown"/>
                 <Separator Margin="6 0"/>
                 <MenuItem Header="Exit" Click="MenuItemExitClicked">
                     <MenuItem.Icon>
@@ -88,10 +88,14 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Options">
-                <MenuItem Header="Compiler">
+                <MenuItem Header="Switch Theme" Command="{Binding SwitchThemeCommand}">
                     <MenuItem.Icon>
-                        <Rectangle Fill="{DynamicResource ProcessServicesIcon}" Height="16" Width="16"/>
+                        <Rectangle Fill="{Binding ThemeName, Converter={StaticResource StringToResourceConverter}}" Height="16" Width="16"/>
                     </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Language">
+                    <MenuItem Header="English" Command="{Binding ChangeLanguageCommand}" CommandParameter="English"/>
+                    <MenuItem Header="Deutsch" Command="{Binding ChangeLanguageCommand}" CommandParameter="German"/>
                 </MenuItem>
                 <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}">
                     <MenuItem.Icon>

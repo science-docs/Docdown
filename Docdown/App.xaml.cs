@@ -14,6 +14,7 @@ namespace Docdown
             ThemeManager.AddAppTheme("DarkDoc", GetResourceUri("Resources/Themes/Dark.xaml"));
             ThemeManager.AddAppTheme("LightDoc", GetResourceUri("Resources/Themes/Light.xaml"));
             var theme = Settings.Default.Theme;
+            ChangeLocale(Settings.Default.Locale);
             ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent("BlueDoc"), ThemeManager.GetAppTheme(theme + "Doc"));
             SplashViewModel.Args = e.Args;
             base.OnStartup(e);
@@ -26,12 +27,22 @@ namespace Docdown
 
         public static void ReloadIcons()
         {
-            var myResourceDictionary = new ResourceDictionary
+            LoadResource(GetResourceUri("Resources/Images/Icons.xaml"));
+        }
+
+        public static void ChangeLocale(string locale)
+        {
+            LoadResource(GetResourceUri($"Resources/Locale/{locale}.xaml"));
+        }
+
+        private static void LoadResource(Uri uri)
+        {
+            var resourceDictionary = new ResourceDictionary
             {
-                Source = GetResourceUri("Resources/Images/VS.xaml")
+                Source = uri
             };
-            Current.Resources.MergedDictionaries.Remove(myResourceDictionary);
-            Current.Resources.MergedDictionaries.Add(myResourceDictionary);
+            Current.Resources.MergedDictionaries.Remove(resourceDictionary);
+            Current.Resources.MergedDictionaries.Add(resourceDictionary);
         }
     }
 }

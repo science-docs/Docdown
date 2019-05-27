@@ -153,5 +153,17 @@ namespace Docdown.Properties {
                 this["LocalCsl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("English")]
+        public string Locale {
+            get {
+                return ((string)(this["Locale"]));
+            }
+            set {
+                this["Locale"] = value;
+            }
+        }
     }
 }

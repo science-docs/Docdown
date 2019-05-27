@@ -162,6 +162,7 @@
     <Compile Include="ViewModel\Commands\ActionCommand.cs" />
     <Compile Include="ViewModel\ChangeListenerAttribute.cs" />
     <Compile Include="ViewModel\Commands\AddExistingFileCommand.cs" />
+    <Compile Include="ViewModel\Commands\ChangeLanguageCommand.cs" />
     <Compile Include="ViewModel\Commands\CreateNewFileCommand.cs" />
     <Compile Include="ViewModel\Commands\DelegateCommand.cs" />
     <Compile Include="ViewModel\Commands\ImportCommand.cs" />
@@ -251,6 +252,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Resources\Locale\English.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Locale\German.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
