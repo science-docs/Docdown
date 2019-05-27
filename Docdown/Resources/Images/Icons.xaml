@@ -337,4 +337,41 @@
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
+    <DrawingBrush x:Key="NewFileIcon">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                    <GeometryDrawing Brush="{DynamicResource GrayBrush1}" Geometry="F1M14,6.1362L14,13.0002C14,13.0002,13.965,14.0002,12.965,14.0002L6.965,14.0002C6.965,14.0002,6,14.0002,6,13.0002L6,8.1442 6.598,8.7422 7,8.3402 7,13.0002 13,13.0002 13,9.0002 13,8.0002 13,7.0002 11,7.0002 11,5.0002 9,5.0002 9,4.0002 11.625,4.0002z" />
+                    <GeometryDrawing Brush="#FFC27D1A" Geometry="F1M5,5L4,5 4,4 5,4z M8,4L5.707,4 7.328,2.379 6.621,1.671 5,3.292 5,1 4,1 4,3.292 2.379,1.671 1.671,2.379 3.292,4 1,4 1,5 3.292,5 1.671,6.621 2.379,7.328 4,5.707 4,8 5,8 5,5.707 6.621,7.328 7.328,6.621 5.707,5 8,5z" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="NewFolderIcon">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M0,0L16,0 16,15.917 0,15.917z" />
+                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16.041L0,16.041 0,0.0410000000000004 16,0.0410000000000004z" />
+                    <GeometryDrawing Brush="#FFDCB67A" Geometry="F1M14.4961,6L11.0001,6 10.9921,6 9.9921,4 9.0001,4 9.0001,5 9.3741,5 9.8741,6 9.0001,6 8.1211,6 8.7421,6.621 6.6211,8.742 6.0001,8.121 6.0001,9 3.0001,9 3.0001,8.121 2.3791,8.742 2.0001,8.363 2.0001,14.5C2.0001,14.776,2.2251,15,2.5001,15L14.4961,15C14.7731,15,14.9961,14.776,14.9961,14.5L14.9961,6.5C14.9961,6.224,14.7731,6,14.4961,6" />
+                    <GeometryDrawing Brush="#FFC27D1A" Geometry="F1M5,5L4,5 4,4 5,4z M8,4L5.707,4 7.328,2.379 6.621,1.671 5,3.292 5,1 4,1 4,3.292 2.379,1.671 1.671,2.379 3.293,4 1,4 1,5 3.293,5 1.671,6.621 2.379,7.328 4,5.707 4,8 5,8 5,5.707 6.621,7.328 7.328,6.621 5.707,5 8,5z" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="AddFileIcon">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                    <GeometryDrawing Brush="{DynamicResource GrayBrush1}" Geometry="F1M15,6L15,14C15,14,14.965,15,13.965,15L5.965,15C5.965,15,5,15,5,14L5,8 6,8 6,14 14,14 14,7 11,7 11,4 8,4 8,3 12,3z" />
+                    <GeometryDrawing Brush="#FF388A34" Geometry="F1M7,3.0181L5,3.0181 5,1.0001 3.019,1.0001 3.019,3.0181 1,3.0181 1,5.0001 3.019,5.0001 3.019,7.0001 5,7.0001 5,5.0001 7,5.0001z" />
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
 </ResourceDictionary>
