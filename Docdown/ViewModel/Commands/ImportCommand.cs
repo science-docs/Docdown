@@ -44,7 +44,7 @@ namespace Docdown.ViewModel.Commands
         private static void ImportFile(WorkspaceViewModel workspace, string fileName, ConverterType target)
         {
             string targetFileName = Path.GetFileNameWithoutExtension(fileName) + target.GetExtension();
-            targetFileName = Path.Combine(workspace.Item.FullName, targetFileName);
+            targetFileName = Path.Combine(workspace.Item.RelativeName, targetFileName);
             string from = Path.GetExtension(fileName);
             if (string.IsNullOrEmpty(from))
             {
@@ -52,17 +52,19 @@ namespace Docdown.ViewModel.Commands
             }
             string url = WebUtility.BuildConvertUrl();
             var req = WebUtility.MultipartFormDataPost(url, BuildParameters(fileName, target).Concat(MultipartFormParameter.CreateFile("content", fileName)));
+            byte[] content;
             using (var res = req.GetResponse())
             using (var rs = res.GetResponseStream())
             {
                 workspace.IgnoreChange = true;
-                using (var fs = File.Open(targetFileName, FileMode.OpenOrCreate))
+                using (var ms = new MemoryStream())
                 {
-                    rs.CopyTo(fs);
+                    rs.CopyTo(ms);
+                    content = ms.ToArray();
                 }
                 workspace.IgnoreChange = false;
             }
-            var item = new WorkspaceItem(new FileInfo(targetFileName));
+            var item = workspace.Item.Data.CreateNewFile(targetFileName, null, content);
             var itemViewModel = workspace.Item.AddChild(item);
             workspace.SelectedItem = itemViewModel;
         }

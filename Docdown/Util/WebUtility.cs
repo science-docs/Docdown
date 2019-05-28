@@ -93,7 +93,6 @@ namespace Docdown.Util
             string contentType = "multipart/form-data; boundary=" + formDataBoundary;
 
             byte[] formData = GetMultipartFormData(postParameters, formDataBoundary);
-            string text = Encoding.UTF8.GetString(formData);
             return PostForm(postUrl, UserAgent, contentType, formData);
         }
 
@@ -293,22 +292,22 @@ namespace Docdown.Util
 
         public static IEnumerable<MultipartFormParameter> FromFolder(string folderPath)
         {
-            var item = new WorkspaceItem(folderPath);
+            var item = new FileWorkspaceItem(folderPath);
             return CreateFormData(item, item, null, false).Where(e => e != null);
         }
 
-        public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(WorkspaceItem workspaceItem, bool onlySelected)
+        public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(FileWorkspaceItem workspaceItem, bool onlySelected)
         {
             return CreateFormData(workspaceItem.Parent, workspaceItem, null, onlySelected).Where(e => e != null).Distinct();
         }
 
-        private static IEnumerable<MultipartFormParameter> CreateFormData(WorkspaceItem item, WorkspaceItem root, string current, bool onlySelected)
+        private static IEnumerable<MultipartFormParameter> CreateFormData(FileWorkspaceItem item, FileWorkspaceItem root, string current, bool onlySelected)
         {
             if (item is null)
             {
                 yield break;
             }
-            else if (item.IsDirectory())
+            else if (item.IsDirectory)
             {
                 string folder = item.FileSystemInfo.Name;
                 if (!string.IsNullOrWhiteSpace(current))

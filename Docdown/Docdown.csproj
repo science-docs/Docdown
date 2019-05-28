@@ -139,11 +139,17 @@
     <Compile Include="Converters\SvgToBrushConverter.cs" />
     <Compile Include="Model\ConnectionStatus.cs" />
     <Compile Include="Model\ConverterType.cs" />
+    <Compile Include="Model\FileWorkspace.cs" />
+    <Compile Include="Model\FileWorkspaceItem.cs" />
+    <Compile Include="Model\IWorkspace.cs" />
+    <Compile Include="Model\IWorkspaceItem.cs" />
     <Compile Include="Model\Outline.cs" />
     <Compile Include="Model\OutlineItem.cs" />
     <Compile Include="Model\Template.cs" />
     <Compile Include="Model\Workspace.cs" />
     <Compile Include="Model\WorkspaceItem.cs" />
+    <Compile Include="Model\WorkspaceItemCollection.cs" />
+    <Compile Include="Model\WorkspaceProvider.cs" />
     <Compile Include="Util\CancelToken.cs" />
     <Compile Include="Util\DependencyPropertyUtility.cs" />
     <Compile Include="Util\Enumerable.cs" />

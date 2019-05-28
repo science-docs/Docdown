@@ -22,7 +22,7 @@ namespace Docdown.ViewModel.Commands
 
             var workspace = workspaceItem.Workspace;
             workspace.IgnoreChange = true;
-            WorkspaceItem item = workspaceItem.Data;
+            IWorkspaceItem item = workspaceItem.Data;
 
             var dialog = new CommonOpenFileDialog("Add existing files")
             {

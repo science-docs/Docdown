@@ -1,9 +1,5 @@
-using Docdown.Properties;
 using Docdown.Util;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Docdown.Model
 {
@@ -22,14 +18,14 @@ namespace Docdown.Model
         Docx
     }
 
-    public class WorkspaceItem
+    public abstract class WorkspaceItem<T> : IWorkspaceItem<T> where T : WorkspaceItem<T>
     {
-        public FileSystemInfo FileSystemInfo { get; set; }
+        public abstract string Name { get; }
         public string RelativeName
         {
             get
             {
-                string name = FileSystemInfo.Name;
+                string name = Name;
                 if (Parent != null)
                 {
                     name = Parent.RelativeName + "/" + name;
@@ -38,307 +34,71 @@ namespace Docdown.Model
             }
         }
         public WorkspaceItemType Type { get; set; }
-        public List<WorkspaceItem> Children { get; } = new List<WorkspaceItem>();
-        public WorkspaceItem Parent { get; set; }
-        public WorkspaceItem TopParent => Parent ?? this;
+        public WorkspaceItemCollection<T> Children { get; }
+        public T Parent { get; set; }
+        public T TopParent => Parent ?? this as T;
         public ConverterType FromType => FromFileType();
         public ConverterType ToType { get; set; } = ConverterType.Pdf;
-        public bool IsHidden => (FileSystemInfo.Attributes & FileAttributes.Hidden) > 0 || (Parent != null && Parent.IsHidden);
-
-        public WorkspaceItem()
-        {
-
-        }
-
-        public WorkspaceItem(string folderPath)
-            : this(new DirectoryInfo(folderPath), true)
-        {
-
-        }
-
-        public WorkspaceItem(FileSystemInfo fileSystemInfo)
-            : this(fileSystemInfo, false)
-        {
-
-        }
-
-        public WorkspaceItem(FileSystemInfo fileSystemInfo, bool recursively)
-        {
-            FileSystemInfo = fileSystemInfo ??
-                throw new ArgumentNullException(nameof(fileSystemInfo));
-
-            if (fileSystemInfo is DirectoryInfo directoryInfo)
-            {
-                Type = WorkspaceItemType.Directory;
-
-                if (recursively)
-                {
-                    Children.AddRange(FromDirectory(directoryInfo, this));
-                }
-            }
-            else if (fileSystemInfo is FileInfo fileInfo)
-            {
-                switch (fileInfo.Extension)
-                {
-                    case ".md":
-                    case ".markdown":
-                        Type = WorkspaceItemType.Markdown;
-                        break;
-                    case ".tex":
-                    case ".latex":
-                        Type = WorkspaceItemType.Latex;
-                        break;
-                    case ".pdf":
-                        Type = WorkspaceItemType.Pdf;
-                        break;
-                    case ".docx":
-                        Type = WorkspaceItemType.Docx;
-                        break;
-                    case ".txt":
-                    case ".ini":
-                    case ".bat":
-                    case ".sh":
-                    case ".json":
-                    case ".xml":
-                    case ".xaml":
-                        Type = WorkspaceItemType.Text;
-                        break;
-                    case ".png":
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".gif":
-                    case ".webp":
-                        Type = WorkspaceItemType.Image;
-                        break;
-                    case ".mp4":
-                    case ".webm":
-                    case ".mkv":
-                        Type = WorkspaceItemType.Video;
-                        break;
-                    case ".mp3":
-                    case ".flac":
-                    case ".ogg":
-                        Type = WorkspaceItemType.Audio;
-                        break;
-                    case ".bib":
-                    case ".bibtex":
-                        Type = WorkspaceItemType.Bibliography;
-                        break;
-                    default:
-                        Type = WorkspaceItemType.Other;
-                        break;
-                }
-            }
-        }
-
-        public string Convert(CancelToken cancelToken)
-        {
-            var folder = Path.GetDirectoryName(FileSystemInfo.FullName);
-
-            string temp = IOUtility.GetHashFile(FileSystemInfo.FullName);
-            var settings = Settings.Default;
-            var onlySelected = settings.CompileOnlySelected;
-
-            if (settings.UseOfflineCompiler)
-            {
-                return PandocUtility.Compile(temp, TopParent.FileSystemInfo.FullName, settings.LocalTemplate, settings.LocalCsl, "*.md");
-            }
-            else
-            {
-                var req = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
-                MultipartFormParameter.ApiParameter(FromType, ToType, settings.Template, settings.Csl, onlySelected).Concat(
-                MultipartFormParameter.FromWorkspaceItem(this, onlySelected)));
-
-                if (cancelToken != null)
-                {
-                    cancelToken.Canceled += AbortRequest;
-                }
-
-                using (var res = req.GetResponse())
-                using (var rs = res.GetResponseStream())
-                {
-                    using (var fs = File.Open(temp, FileMode.Create))
-                    {
-                        rs.CopyTo(fs);
-                    }
-                }
-
-                return temp;
-
-                void AbortRequest(object sender, EventArgs e)
-                {
-                    req.Abort();
-                }
-            }
-        }
-
-        public void Delete()
-        {
-            string fullName = FileSystemInfo.FullName;
-
-            if (IsDirectory())
-            {
-                Directory.Delete(fullName, true);
-            }
-            else
-            {
-                File.Delete(fullName);
-            }
-
-            Parent.Children.Remove(this);
-            Parent = null;
-        }
-
-        public void Rename(string newName)
-        {
-            if (string.IsNullOrWhiteSpace(newName) ||
-                !IOUtility.IsValidFileName(newName))
-                throw new ArgumentException("Invalid name");
-            if (newName == FileSystemInfo.Name)
-                return;
-
-            string oldName = FileSystemInfo.FullName;
-            string parentName = Path.GetDirectoryName(oldName);
-            string fullNewName = Path.Combine(parentName, newName);
-
-            if (IsDirectory())
-            {
-                Directory.Move(oldName, fullNewName);
-                FileSystemInfo = new DirectoryInfo(fullNewName);
-                Children.ForEach(e => e.Update());
-            }
-            else
-            {
-                File.Move(oldName, fullNewName);
-                FileSystemInfo = new FileInfo(fullNewName);
-            }
-        }
-
-        public void Update()
-        {
-            var name = FileSystemInfo.Name;
-            var parentDirectory = Parent.FileSystemInfo.FullName;
-            var newName = Path.Combine(parentDirectory, name);
-            if (Directory.Exists(newName))
-            {
-                FileSystemInfo = new DirectoryInfo(newName);
-                Children.ForEach(e => e.Update());
-            }
-            else
-            {
-                FileSystemInfo = new FileInfo(newName);
-            }
-        }
-
-        public WorkspaceItem CreateNewFile(string name, string autoExtension = null, string content = null)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("message", nameof(name));
-            if (Type != WorkspaceItemType.Directory)
-                throw new InvalidOperationException("Only Directories can contain files");
-
-            if (autoExtension != null && !name.EndsWith(autoExtension))
-            {
-                name += autoExtension;
-            }
-
-            string fullName = Path.Combine(FileSystemInfo.FullName, name);
-
-            if (content is null)
-            {
-                content = string.Empty;
-            }
-            File.WriteAllText(fullName, content);
-
-            var fileInfo = new FileInfo(fullName);
-            var item = new WorkspaceItem(fileInfo)
-            {
-                Parent = this
-            };
-            Children.Add(item);
-            return item;
-        }
-
-        public WorkspaceItem CreateNewDirectory(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("message", nameof(name));
-            if (Type != WorkspaceItemType.Directory)
-                throw new InvalidOperationException("Only Directories can contain other directories");
-
-            string fullName = Path.Combine(FileSystemInfo.FullName, name);
-
-            Directory.CreateDirectory(fullName);
-            var fileInfo = new DirectoryInfo(fullName);
-            var item = new WorkspaceItem(fileInfo)
-            {
-                Parent = this
-            };
-            Children.Add(item);
-            return item;
-        }
-
-        public WorkspaceItem CopyExistingItem(string path)
-        {
-            var fileName = Path.GetFileName(path);
-            var fullNewName = Path.Combine(FileSystemInfo.FullName, fileName);
-
-            if (Children.Any(e => e.FileSystemInfo.Name == fileName))
-            {
-                File.Replace(path, fullNewName, null);
-            }
-            else
-            {
-                File.Copy(path, fullNewName);
-            }
-
-            var fileInfo = new FileInfo(fullNewName);
-            var item = new WorkspaceItem(fileInfo)
-            {
-                Parent = this
-            };
-            Children.Add(item);
-            return item;
-        }
-
-        public WorkspaceItem CopyExistingFolder(string path)
-        {
-            var item = CreateNewDirectory(Path.GetFileName(path));
-            foreach (var file in Directory.GetFiles(path))
-            {
-                var child = CopyExistingItem(file);
-                item.Children.Add(child);
-                child.Parent = item;
-            }
-            foreach (var directory in Directory.GetDirectories(path))
-            {
-                var child = CopyExistingFolder(directory);
-                item.Children.Add(child);
-                child.Parent = item;
-            }
-            return item;
-        }
+        //public bool IsHidden => (FileSystemInfo.Attributes & FileAttributes.Hidden) > 0 || (Parent != null && Parent.IsHidden);
         
-        public bool IsDirectory()
+        public abstract string Convert(CancelToken cancelToken);
+
+        public abstract void Delete();
+
+        public abstract byte[] Read();
+
+        public abstract void Save(string text);
+
+        public abstract void Rename(string newName);
+
+        public abstract void Update();
+
+        public abstract T CreateNewFile(string name, string autoExtension = null, byte[] content = null);
+
+        public abstract T CreateNewDirectory(string name);
+
+        public abstract T CopyExistingItem(string path);
+
+        public abstract T CopyExistingFolder(string path);
+        
+        public bool IsDirectory => Type == WorkspaceItemType.Directory;
+
+        public bool IsFile => !IsDirectory;
+
+        List<IWorkspaceItem> IWorkspaceItem.Children { get; } = new List<IWorkspaceItem>();
+
+        IWorkspaceItem IWorkspaceItem.Parent { get => Parent; set => Parent = (T)value; }
+
+        IWorkspaceItem IWorkspaceItem.TopParent => throw new System.NotImplementedException();
+
+        protected WorkspaceItem()
         {
-            return Type == WorkspaceItemType.Directory;
+            Children = new WorkspaceItemCollection<T>((T)this);
         }
 
-        public bool IsPlainText()
+        IWorkspaceItem IWorkspaceItem.CreateNewFile(string name, string autoExtension, byte[] content)
         {
-            switch (Type)
-            {
-                case WorkspaceItemType.Text:
-                case WorkspaceItemType.Latex:
-                case WorkspaceItemType.Markdown:
-                    return true;
-            }
-            return false;
+            return CreateNewFile(name, autoExtension, content);
+        }
+
+        IWorkspaceItem IWorkspaceItem.CreateNewDirectory(string name)
+        {
+            return CreateNewDirectory(name);
+        }
+
+        IWorkspaceItem IWorkspaceItem.CopyExistingItem(string path)
+        {
+            return CopyExistingItem(path);
+        }
+
+        IWorkspaceItem IWorkspaceItem.CopyExistingFolder(string path)
+        {
+            return CopyExistingFolder(path);
         }
 
         public override string ToString()
         {
-            return FileSystemInfo?.FullName ?? base.ToString();
+            return RelativeName ?? base.ToString();
         }
 
         private ConverterType FromFileType()
@@ -354,15 +114,6 @@ namespace Docdown.Model
             }
         }
 
-        private static IEnumerable<WorkspaceItem> FromDirectory(DirectoryInfo directoryInfo, WorkspaceItem parent)
-        {
-            foreach (var dir in directoryInfo.EnumerateFileSystemInfos())
-            {
-                if (dir.Name != ".git")
-                {
-                    yield return new WorkspaceItem(dir, true) { Parent = parent };
-                }
-            }
-        }
+        
     }
 }

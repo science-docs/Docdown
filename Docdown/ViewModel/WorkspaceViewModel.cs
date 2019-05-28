@@ -15,7 +15,7 @@ using System.Windows.Input;
 
 namespace Docdown.ViewModel
 {
-    public class WorkspaceViewModel : ObservableObject<Workspace>
+    public class WorkspaceViewModel : ObservableObject<IWorkspace>
     {
         [ChangeListener(nameof(Data))]
         public WorkspaceItemViewModel Item
@@ -63,7 +63,7 @@ namespace Docdown.ViewModel
                 selectedItem = value;
                 var item = Data.SelectedItem = value?.Data;
 
-                if (item is null || !item.IsDirectory())
+                if (item is null || !item.IsDirectory)
                 {
                     SendPropertyUpdate();
                 }
@@ -102,8 +102,10 @@ namespace Docdown.ViewModel
         /// </summary>
         public bool IgnoreChange
         {
-            get => Data.IgnoreChange;
-            set => Data.IgnoreChange = value;
+            // TODO: Fix this
+            get; set;
+            //get => Data.IgnoreChange;
+            //set => Data.IgnoreChange = value;
         }
 
         public string ErrorMessage
@@ -140,13 +142,13 @@ namespace Docdown.ViewModel
         private WorkspaceItemViewModel selectedItem;
         private Theme theme;
         
-        public WorkspaceViewModel(Workspace workspace) : base(workspace ?? throw new ArgumentNullException(nameof(workspace)))
+        public WorkspaceViewModel(IWorkspace workspace) : base(workspace ?? throw new ArgumentNullException(nameof(workspace)))
         {
             theme = (Theme)Enum.Parse(typeof(Theme), Properties.Settings.Default.Theme);
             Messages = new MessageQueue();
             Wizard = new WizardViewModel(this);
             Settings = new SettingsViewModel(this);
-            workspace.WorkspaceChanged += OnWorkspaceChanged;
+            //workspace.WorkspaceChanged += OnWorkspaceChanged;
             Explorer = new Explorer(this);
         }
 
@@ -176,10 +178,8 @@ namespace Docdown.ViewModel
 
             Settings.WorkspacePath = newWorkspace;
             Settings.Save();
-            Data = new Workspace(newWorkspace)
-            {
-                ToType = ConverterType.Pdf
-            };
+            Data = WorkspaceProvider.Create(newWorkspace);
+            Data.ToType = ConverterType.Pdf;
         }
 
         public void OpenItem(string fullPath)
@@ -193,10 +193,8 @@ namespace Docdown.ViewModel
             else
             {
                 var parent = Path.GetDirectoryName(fullPath);
-                Data = new Workspace(parent)
-                {
-                    ToType = Data.ToType
-                };
+                Data = WorkspaceProvider.Create(parent);
+                Data.ToType = ConverterType.Pdf;
                 OpenItem(fullPath);
             }
         }
@@ -243,11 +241,10 @@ namespace Docdown.ViewModel
             if (result == MessageBoxResult.Yes)
             {
                 var openItems = OpenItems.ToArray();
-                var selectedItemName = SelectedItem?.FullName;
-                Data = new Workspace(Data.Item.FileSystemInfo.FullName)
-                {
-                    ToType = Data.ToType
-                };
+                var selectedItemName = SelectedItem?.RelativeName;
+                // TODO: this isn't completely right
+                Data = WorkspaceProvider.Create(Data.Item.RelativeName);
+                Data.ToType = ConverterType.Pdf;
                 RestoreWorkspace(Item, openItems, selectedItemName);
             }
             IgnoreChange = false;
@@ -261,7 +258,7 @@ namespace Docdown.ViewModel
                 {
                     RestoreWorkspace(child, openItems, null);
                 }
-                else if (openItems.Any(e => e.FullName == child.FullName))
+                else if (openItems.Any(e => e.RelativeName == child.RelativeName))
                 {
                     OpenItems.Add(child);
                 }
@@ -271,7 +268,7 @@ namespace Docdown.ViewModel
             {
                 foreach (var i in OpenItems)
                 {
-                    if (i.FullName == selectedItemName)
+                    if (i.RelativeName == selectedItemName)
                     {
                         SelectedItem = i;
                         break;
@@ -301,7 +298,7 @@ namespace Docdown.ViewModel
             Explorer = new Explorer(this);
         }
 
-        private WorkspaceItemViewModel SearchForSelectedItem(WorkspaceItemViewModel vm, WorkspaceItem item)
+        private WorkspaceItemViewModel SearchForSelectedItem(WorkspaceItemViewModel vm, IWorkspaceItem item)
         {
             if (vm.Data == item)
             {
@@ -323,7 +320,7 @@ namespace Docdown.ViewModel
 
         private WorkspaceItemViewModel SearchForSelectedItem(WorkspaceItemViewModel vm, string fullPath)
         {
-            if (vm.FullName == fullPath)
+            if (vm.RelativeName == fullPath)
             {
                 return vm;
             }

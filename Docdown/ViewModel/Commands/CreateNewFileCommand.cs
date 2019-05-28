@@ -20,7 +20,7 @@ namespace Docdown.ViewModel.Commands
 
             var workspace = workspaceItem.Workspace;
             workspace.IgnoreChange = true;
-            WorkspaceItem newItem;
+            IWorkspaceItem newItem;
             if (isDirectory)
             {
                 newItem = workspaceItem.Data.CreateNewDirectory("New Folder");
