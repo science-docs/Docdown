@@ -152,8 +152,17 @@ namespace Docdown.Util
                     }
                     else if (param.Type == MultipartFormParameterType.Field)
                     {
-                        string postData = $"--{boundary}{CRLF}Content-Disposition: form-data; name=\"{param.Name}\"{CRLF}{CRLF}{param.Value}";
-                        Write(formDataStream, postData);
+                        if (param.Array)
+                        {
+                            foreach (var value in param.Value)
+                            {
+                                AddField(formDataStream, param.Name + "[]", value);
+                            }
+                        }
+                        else
+                        {
+                            AddField(formDataStream, param.Name, param.Value[0]);
+                        }
                     }
                 }
 
@@ -161,6 +170,12 @@ namespace Docdown.Util
                 Write(formDataStream, $"{CRLF}--{boundary}--{CRLF}");
 
                 return formDataStream.ToArray();
+            }
+
+            void AddField(MemoryStream ms, string name, string value)
+            {
+                string postData = $"--{boundary}{CRLF}Content-Disposition: form-data; name=\"{name}\"{CRLF}{CRLF}{value}";
+                Write(ms, postData);
             }
         }
 
@@ -187,7 +202,8 @@ namespace Docdown.Util
         public byte[] Data { get; set; }
         public string FileName { get; set; }
         public string ContentType { get; set; }
-        public string Value { get; set; }
+        public string[] Value { get; set; }
+        public bool Array { get; set; } = false;
         public MultipartFormParameterType Type { get; set; }
 
         private const string BinaryType = "application/octet-stream";
@@ -224,7 +240,22 @@ namespace Docdown.Util
             return new MultipartFormParameter
             {
                 Name = name,
-                Value = value,
+                Value = new[] { value },
+                Type = MultipartFormParameterType.Field
+            };
+        }
+
+        public static MultipartFormParameter CreateFieldArray(string name, string[] values)
+        {
+            if (name is null)
+                throw new ArgumentNullException(nameof(name));
+            if (values is null)
+                throw new ArgumentNullException(nameof(values));
+
+            return new MultipartFormParameter
+            {
+                Name = name,
+                Value = values,
                 Type = MultipartFormParameterType.Field
             };
         }
