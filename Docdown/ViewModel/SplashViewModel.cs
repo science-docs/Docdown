@@ -38,10 +38,8 @@ namespace Docdown.ViewModel
                     settings.WorkspacePath = workspacePath;
                     settings.Save();
 
-                    var workspace = new FileWorkspace(workspacePath)
-                    {
-                        ToType = ConverterType.Pdf
-                    };
+                    var workspace = WorkspaceProvider.Create(new Uri(workspacePath));
+                    workspace.ToType = ConverterType.Pdf;
                     var workspaceViewModel = new WorkspaceViewModel(workspace);
                     workspaceViewModel.Settings.TestConnection();
 

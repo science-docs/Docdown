@@ -83,12 +83,6 @@ namespace Docdown.ViewModel
             set => Set(ref isNameChanging, value);
         }
 
-        public string ErrorMessage
-        {
-            get => errorMessage;
-            set => Set(ref errorMessage, value);
-        }
-
         public string PdfPath
         {
             get => pdfPath;
@@ -172,7 +166,6 @@ namespace Docdown.ViewModel
         public WorkspaceViewModel Workspace { get; }
         public WorkspaceItemViewModel Parent { get; }
 
-        private string errorMessage;
         private string pdfPath;
         private bool isExpanded = false;
         private bool canConvert;
@@ -285,7 +278,6 @@ namespace Docdown.ViewModel
                 return;
 
             converterToken.Cancel();
-            ErrorMessage = "";
             Workspace.Messages.Warning("Compilation cancelled");
         }
 
@@ -296,7 +288,6 @@ namespace Docdown.ViewModel
             
             converterToken = new CancelToken();
             Workspace.Messages.Working("Compiling...");
-            ErrorMessage = "";
             IsConverting = true;
             Save();
             Task.Run(() =>
@@ -307,15 +298,13 @@ namespace Docdown.ViewModel
                     PdfPath = string.Empty;
                     PdfPath = Data.Convert(converterToken);
                     watch.Stop();
-                    ErrorMessage = "";
                     Workspace.Messages.Success($"Succesfully compiled in {watch.Elapsed.Seconds}s {watch.Elapsed.Milliseconds}ms");
                 }
                 catch (Exception e)
                 {
                     if (!converterToken.IsCanceled)
                     {
-                        ErrorMessage = ErrorUtility.GetErrorMessage(e);
-                        Workspace.Messages.Error(ErrorMessage);
+                        Workspace.Messages.Error(ErrorUtility.GetErrorMessage(e));
                     }
                 }
                 watch.Stop();
@@ -482,8 +471,7 @@ namespace Docdown.ViewModel
             }
             catch (Exception e)
             {
-                ErrorMessage = ErrorUtility.GetErrorMessage(e);
-                Workspace.Messages.Error(ErrorMessage);
+                Workspace.Messages.Error(ErrorUtility.GetErrorMessage(e));
             }
             return docViewer;
         }

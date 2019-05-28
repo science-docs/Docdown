@@ -178,7 +178,7 @@ namespace Docdown.ViewModel
 
             Settings.WorkspacePath = newWorkspace;
             Settings.Save();
-            Data = WorkspaceProvider.Create(newWorkspace);
+            Data = WorkspaceProvider.Create(new Uri(newWorkspace));
             Data.ToType = ConverterType.Pdf;
         }
 
@@ -193,7 +193,7 @@ namespace Docdown.ViewModel
             else
             {
                 var parent = Path.GetDirectoryName(fullPath);
-                Data = WorkspaceProvider.Create(parent);
+                Data = WorkspaceProvider.Create(new Uri(parent));
                 Data.ToType = ConverterType.Pdf;
                 OpenItem(fullPath);
             }
@@ -243,7 +243,7 @@ namespace Docdown.ViewModel
                 var openItems = OpenItems.ToArray();
                 var selectedItemName = SelectedItem?.RelativeName;
                 // TODO: this isn't completely right
-                Data = WorkspaceProvider.Create(Data.Item.RelativeName);
+                Data = WorkspaceProvider.Create(new Uri(Data.Item.RelativeName));
                 Data.ToType = ConverterType.Pdf;
                 RestoreWorkspace(Item, openItems, selectedItemName);
             }
