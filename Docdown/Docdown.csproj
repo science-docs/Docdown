@@ -147,6 +147,7 @@
     <Compile Include="Model\OutlineItem.cs" />
     <Compile Include="Model\Template.cs" />
     <Compile Include="Model\Workspace.cs" />
+    <Compile Include="Model\WorkspaceChangeEventArgs.cs" />
     <Compile Include="Model\WorkspaceItem.cs" />
     <Compile Include="Model\WorkspaceItemCollection.cs" />
     <Compile Include="Model\WorkspaceProvider.cs" />

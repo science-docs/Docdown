@@ -1,6 +1,7 @@
 ﻿using Docdown.Util;
 using LibGit2Sharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Docdown.Model
@@ -17,17 +18,21 @@ namespace Docdown.Model
 
         public bool GitEnabled => Repository != null;
         public Repository Repository { get; }
-        public event EventHandler WorkspaceChanged;
+        public override event WorkspaceChangeEventHandler WorkspaceChanged;
 
         private readonly FileSystemWatcher watcher;
 
         private readonly Action debounceUpdate;
+        private readonly Stack<WorkspaceChangeEventArgs> stackedChanges;
+        private readonly string path;
 
         public FileWorkspace(string path)
         {
+            this.path = path;
             Repository = SetupGit(path);
             Item = new FileWorkspaceItem(path);
 
+            stackedChanges = new Stack<WorkspaceChangeEventArgs>();
             watcher = new FileSystemWatcher(path);
             watcher.Changed += OnWorkspaceChanged;
             watcher.Created += OnWorkspaceChanged;
@@ -41,13 +46,28 @@ namespace Docdown.Model
 
             debounceUpdate = UIUtility.Debounce(() =>
             {
-                WorkspaceChanged?.Invoke(this, EventArgs.Empty);
+                while (stackedChanges.Count > 0)
+                {
+                    WorkspaceChanged?.Invoke(this, stackedChanges.Pop());
+                }
             }, 1000);
         }
 
         private void OnWorkspaceChanged(object sender, FileSystemEventArgs e)
         {
+            var change = FromFileSystemEvent(e);
+            stackedChanges.Push(change);
             debounceUpdate();
+        }
+
+        private WorkspaceChangeEventArgs FromFileSystemEvent(FileSystemEventArgs e)
+        {
+            var full = e.FullPath;
+            int diff = full.Length - path.Length;
+            full = full.Substring(path.Length, diff);
+            var item = FindRelativeItem(full);
+            WorkspaceChange change = (WorkspaceChange)e.ChangeType;
+            return new WorkspaceChangeEventArgs(item, change);
         }
 
         private Repository SetupGit(string path)

@@ -12,6 +12,7 @@ namespace Docdown.Model
         IWorkspaceItem SelectedItem { get; set; }
         ConverterType FromType { get; }
         ConverterType ToType { get; set; }
+        event WorkspaceChangeEventHandler WorkspaceChanged;
     }
     public interface IWorkspace<T> : IWorkspace where T : class, IWorkspaceItem<T>
     {
