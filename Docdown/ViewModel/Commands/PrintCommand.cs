@@ -1,3 +1,4 @@
+using Docdown.Model;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.IO;
@@ -17,7 +18,7 @@ namespace Docdown.ViewModel.Commands
         {
             var dialog = new CommonSaveFileDialog
             {
-                Title = "Save Pdf file",
+                Title = Language.Current.Get("Dialog.Print.Title"),
                 EnsurePathExists = true,
                 DefaultExtension = "pdf",
                 CreatePrompt = true,
@@ -38,11 +39,11 @@ namespace Docdown.ViewModel.Commands
                     {
                         File.Copy(pdfPath, dialog.FileName);
                     }
-                    workspace.Messages.Success("File saved");
+                    workspace.Messages.Success(Language.Current.Get("Message.File.Save.Success"));
                 }
                 catch
                 {
-                    workspace.Messages.Error("Could not save file");
+                    workspace.Messages.Error((Language.Current.Get("Message.File.Save.Error")));
                 }
             }
         }

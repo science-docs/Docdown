@@ -13,11 +13,6 @@ namespace Docdown.Model
         public override string Name => FileSystemInfo.Name;
         public bool IsHidden => (FileSystemInfo.Attributes & FileAttributes.Hidden) > 0 || (Parent != null && Parent.IsHidden);
 
-        public FileWorkspaceItem()
-        {
-
-        }
-
         public FileWorkspaceItem(string folderPath)
             : this(new DirectoryInfo(folderPath), true)
         {

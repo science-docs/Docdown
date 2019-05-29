@@ -1,0 +1,93 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:System="clr-namespace:System;assembly=mscorlib">
+    
+    <!-- Main Menu -->
+    <System:String x:Key="Main_Menu_File">File</System:String>
+    <System:String x:Key="Main_Menu_File_OpenWorkspace">Open Workspace</System:String>
+    <System:String x:Key="Main_Menu_File_LastWorkspaces">Last Workspaces</System:String>
+    <System:String x:Key="Main_Menu_File_Close">Close</System:String>
+    <System:String x:Key="Main_Menu_File_CloseAll">Close all</System:String>
+    <System:String x:Key="Main_Menu_File_Import">Import</System:String>
+    <System:String x:Key="Main_Menu_File_Import_Tooltip">Imported files will be converted to markdown</System:String>
+    <System:String x:Key="Main_Menu_File_Exit">Exit</System:String>
+    
+    <System:String x:Key="Main_Menu_Options">Options</System:String>
+    <System:String x:Key="Main_Menu_Options_ThemeSwitch">Switch Theme</System:String>
+    <System:String x:Key="Main_Menu_Options_Language">Language</System:String>
+    <System:String x:Key="Main_Menu_Options_Settings">Settings</System:String>
+
+    <System:String x:Key="Main_Menu_Help">Help</System:String>
+    <System:String x:Key="Main_Menu_Help_Markdown">Markdown</System:String>
+    <System:String x:Key="Main_Menu_Help_About">About</System:String>
+
+    <System:String x:Key="Main_Menu_Save_Tooltip">Save {0}</System:String>
+    <System:String x:Key="Main_Menu_SaveAll_Tooltip">Save all</System:String>
+
+    <System:String x:Key="Main_Menu_Start">Start</System:String>
+    <System:String x:Key="Main_Menu_Start_Tooltip">Convert to {0}</System:String>
+    <System:String x:Key="Main_Menu_Stop_Tooltip">Stop compiling</System:String>
+
+    <System:String x:Key="Main_Menu_Print_Tooltip">Print File</System:String>
+    
+    <!-- Workspace explorer -->
+    <System:String x:Key="Workspace_Explorer_Title">Workspace Explorer</System:String>
+    <System:String x:Key="Workspace_Explorer_Search">Search in explorer</System:String>
+    
+    <!-- Outline View -->
+    <System:String x:Key="Outline_Title">Outline</System:String>
+    
+    <!-- Search View-->
+    <System:String x:Key="Search_Search_Tooltip">Search (Enter)</System:String>
+    <System:String x:Key="Search_Close_Tooltip">Close (Esc)</System:String>
+    <System:String x:Key="Search_Replace_Tooltip">Replace next (Alt+R)</System:String>
+    <System:String x:Key="Search_Replace_All_Tooltip">Replace all (Alt+A)</System:String>
+    
+    <!-- Message Window -->
+    <System:String x:Key="Message_Window_OK">OK</System:String>
+    <System:String x:Key="Message_Window_Yes">Yes</System:String>
+    <System:String x:Key="Message_Window_No">No</System:String>
+    <System:String x:Key="Message_Window_Cancel">Cancel</System:String>
+
+    <!-- Settings Window-->
+    <System:String x:Key="Settings_Window_Title">Settings</System:String>
+    <System:String x:Key="Settings_Window_OnlySelected">Only compile selected file</System:String>
+    <System:String x:Key="Settings_Window_UseOfflineCompiler">Use offline compiler</System:String>
+    <System:String x:Key="Settings_Window_Offline_Template">Template Location</System:String>
+    <System:String x:Key="Settings_Window_Offline_Csl">Citation Style Location</System:String>
+    <System:String x:Key="Settings_Window_Online_Template">Templates</System:String>
+    <System:String x:Key="Settings_Window_Online_Csl">Citation Styles</System:String>
+    <System:String x:Key="Settings_Window_Online_Url">Server URL</System:String>
+    <System:String x:Key="Settings_Window_Upload_Template">Upload Template</System:String>
+    <System:String x:Key="Settings_Window_Upload_Csl">Upload Citation Style</System:String>
+    <System:String x:Key="Settings_Window_Save">Save</System:String>
+    <System:String x:Key="Settings_Window_Close">Close</System:String>
+    <System:String x:Key="Settings_Window_Default">Default</System:String>
+
+    <!-- Dialogs -->
+    <System:String x:Key="Dialog_Existing_Title">Add existing files</System:String>
+    <System:String x:Key="Dialog_Import_Title">Select a file to import</System:String>
+    <System:String x:Key="Dialog_Print_Title">Save PDF file</System:String>
+    
+    <!-- IO Operations-->
+    <System:String x:Key="File_New_Folder">New Folder</System:String>
+    <System:String x:Key="File_New_File">New File</System:String>
+    
+    <!-- App Messages -->
+    <System:String x:Key="Message_File_Save_Success">File saved</System:String>
+    <System:String x:Key="Message_File_Save_Error">Could not save file</System:String>
+    
+    
+    <!-- Workspace Messages-->
+    <System:String x:Key="Workspace_Save_Files_Title">Save files</System:String>
+    <System:String x:Key="Workspace_Save_Files_Text">Do you want to save your files before closing?</System:String>
+    <System:String x:Key="Workspace_Save_File_Title">Save file</System:String>
+    <System:String x:Key="Workspace_Save_File_Text">Do you want to save your file before closing?</System:String>
+    <System:String x:Key="Workspace_Delete_File_Title">Delete file</System:String>
+    <System:String x:Key="Workspace_Delete_File_Text">Are you sure you want to delete "{0}"?</System:String>
+    <System:String x:Key="Workspace_Compilation_Cancelled">Compilation cancelled</System:String>
+    <System:String x:Key="Workspace_Compilation_Running">Compiling...</System:String>
+    <System:String x:Key="Workspace_Compilation_Success">Succesfully compiled in {0}.{1} seconds</System:String>
+    <System:String x:Key="Workspace_Image_Failed">Could not open image</System:String>
+
+</ResourceDictionary>

@@ -1,4 +1,5 @@
-﻿using Docdown.Properties;
+﻿using Docdown.Model;
+using Docdown.Properties;
 using Docdown.ViewModel;
 using MahApps.Metro;
 using System;
@@ -32,7 +33,8 @@ namespace Docdown
 
         public static void ChangeLocale(string locale)
         {
-            LoadResource(GetResourceUri($"Resources/Locale/{locale}.xaml"));
+            var language = Language.Load(locale);
+            SetResources(language.Dictionary);
         }
 
         private static void LoadResource(Uri uri)
@@ -41,8 +43,13 @@ namespace Docdown
             {
                 Source = uri
             };
-            Current.Resources.MergedDictionaries.Remove(resourceDictionary);
-            Current.Resources.MergedDictionaries.Add(resourceDictionary);
+            SetResources(resourceDictionary);
+        }
+
+        private static void SetResources(ResourceDictionary dictionary)
+        {
+            Current.Resources.MergedDictionaries.Remove(dictionary);
+            Current.Resources.MergedDictionaries.Add(dictionary);
         }
     }
 }

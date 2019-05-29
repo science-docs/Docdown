@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-        Title="Settings"
+        Title="{DynamicResource Settings_Window_Title}"
         Style="{StaticResource SlimWindowStyle}"
         TitleTemplate="{StaticResource DefaultTitleTemplate}"
         IconTemplate="{StaticResource DefaultIconTemplate}"
@@ -31,25 +31,23 @@
                     <SolidColorBrush x:Key="GrayBrush9" Color="#5EC9C9C9"/>
                 </ResourceDictionary>
             </StackPanel.Resources>
-            <CheckBox Content="Only compile selected file"
+            <CheckBox Content="{DynamicResource Settings_Window_OnlySelected}"
                       Style="{StaticResource DefaultCheckStyle}"
                       Margin="0 2"
                       IsChecked="{Binding CompileOnlySelected}"/>
             <CheckBox x:Name="OfflineCompilerCheck"
-                      Content="Use offline compiler"
+                      Content="{DynamicResource Settings_Window_UseOfflineCompiler}"
                       Style="{StaticResource DefaultCheckStyle}"
                       Margin="0 2"
                       IsChecked="{Binding UseOfflineCompiler}"
                       IsEnabled="{Binding CanCompileOffline}"/>
             <CheckBox x:Name="InvertedOfflineCompilerCheck"
-                      Content="Use offline compiler"
                       Style="{StaticResource DefaultCheckStyle}"
-                      Margin="0 2"
                       Visibility="Collapsed"
                       IsChecked="{Binding ElementName=OfflineCompilerCheck, Path=IsChecked, Converter={StaticResource InvertBooleanConverter}}"/>
             <StackPanel Orientation="Vertical"
                         Visibility="{Binding ElementName=OfflineCompilerCheck, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <TextBlock Text="Template Location"
+                <TextBlock Text="{DynamicResource Settings_Window_Offline_Template}"
                        Margin="0 2"
                        Style="{StaticResource DefaultInformationStyle}"/>
                 <TextBox Margin="0 2"
@@ -58,7 +56,7 @@
                      Metro:TextBoxHelper.ButtonCommand="{Binding SearchTemplateCommand}"
                      Metro:TextBoxHelper.ButtonContent="🔍"
                      Metro:TextBoxHelper.ButtonFontFamily="Segoe UI Symbol"/>
-                <TextBlock Text="Citation Style Location"
+                <TextBlock Text="{DynamicResource Settings_Window_Offline_Csl}"
                        Margin="0 2"
                        Style="{StaticResource DefaultInformationStyle}"/>
                 <TextBox Margin="0 2"
@@ -70,7 +68,7 @@
             </StackPanel>
             <StackPanel Orientation="Vertical"
                         Visibility="{Binding ElementName=InvertedOfflineCompilerCheck, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <TextBlock Text="Server URL"
+                <TextBlock Text="{DynamicResource Settings_Window_Online_Url}"
                        Margin="0 2"
                        Style="{StaticResource DefaultInformationStyle}"/>
                 <TextBox Text="{Binding Api, UpdateSourceTrigger=PropertyChanged}"
@@ -111,7 +109,7 @@
                         </Style>
                     </TextBox.Style>
                 </TextBox>
-                <TextBlock Text="Templates"
+                <TextBlock Text="{DynamicResource Settings_Window_Online_Template}"
                        Margin="0 2"
                        Style="{StaticResource DefaultInformationStyle}"/>
                 <ComboBox ItemsSource="{Binding Templates}"
@@ -131,19 +129,19 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <Button Content="Upload Template"
+                <Button Content="{DynamicResource Settings_Window_Upload_Template}"
                     Command="{Binding UploadTemplateCommand}"
                     Style="{StaticResource MetroFlatButton}"
                     IsEnabled="{Binding IsConnected}"
                     Margin="0 2"/>
-                <TextBlock Text="Citation Styles"
+                <TextBlock Text="{DynamicResource Settings_Window_Online_Csl}"
                        Margin="0 2"
                        Style="{StaticResource DefaultInformationStyle}"/>
                 <ComboBox ItemsSource="{Binding Csls}"
                       SelectedItem="{Binding SelectedCsl}"
                       IsEnabled="{Binding IsConnected}"
                       Margin="0 2"/>
-                <Button Content="Upload Citation Style"
+                <Button Content="{DynamicResource Settings_Window_Upload_Csl}"
                     Style="{StaticResource MetroFlatButton}"
                     IsEnabled="False"
                     Margin="0 2"/>
@@ -157,12 +155,16 @@
             </Grid.Resources>
             <Button Command="{Binding RestoreCommand}"
                     HorizontalAlignment="Left" 
-                    Content="Default" 
+                    Content="{DynamicResource Settings_Window_Default}" 
                     Margin="8"/>
             <StackPanel HorizontalAlignment="Right"
                         Orientation="Horizontal">
-                <Button Content="Save" Command="{Binding SaveCommand}" Click="CloseClick"/>
-                <Button Content="Close" Margin="4 8 8 8" Click="CloseClick"/>
+                <Button Content="{DynamicResource Settings_Window_Save}" 
+                        Command="{Binding SaveCommand}" 
+                        Click="CloseClick"/>
+                <Button Content="{DynamicResource Settings_Window_Close}" 
+                        Margin="4 8 8 8" 
+                        Click="CloseClick"/>
             </StackPanel>
         </Grid>
     </Grid>

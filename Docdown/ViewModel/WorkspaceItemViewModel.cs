@@ -278,7 +278,7 @@ namespace Docdown.ViewModel
                 return;
 
             converterToken.Cancel();
-            Workspace.Messages.Warning("Compilation cancelled");
+            Workspace.Messages.Warning(Language.Current.Get("Workspace.Compilation.Cancelled"));
         }
 
         public void Convert()
@@ -287,7 +287,7 @@ namespace Docdown.ViewModel
                 return;
             
             converterToken = new CancelToken();
-            Workspace.Messages.Working("Compiling...");
+            Workspace.Messages.Working(Language.Current.Get("Workspace.Compilation.Running"));
             IsConverting = true;
             Save();
             Task.Run(() =>
@@ -298,7 +298,7 @@ namespace Docdown.ViewModel
                     PdfPath = string.Empty;
                     PdfPath = Data.Convert(converterToken);
                     watch.Stop();
-                    Workspace.Messages.Success($"Succesfully compiled in {watch.Elapsed.Seconds}s {watch.Elapsed.Milliseconds}ms");
+                    Workspace.Messages.Success(Language.Current.Get("Workspace.Compilation.Success", watch.Elapsed.Seconds, watch.Elapsed.Milliseconds));
                 }
                 catch (Exception e)
                 {
@@ -315,7 +315,8 @@ namespace Docdown.ViewModel
 
         public void Delete()
         {
-            if (!IsNameChanging && ShowMessage("Delete file", $"Are you sure you want to delete \"{Name}\"?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            var lang = Language.Current;
+            if (!IsNameChanging && ShowMessage(lang.Get("Workspace.Delete.File.Title"), lang.Get("Workspace.Delete.File.Text", Name), MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 RemoveFromOpenItems();
                 Workspace.IgnoreChange = true;
@@ -398,7 +399,8 @@ namespace Docdown.ViewModel
             {
                 if (HasChanged)
                 {
-                     switch (ShowMessage("Save file", "Do you want to save your file before closing?", MessageBoxButton.YesNoCancel))
+                    var lang = Language.Current;
+                     switch (ShowMessage(lang.Get("Workspace.Save.File.Title"), lang.Get("Workspace.Save.File.Text"), MessageBoxButton.YesNoCancel))
                      {
                         case MessageBoxResult.Yes:
                             Save();
@@ -522,7 +524,7 @@ namespace Docdown.ViewModel
             }
             catch
             {
-                Workspace.Messages.Error("Could not open image");
+                Workspace.Messages.Error(Language.Current.Get("Workspace.Image.Failed"));
             }
             
             return image;

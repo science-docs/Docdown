@@ -25,12 +25,6 @@
                 </Style>
             </PdfViewer:PdfViewer.Style>
         </PdfViewer:PdfViewer>
-        <TextBlock x:Name="Error" 
-                   Text="{Binding ErrorMessage}" 
-                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" 
-                   TextWrapping="Wrap"
-                   VerticalAlignment="Center" 
-                   HorizontalAlignment="Center"/>
         <Control x:Name="Spinner" 
                  Style="{StaticResource BusyAnimationStyle}" 
                  Visibility="{Binding IsConverting, Converter={StaticResource BooleanToVisibilityConverter}}" 

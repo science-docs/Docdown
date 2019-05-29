@@ -143,6 +143,7 @@
     <Compile Include="Model\FileWorkspaceItem.cs" />
     <Compile Include="Model\IWorkspace.cs" />
     <Compile Include="Model\IWorkspaceItem.cs" />
+    <Compile Include="Model\Language.cs" />
     <Compile Include="Model\Outline.cs" />
     <Compile Include="Model\OutlineItem.cs" />
     <Compile Include="Model\Template.cs" />
@@ -259,11 +260,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Resources\Locale\English.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resources\Locale\German.xaml">
+    <Page Include="Resources\Locale\Template.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -350,6 +347,7 @@
     <EmbeddedResource Include="Resources\Wizards\Wizard.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Locale\German.properties" />
     <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -54,6 +55,27 @@ namespace Docdown.Util
             foreach (byte b in ba)
                 hex.AppendFormat("{0:x2}", b);
             return hex.ToString();
+        }
+
+        public static IEnumerable<Tuple<string, string>> ParseProperties(Stream resource)
+        {
+            string line;
+            using (var reader = new StreamReader(resource))
+            {
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (!line.StartsWith("#"))
+                    {
+                        var splits = line.Split('=');
+                        if (splits.Length == 2)
+                        {
+                            var key = splits[0];
+                            var value = splits[1];
+                            yield return new Tuple<string, string>(key, value);
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Docdown.ViewModel.Commands
             workspace.IgnoreChange = true;
             IWorkspaceItem item = workspaceItem.Data;
 
-            var dialog = new CommonOpenFileDialog("Add existing files")
+            var dialog = new CommonOpenFileDialog(Language.Current.Get("Dialog.Existing.Title"))
             {
                 Multiselect = true,
                 IsFolderPicker = false

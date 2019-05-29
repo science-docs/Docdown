@@ -29,16 +29,16 @@
                     <EventSetter Event="Click" Handler="CloseClicked"/>
                 </Style>
             </StackPanel.Resources>
-            <Button Content="OK" 
+            <Button Content="{DynamicResource Message_Window_OK}" 
                     Command="{Binding OkCommand}"
                     Visibility="{Binding HasOkButton, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <Button Content="Yes" 
+            <Button Content="{DynamicResource Message_Window_Yes}" 
                     Command="{Binding YesCommand}"
                     Visibility="{Binding HasYesButton, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <Button Content="No" 
+            <Button Content="{DynamicResource Message_Window_No}" 
                     Command="{Binding NoCommand}"
                     Visibility="{Binding HasNoButton, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <Button Content="Cancel" 
+            <Button Content="{DynamicResource Message_Window_Cancel}" 
                     Command="{Binding CancelCommand}"
                     Visibility="{Binding HasCancelButton, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </StackPanel>

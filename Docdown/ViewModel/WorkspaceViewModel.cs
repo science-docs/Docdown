@@ -203,7 +203,8 @@ namespace Docdown.ViewModel
         {
             if (OpenItems.Any(e => e.HasChanged))
             {
-                switch (ShowMessage("Save files", "Do you want to save your files before closing?", MessageBoxButton.YesNoCancel))
+                var lang = Language.Current;
+                switch (ShowMessage(lang.Get("Workspace.Save.Files.Title"), lang.Get("Workspace.Save.Files.Text"), MessageBoxButton.YesNoCancel))
                 {
                     case MessageBoxResult.Yes:
                         foreach (var openItem in OpenItems)

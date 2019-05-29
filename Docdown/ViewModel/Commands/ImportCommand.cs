@@ -24,7 +24,7 @@ namespace Docdown.ViewModel.Commands
                 IsFolderPicker = false,
                 Multiselect = false,
                 EnsureFileExists = true,
-                Title = "Select a file to import"
+                Title = Language.Current.Get("Dialog.Import.Title")
             };
 
             if (dialog.ShowDialog(Application.Current.MainWindow) == CommonFileDialogResult.Ok)

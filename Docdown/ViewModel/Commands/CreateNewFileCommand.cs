@@ -23,11 +23,11 @@ namespace Docdown.ViewModel.Commands
             IWorkspaceItem newItem;
             if (isDirectory)
             {
-                newItem = workspaceItem.Data.CreateNewDirectory("New Folder");
+                newItem = workspaceItem.Data.CreateNewDirectory(Language.Current.Get("File.New.Folder"));
             }
             else
             {
-                newItem = workspaceItem.Data.CreateNewFile("NewFile", ".md");
+                newItem = workspaceItem.Data.CreateNewFile(Language.Current.Get("File.New.File"), ".md");
             }
             var vm = new WorkspaceItemViewModel(workspace, workspaceItem, newItem);
             if (isDirectory)
