@@ -8,6 +8,7 @@ using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -190,6 +191,8 @@ namespace Docdown.Controls
             set => SetValue(AbstractSyntaxTreeProperty, value);
         }
 
+        public int WordCount { get; set; }
+
         public Outline Outline { get; set; }
 
         //public MyEncodingInfo Encoding
@@ -249,10 +252,12 @@ namespace Docdown.Controls
             {
                 try
                 {
-                    AbstractSyntaxTree = GenerateAbstractSyntaxTree(Text);
+                    var text = EditBox.Text;
+                    AbstractSyntaxTree = GenerateAbstractSyntaxTree(text);
                     colorizer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
                     blockBackgroundRenderer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
-                    foldingStrategy.UpdateFoldings(foldingManager, AbstractSyntaxTree, EditBox.Text);
+                    foldingStrategy.UpdateFoldings(foldingManager, AbstractSyntaxTree, text);
+                    
                     var headers = EnumerateHeader(AbstractSyntaxTree);
                     Outline = new Outline(headers);
                     if (DataContext is WorkspaceItemViewModel workspaceItem)
@@ -261,6 +266,8 @@ namespace Docdown.Controls
                         {
                             workspaceItem.HasChanged = true;
                         }
+                        WordCount = CountWords(AbstractSyntaxTree, text);
+                        workspaceItem.WordCount = WordCount;
                         workspaceItem.Outline = new OutlineViewModel(Outline, JumpToLocation);
                     }
                     firstChange = true;

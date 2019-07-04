@@ -17,6 +17,47 @@ namespace Docdown.Controls.Markdown
             CommonMarkSettings.TrackSourcePosition = true;
         }
 
+        public static int CountWords(Block ast, string text)
+        {
+            int words = 0;
+            foreach (var block in EnumerateBlocks(ast))
+            {
+                switch (block.Tag)
+                {
+                    case BlockTag.AtxHeading:
+                    case BlockTag.SetextHeading:
+                    case BlockTag.Paragraph:
+                    case BlockTag.ListItem:
+                    case BlockTag.BlockQuote:
+                        words += CountSingleWords(block, text);
+                        break;
+                }
+            }
+            return words;
+        }
+
+        private static readonly HashSet<char> EndCharacters = new HashSet<char>(" \r\n\t\"\\-_+*#@$%&/(){}[]?^°");
+
+        private static int CountSingleWords(Block block, string text)
+        {
+            var start = block.SourcePosition + 1;
+            var end = Math.Min(text.Length, start + block.SourceLength) - 1;
+
+            int words = 0;
+            for (int i = start; i < end; i++)
+            {
+                var current = text[i];
+                int j = i + 1;
+                var next = text[j];
+                if (EndCharacters.Contains(current) && !EndCharacters.Contains(next))
+                {
+                    words++;
+                    i++;
+                }
+            }
+            return words;
+        }
+
         public static Block GenerateAbstractSyntaxTree(string text)
         {
             using (var reader = new StringReader(Normalize(text)))

@@ -160,6 +160,12 @@ namespace Docdown.ViewModel
             get; set;
         }
 
+        public int? WordCount
+        {
+            get => wordCount;
+            set => Set(ref wordCount, value);
+        }
+
         public bool IsDirectory => Data.IsDirectory;
         public bool IsFile => Data.IsFile;
 
@@ -174,6 +180,7 @@ namespace Docdown.ViewModel
         private bool isNameChanging;
         private string tempName;
         private object view;
+        private int? wordCount;
         private WorkspaceItemViewModel[] childrenCache;
         private OutlineViewModel outline;
         private CancelToken converterToken;
