@@ -1,4 +1,5 @@
 using Docdown.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Docdown.Model
@@ -18,9 +19,10 @@ namespace Docdown.Model
         Docx
     }
 
-    public abstract class WorkspaceItem<T> : IWorkspaceItem<T> where T : WorkspaceItem<T>
+    public abstract class WorkspaceItem<T> : IWorkspaceItem<T>, IEquatable<WorkspaceItem<T>> where T : WorkspaceItem<T>
     {
         public abstract string Name { get; }
+        public abstract string FullName { get; }
         public string RelativeName
         {
             get
@@ -34,7 +36,7 @@ namespace Docdown.Model
             }
         }
         public WorkspaceItemType Type { get; set; }
-        public WorkspaceItemCollection<T> Children { get; }
+        public List<T> Children { get; } = new List<T>();
         public T Parent { get; set; }
         public T TopParent => Parent ?? this as T;
         public ConverterType FromType => FromFileType();
@@ -65,16 +67,11 @@ namespace Docdown.Model
 
         public bool IsFile => !IsDirectory;
 
-        List<IWorkspaceItem> IWorkspaceItem.Children { get; } = new List<IWorkspaceItem>();
+        IReadOnlyCollection<IWorkspaceItem> IWorkspaceItem.Children => Children.AsReadOnly();
 
         IWorkspaceItem IWorkspaceItem.Parent { get => Parent; set => Parent = (T)value; }
 
-        IWorkspaceItem IWorkspaceItem.TopParent => throw new System.NotImplementedException();
-
-        protected WorkspaceItem()
-        {
-            Children = new WorkspaceItemCollection<T>((T)this);
-        }
+        IWorkspaceItem IWorkspaceItem.TopParent => TopParent;
 
         IWorkspaceItem IWorkspaceItem.CreateNewFile(string name, string autoExtension, byte[] content)
         {
@@ -101,6 +98,23 @@ namespace Docdown.Model
             return RelativeName ?? base.ToString();
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is WorkspaceItem<T> item)
+            {
+                return Equals(item);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return RelativeName?.GetHashCode() ?? base.GetHashCode();
+        }
+
         private ConverterType FromFileType()
         {
             switch (Type)
@@ -114,6 +128,9 @@ namespace Docdown.Model
             }
         }
 
-        
+        public bool Equals(WorkspaceItem<T> other)
+        {
+            return ToString() == other?.ToString();
+        }
     }
 }

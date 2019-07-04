@@ -28,6 +28,7 @@ namespace Docdown.ViewModel
             set => tempName = value;
         }
         public string RelativeName => Data.RelativeName;
+        public string FullName => Data.FullName;
 
         public bool HasChanged
         {
@@ -272,7 +273,7 @@ namespace Docdown.ViewModel
             //}
             if (!Data.Children.Contains(child.Data))
             {
-                Data.Children.Add(child.Data);
+                throw new InvalidDataException("Underlying WorkspaceItem has to contain the specified child");
             }
             childrenCache = childrenCache.Concat(child).OrderByDescending(e => e.IsDirectory).ThenBy(e => e.Name).ToArray();
             Workspace.RefreshExplorer();
@@ -333,7 +334,7 @@ namespace Docdown.ViewModel
                 {
                     Parent.childrenCache = Parent.childrenCache.Except(this).ToArray();
                 }
-                string hash = IOUtility.GetHashFile(RelativeName);
+                string hash = IOUtility.GetHashFile(Data.FullName);
                 if (File.Exists(hash))
                 {
                     try
@@ -375,7 +376,21 @@ namespace Docdown.ViewModel
             Workspace.IgnoreChange = true;
             try
             {
+                var oldHash = IOUtility.GetHashFile(FullName);
                 Data.Rename(newName);
+                try
+                {
+                    if (File.Exists(oldHash))
+                    {
+                        var newHash = IOUtility.GetHashFile(FullName);
+                        File.Move(oldHash, newHash);
+                        PdfPath = newHash;
+                    }
+                }
+                catch
+                {
+                    // Some IO error, this is fine
+                }
                 UpdateFileStatus();
             }
             catch
@@ -488,7 +503,7 @@ namespace Docdown.ViewModel
         private EditorAndViewer ShowMdEditorAndPdf()
         {
             var editorAndViewer = new EditorAndViewer();
-            var temp = IOUtility.GetHashFile(RelativeName);
+            var temp = IOUtility.GetHashFile(Data.FullName);
             if (File.Exists(temp))
             {
                 PdfPath = temp;

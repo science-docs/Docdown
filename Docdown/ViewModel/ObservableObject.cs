@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Docdown.ViewModel
 {
@@ -50,15 +51,9 @@ namespace Docdown.ViewModel
             = typeof(ObservableObject).Assembly.GetName().Version.ToString();
         private static readonly ListTypeCache<PropertyChangedEventHandler> eventHandlerCache
             = new ListTypeCache<PropertyChangedEventHandler>();
-        public static ObservableObject MainViewModel
-        {
-            get => mainViewModel;
-            set => DialogParticipation.SetRegister(Application.Current.MainWindow, mainViewModel = value);
-        }
-
-        private static ObservableObject mainViewModel;
 
         public string Version => VersionString;
+        public Dispatcher Dispatcher => Application.Current.Dispatcher;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -97,19 +92,7 @@ namespace Docdown.ViewModel
         {
             return Util.MessageBox.Show(title, message, button);
         }
-
-        protected async Task<MessageDialogResult> ShowMessageAsync(string title, string message, MessageDialogStyle style = MessageDialogStyle.Affirmative, MetroDialogSettings settings = null)
-        {
-            return await DialogCoordinator.Instance.ShowMessageAsync(MainViewModel, title, message, style, settings);
-        }
-
-        protected async Task<string> ShowInputAsync(string title, string message, MetroDialogSettings settings = null)
-        {
-            return await DialogCoordinator.Instance.ShowInputAsync(MainViewModel, title, message, settings);
-        }
-
-
-
+        
         private void InspectChangeListener()
         {
             var type = GetType();

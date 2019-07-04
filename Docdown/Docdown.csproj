@@ -150,7 +150,6 @@
     <Compile Include="Model\Workspace.cs" />
     <Compile Include="Model\WorkspaceChangeEventArgs.cs" />
     <Compile Include="Model\WorkspaceItem.cs" />
-    <Compile Include="Model\WorkspaceItemCollection.cs" />
     <Compile Include="Model\WorkspaceProvider.cs" />
     <Compile Include="Util\CancelToken.cs" />
     <Compile Include="Util\DependencyPropertyUtility.cs" />

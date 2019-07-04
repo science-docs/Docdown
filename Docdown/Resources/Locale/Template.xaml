@@ -29,6 +29,8 @@
     <System:String x:Key="Main_Menu_Stop_Tooltip">Stop compiling</System:String>
 
     <System:String x:Key="Main_Menu_Print_Tooltip">Print File</System:String>
+
+    <System:String x:Key="Main_WordCount">Words:</System:String>
     
     <!-- Workspace explorer -->
     <System:String x:Key="Workspace_Explorer_Title">Workspace Explorer</System:String>

@@ -11,6 +11,7 @@ namespace Docdown.Model
     {
         public FileSystemInfo FileSystemInfo { get; set; }
         public override string Name => FileSystemInfo.Name;
+        public override string FullName => FileSystemInfo.FullName;
         public bool IsHidden => (FileSystemInfo.Attributes & FileAttributes.Hidden) > 0 || (Parent != null && Parent.IsHidden);
 
         public FileWorkspaceItem(string folderPath)
@@ -98,7 +99,7 @@ namespace Docdown.Model
         {
             var folder = Path.GetDirectoryName(FileSystemInfo.FullName);
 
-            string temp = IOUtility.GetHashFile(FileSystemInfo.FullName);
+            string temp = IOUtility.GetHashFile(FullName);
             var settings = Settings.Default;
             var onlySelected = settings.CompileOnlySelected;
 

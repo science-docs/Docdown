@@ -48,7 +48,8 @@ namespace Docdown.Model
             {
                 while (stackedChanges.Count > 0)
                 {
-                    WorkspaceChanged?.Invoke(this, stackedChanges.Pop());
+                    var change = stackedChanges.Pop();
+                    WorkspaceChanged?.Invoke(this, change);
                 }
             }, 1000);
         }

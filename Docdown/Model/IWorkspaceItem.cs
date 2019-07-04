@@ -7,8 +7,9 @@ namespace Docdown.Model
     {
         string RelativeName { get; }
         string Name { get; }
+        string FullName { get; }
         WorkspaceItemType Type { get; set; }
-        List<IWorkspaceItem> Children { get; }
+        IReadOnlyCollection<IWorkspaceItem> Children { get; }
         IWorkspaceItem Parent { get; set; }
         IWorkspaceItem TopParent { get; }
         ConverterType FromType { get; }
@@ -31,7 +32,7 @@ namespace Docdown.Model
 
     public interface IWorkspaceItem<T> : IWorkspaceItem where T : class, IWorkspaceItem<T>
     {
-        new WorkspaceItemCollection<T> Children { get; }
+        new List<T> Children { get; }
         new T Parent { get; set; }
         new T TopParent { get; }
         new T CreateNewFile(string name, string autoExtension = null, byte[] content = null);

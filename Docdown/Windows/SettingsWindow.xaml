@@ -52,7 +52,7 @@
                        Style="{StaticResource DefaultInformationStyle}"/>
                 <TextBox Margin="0 2"
                      Style="{StaticResource MetroButtonTextBox}"
-                     Text="{Binding SelectedLocaleTemplate}"
+                     Text="{Binding SelectedLocalTemplate}"
                      Metro:TextBoxHelper.ButtonCommand="{Binding SearchTemplateCommand}"
                      Metro:TextBoxHelper.ButtonContent="🔍"
                      Metro:TextBoxHelper.ButtonFontFamily="Segoe UI Symbol"/>
@@ -61,7 +61,7 @@
                        Style="{StaticResource DefaultInformationStyle}"/>
                 <TextBox Margin="0 2"
                      Style="{StaticResource MetroButtonTextBox}"
-                     Text="{Binding SelectedLocaleCsl}"
+                     Text="{Binding SelectedLocalCsl}"
                      Metro:TextBoxHelper.ButtonCommand="{Binding SearchCitationStyleCommand}"
                      Metro:TextBoxHelper.ButtonContent="🔍"
                      Metro:TextBoxHelper.ButtonFontFamily="Segoe UI Symbol"/>

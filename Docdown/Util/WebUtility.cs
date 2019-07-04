@@ -343,7 +343,7 @@ namespace Docdown.Util
                 string folder = item.FileSystemInfo.Name;
                 if (!string.IsNullOrWhiteSpace(current))
                     folder = Path.Combine(current, folder);
-                if (item == root || item == root.Parent)
+                if (item.Equals(root) || item.Equals(root.Parent))
                     folder = null;
 
                 foreach (var child in item.Children)
@@ -354,7 +354,7 @@ namespace Docdown.Util
                     }
                 }
             }
-            else if (onlySelected && root == item)
+            else if (onlySelected && item.Equals(root))
             {
                 yield return CreateFile(MainFile, root.FileSystemInfo.FullName);
             }

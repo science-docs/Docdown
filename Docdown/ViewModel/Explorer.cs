@@ -2,6 +2,8 @@
 using Docdown.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Docdown.ViewModel
@@ -40,8 +42,7 @@ namespace Docdown.ViewModel
 
         public List<Explorer> Items { get; } = new List<Explorer>();
         
-        [ChangeListener(nameof(Search))]
-        public IEnumerable<Explorer> Children => SearchChildren();
+        public ObservableCollection<Explorer> Children { get; } = new ObservableCollection<Explorer>();
 
         public Explorer Parent { get; }
 
@@ -52,19 +53,22 @@ namespace Docdown.ViewModel
 
         public Explorer(WorkspaceViewModel workspace)
         {
-            Workspace = workspace;
+            Workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
             Items.Add(new Explorer(this, workspace.Item));
-            debouncedSearch = UIUtility.Debounce<string>(SetSearch, 500);
+            Children.Add(Items[0]);
+            debouncedSearch = UIUtility.Debounce<string>(SetSearch, 300);
         }
 
-        public Explorer(Explorer parent, WorkspaceItemViewModel workspaceItem)
+        private Explorer(Explorer parent, WorkspaceItemViewModel workspaceItem)
         {
-            Parent = parent;
-            WorkspaceItem = workspaceItem;
+            Parent = parent ?? throw new ArgumentNullException(nameof(parent));
+            WorkspaceItem = workspaceItem ?? throw new ArgumentNullException(nameof(workspaceItem));
             Workspace = WorkspaceItem.Workspace;
             foreach (var child in WorkspaceItem.Children)
             {
-                Items.Add(new Explorer(this, child));
+                var explorer = new Explorer(this, child);
+                Items.Add(explorer);
+                Children.Add(explorer);
             }
         }
 
@@ -73,6 +77,20 @@ namespace Docdown.ViewModel
             search = value;
             SendPropertyUpdate(nameof(Search));
             Items.ForEach(e => e.Search = search);
+        }
+        
+        [ChangeListener(nameof(Search))]
+        private void UpdateChildren()
+        {
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                Children.Clear();
+
+                foreach (var child in SearchChildren())
+                {
+                    Children.Add(child);
+                }
+            }));
         }
 
         private IEnumerable<Explorer> SearchChildren()
