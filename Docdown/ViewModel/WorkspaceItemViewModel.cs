@@ -89,12 +89,27 @@ namespace Docdown.ViewModel
             get => pdfPath;
             set => Set(ref pdfPath, value);
         }
-        
+
         public FileStatus FileStatus
         {
             get => fileStatus;
             set => Set(ref fileStatus, value);
         }
+
+        public ConverterType ConverterType
+        {
+            get => converterType;
+            set
+            {
+                Data.ToType = value;
+                Set(ref converterType, value);
+            }
+        }
+
+        public ConverterType[] ConverterTypes { get; } = new ConverterType[]
+        {
+            ConverterType.Latex, ConverterType.Pdf
+        };
 
         public SearchViewModel Search { get; private set; }
 
@@ -186,6 +201,7 @@ namespace Docdown.ViewModel
         private OutlineViewModel outline;
         private CancelToken converterToken;
         private FileStatus fileStatus;
+        private ConverterType converterType;
 
         public WorkspaceItemViewModel(WorkspaceViewModel workspaceViewModel, WorkspaceItemViewModel parent, IWorkspaceItem workspaceItem) 
             : base(workspaceItem ?? throw new ArgumentNullException(nameof(workspaceItem)))

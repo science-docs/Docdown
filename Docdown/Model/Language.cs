@@ -62,6 +62,12 @@ namespace Docdown.Model
             {
                 Dictionary.Clear();
                 var resource = IOUtility.LoadResource($"Docdown.Resources.Locale.{Name}.properties");
+
+                if (resource == null)
+                {
+                    throw new InvalidProgramException("No translation exists for language: " + Name);
+                }
+
                 foreach (var pair in IOUtility.ParseProperties(resource))
                 {
                     Dictionary.Add(pair.Item1.Replace('.', '_'), pair.Item2);
