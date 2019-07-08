@@ -27,7 +27,6 @@ namespace Docdown.Controls.Markdown
                     case BlockTag.AtxHeading:
                     case BlockTag.SetextHeading:
                     case BlockTag.Paragraph:
-                    case BlockTag.ListItem:
                     case BlockTag.BlockQuote:
                         words += CountSingleWords(block, text);
                         break;
@@ -43,7 +42,8 @@ namespace Docdown.Controls.Markdown
             var start = block.SourcePosition + 1;
             var end = Math.Min(text.Length, start + block.SourceLength) - 1;
 
-            int words = 0;
+            // The algorithm always skips the first word, so we start at 1
+            int words = 1;
             for (int i = start; i < end; i++)
             {
                 var current = text[i];
