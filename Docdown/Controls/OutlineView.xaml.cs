@@ -31,10 +31,10 @@ namespace Docdown.Controls
             {
                 var selectedItem = workspace?.SelectedItem?.SelectedOutlineItem;
                 var outline = workspace?.SelectedItem?.Outline;
-                if (outline != null && selectedItem != null)
+                if (outline?.JumpTo != null && selectedItem != null)
                 {
                     Keyboard.ClearFocus();
-                    outline?.JumpTo(selectedItem.Data.TextPosition);
+                    outline.JumpTo(selectedItem.Data.JumpPosition);
                     e.Handled = true;
                 }
             }

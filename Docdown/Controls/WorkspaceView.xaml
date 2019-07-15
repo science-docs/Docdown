@@ -9,7 +9,8 @@
              xmlns:ViewModel="clr-namespace:Docdown.ViewModel"
              xmlns:Git="clr-namespace:LibGit2Sharp;assembly=LibGit2Sharp"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="300">
+             d:DesignHeight="450" d:DesignWidth="300"
+             Tag="{DynamicResource Workspace_Explorer_Title}">
     <UserControl.Resources>
         <Git:FileStatus x:Key="FileModified">ModifiedInWorkdir</Git:FileStatus>
         <Git:FileStatus x:Key="FileNew">NewInIndex</Git:FileStatus>
@@ -23,23 +24,14 @@
     <Grid Background="{DynamicResource EditorBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Border Background="{DynamicResource OverlayBrush}" 
                 BorderBrush="{DynamicResource GrayBrush10}" 
-                BorderThickness="0">
-            <TextBlock Text="{DynamicResource Workspace_Explorer_Title}" 
-                       Focusable="False"
-                       Foreground="{DynamicResource BlackBrush}" 
-                       Margin="4 2"
-                       FontSize="{StaticResource DefaultFontSize}"/>
-        </Border>
-        <Border Background="{DynamicResource OverlayBrush}" 
-                BorderBrush="{DynamicResource GrayBrush9}" 
                 BorderThickness="0 1"
-                Grid.Row="1">
+                Grid.Row="0">
             <TextBox BorderThickness="0" 
+                     Background="{DynamicResource GrayBrush11}"
                      FontSize="{StaticResource DefaultFontSize}"
                      Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}"
                      Style="{StaticResource MetroButtonTextBox}"
@@ -47,7 +39,7 @@
                      Metro:TextBoxHelper.Watermark="{DynamicResource Workspace_Explorer_Search}" MinHeight="0">
             </TextBox>
         </Border>
-        <TreeView Grid.Row="2" 
+        <TreeView Grid.Row="1" 
                   AllowDrop="True"
                   Drop="DropFromTreeView"
                   Background="Transparent" 

@@ -126,6 +126,9 @@
     <Compile Include="Controls\TabView.xaml.cs">
       <DependentUpon>TabView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ViewWrapper.xaml.cs">
+      <DependentUpon>ViewWrapper.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\WebViewer.xaml.cs">
       <DependentUpon>WebViewer.xaml</DependentUpon>
     </Compile>
@@ -230,6 +233,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\TabView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ViewWrapper.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
