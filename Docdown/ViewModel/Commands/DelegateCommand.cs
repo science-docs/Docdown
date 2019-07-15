@@ -95,7 +95,14 @@ namespace Docdown.ViewModel.Commands
                 CheckAdditionalParameter(ref parameter);
                 param = param.Concat(parameter).ToArray();
             }
-            Result = del?.DynamicInvoke(param);
+            try
+            {
+                Result = del?.DynamicInvoke(param);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("An uncaught exception occured", e.Message, System.Windows.MessageBoxButton.OK);
+            }
         }
 
         public static void Run<T>(params object[] args) where T : DelegateCommand

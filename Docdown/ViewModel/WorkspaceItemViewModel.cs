@@ -166,8 +166,14 @@ namespace Docdown.ViewModel
             set
             {
                 if (outline != null && value != null)
+                {
                     outline.Exchange(value);
-                Set(ref outline, value);
+                }
+                else
+                {
+                    outline = value;
+                }
+                SendPropertyUpdate();
             }
         }
 

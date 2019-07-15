@@ -1089,38 +1089,37 @@ namespace PandocMark.Parser
             Inline inline = first;
 
             int index = -1;
-            int nextIndex = -1;
             do
             {
                 index = IndexOfAny(subj.Buffer, todoConst, index + 1, StringComparison.InvariantCultureIgnoreCase);
                 if (index > -1)
                 {
-                    nextIndex = IndexOfAny(subj.Buffer, todoEnd, index + 1);
-                    
+                    // As parsing html inlines can only happen after a closing html comment bracket was found,
+                    // we can assume that nextIndex is always larger than 0
+                    int nextIndex = IndexOfAny(subj.Buffer, todoEnd, index + 1);
+
                     while (subj.Buffer[nextIndex] == ' ')
                     {
                         nextIndex--;
                     }
 
-                    if (nextIndex > -1)
+                    int pos = subj.Position + index;
+                    int len = nextIndex - index;
+                    var taskInline = new Inline(InlineTag.Task, subj.Buffer, pos, len)
                     {
-                        int pos = subj.Position + index;
-                        int len = nextIndex - index;
-                        var todo = new Inline(InlineTag.Todo, subj.Buffer, pos, len)
-                        {
-                            SourcePosition = pos,
-                            SourceLength = len
-                        };
-                        if (inline.Tag == InlineTag.String)
-                        {
-                            first = todo;
-                            inline = todo;
-                        }
-                        else
-                        {
-                            inline.NextSibling = todo;
-                            inline = inline.NextSibling;
-                        }
+                        SourcePosition = pos,
+                        SourceLength = len
+                    };
+
+                    if (inline.Tag == InlineTag.String)
+                    {
+                        first = taskInline;
+                        inline = taskInline;
+                    }
+                    else
+                    {
+                        inline.NextSibling = taskInline;
+                        inline = inline.NextSibling;
                     }
                 }
             }
@@ -1178,11 +1177,10 @@ namespace PandocMark.Parser
         {
             var startPos = subj.Position;
             var source = subj.Buffer;
-            var len = subj.Length;
 
             var labelStartPos = ++subj.Position;
 
-            len = subj.Position + Reference.MaximumReferenceLabelLength;
+            var len = subj.Position + Reference.MaximumReferenceLabelLength;
             if (len > source.Length)
                 len = source.Length;
 

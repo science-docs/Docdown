@@ -6,7 +6,7 @@ namespace Docdown
 {
     public partial class MainWindow
     {
-        WorkspaceViewModel workspaceViewModel;
+        readonly WorkspaceViewModel workspaceViewModel;
 
         public MainWindow()
         {

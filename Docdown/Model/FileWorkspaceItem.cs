@@ -15,21 +15,22 @@ namespace Docdown.Model
         public bool IsHidden => (FileSystemInfo.Attributes & FileAttributes.Hidden) > 0 || (Parent != null && Parent.IsHidden);
 
         public FileWorkspaceItem(string folderPath)
-            : this(new DirectoryInfo(folderPath), true)
+            : this(new DirectoryInfo(folderPath), null, true)
         {
 
         }
 
-        public FileWorkspaceItem(FileSystemInfo fileSystemInfo)
-            : this(fileSystemInfo, false)
+        public FileWorkspaceItem(FileSystemInfo fileSystemInfo, FileWorkspaceItem parent)
+            : this(fileSystemInfo, parent, false)
         {
 
         }
 
-        public FileWorkspaceItem(FileSystemInfo fileSystemInfo, bool recursively)
+        private FileWorkspaceItem(FileSystemInfo fileSystemInfo, FileWorkspaceItem parent, bool recursively)
         {
             FileSystemInfo = fileSystemInfo ??
                 throw new ArgumentNullException(nameof(fileSystemInfo));
+            Parent = parent;
 
             if (fileSystemInfo is DirectoryInfo directoryInfo)
             {
@@ -97,7 +98,7 @@ namespace Docdown.Model
 
         public override string Convert(CancelToken cancelToken)
         {
-            var folder = Path.GetDirectoryName(FileSystemInfo.FullName);
+            var folder = Path.GetDirectoryName(FullName);
 
             string temp = IOUtility.GetHashFile(FullName);
             var settings = Settings.Default;
@@ -105,7 +106,7 @@ namespace Docdown.Model
 
             if (settings.UseOfflineCompiler)
             {
-                return PandocUtility.Compile(temp, TopParent.FileSystemInfo.FullName, settings.LocalTemplate, settings.LocalCsl, "*.md");
+                return PandocUtility.Compile(temp, TopParent.FullName, settings.LocalTemplate, settings.LocalCsl, "*.md");
             }
             else
             {
@@ -225,10 +226,7 @@ namespace Docdown.Model
             File.WriteAllBytes(fullName, content);
 
             var fileInfo = new FileInfo(fullName);
-            var item = new FileWorkspaceItem(fileInfo)
-            {
-                Parent = this
-            };
+            var item = new FileWorkspaceItem(fileInfo, this);
             Children.Add(item);
             return item;
         }
@@ -242,12 +240,15 @@ namespace Docdown.Model
 
             string fullName = Path.Combine(FileSystemInfo.FullName, name);
 
+            FileWorkspaceItem existing = Children.FirstOrDefault(e => e.FullName == fullName);
+            if (existing != null)
+            {
+                return existing;
+            }
+
             Directory.CreateDirectory(fullName);
             var fileInfo = new DirectoryInfo(fullName);
-            var item = new FileWorkspaceItem(fileInfo)
-            {
-                Parent = this
-            };
+            var item = new FileWorkspaceItem(fileInfo, this);
             Children.Add(item);
             return item;
         }
@@ -257,7 +258,7 @@ namespace Docdown.Model
             var fileName = Path.GetFileName(path);
             var fullNewName = Path.Combine(FileSystemInfo.FullName, fileName);
 
-            if (Children.Any(e => e.Children.First().FileSystemInfo.Name == fileName))
+            if (Children.Any(e => e.Name == fileName))
             {
                 File.Replace(path, fullNewName, null);
             }
@@ -267,10 +268,7 @@ namespace Docdown.Model
             }
 
             var fileInfo = new FileInfo(fullNewName);
-            var item = new FileWorkspaceItem(fileInfo)
-            {
-                Parent = this
-            };
+            var item = new FileWorkspaceItem(fileInfo, this);
             Children.Add(item);
             return item;
         }
@@ -313,12 +311,9 @@ namespace Docdown.Model
 
         private static IEnumerable<FileWorkspaceItem> FromDirectory(DirectoryInfo directoryInfo, FileWorkspaceItem parent)
         {
-            foreach (var dir in directoryInfo.EnumerateFileSystemInfos())
+            foreach (var dir in directoryInfo.EnumerateFileSystemInfos().Where(e => !e.Name.StartsWith(".")))
             {
-                if (dir.Name != ".git")
-                {
-                    yield return new FileWorkspaceItem(dir, true) { Parent = parent };
-                }
+                yield return new FileWorkspaceItem(dir, parent, true);
             }
         }
     }

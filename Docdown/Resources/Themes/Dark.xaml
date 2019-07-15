@@ -17,6 +17,7 @@
     <Color x:Key="Gray8">#FF666666</Color>
     <Color x:Key="Gray9">#FF535353</Color>
     <Color x:Key="Gray10">#FF404040</Color>
+    <Color x:Key="Gray11">#FF333333</Color>
 
     <Color x:Key="GrayNormal">#FF7D7D7D</Color>
     <Color x:Key="GrayHover">#FFAAAAAA</Color>
@@ -58,6 +59,7 @@
     <SolidColorBrush x:Key="GrayBrush8" Color="{StaticResource Gray8}" options:Freeze="True" />
     <SolidColorBrush x:Key="GrayBrush9" Color="{StaticResource Gray9}" options:Freeze="True" />
     <SolidColorBrush x:Key="GrayBrush10" Color="{StaticResource Gray10}" options:Freeze="True" />
+    <SolidColorBrush x:Key="GrayBrush11" Color="{StaticResource Gray11}" options:Freeze="True" />
 
     <SolidColorBrush x:Key="GrayNormalBrush" Color="{StaticResource GrayNormal}" options:Freeze="True" />
     <SolidColorBrush x:Key="GrayHoverBrush" Color="{StaticResource GrayHover}" options:Freeze="True" />

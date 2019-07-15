@@ -539,7 +539,7 @@ namespace Docdown.Controls
         }
 
         public void IncreaseFontSize()
-            => EditBox.FontSize = EditBox.FontSize + 1;
+            => EditBox.FontSize += 1;
 
         public void DecreaseFontSize()
             => EditBox.FontSize = EditBox.FontSize > 5 ? EditBox.FontSize - 1 : EditBox.FontSize;

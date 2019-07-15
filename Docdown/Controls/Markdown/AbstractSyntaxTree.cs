@@ -91,7 +91,7 @@ namespace Docdown.Controls.Markdown
             {InlineTag.Image, t => t.HighlightImage},
             {InlineTag.RawHtml, t => t.HighlightBlockCode},
             {InlineTag.Tex, t => t.HighlightTex},
-            {InlineTag.Todo, t => t.HighlightTodo}
+            {InlineTag.Task, t => t.HighlightTask}
         };
 
         public static IEnumerable<Block> EnumerateHeader(Block ast)

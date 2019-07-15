@@ -243,8 +243,7 @@ namespace Docdown.ViewModel
             {
                 var openItems = OpenItems.ToArray();
                 var selectedItemName = SelectedItem?.RelativeName;
-                // TODO: this isn't completely right
-                Data = WorkspaceProvider.Create(new Uri(Data.Item.RelativeName));
+                Data = WorkspaceProvider.Create(new Uri(Data.Item.FullName));
                 Data.ToType = ConverterType.Pdf;
                 RestoreWorkspace(Item, openItems, selectedItemName);
             }

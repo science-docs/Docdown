@@ -44,7 +44,7 @@ namespace PandocMark.Syntax
         /// Represents a todo marker.
         /// Cannot contain nested elements.
         /// </summary>
-        Todo,
+        Task,
 
         /// <summary>
         /// Represents an emphasis element. Uses <see cref="Inline.FirstChild"/> to specify the contents.

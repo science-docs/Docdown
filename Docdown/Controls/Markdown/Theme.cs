@@ -105,7 +105,7 @@ namespace Docdown.Controls.Markdown
             set => Set(ref _highlightTex, value);
         }
 
-        public Highlight HighlightTodo
+        public Highlight HighlightTask
         {
             get => _highlightTodo;
             set => Set(ref _highlightTodo, value);

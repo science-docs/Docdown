@@ -102,7 +102,6 @@ namespace Docdown.Controls.Markdown
         {
             var header = blocks[index];
             int level = header.Heading.Level;
-            int start = header.SourcePosition;
             int end = -1;
 
             for (int i = index + 1; i < blocks.Length; i++)

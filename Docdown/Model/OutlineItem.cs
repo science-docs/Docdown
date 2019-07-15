@@ -7,6 +7,7 @@ namespace Docdown.Model
     {
         public List<OutlineItem> Children { get; } = new List<OutlineItem>();
         public int Level { get; set; }
+        public int JumpPosition { get; set; }
         public int TextPosition { get; set; }
 
         public string Text { get; set; }
@@ -20,7 +21,8 @@ namespace Docdown.Model
         {
             Text = block.InlineContent.LiteralContent;
             Level = block.Heading.Level;
-            TextPosition = block.SourcePosition + block.SourceLength - 1;
+            TextPosition = block.SourcePosition;
+            JumpPosition = block.SourcePosition + block.SourceLength - 1;
         }
 
         public static IEnumerable<OutlineItem> FromFlatList(IEnumerable<Block> headers)
