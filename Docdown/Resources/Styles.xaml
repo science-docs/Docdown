@@ -157,8 +157,18 @@
                         <Trigger Property="IsSelected" Value="true">
                             <Setter TargetName="ContentSite" Property="Foreground" Value="White"/>
                             <Setter TargetName="CloseButton" Property="Visibility" Value="Visible"/>
-                            <Setter Property="Background" Value="{DynamicResource AccentBaseColorBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource GrayBrush10}" />
                         </Trigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource Mode=Self}}" Value="True"/>
+                                <Condition Binding="{Binding Path=IsKeyboardFocusWithin, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Controls:MetroTabControl}}}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="ContentSite" Property="Foreground" Value="White"/>
+                            <Setter TargetName="CloseButton" Property="Visibility" Value="Visible"/>
+                            <Setter Property="Background" Value="{DynamicResource AccentBaseColorBrush}" />
+                        </MultiDataTrigger>
+                        
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition SourceName="Border" Property="IsMouseOver" Value="True" />
@@ -203,7 +213,7 @@
                                       IsItemsHost="true"
                                       KeyboardNavigation.TabIndex="1"/>
                         </Grid>
-                        <Rectangle Grid.Row="1" Height="2" Fill="{DynamicResource AccentBaseColorBrush}"/>
+                        <Rectangle x:Name="HighlightRect" Grid.Row="1" Height="2" Fill="{DynamicResource AccentBaseColorBrush}"/>
                         <Border x:Name="ContentPanel"
                                 Grid.Row="2"
                                 Grid.Column="0"
@@ -251,6 +261,9 @@
                             <Setter TargetName="RowDefinition0" Property="Height" Value="*" />
                             <Setter TargetName="RowDefinition1" Property="Height" Value="0" />
                             <Setter TargetName="Underline" Property="Placement" Value="Left" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="False">
+                            <Setter TargetName="HighlightRect" Property="Fill" Value="{DynamicResource GrayBrush10}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

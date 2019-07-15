@@ -223,7 +223,13 @@ namespace Docdown.Model
             {
                 content = new byte[0];
             }
+
             File.WriteAllBytes(fullName, content);
+
+            if (FindChild(fullName, out var existing))
+            {
+                return existing;
+            }
 
             var fileInfo = new FileInfo(fullName);
             var item = new FileWorkspaceItem(fileInfo, this);
@@ -240,8 +246,7 @@ namespace Docdown.Model
 
             string fullName = Path.Combine(FileSystemInfo.FullName, name);
 
-            FileWorkspaceItem existing = Children.FirstOrDefault(e => e.FullName == fullName);
-            if (existing != null)
+            if (FindChild(fullName, out var existing))
             {
                 return existing;
             }
@@ -251,6 +256,12 @@ namespace Docdown.Model
             var item = new FileWorkspaceItem(fileInfo, this);
             Children.Add(item);
             return item;
+        }
+
+        private bool FindChild(string fullName, out FileWorkspaceItem item)
+        {
+            item = Children.FirstOrDefault(e => e.FullName == fullName);
+            return item != null;
         }
 
         public override FileWorkspaceItem CopyExistingItem(string path)

@@ -31,7 +31,13 @@ namespace Docdown.Controls.Markdown
                         words += CountSingleWords(block, text);
                         break;
                 }
+                // The start of an atxheading is counted twice
+                if (block.Tag == BlockTag.AtxHeading)
+                {
+                    words--;
+                }
             }
+
             return words;
         }
 

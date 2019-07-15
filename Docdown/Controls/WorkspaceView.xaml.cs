@@ -1,4 +1,5 @@
 ﻿using Docdown.ViewModel;
+using Docdown.ViewModel.Commands;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -6,11 +7,21 @@ using System.Windows.Input;
 
 namespace Docdown.Controls
 {
-    public partial class WorkspaceView
+    public partial class WorkspaceView : IWrappedView
     {
+        public ICommand CloseCommand => new ActionCommand(Close);
+
         public WorkspaceView()
         {
             InitializeComponent();
+        }
+
+        private void Close()
+        {
+            if (DataContext is Explorer explorer)
+            {
+                explorer.Workspace.ExplorerVisible = false;
+            }
         }
 
         private void ViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

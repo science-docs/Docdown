@@ -75,6 +75,18 @@ namespace Docdown.ViewModel
         [ChangeListener(nameof(Data))]
         public IEnumerable<WorkspaceItemViewModel> Children => new[] { Item };
 
+        public bool ExplorerVisible
+        {
+            get => explorerVisible;
+            set => Set(ref explorerVisible, value);
+        }
+
+        public bool OutlineVisible
+        {
+            get => outlineVisible;
+            set => Set(ref outlineVisible, value);
+        }
+
         [ChangeListener(nameof(SelectedItem))]
         public ConverterType FromType => Data.FromType;
 
@@ -108,12 +120,6 @@ namespace Docdown.ViewModel
             //set => Data.IgnoreChange = value;
         }
 
-        public string ErrorMessage
-        {
-            get => errorMessage;
-            set => Set(ref errorMessage, value);
-        }
-
         public SettingsViewModel Settings { get; }
         public WizardViewModel Wizard { get; }
         public MessageQueue Messages { get; }
@@ -136,7 +142,8 @@ namespace Docdown.ViewModel
         public ICommand SwitchThemeCommand => new ActionCommand(SwitchTheme);
         public ICommand ChangeLanguageCommand => new ChangeLanguageCommand();
 
-        private string errorMessage;
+        private bool explorerVisible = true;
+        private bool outlineVisible = true;
         private Explorer explorer;
         private WorkspaceItemViewModel item;
         private WorkspaceItemViewModel selectedItem;

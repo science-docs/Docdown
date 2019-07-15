@@ -110,6 +110,7 @@
       <DependentUpon>EditorAndViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\IEditor.cs" />
+    <Compile Include="Controls\IWrappedView.cs" />
     <Compile Include="Controls\Markdown\AbstractSyntaxTree.cs" />
     <Compile Include="Controls\Markdown\BlockBackgroundRenderer.cs" />
     <Compile Include="Controls\Markdown\Highlight.cs" />

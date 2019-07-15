@@ -57,7 +57,22 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition>
+                <ColumnDefinition.Style>
+                    <Style TargetType="{x:Type ColumnDefinition}">
+                        <Setter Property="Width" Value="*" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding ExplorerVisible}" Value="False"/>
+                                    <Condition Binding="{Binding OutlineVisible}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Width" Value="0" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ColumnDefinition.Style>
+            </ColumnDefinition>
             <ColumnDefinition Width="4"/>
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
@@ -87,6 +102,12 @@
                         <Rectangle Fill="{DynamicResource CloseIcon}" Height="16" Width="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
+            </MenuItem>
+            <MenuItem Header="View">
+                <MenuItem Header="Workspace Explorer" IsCheckable="True" IsChecked="{Binding ExplorerVisible}"/>
+                <MenuItem Header="Outline" IsCheckable="True" IsChecked="{Binding OutlineVisible}"/>
+                <Separator/>
+                <MenuItem Header="Tasks"/>
             </MenuItem>
             <MenuItem Header="{DynamicResource Main_Menu_Options}">
                 <MenuItem Header="{DynamicResource Main_Menu_Options_ThemeSwitch}" Command="{Binding SwitchThemeCommand}">
@@ -172,14 +193,36 @@
         <Grid Grid.Column="0" Grid.Row="2"
               Margin="4 2 0 4">
             <Grid.RowDefinitions>
-                <RowDefinition Height="3*"/>
+                <RowDefinition>
+                    <RowDefinition.Style>
+                        <Style TargetType="{x:Type RowDefinition}">
+                            <Setter Property="Height" Value="3*" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ExplorerVisible}" Value="False">
+                                    <Setter Property="Height" Value="0" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RowDefinition.Style>
+                </RowDefinition>
                 <RowDefinition Height="4"/>
-                <RowDefinition Height="2*"/>
+                <RowDefinition>
+                    <RowDefinition.Style>
+                        <Style TargetType="{x:Type RowDefinition}">
+                            <Setter Property="Height" Value="2*" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding OutlineVisible}" Value="False">
+                                    <Setter Property="Height" Value="0" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RowDefinition.Style>
+                </RowDefinition>
             </Grid.RowDefinitions>
-            <Controls:ViewWrapper Grid.Row="0">
+            <Controls:ViewWrapper Grid.Row="0" Visibility="{Binding Path=ExplorerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Controls:WorkspaceView DataContext="{Binding Explorer}"/>
             </Controls:ViewWrapper>
-            <Controls:ViewWrapper Grid.Row="2">
+            <Controls:ViewWrapper Grid.Row="2"  Visibility="{Binding Path=OutlineVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Controls:OutlineView DataContext="{Binding}"/>
             </Controls:ViewWrapper>
         </Grid>
@@ -235,7 +278,7 @@
                        Text="{Binding NewestMessage.Content}"/>
             <StackPanel Grid.Column="2"
                         Orientation="Horizontal" 
-                        Visibility="{Binding SelectedItem}"
+                        Visibility="{Binding SelectedItem, Converter={StaticResource StringToVisibilityConverter}}"
                         DataContext="{Binding ElementName=DocdownWindow, Path=DataContext}">
                 <TextBlock Foreground="White"
                        VerticalAlignment="Center"

@@ -1,15 +1,26 @@
 ﻿using Docdown.ViewModel;
+using Docdown.ViewModel.Commands;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Docdown.Controls
 {
-    public partial class OutlineView : UserControl
+    public partial class OutlineView : IWrappedView
     {
+        public ICommand CloseCommand => new ActionCommand(Close);
+
         public OutlineView()
         {
             InitializeComponent();
+        }
+
+        private void Close()
+        {
+            if (DataContext is WorkspaceViewModel workspace)
+            {
+                workspace.OutlineVisible = false;
+            }
         }
 
         private void OutlineSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

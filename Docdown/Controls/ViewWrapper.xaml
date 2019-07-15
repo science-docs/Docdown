@@ -49,6 +49,7 @@
                             <Button x:Name="CloseButton" 
                                     Style="{StaticResource ChromelessButtonStyle}" 
                                     ToolTip="{DynamicResource Main_Menu_File_Close}"
+                                    Command="{Binding Path=Content.CloseCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                     Margin="0 6 6 0" 
                                     VerticalAlignment="Center" 
                                     VerticalContentAlignment="Center">
