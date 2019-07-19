@@ -54,6 +54,7 @@ namespace Docdown.ViewModel
                     case WorkspaceItemType.Pdf: return "PdfIcon";
                     case WorkspaceItemType.Video: return "VideoIcon";
                     case WorkspaceItemType.Markdown: return "MarkdownIcon";
+                    case WorkspaceItemType.Web: return "WebIcon";
                     default: return "DocumentIcon";
                 }
             }
@@ -327,13 +328,13 @@ namespace Docdown.ViewModel
             Workspace.Messages.Working(Language.Current.Get("Workspace.Compilation.Running"));
             IsConverting = true;
             Save();
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 var watch = Stopwatch.StartNew();
                 try
                 {
                     PdfPath = string.Empty;
-                    PdfPath = Data.Convert(converterToken);
+                    PdfPath = await Data.Convert(converterToken);
                     watch.Stop();
                     Workspace.Messages.Success(Language.Current.Get("Workspace.Compilation.Success", watch.Elapsed.Seconds, watch.Elapsed.Milliseconds));
                 }
@@ -356,27 +357,30 @@ namespace Docdown.ViewModel
             if (!IsNameChanging && ShowMessage(lang.Get("Workspace.Delete.File.Title"), lang.Get("Workspace.Delete.File.Text", Name), MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 RemoveFromOpenItems();
-                Workspace.IgnoreChange = true;
-                Data.Delete();
-                Workspace.IgnoreChange = false;
-                if (Parent != null)
+                Task.Run(async () =>
                 {
-                    Parent.childrenCache = Parent.childrenCache.Except(this).ToArray();
-                }
-                string hash = IOUtility.GetHashFile(Data.FullName);
-                if (File.Exists(hash))
-                {
-                    try
+                    Workspace.IgnoreChange = true;
+                    await Data.Delete();
+                    Workspace.IgnoreChange = false;
+                    if (Parent != null)
                     {
-                        File.Delete(hash);
+                        Parent.childrenCache = Parent.childrenCache.Except(this).ToArray();
                     }
-                    catch
+                    string hash = IOUtility.GetHashFile(Data.FullName);
+                    if (File.Exists(hash))
                     {
-                        // Could not delete temp file. This is fine
+                        try
+                        {
+                            File.Delete(hash);
+                        }
+                        catch
+                        {
+                            // Could not delete temp file. This is fine
+                        }
                     }
-                }
-                Workspace.RefreshExplorer();
-                Workspace.SendPropertyUpdate(nameof(Children));
+                    Workspace.RefreshExplorer();
+                    Workspace.SendPropertyUpdate(nameof(Children));
+                });
             }
         }
 
@@ -436,11 +440,15 @@ namespace Docdown.ViewModel
         {
             if (view is IEditor editorWrapper)
             {
-                HasChanged = false;
-                Workspace.IgnoreChange = true;
-                Data.Save(editorWrapper.Editor.Text);
-                Workspace.IgnoreChange = false;
-                UpdateFileStatus();
+                var text = editorWrapper.Editor.Text;
+                Task.Run(async () =>
+                {
+                    HasChanged = false;
+                    Workspace.IgnoreChange = true;
+                    await Data.Save(text);
+                    Workspace.IgnoreChange = false;
+                    UpdateFileStatus();
+                });
             }
         }
 
@@ -520,7 +528,7 @@ namespace Docdown.ViewModel
             var docViewer = new DocumentViewer();
             try
             {
-                PdfPath = RelativeName;
+                PdfPath = FullName;
             }
             catch (Exception e)
             {
@@ -537,16 +545,30 @@ namespace Docdown.ViewModel
             {
                 PdfPath = temp;
             }
-            string allText = ReadText(Data.Read());
-            editorAndViewer.Delay(100, () => editorAndViewer.Editor.Text = allText);
+            Task.Run(async () =>
+            {
+                string allText = ReadText(await Data.Read());
+                await Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    editorAndViewer.Delay(100, () => editorAndViewer.Editor.Text = allText);
+                }));
+            });
+            
             return editorAndViewer;
         }
 
         private MarkdownEditor ShowEditor()
         {
             var editor = new MarkdownEditor();
-            string allText = ReadText(Data.Read());
-            editor.Delay(100, () => editor.Editor.Text = allText);
+
+            Task.Run(async () =>
+            {
+                string allText = ReadText(await Data.Read());
+                await Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    editor.Delay(100, () => editor.Editor.Text = allText);
+                }));
+            });
             return editor;
         }
 
@@ -560,18 +582,26 @@ namespace Docdown.ViewModel
             var image = new Image();
             try
             {
-                
-                using (var ms = new MemoryStream())
+                Task.Run(async () =>
                 {
-                    var bytes = Data.Read();
-                    ms.Write(bytes, 0, bytes.Length);
-                    var bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.StreamSource = ms;
-                    bitmap.EndInit();
-                    image.Source = bitmap;
-                }
+                    using (var ms = new MemoryStream())
+                    {
+
+                        var bytes = await Data.Read();
+                        ms.Write(bytes, 0, bytes.Length);
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = ms;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+                        await Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            image.Source = bitmap;
+                        }));
+                        
+                    }
+                });
             }
             catch
             {

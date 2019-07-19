@@ -2,6 +2,7 @@
 using Docdown.ViewModel.Commands;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -43,15 +44,15 @@ namespace Docdown.Controls
             }
         }
 
-        private void DropFromTreeView(object sender, DragEventArgs e)
+        private async void DropFromTreeView(object sender, DragEventArgs e)
         {
             if (DataContext is Explorer explorer && explorer.Children.Any())
             {
-                HandleDrop(explorer.Children.First(), e);
+                await HandleDrop(explorer.Children.First(), e);
             }
         }
 
-        private void DropFromTreeViewItem(object sender, DragEventArgs e)
+        private async void DropFromTreeViewItem(object sender, DragEventArgs e)
         {
             if (sender is FrameworkElement elem && elem.DataContext is Explorer explorer)
             {
@@ -59,11 +60,11 @@ namespace Docdown.Controls
                 {
                     explorer = explorer.Parent;
                 }
-                HandleDrop(explorer, e);
+                await HandleDrop(explorer, e);
             }
         }
 
-        private void HandleDrop(Explorer explorer, DragEventArgs e)
+        private async Task HandleDrop(Explorer explorer, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -81,7 +82,7 @@ namespace Docdown.Controls
                     foreach (var name in files)
                     {
                         var isFolder = Directory.Exists(name);
-                        var newChild = isFolder ? item.CopyExistingFolder(name) : item.CopyExistingItem(name);
+                        var newChild = await (isFolder ? item.CopyExistingFolder(name) : item.CopyExistingItem(name));
                         workspaceItem.AddChild(newChild);
                     }
                 }

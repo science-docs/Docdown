@@ -5,7 +5,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 
 namespace Docdown.Util
 {
@@ -18,6 +21,11 @@ namespace Docdown.Util
         public static string BuildConvertUrl()
         {
             return BuildUrl(Settings.Default.API, "convert");
+        }
+
+        public static string BuildWorkspaceConvertUrl()
+        {
+            return BuildUrl(Settings.Default.API, "workspace", "convert");
         }
 
         public static string BuildTemplatesUrl()
@@ -35,29 +43,66 @@ namespace Docdown.Util
             return Path.Combine(values).Replace('\\', '/');
         }
 
-        public static HttpWebResponse SimpleGetRequest(string url)
+        public static HttpResponseMessage DeleteRequest(string url, IEnumerable<MultipartFormParameter> postParameters)
         {
-            var request = WebRequest.CreateHttp(url);
-
-            request.Method = "GET";
-            request.UserAgent = UserAgent;
-            request.CookieContainer = new CookieContainer();
-            request.Timeout = 60_000;
-
-            return request.GetResponse() as HttpWebResponse;
+            return SimpleRequest(url, HttpMethod.Delete, CancellationToken.None, postParameters.ToArray());
         }
 
-        public static string SimpleTextRequest(string url)
+        public static HttpResponseMessage GetRequest(string url, IEnumerable<MultipartFormParameter> postParameters)
         {
-            using (var res = WebUtility.SimpleGetRequest(url))
+            return GetRequest(url, postParameters.ToArray());
+        }
+
+        public static HttpResponseMessage SimpleRequest(string url, HttpMethod method, CancellationToken cancellationToken, params MultipartFormParameter[] postParameters)
+        {
+            var handler = new WinHttpHandler();
+            var client = new HttpClient(handler);
+
+            var request = new HttpRequestMessage
             {
-                using (var rs = res.GetResponseStream())
+                Method = method,
+                RequestUri = new Uri(url)
+            };
+            request.Headers.UserAgent.Add(new ProductInfoHeaderValue("Docdown", "1.0.0"));
+
+            if (postParameters != null && postParameters.Length > 0)
+            {
+                string formDataBoundary = $"----------{Guid.NewGuid()}";
+                var content = new MultipartFormDataContent(formDataBoundary);
+                foreach (var parameter in postParameters)
                 {
-                    using (var sr = new StreamReader(rs))
+                    if (parameter.FileName is null)
                     {
-                        return sr.ReadToEnd();
+                        content.Add(parameter.ToHttpContent(), parameter.Name);
+                    }
+                    else
+                    {
+                        content.Add(parameter.ToHttpContent(), parameter.Name, parameter.FileName);
                     }
                 }
+                request.Content = content;
+            }
+
+            var responseTask = client.SendAsync(request, cancellationToken);
+            responseTask.Wait();
+            var response = responseTask.Result;
+            response.EnsureSuccessStatusCode();
+
+            return response;
+        }
+
+        public static HttpResponseMessage GetRequest(string url, params MultipartFormParameter[] postParameters)
+        {
+            return SimpleRequest(url, HttpMethod.Get, CancellationToken.None, postParameters);
+        }
+
+        public static string SimpleTextRequest(string url, params MultipartFormParameter[] postParameters)
+        {
+            using (var res = GetRequest(url, postParameters))
+            {
+                var task = res.Content.ReadAsStringAsync();
+                task.Wait();
+                return task.Result;
             }
         }
 
@@ -65,7 +110,7 @@ namespace Docdown.Util
         {
             try
             {
-                SimpleGetRequest(Settings.Default.API).Dispose();
+                GetRequest(Settings.Default.API).Dispose();
             }
             catch
             {
@@ -74,9 +119,14 @@ namespace Docdown.Util
             return ConnectionStatus.Connected;
         }
 
-        public static HttpWebRequest MultipartFormDataPost(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
+        public static HttpResponseMessage PostRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
         {
-            return MultipartFormDataPost(postUrl, postParameters.ToArray());
+            return SimpleRequest(postUrl, HttpMethod.Post, CancellationToken.None, postParameters.ToArray());
+        }
+
+        public static HttpResponseMessage PostRequest(string postUrl, CancellationToken cancellationToken, IEnumerable<MultipartFormParameter> postParameters)
+        {
+            return SimpleRequest(postUrl, HttpMethod.Post, cancellationToken, postParameters.ToArray());
         }
 
         /// <summary>
@@ -115,7 +165,7 @@ namespace Docdown.Util
             request.UserAgent = userAgent;
             request.CookieContainer = new CookieContainer();
             request.ContentLength = formData.Length;
-            request.Timeout = 60_000;
+            request.Timeout = 120_000;
 
             // Send the form data to the request.
             using (var requestStream = request.GetRequestStream())
@@ -211,6 +261,17 @@ namespace Docdown.Util
 
         private MultipartFormParameter() { }
 
+        public HttpContent ToHttpContent()
+        {
+            if (Type == MultipartFormParameterType.File)
+            {
+                return new StreamContent(new MemoryStream(Data));
+            }
+            else
+            {
+                return new StringContent(Value[0]);
+            }
+        }
         public override string ToString()
         {
             return Name;
@@ -325,6 +386,27 @@ namespace Docdown.Util
         {
             var item = new FileWorkspaceItem(folderPath);
             return CreateFormData(item, item, null, false).Where(e => e != null);
+        }
+
+        public static IEnumerable<MultipartFormParameter> FromWebWorkspace(WebWorkspace workspace)
+        {
+            yield return CreateField("token", workspace.User.Token);
+            yield return CreateField("workspace", workspace.Name);
+        }
+
+        public static IEnumerable<MultipartFormParameter> GetWebWorkspaceItem(WebWorkspaceItem item)
+        {
+            yield return CreateField("token", item.Workspace.User.Token);
+            yield return CreateField("workspace", item.Workspace.Name);
+            yield return CreateField("name", item.FullName);
+        }
+
+        public static IEnumerable<MultipartFormParameter> PostWebWorkspaceItem(WebWorkspaceItem item, string file)
+        {
+            yield return CreateField("token", item.Workspace.User.Token);
+            yield return CreateField("workspace", item.Workspace.Name);
+            yield return CreateField("name", item.FullName);
+            yield return CreateFile("content", file);
         }
 
         public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(FileWorkspaceItem workspaceItem, bool onlySelected)

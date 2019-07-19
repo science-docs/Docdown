@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Docdown.Util
 {
@@ -7,6 +8,13 @@ namespace Docdown.Util
         public event EventHandler Canceled;
 
         public bool IsCanceled { get; private set; }
+
+        public CancellationToken ToCancellationToken()
+        {
+            var token = new CancellationTokenSource();
+            Canceled += (_, __) => token.Cancel();
+            return token.Token;
+        }
 
         public void Cancel()
         {

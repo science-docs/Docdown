@@ -1,6 +1,7 @@
 using Docdown.Util;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Docdown.Model
 {
@@ -16,7 +17,8 @@ namespace Docdown.Model
         Video,
         Audio,
         Text,
-        Docx
+        Docx,
+        Web
     }
 
     public abstract class WorkspaceItem<T> : IWorkspaceItem<T>, IEquatable<WorkspaceItem<T>> where T : WorkspaceItem<T>
@@ -43,27 +45,27 @@ namespace Docdown.Model
         public ConverterType ToType { get; set; } = ConverterType.Pdf;
         //public bool IsHidden => (FileSystemInfo.Attributes & FileAttributes.Hidden) > 0 || (Parent != null && Parent.IsHidden);
         
-        public abstract string Convert(CancelToken cancelToken);
+        public abstract Task<string> Convert(CancelToken cancelToken);
 
-        public abstract void Delete();
+        public abstract Task Delete();
 
-        public abstract byte[] Read();
+        public abstract Task<byte[]> Read();
 
-        public abstract void Save(string text);
+        public abstract Task Save(string text);
 
-        public abstract void Rename(string newName);
+        public abstract Task Rename(string newName);
 
-        public abstract void Update();
+        public abstract Task Update();
 
-        public abstract T CreateNewFile(string name, string autoExtension = null, byte[] content = null);
+        public abstract Task<T> CreateNewFile(string name, string autoExtension = null, byte[] content = null);
 
-        public abstract T CreateNewDirectory(string name);
+        public abstract Task<T> CreateNewDirectory(string name);
 
-        public abstract T CopyExistingItem(string path);
+        public abstract Task<T> CopyExistingItem(string path);
 
-        public abstract T CopyExistingFolder(string path);
+        public abstract Task<T> CopyExistingFolder(string path);
         
-        public bool IsDirectory => Type == WorkspaceItemType.Directory;
+        public bool IsDirectory => Type == WorkspaceItemType.Directory || Type == WorkspaceItemType.Web;
 
         public bool IsFile => !IsDirectory;
 
@@ -73,24 +75,24 @@ namespace Docdown.Model
 
         IWorkspaceItem IWorkspaceItem.TopParent => TopParent;
 
-        IWorkspaceItem IWorkspaceItem.CreateNewFile(string name, string autoExtension, byte[] content)
+        async Task<IWorkspaceItem> IWorkspaceItem.CreateNewFile(string name, string autoExtension, byte[] content)
         {
-            return CreateNewFile(name, autoExtension, content);
+            return await CreateNewFile(name, autoExtension, content);
         }
 
-        IWorkspaceItem IWorkspaceItem.CreateNewDirectory(string name)
+        async Task<IWorkspaceItem> IWorkspaceItem.CreateNewDirectory(string name)
         {
-            return CreateNewDirectory(name);
+            return await CreateNewDirectory(name);
         }
 
-        IWorkspaceItem IWorkspaceItem.CopyExistingItem(string path)
+        async Task<IWorkspaceItem> IWorkspaceItem.CopyExistingItem(string path)
         {
-            return CopyExistingItem(path);
+            return await CopyExistingItem(path);
         }
 
-        IWorkspaceItem IWorkspaceItem.CopyExistingFolder(string path)
+        async Task<IWorkspaceItem> IWorkspaceItem.CopyExistingFolder(string path)
         {
-            return CopyExistingFolder(path);
+            return await CopyExistingFolder(path);
         }
 
         public override string ToString()
@@ -131,6 +133,60 @@ namespace Docdown.Model
         public bool Equals(WorkspaceItem<T> other)
         {
             return ToString() == other?.ToString();
+        }
+
+        protected void SetType(string fileExt)
+        {
+            switch (fileExt)
+            {
+                case ".md":
+                case ".markdown":
+                    Type = WorkspaceItemType.Markdown;
+                    break;
+                case ".tex":
+                case ".latex":
+                    Type = WorkspaceItemType.Latex;
+                    break;
+                case ".pdf":
+                    Type = WorkspaceItemType.Pdf;
+                    break;
+                case ".docx":
+                    Type = WorkspaceItemType.Docx;
+                    break;
+                case ".txt":
+                case ".ini":
+                case ".bat":
+                case ".sh":
+                case ".json":
+                case ".xml":
+                case ".xaml":
+                    Type = WorkspaceItemType.Text;
+                    break;
+                case ".png":
+                case ".jpg":
+                case ".jpeg":
+                case ".gif":
+                case ".webp":
+                    Type = WorkspaceItemType.Image;
+                    break;
+                case ".mp4":
+                case ".webm":
+                case ".mkv":
+                    Type = WorkspaceItemType.Video;
+                    break;
+                case ".mp3":
+                case ".flac":
+                case ".ogg":
+                    Type = WorkspaceItemType.Audio;
+                    break;
+                case ".bib":
+                case ".bibtex":
+                    Type = WorkspaceItemType.Bibliography;
+                    break;
+                default:
+                    Type = WorkspaceItemType.Other;
+                    break;
+            }
         }
     }
 }

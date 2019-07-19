@@ -13,7 +13,7 @@ namespace Docdown.ViewModel.Commands
         }
 
         [Delegate]
-        private static void OpenAddExistingFileWindow(WorkspaceItemViewModel workspaceItem)
+        private async static void OpenAddExistingFileWindow(WorkspaceItemViewModel workspaceItem)
         {
             if (!workspaceItem.IsDirectory)
             {
@@ -34,7 +34,7 @@ namespace Docdown.ViewModel.Commands
             {
                 foreach (var name in dialog.FileNames)
                 {
-                    var newChild = item.CopyExistingItem(name);
+                    var newChild = await item.CopyExistingItem(name);
                     workspaceItem.AddChild(newChild);
                 }
             }

@@ -1,5 +1,6 @@
 ﻿using Docdown.Util;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Docdown.Model
 {
@@ -18,16 +19,16 @@ namespace Docdown.Model
         bool IsDirectory { get; }
         bool IsFile { get; }
 
-        byte[] Read();
-        void Save(string text);
-        string Convert(CancelToken cancelToken);
-        void Delete();
-        void Rename(string newName);
-        void Update();
-        IWorkspaceItem CreateNewFile(string name, string autoExtension = null, byte[] content = null);
-        IWorkspaceItem CreateNewDirectory(string name);
-        IWorkspaceItem CopyExistingItem(string path);
-        IWorkspaceItem CopyExistingFolder(string path);
+        Task<byte[]> Read();
+        Task Save(string text);
+        Task<string> Convert(CancelToken cancelToken);
+        Task Delete();
+        Task Rename(string newName);
+        Task Update();
+        Task<IWorkspaceItem> CreateNewFile(string name, string autoExtension = null, byte[] content = null);
+        Task<IWorkspaceItem> CreateNewDirectory(string name);
+        Task<IWorkspaceItem> CopyExistingItem(string path);
+        Task<IWorkspaceItem> CopyExistingFolder(string path);
     }
 
     public interface IWorkspaceItem<T> : IWorkspaceItem where T : class, IWorkspaceItem<T>
@@ -35,9 +36,9 @@ namespace Docdown.Model
         new List<T> Children { get; }
         new T Parent { get; set; }
         new T TopParent { get; }
-        new T CreateNewFile(string name, string autoExtension = null, byte[] content = null);
-        new T CreateNewDirectory(string name);
-        new T CopyExistingItem(string path);
-        new T CopyExistingFolder(string path);
+        new Task<T> CreateNewFile(string name, string autoExtension = null, byte[] content = null);
+        new Task<T> CreateNewDirectory(string name);
+        new Task<T> CopyExistingItem(string path);
+        new Task<T> CopyExistingFolder(string path);
     }
 }

@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Docdown.Model
 {
@@ -43,60 +45,11 @@ namespace Docdown.Model
             }
             else if (fileSystemInfo is FileInfo fileInfo)
             {
-                switch (fileInfo.Extension)
-                {
-                    case ".md":
-                    case ".markdown":
-                        Type = WorkspaceItemType.Markdown;
-                        break;
-                    case ".tex":
-                    case ".latex":
-                        Type = WorkspaceItemType.Latex;
-                        break;
-                    case ".pdf":
-                        Type = WorkspaceItemType.Pdf;
-                        break;
-                    case ".docx":
-                        Type = WorkspaceItemType.Docx;
-                        break;
-                    case ".txt":
-                    case ".ini":
-                    case ".bat":
-                    case ".sh":
-                    case ".json":
-                    case ".xml":
-                    case ".xaml":
-                        Type = WorkspaceItemType.Text;
-                        break;
-                    case ".png":
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".gif":
-                    case ".webp":
-                        Type = WorkspaceItemType.Image;
-                        break;
-                    case ".mp4":
-                    case ".webm":
-                    case ".mkv":
-                        Type = WorkspaceItemType.Video;
-                        break;
-                    case ".mp3":
-                    case ".flac":
-                    case ".ogg":
-                        Type = WorkspaceItemType.Audio;
-                        break;
-                    case ".bib":
-                    case ".bibtex":
-                        Type = WorkspaceItemType.Bibliography;
-                        break;
-                    default:
-                        Type = WorkspaceItemType.Other;
-                        break;
-                }
+                SetType(fileInfo.Extension);
             }
         }
 
-        public override string Convert(CancelToken cancelToken)
+        public async override Task<string> Convert(CancelToken cancelToken)
         {
             var folder = Path.GetDirectoryName(FullName);
 
@@ -110,34 +63,21 @@ namespace Docdown.Model
             }
             else
             {
-                var req = WebUtility.MultipartFormDataPost(WebUtility.BuildConvertUrl(),
+                var token = cancelToken?.ToCancellationToken() ?? CancellationToken.None;
+                var req = WebUtility.PostRequest(WebUtility.BuildConvertUrl(), token,
                 MultipartFormParameter.ApiParameter(FromType, ToType, settings.Template, settings.Csl, onlySelected).Concat(
                 MultipartFormParameter.FromWorkspaceItem(this, onlySelected)));
 
-                if (cancelToken != null)
+                using (var fs = File.Open(temp, FileMode.Create))
                 {
-                    cancelToken.Canceled += AbortRequest;
-                }
-
-                using (var res = req.GetResponse())
-                using (var rs = res.GetResponseStream())
-                {
-                    using (var fs = File.Open(temp, FileMode.Create))
-                    {
-                        rs.CopyTo(fs);
-                    }
+                    await req.Content.CopyToAsync(fs);
                 }
 
                 return temp;
-
-                void AbortRequest(object sender, EventArgs e)
-                {
-                    req.Abort();
-                }
             }
         }
 
-        public override void Delete()
+        public override Task Delete()
         {
             string fullName = FileSystemInfo.FullName;
 
@@ -152,25 +92,26 @@ namespace Docdown.Model
 
             Parent.Children.Remove(this);
             Parent = null;
+            return null;
         }
 
-        public override byte[] Read()
+        public async override Task<byte[]> Read()
         {
-            return File.ReadAllBytes(FileSystemInfo.FullName);
+            return await IOUtility.ReadAllBytes(FullName);
         }
 
-        public override void Save(string text)
+        public async override Task Save(string text)
         {
-            File.WriteAllText(FileSystemInfo.FullName, text);
+            await IOUtility.WriteAllText(FullName, text);
         }
 
-        public override void Rename(string newName)
+        public override Task Rename(string newName)
         {
             if (string.IsNullOrWhiteSpace(newName) ||
                 !IOUtility.IsValidFileName(newName))
                 throw new ArgumentException("Invalid name");
             if (newName == FileSystemInfo.Name)
-                return;
+                return null;
 
             string oldName = FileSystemInfo.FullName;
             string parentName = Path.GetDirectoryName(oldName);
@@ -187,9 +128,10 @@ namespace Docdown.Model
                 File.Move(oldName, fullNewName);
                 FileSystemInfo = new FileInfo(fullNewName);
             }
+            return null;
         }
 
-        public override void Update()
+        public override Task Update()
         {
             var name = FileSystemInfo.Name;
             var parentDirectory = Parent.FileSystemInfo.FullName;
@@ -203,9 +145,10 @@ namespace Docdown.Model
             {
                 FileSystemInfo = new FileInfo(newName);
             }
+            return null;
         }
 
-        public override FileWorkspaceItem CreateNewFile(string name, string autoExtension = null, byte[] content = null)
+        public async override Task<FileWorkspaceItem> CreateNewFile(string name, string autoExtension = null, byte[] content = null)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("message", nameof(name));
@@ -224,7 +167,7 @@ namespace Docdown.Model
                 content = new byte[0];
             }
 
-            File.WriteAllBytes(fullName, content);
+            await IOUtility.WriteAllBytes(fullName, content);
 
             if (FindChild(fullName, out var existing))
             {
@@ -237,7 +180,7 @@ namespace Docdown.Model
             return item;
         }
 
-        public override FileWorkspaceItem CreateNewDirectory(string name)
+        public override Task<FileWorkspaceItem> CreateNewDirectory(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("message", nameof(name));
@@ -248,14 +191,14 @@ namespace Docdown.Model
 
             if (FindChild(fullName, out var existing))
             {
-                return existing;
+                return Task.FromResult(existing);
             }
 
             Directory.CreateDirectory(fullName);
             var fileInfo = new DirectoryInfo(fullName);
             var item = new FileWorkspaceItem(fileInfo, this);
             Children.Add(item);
-            return item;
+            return Task.FromResult(item);
         }
 
         private bool FindChild(string fullName, out FileWorkspaceItem item)
@@ -264,7 +207,7 @@ namespace Docdown.Model
             return item != null;
         }
 
-        public override FileWorkspaceItem CopyExistingItem(string path)
+        public override Task<FileWorkspaceItem> CopyExistingItem(string path)
         {
             var fileName = Path.GetFileName(path);
             var fullNewName = Path.Combine(FileSystemInfo.FullName, fileName);
@@ -281,21 +224,21 @@ namespace Docdown.Model
             var fileInfo = new FileInfo(fullNewName);
             var item = new FileWorkspaceItem(fileInfo, this);
             Children.Add(item);
-            return item;
+            return Task.FromResult(item);
         }
 
-        public override FileWorkspaceItem CopyExistingFolder(string path)
+        public async override Task<FileWorkspaceItem> CopyExistingFolder(string path)
         {
-            var item = CreateNewDirectory(Path.GetFileName(path));
+            var item = await CreateNewDirectory(Path.GetFileName(path));
             foreach (var file in Directory.GetFiles(path))
             {
-                var child = CopyExistingItem(file);
+                var child = await CopyExistingItem(file);
                 item.Children.Add(child);
                 child.Parent = item;
             }
             foreach (var directory in Directory.GetDirectories(path))
             {
-                var child = CopyExistingFolder(directory);
+                var child = await CopyExistingFolder(directory);
                 item.Children.Add(child);
                 child.Parent = item;
             }

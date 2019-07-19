@@ -254,13 +254,13 @@ namespace Docdown.ViewModel
             }
         }
 
-        public void UploadTemplate(string path)
+        public async Task UploadTemplate(string path)
         {
             var nameParam = MultipartFormParameter.CreateField("name", Path.GetFileName(path));
             var parameter = MultipartFormParameter.FromFolder(path).Concat(nameParam);
             try
             {
-                WebUtility.MultipartFormDataPost(WebUtility.BuildTemplatesUrl(), parameter).GetResponse().Dispose();
+                await WebUtility.PostRequest(WebUtility.BuildTemplatesUrl(), parameter).Content.ReadAsStreamAsync();
                 LoadTemplates();
                 workspace.Messages.Success("Successfully uploaded template");
             }
@@ -278,9 +278,9 @@ namespace Docdown.ViewModel
             string templateFolder = new SearchFolderCommand(null, "Select template").ExecuteWithResult();
             if (!string.IsNullOrEmpty(templateFolder))
             {
-                Task.Run(() =>
+                Task.Run(async () =>
                 {
-                    UploadTemplate(templateFolder);
+                    await UploadTemplate(templateFolder);
                 });
             }
         }

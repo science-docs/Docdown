@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Docdown.Util
 {
@@ -11,6 +12,34 @@ namespace Docdown.Util
     {
         private static readonly Regex InvalidFileNameRegex = new Regex("[" + new string(Path.GetInvalidFileNameChars()) + "]", RegexOptions.Compiled);
         private static readonly MD5 md5 = MD5.Create();
+
+        public static async Task WriteAllBytes(string fullName, byte[] bytes)
+        {
+            using (FileStream stream = File.Open(fullName, FileMode.OpenOrCreate))
+            {
+                await stream.WriteAsync(bytes, 0, fullName.Length);
+            }
+        }
+
+        public static async Task WriteAllText(string fullName, string text)
+        {
+            await WriteAllBytes(fullName, Encoding.UTF8.GetBytes(text));
+        }
+
+        public static async Task<byte[]> ReadAllBytes(string fullName)
+        {
+            using (FileStream stream = File.Open(fullName, FileMode.Open))
+            {
+                var result = new byte[stream.Length];
+                await stream.ReadAsync(result, 0, (int)stream.Length);
+                return result;
+            }
+        }
+
+        public static async Task<string> ReadAllText(string fullName)
+        {
+            return Encoding.UTF8.GetString(await ReadAllBytes(fullName));
+        }
 
         public static string GetTempFile(string name = null)
         {

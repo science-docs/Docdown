@@ -11,7 +11,7 @@ namespace Docdown.ViewModel.Commands
         }
 
         [Delegate]
-        private static void OpenCreateNewFileWindow(WorkspaceItemViewModel workspaceItem, bool isDirectory = false)
+        private async static void OpenCreateNewFileWindow(WorkspaceItemViewModel workspaceItem, bool isDirectory = false)
         {
             if (!workspaceItem.IsDirectory)
             {
@@ -23,11 +23,11 @@ namespace Docdown.ViewModel.Commands
             IWorkspaceItem newItem;
             if (isDirectory)
             {
-                newItem = workspaceItem.Data.CreateNewDirectory(Language.Current.Get("File.New.Folder"));
+                newItem = await workspaceItem.Data.CreateNewDirectory(Language.Current.Get("File.New.Folder"));
             }
             else
             {
-                newItem = workspaceItem.Data.CreateNewFile(Language.Current.Get("File.New.File"), ".md");
+                newItem = await workspaceItem.Data.CreateNewFile(Language.Current.Get("File.New.File"), ".md");
             }
             var vm = new WorkspaceItemViewModel(workspace, workspaceItem, newItem);
             if (isDirectory)
