@@ -1,4 +1,4 @@
-﻿using Docdown.Controls.Markdown;
+﻿using Docdown.Editor.Markdown;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel;
@@ -8,15 +8,14 @@ using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-using static Docdown.Controls.Markdown.AbstractSyntaxTree;
+using static Docdown.Editor.Markdown.AbstractSyntaxTree;
 
-namespace Docdown.Controls
+namespace Docdown.Editor
 {
     public partial class MarkdownEditor : INotifyPropertyChanged, IEditor
     {
@@ -228,10 +227,6 @@ namespace Docdown.Controls
                 Theme = new Theme();
                 //ThemeChangedCallback(this, new DependencyPropertyChangedEventArgs());
                 EditBox.Focus();
-
-                // fixes context menu not showing on first click
-                ContextMenu = new ContextMenu();
-                ContextMenu.Items.Add(new MenuItem());
             });
         }
 

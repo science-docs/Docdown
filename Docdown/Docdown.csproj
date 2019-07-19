@@ -109,15 +109,18 @@
     <Compile Include="Controls\EditorAndViewer.xaml.cs">
       <DependentUpon>EditorAndViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\IEditor.cs" />
+    <Compile Include="Editor\Commands\BoldCommand.cs" />
+    <Compile Include="Editor\Commands\ItalicCommand.cs" />
+    <Compile Include="Editor\Commands\QuoteCommand.cs" />
+    <Compile Include="Editor\IEditor.cs" />
     <Compile Include="Controls\IWrappedView.cs" />
-    <Compile Include="Controls\Markdown\AbstractSyntaxTree.cs" />
-    <Compile Include="Controls\Markdown\BlockBackgroundRenderer.cs" />
-    <Compile Include="Controls\Markdown\Highlight.cs" />
-    <Compile Include="Controls\Markdown\ListInputHandler.cs" />
-    <Compile Include="Controls\Markdown\MarkdownFoldingStrategy.cs" />
-    <Compile Include="Controls\Markdown\MarkdownHighlightColorizer.cs" />
-    <Compile Include="Controls\Markdown\Theme.cs" />
+    <Compile Include="Editor\Markdown\AbstractSyntaxTree.cs" />
+    <Compile Include="Editor\Markdown\BlockBackgroundRenderer.cs" />
+    <Compile Include="Editor\Markdown\Highlight.cs" />
+    <Compile Include="Editor\Markdown\ListInputHandler.cs" />
+    <Compile Include="Editor\Markdown\MarkdownFoldingStrategy.cs" />
+    <Compile Include="Editor\Markdown\MarkdownHighlightColorizer.cs" />
+    <Compile Include="Editor\Markdown\Theme.cs" />
     <Compile Include="Controls\OutlineView.xaml.cs">
       <DependentUpon>OutlineView.xaml</DependentUpon>
     </Compile>
@@ -176,6 +179,8 @@
     <Compile Include="ViewModel\Commands\ChangeLanguageCommand.cs" />
     <Compile Include="ViewModel\Commands\CreateNewFileCommand.cs" />
     <Compile Include="ViewModel\Commands\DelegateCommand.cs" />
+    <Compile Include="Editor\Commands\EditorCommand.cs" />
+    <Compile Include="ViewModel\Commands\EditCommand.cs" />
     <Compile Include="ViewModel\Commands\ImportCommand.cs" />
     <Compile Include="ViewModel\Commands\OpenExplorerCommand.cs" />
     <Compile Include="ViewModel\Commands\OpenWindowCommand.cs" />
@@ -217,7 +222,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\MarkdownEditor.xaml">
+    <Page Include="Editor\MarkdownEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -260,7 +265,7 @@
     <Compile Include="Controls\DocumentViewer.xaml.cs">
       <DependentUpon>DocumentViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MarkdownEditor.xaml.cs">
+    <Compile Include="Editor\MarkdownEditor.xaml.cs">
       <DependentUpon>MarkdownEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
@@ -420,6 +425,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controls\Markdown\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

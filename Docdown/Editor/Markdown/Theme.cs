@@ -1,7 +1,7 @@
 ﻿using Docdown.ViewModel;
 using System;
 
-namespace Docdown.Controls.Markdown
+namespace Docdown.Editor.Markdown
 {
     public class ThemeChangedEventArgs : EventArgs
     {

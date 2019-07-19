@@ -15,6 +15,8 @@ using System.Windows;
 using Image = System.Windows.Controls.Image;
 using LibGit2Sharp;
 using System.Text;
+using Docdown.Editor;
+using Docdown.Editor.Commands;
 
 namespace Docdown.ViewModel
 {
@@ -28,6 +30,7 @@ namespace Docdown.ViewModel
             set => tempName = value;
         }
         public string RelativeName => Data.RelativeName;
+        [ChangeListener(nameof(TabName))]
         public string FullName => Data.FullName;
 
         public bool HasChanged
@@ -139,10 +142,14 @@ namespace Docdown.ViewModel
         public ICommand NameChangeEndCommand => new ActionCommand(NameChangeEnd);
         public ICommand SelectItemCommand => new ActionCommand(SelectItem);
         public ICommand DeleteCommand => new ActionCommand(Delete);
-        [ChangeListener(nameof(RelativeName))]
-        public ICommand OpenInExplorerCommand => new OpenExplorerCommand(RelativeName);
+        [ChangeListener(nameof(FullName))]
+        public ICommand OpenInExplorerCommand => new OpenExplorerCommand(FullName);
         public ICommand NewFileCommand => new CreateNewFileCommand(this);
         public ICommand ExistingFileCommand => new AddExistingFileCommand(this);
+
+        public ICommand BoldCommand => new EditCommand(this, EditorCommands.Bold);
+        public ICommand ItalicCommand => new EditCommand(this, EditorCommands.Italic);
+        public ICommand QuoteCommand => new EditCommand(this, EditorCommands.Quote);
 
         public object View
         {

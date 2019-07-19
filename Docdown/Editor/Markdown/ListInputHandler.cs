@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 using PM = System.Tuple<System.Text.RegularExpressions.Regex, System.Action<System.Text.RegularExpressions.Match>>;
 
-namespace Docdown.Controls.Markdown
+namespace Docdown.Editor.Markdown
 {
     public static class ListInputHandler
     {

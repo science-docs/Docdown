@@ -1,6 +1,6 @@
 ﻿using ICSharpCode.AvalonEdit;
 
-namespace Docdown.Controls
+namespace Docdown.Editor
 {
     public interface IEditor
     {

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Docdown.Controls.Markdown
+namespace Docdown.Editor.Markdown
 {
     public sealed class MarkdownFolding : NewFolding
     {

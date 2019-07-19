@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Docdown.Controls.MarkdownEditor"
+﻿<UserControl x:Class="Docdown.Editor.MarkdownEditor"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -41,7 +41,15 @@
             </AvalonEdit:TextEditor.Resources>
             <AvalonEdit:TextEditor.ContextMenu>
                 <ContextMenu>
-                    
+                    <MenuItem Header="Compile" Command="{Binding ConvertCommand}" IsEnabled="{Binding CanConvert}" InputGestureText="F5">
+                        <MenuItem.Icon>
+                            <Rectangle Width="16" Height="16" Fill="{DynamicResource RunIcon}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Cut" Command="ApplicationCommands.Cut"/>
+                    <MenuItem Header="Copy" Command="ApplicationCommands.Copy"/>
+                    <MenuItem Header="Paste" Command="ApplicationCommands.Paste"/>
                 </ContextMenu>
             </AvalonEdit:TextEditor.ContextMenu>
         </AvalonEdit:TextEditor>

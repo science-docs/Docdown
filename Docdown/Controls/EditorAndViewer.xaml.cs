@@ -1,4 +1,5 @@
-﻿using ICSharpCode.AvalonEdit;
+﻿using Docdown.Editor;
+using ICSharpCode.AvalonEdit;
 using System.Windows.Controls;
 
 namespace Docdown.Controls

@@ -188,6 +188,27 @@
                     IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource WizardIcon}" Height="16" Width="16"/>
             </Button>
+            <Rectangle Width="1" Margin="0 2" Fill="{DynamicResource GrayBrush9}"/>
+            <Button Command="{Binding SelectedItem.BoldCommand}"
+                    ToolTip="Bold" 
+                    IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource BoldIcon}" Height="16" Width="16"/>
+            </Button>
+            <Button Command="{Binding SelectedItem.ItalicCommand}"
+                    ToolTip="Italic" 
+                    IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource ItalicIcon}" Height="16" Width="16"/>
+            </Button>
+            <Button Command="{Binding SelectedItem.ItalicCommand}"
+                    ToolTip="Underline" 
+                    IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource UnderlineIcon}" Height="16" Width="16"/>
+            </Button>
+            <Button Command="{Binding SelectedItem.QuoteCommand}"
+                    ToolTip="Quote" 
+                    IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource QuoteIcon}" Height="16" Width="16"/>
+            </Button>
         </StackPanel>
 
         <Grid Grid.Column="0" Grid.Row="2"

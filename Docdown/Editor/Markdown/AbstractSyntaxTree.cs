@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Docdown.Controls.Markdown
+namespace Docdown.Editor.Markdown
 {
     public static class AbstractSyntaxTree
     {

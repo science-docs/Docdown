@@ -1,4 +1,5 @@
 ﻿using Docdown.Controls;
+using Docdown.Editor;
 using Docdown.ViewModel.Commands;
 using System;
 using System.Text.RegularExpressions;

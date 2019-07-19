@@ -6,9 +6,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
-using static Docdown.Controls.Markdown.AbstractSyntaxTree;
+using static Docdown.Editor.Markdown.AbstractSyntaxTree;
 
-namespace Docdown.Controls.Markdown
+namespace Docdown.Editor.Markdown
 {
     public class MarkdownHighlightingColorizer : DocumentColorizingTransformer
     {

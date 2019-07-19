@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
-namespace Docdown.Controls.Markdown
+namespace Docdown.Editor.Markdown
 {
     public class BlockBackgroundRenderer : IBackgroundRenderer
     {
