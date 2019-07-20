@@ -19,10 +19,7 @@ namespace Docdown.Controls
 
         private void Close()
         {
-            if (DataContext is Explorer explorer)
-            {
-                explorer.Workspace.ExplorerVisible = false;
-            }
+            AppViewModel.Instance.ExplorerVisible = false;
         }
 
         private void ViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

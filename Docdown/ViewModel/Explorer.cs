@@ -54,8 +54,11 @@ namespace Docdown.ViewModel
         public Explorer(WorkspaceViewModel workspace)
         {
             Workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
-            Items.Add(new Explorer(this, workspace.Item));
-            Children.Add(Items[0]);
+            if (workspace.Data != null)
+            {
+                Items.Add(new Explorer(this, workspace.Item));
+                Children.Add(Items[0]);
+            }
             debouncedSearch = UIUtility.Debounce<string>(SetSearch, 300);
         }
 

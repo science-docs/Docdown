@@ -38,6 +38,16 @@ namespace Docdown.Util
             return BuildUrl(Settings.Default.API, "csl");
         }
 
+        public static string BuildRegisterUrl()
+        {
+            return BuildUrl(Settings.Default.API, "register");
+        }
+
+        public static string BuildLoginUrl()
+        {
+            return BuildUrl(Settings.Default.API, "login");
+        }
+
         public static string BuildUrl(params string[] values)
         {
             return Path.Combine(values).Replace('\\', '/');
@@ -120,6 +130,11 @@ namespace Docdown.Util
         }
 
         public static HttpResponseMessage PostRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
+        {
+            return PostRequest(postUrl, postParameters.ToArray());
+        }
+
+        public static HttpResponseMessage PostRequest(string postUrl, params MultipartFormParameter[] postParameters)
         {
             return SimpleRequest(postUrl, HttpMethod.Post, CancellationToken.None, postParameters.ToArray());
         }

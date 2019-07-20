@@ -2,14 +2,13 @@
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
-using MahApps.Metro;
-using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -22,7 +21,7 @@ namespace Docdown.ViewModel
         {
             get
             {
-                if (item is null || item.Data != Data.Item)
+                if (Data != null && (item is null || item.Data != Data.Item))
                 {
                     item = new WorkspaceItemViewModel(this, null, Data.Item)
                     {
@@ -45,7 +44,7 @@ namespace Docdown.ViewModel
         {
             get
             {
-                if (selectedItem is null && Data.SelectedItem != null)
+                if (selectedItem is null && Data?.SelectedItem != null)
                 {
                     selectedItem = SearchForSelectedItem(Item, Data.SelectedItem);
                 }
@@ -61,7 +60,11 @@ namespace Docdown.ViewModel
                 }
 
                 selectedItem = value;
-                var item = Data.SelectedItem = value?.Data;
+                var item = value?.Data;
+                if (Data != null)
+                {
+                    Data.SelectedItem = item;
+                }
 
                 if (item is null || !item.IsDirectory)
                 {
@@ -73,19 +76,9 @@ namespace Docdown.ViewModel
         public WorkspaceItemViewModel PreSelectedItem { get; set; }
 
         [ChangeListener(nameof(Data))]
-        public IEnumerable<WorkspaceItemViewModel> Children => new[] { Item };
+        public IEnumerable<WorkspaceItemViewModel> Children => Item == null ? new WorkspaceItemViewModel[0] : new[] { Item };
 
-        public bool ExplorerVisible
-        {
-            get => explorerVisible;
-            set => Set(ref explorerVisible, value);
-        }
-
-        public bool OutlineVisible
-        {
-            get => outlineVisible;
-            set => Set(ref outlineVisible, value);
-        }
+        
 
         [ChangeListener(nameof(SelectedItem))]
         public ConverterType FromType => Data.FromType;
@@ -100,14 +93,6 @@ namespace Docdown.ViewModel
             }
         }
 
-        public Theme Theme
-        {
-            get => theme;
-            set => Set(ref theme, value);
-        }
-
-        [ChangeListener(nameof(Theme))]
-        public string ThemeName => "Lightbulb" + theme;
 
         /// <summary>
         /// Indicates whether the workspace is currently being changed programmatically in order to ignore the change message.
@@ -120,9 +105,7 @@ namespace Docdown.ViewModel
             //set => Data.IgnoreChange = value;
         }
 
-        public SettingsViewModel Settings { get; }
         public WizardViewModel Wizard { get; }
-        public MessageQueue Messages { get; }
         public Explorer Explorer
         {
             get => explorer;
@@ -132,30 +115,18 @@ namespace Docdown.ViewModel
         public ICommand SaveSelectedItemCommand => new ActionCommand(SaveSelectedItem);
         public ICommand SaveAllItemsCommand => new ActionCommand(SaveAllItems);
         public ICommand CloseAllItemsCommand => new ActionCommand(CloseAll);
-        [ChangeListener(nameof(Data))]
-        public ICommand SearchWorkspaceCommand => new SearchFolderCommand(Settings.WorkspacePath, "Select workspace", ChangeWorkspace);
-        public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(Settings);
         public ICommand OpenWizardCommand => new OpenWindowCommand<WizardWindow>(Wizard);
         public ICommand ChangeSelectedItemNameCommand => new ActionCommand(ChangeSelectedItemName);
         public ICommand DeleteSelectedItemCommand => new ActionCommand(DeleteSelectedItem);
         public ICommand ImportCommand => new ImportCommand(this, ConverterType.Markdown);
-        public ICommand SwitchThemeCommand => new ActionCommand(SwitchTheme);
-        public ICommand ChangeLanguageCommand => new ChangeLanguageCommand();
-
-        private bool explorerVisible = true;
-        private bool outlineVisible = true;
+        
         private Explorer explorer;
         private WorkspaceItemViewModel item;
         private WorkspaceItemViewModel selectedItem;
-        private Theme theme;
         
-        public WorkspaceViewModel(IWorkspace workspace) : base(workspace ?? throw new ArgumentNullException(nameof(workspace)))
+        public WorkspaceViewModel() : base(null)
         {
-            theme = (Theme)Enum.Parse(typeof(Theme), Properties.Settings.Default.Theme);
-            Messages = new MessageQueue();
             Wizard = new WizardViewModel(this);
-            Settings = new SettingsViewModel(this);
-            //workspace.WorkspaceChanged += OnWorkspaceChanged;
             Explorer = new Explorer(this);
         }
 
@@ -165,28 +136,17 @@ namespace Docdown.ViewModel
             OpenItems.Clear();
         }
         
-        private void SaveSelectedItem()
+        private async Task SaveSelectedItem()
         {
-            SelectedItem?.Save();
+            await SelectedItem?.Save();
         }
 
-        private void SaveAllItems()
+        private async Task SaveAllItems()
         {
             foreach (var item in OpenItems)
             {
-                item.Save();
+                await item.Save();
             }
-        }
-
-        public void ChangeWorkspace(string newWorkspace)
-        {
-            if (newWorkspace is null)
-                return;
-
-            Settings.WorkspacePath = newWorkspace;
-            Settings.Save();
-            Data = WorkspaceProvider.Create(new Uri(newWorkspace));
-            Data.ToType = ConverterType.Pdf;
         }
 
         public void OpenItem(string fullPath)
@@ -218,7 +178,7 @@ namespace Docdown.ViewModel
                         {
                             if (openItem.HasChanged)
                             {
-                                openItem.Save();
+                                openItem.Save().Wait();
                             }
                         }
                         break;
@@ -292,11 +252,11 @@ namespace Docdown.ViewModel
             }
         }
 
-        private void DeleteSelectedItem()
+        private async Task DeleteSelectedItem()
         {
             if (PreSelectedItem != null)
             {
-                PreSelectedItem.Delete();
+                await PreSelectedItem.Delete();
             }
         }
 
@@ -345,24 +305,7 @@ namespace Docdown.ViewModel
             }
         }
 
-        public void SwitchTheme()
-        {
-            if (theme == Theme.Dark)
-            {
-                Theme = Theme.Light;
-            }
-            else
-            {
-                Theme = Theme.Dark;
-            }
-            Properties.Settings.Default.Theme = Theme.ToString();
-            Properties.Settings.Default.Save();
-            ThemeManager.ChangeAppStyle(Application.Current, ThemeManager.GetAccent("BlueDoc"), ThemeManager.GetAppTheme(theme + "Doc"));
-            App.ReloadIcons();
-            UpdateIcons(Children);
-        }
-
-        private void UpdateIcons(IEnumerable<WorkspaceItemViewModel> items)
+        public void UpdateIcons(IEnumerable<WorkspaceItemViewModel> items)
         {
             foreach (var item in items)
             {

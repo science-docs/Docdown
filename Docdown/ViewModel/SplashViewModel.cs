@@ -2,13 +2,14 @@
 using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
+using Docdown.Windows;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace Docdown.ViewModel
 {
-    public class SplashViewModel : ObservableObject<WorkspaceViewModel>
+    public class SplashViewModel : ObservableObject<AppViewModel>
     {
         public static string[] Args { get; internal set; }
 
@@ -22,36 +23,23 @@ namespace Docdown.ViewModel
         public void Initialize()
         {
             var settings = Settings.Default;
+            settings.API = "http://localhost:3030";
             var workspacePath = settings.WorkspacePath;
             if (Args != null && Args.Length > 0 && File.Exists(Args[0]) && !IOUtility.IsParent(workspacePath, Args[0]))
             {
                 workspacePath = Path.GetDirectoryName(Args[0]);
             }
-            else if (string.IsNullOrEmpty(workspacePath) || !Directory.Exists(workspacePath))
-            {
-                workspacePath = new SearchFolderCommand(null, "Select workspace").ExecuteWithResult();
-            }
-            if (workspacePath != null)
-            {
-                Task.Run(() =>
-                {
-                    settings.WorkspacePath = workspacePath;
-                    settings.Save();
 
-                    var workspace = WorkspaceProvider.Create(new Uri(workspacePath));
-                    workspace.ToType = ConverterType.Pdf;
-                    var workspaceViewModel = new WorkspaceViewModel(workspace);
-                    workspaceViewModel.Settings.TestConnection();
-
-                    Data = workspaceViewModel;
-
-                    setDialogResult?.Invoke(true);
-                });
-            }
-            else
+            Task.Run(() =>
             {
-                setDialogResult?.Invoke(false);
-            }
+                var app = new AppViewModel();
+                app.Settings.TestConnection();
+                app.ChangeWorkspace(workspacePath);
+
+                Data = app;
+
+                setDialogResult?.Invoke(true);
+            });
         }
     }
 }

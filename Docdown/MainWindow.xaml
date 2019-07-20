@@ -44,10 +44,10 @@
         </ResourceDictionary>
     </FrameworkElement.Resources>
     <Window.InputBindings>
-        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveSelectedItemCommand}"/>
-        <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{Binding SaveAllItemsCommand}"/>
-        <KeyBinding Key="F5" Command="{Binding SelectedItem.ConvertCommand}"/>
-        <KeyBinding Key="P" Modifiers="Ctrl" Command="{Binding SelectedItem.PrintCommand}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding Workspace.SaveSelectedItemCommand}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{Binding Workspace.SaveAllItemsCommand}"/>
+        <KeyBinding Key="F5" Command="{Binding Workspace.SelectedItem.ConvertCommand}"/>
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{Binding Workspace.SelectedItem.PrintCommand}"/>
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -83,6 +83,20 @@
                         <Rectangle Fill="{DynamicResource OpenFolderIcon}" Height="16" Width="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem Header="Web Workspaces" 
+                          Command="{Binding User.EnsureLoginCommand}"
+                          IsEnabled="{Binding Settings.IsConnected}" 
+                          ItemsSource="{Binding User.Workspaces}">
+                    <MenuItem.Icon>
+                        <Rectangle Fill="{DynamicResource WebIcon}" Height="16" Width="16"/>
+                    </MenuItem.Icon>
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="{x:Type MenuItem}">
+                            <Setter Property="Command" Value="{Binding OpenWorkspaceCommand}"/>
+                            <Setter Property="Padding" Value="0 6"/>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
                 <MenuItem Header="{DynamicResource Main_Menu_File_LastWorkspaces}" ItemsSource="{Binding Settings.LastWorkspaces}">
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="{x:Type MenuItem}">
@@ -92,71 +106,107 @@
                     </MenuItem.ItemContainerStyle>
                 </MenuItem>
                 <Separator Margin="6 0"/>
-                <MenuItem Header="{DynamicResource Main_Menu_File_Close}" Command="{Binding SelectedItem.CloseCommand, FallbackValue={x:Null}}"/>
-                <MenuItem Header="{DynamicResource Main_Menu_File_CloseAll}" Command="{Binding CloseAllItemsCommand}"/>
+                <MenuItem Header="{DynamicResource Main_Menu_File_Close}" 
+                          Command="{Binding Workspace.SelectedItem.CloseCommand, FallbackValue={x:Null}}"/>
+                <MenuItem Header="{DynamicResource Main_Menu_File_CloseAll}" 
+                          Command="{Binding Workspace.CloseAllItemsCommand}"/>
                 <Separator Margin="6 0"/>
-                <MenuItem Header="{DynamicResource Main_Menu_File_Import}" Command="{Binding ImportCommand}" ToolTip="{DynamicResource Main_Menu_File_Import_Tooltip}"/>
+                <MenuItem Header="{DynamicResource Main_Menu_File_Import}" 
+                          Command="{Binding Workspace.ImportCommand}" 
+                          ToolTip="{DynamicResource Main_Menu_File_Import_Tooltip}"/>
                 <Separator Margin="6 0"/>
-                <MenuItem Header="{DynamicResource Main_Menu_File_Exit}" Click="MenuItemExitClicked">
+                <MenuItem Header="{DynamicResource Main_Menu_File_Exit}" 
+                          Click="MenuItemExitClicked">
                     <MenuItem.Icon>
-                        <Rectangle Fill="{DynamicResource CloseIcon}" Height="16" Width="16"/>
+                        <Rectangle Fill="{DynamicResource CloseIcon}" 
+                                   Height="16" 
+                                   Width="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="View">
-                <MenuItem Header="Workspace Explorer" IsCheckable="True" IsChecked="{Binding ExplorerVisible}"/>
-                <MenuItem Header="Outline" IsCheckable="True" IsChecked="{Binding OutlineVisible}"/>
+                <MenuItem Header="Workspace Explorer" 
+                          IsCheckable="True" 
+                          IsChecked="{Binding ExplorerVisible}"/>
+                <MenuItem Header="Outline" 
+                          IsCheckable="True" 
+                          IsChecked="{Binding OutlineVisible}"/>
                 <Separator/>
                 <MenuItem Header="Tasks"/>
             </MenuItem>
             <MenuItem Header="{DynamicResource Main_Menu_Options}">
-                <MenuItem Header="{DynamicResource Main_Menu_Options_ThemeSwitch}" Command="{Binding SwitchThemeCommand}">
+                <MenuItem Header="{DynamicResource Main_Menu_Options_ThemeSwitch}" 
+                          Command="{Binding SwitchThemeCommand}">
                     <MenuItem.Icon>
-                        <Rectangle Fill="{Binding ThemeName, Converter={StaticResource StringToResourceConverter}}" Height="16" Width="16"/>
+                        <Rectangle Fill="{Binding ThemeName, Converter={StaticResource StringToResourceConverter}}" 
+                                   Height="16" 
+                                   Width="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Header="{DynamicResource Main_Menu_Options_Language}">
-                    <MenuItem Header="English" Command="{Binding ChangeLanguageCommand}" CommandParameter="English"/>
-                    <MenuItem Header="Deutsch" Command="{Binding ChangeLanguageCommand}" CommandParameter="German"/>
+                    <MenuItem Header="English" 
+                              Command="{Binding ChangeLanguageCommand}" 
+                              CommandParameter="English"/>
+                    <MenuItem Header="Deutsch" 
+                              Command="{Binding ChangeLanguageCommand}" 
+                              CommandParameter="German"/>
                 </MenuItem>
-                <MenuItem Header="{DynamicResource Main_Menu_Options_Settings}" Command="{Binding OpenSettingsCommand}">
+                <MenuItem Header="{DynamicResource Main_Menu_Options_Settings}" 
+                          Command="{Binding OpenSettingsCommand}">
                     <MenuItem.Icon>
-                        <Rectangle Fill="{DynamicResource SettingsIcon}" Height="16" Width="16"/>
+                        <Rectangle Fill="{DynamicResource SettingsIcon}" 
+                                   Height="16" 
+                                   Width="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="{DynamicResource Main_Menu_Help}">
-                <MenuItem Header="{DynamicResource Main_Menu_Help_Markdown}" Click="MarkdownHelpMenuClicked">
+                <MenuItem Header="{DynamicResource Main_Menu_Help_Markdown}" 
+                          Click="MarkdownHelpMenuClicked">
                     <MenuItem.Icon>
-                        <Rectangle Fill="{DynamicResource MarkdownIcon}" Height="16" Width="16"/>
+                        <Rectangle Fill="{DynamicResource MarkdownIcon}" 
+                                   Height="16" 
+                                   Width="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="{DynamicResource Main_Menu_Help_About}" Click="AboutHelpMenuClicked">
+                <MenuItem Header="{DynamicResource Main_Menu_Help_About}" 
+                          Click="AboutHelpMenuClicked">
                     
                 </MenuItem>
             </MenuItem>
         </Menu>
-        <StackPanel Grid.ColumnSpan="3" Grid.Row="1" 
+        <StackPanel Grid.ColumnSpan="3" 
+                    Grid.Row="1" 
                     Orientation="Horizontal" 
                     Background="{DynamicResource WhiteBrush}"
                     Margin="4 0 4 2">
-            <Button Command="{Binding SearchWorkspaceCommand}" ToolTip="{DynamicResource Main_Menu_File_OpenWorkspace}">
-                <Rectangle Fill="{DynamicResource OpenFolderIcon}" Height="16" Width="16"/>
+            <Button Command="{Binding SearchWorkspaceCommand}" 
+                    ToolTip="{DynamicResource Main_Menu_File_OpenWorkspace}">
+                <Rectangle Fill="{DynamicResource OpenFolderIcon}" 
+                           Height="16" 
+                           Width="16"/>
             </Button>
-            <Button Command="{Binding SelectedItem.SaveCommand, FallbackValue={x:Null}}">
+            <Button Command="{Binding Workspace.SelectedItem.SaveCommand, FallbackValue={x:Null}}">
                 <Button.ToolTip>
                     <ToolTip Content="{Binding SelectedItem.Name, FallbackValue={x:Null}}"
                              ContentStringFormat="{DynamicResource Main_Menu_Save_Tooltip}"
                              Visibility="{Binding SelectedItem, Converter={StaticResource StringToVisibilityConverter}}"/>
                 </Button.ToolTip>
-                <Rectangle Fill="{DynamicResource SaveIcon}" Height="16" Width="16"/>
+                <Rectangle Fill="{DynamicResource SaveIcon}" 
+                           Height="16" 
+                           Width="16"/>
             </Button>
-            <Button Command="{Binding SaveAllItemsCommand}" ToolTip="{DynamicResource Main_Menu_SaveAll_Tooltip}">
-                <Rectangle Fill="{DynamicResource SaveAllIcon}" Height="16" Width="16"/>
+            <Button Command="{Binding Workspace.SaveAllItemsCommand}" 
+                    ToolTip="{DynamicResource Main_Menu_SaveAll_Tooltip}">
+                <Rectangle Fill="{DynamicResource SaveAllIcon}" 
+                           Height="16" 
+                           Width="16"/>
             </Button>
-            <Rectangle Width="1" Margin="0 2" Fill="{DynamicResource GrayBrush9}"/>
-            <Button IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}" 
-                    Command="{Binding SelectedItem.ConvertCommand, FallbackValue={x:Null}}" 
+            <Rectangle Width="1" 
+                       Margin="0 2" 
+                       Fill="{DynamicResource GrayBrush9}"/>
+            <Button IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}" 
+                    Command="{Binding Workspace.SelectedItem.ConvertCommand, FallbackValue={x:Null}}" 
                     Height="20" 
                     Width="Auto">
                 <Button.ToolTip>
@@ -173,45 +223,66 @@
                                Margin="4 0 6 0"/>
                 </StackPanel>
             </Button>
-            <Button Command="{Binding SelectedItem.StopConvertCommand}" ToolTip="{DynamicResource Main_Menu_Stop_Tooltip}" IsEnabled="{Binding SelectedItem.IsConverting, FallbackValue=False}">
-                <Rectangle Fill="{StaticResource StopIcon}" Height="16" Width="16"/>
+            <Button Command="{Binding Workspace.SelectedItem.StopConvertCommand}" 
+                    ToolTip="{DynamicResource Main_Menu_Stop_Tooltip}" 
+                    IsEnabled="{Binding Workspace.SelectedItem.IsConverting, FallbackValue=False}">
+                <Rectangle Fill="{StaticResource StopIcon}" 
+                           Height="16" 
+                           Width="16"/>
             </Button>
-            <Button Command="{Binding SelectedItem.PrintCommand, FallbackValue={x:Null}}" 
+            <Button Command="{Binding Workspace.SelectedItem.PrintCommand, FallbackValue={x:Null}}" 
                     ToolTip="{DynamicResource Main_Menu_Print_Tooltip}" 
-                    IsEnabled="{Binding SelectedItem.PdfPath, Converter={StaticResource StringLengthToBooleanConverter}, FallbackValue=False}">
-                <Rectangle Fill="{DynamicResource PrintIcon}" Height="16" Width="16"/>
+                    IsEnabled="{Binding Workspace.SelectedItem.PdfPath, Converter={StaticResource StringLengthToBooleanConverter}, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource PrintIcon}" 
+                           Height="16" 
+                           Width="16"/>
             </Button>
-            <Rectangle Width="1" Margin="0 2" Fill="{DynamicResource GrayBrush9}"/>
-            <Button Command="{Binding OpenWizardCommand, FallbackValue={x:Null}}" 
+            <Rectangle Width="1" 
+                       Margin="0 2" 
+                       Fill="{DynamicResource GrayBrush9}"/>
+            <Button Command="{Binding Workspace.OpenWizardCommand, FallbackValue={x:Null}}" 
                     CommandParameter="{StaticResource True}"
                     ToolTip="Open Markdown Wizard" 
-                    IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}">
-                <Rectangle Fill="{DynamicResource WizardIcon}" Height="16" Width="16"/>
+                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource WizardIcon}" 
+                           Height="16" 
+                           Width="16"/>
             </Button>
-            <Rectangle Width="1" Margin="0 2" Fill="{DynamicResource GrayBrush9}"/>
-            <Button Command="{Binding SelectedItem.BoldCommand}"
+            <Rectangle Width="1" 
+                       Margin="0 2" 
+                       Fill="{DynamicResource GrayBrush9}"/>
+            <Button Command="{Binding Workspace.SelectedItem.BoldCommand}"
                     ToolTip="Bold" 
-                    IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}">
-                <Rectangle Fill="{DynamicResource BoldIcon}" Height="16" Width="16"/>
+                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource BoldIcon}" 
+                           Height="16" 
+                           Width="16"/>
             </Button>
-            <Button Command="{Binding SelectedItem.ItalicCommand}"
+            <Button Command="{Binding Workspace.SelectedItem.ItalicCommand}"
                     ToolTip="Italic" 
-                    IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}">
-                <Rectangle Fill="{DynamicResource ItalicIcon}" Height="16" Width="16"/>
+                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource ItalicIcon}" 
+                           Height="16" 
+                           Width="16"/>
             </Button>
-            <Button Command="{Binding SelectedItem.ItalicCommand}"
+            <Button Command="{Binding Workspace.SelectedItem.ItalicCommand}"
                     ToolTip="Underline" 
-                    IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}">
-                <Rectangle Fill="{DynamicResource UnderlineIcon}" Height="16" Width="16"/>
+                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource UnderlineIcon}" 
+                           Height="16" 
+                           Width="16"/>
             </Button>
-            <Button Command="{Binding SelectedItem.QuoteCommand}"
+            <Button Command="{Binding Workspace.SelectedItem.QuoteCommand}"
                     ToolTip="Quote" 
-                    IsEnabled="{Binding SelectedItem.CanConvert, FallbackValue=False}">
-                <Rectangle Fill="{DynamicResource QuoteIcon}" Height="16" Width="16"/>
+                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource QuoteIcon}" 
+                           Height="16" 
+                           Width="16"/>
             </Button>
         </StackPanel>
 
-        <Grid Grid.Column="0" Grid.Row="2"
+        <Grid Grid.Column="0" 
+              Grid.Row="2"
               Margin="4 2 0 4">
             <Grid.RowDefinitions>
                 <RowDefinition>
@@ -240,18 +311,24 @@
                     </RowDefinition.Style>
                 </RowDefinition>
             </Grid.RowDefinitions>
-            <Controls:ViewWrapper Grid.Row="0" Visibility="{Binding Path=ExplorerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Controls:WorkspaceView DataContext="{Binding Explorer}"/>
+            <Controls:ViewWrapper Grid.Row="0" 
+                                  Visibility="{Binding Path=ExplorerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Controls:WorkspaceView DataContext="{Binding Workspace.Explorer}"/>
             </Controls:ViewWrapper>
-            <Controls:ViewWrapper Grid.Row="2"  Visibility="{Binding Path=OutlineVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Controls:OutlineView DataContext="{Binding}"/>
+            <Controls:ViewWrapper Grid.Row="2"
+                                  Visibility="{Binding Path=OutlineVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Controls:OutlineView DataContext="{Binding Workspace}"/>
             </Controls:ViewWrapper>
         </Grid>
         <Grid Grid.Column="2" Grid.Row="2" Margin="0 2 4 4">
-            <Controls:TabView/>
+            <Controls:TabView DataContext="{Binding Workspace}"/>
         </Grid>
 
-        <Grid x:Name="StatusGrid" DataContext="{Binding Messages}" Grid.Row="3" Grid.ColumnSpan="3" Height="23">
+        <Grid x:Name="StatusGrid" 
+              DataContext="{Binding Messages}" 
+              Grid.Row="3" 
+              Grid.ColumnSpan="3" 
+              Height="23">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="Background" Value="{DynamicResource AccentBaseColorBrush}"/>
@@ -288,7 +365,11 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="120"/>
             </Grid.ColumnDefinitions>
-            <Control Height="16" Width="16" Margin="5,3,3,3" DataContext="{Binding NewestMessage.Type}" Style="{StaticResource StatusStyle}"/>
+            <Control Height="16" 
+                     Width="16" 
+                     Margin="5 3 3 3" 
+                     DataContext="{Binding NewestMessage.Type}" 
+                     Style="{StaticResource StatusStyle}"/>
             <TextBlock Grid.Column="1"
                        x:Name="StatusIndicator"
                        Foreground="White"
@@ -299,14 +380,14 @@
                        Text="{Binding NewestMessage.Content}"/>
             <StackPanel Grid.Column="2"
                         Orientation="Horizontal" 
-                        Visibility="{Binding SelectedItem, Converter={StaticResource StringToVisibilityConverter}}"
+                        Visibility="{Binding Workspace.SelectedItem, Converter={StaticResource StringToVisibilityConverter}}"
                         DataContext="{Binding ElementName=DocdownWindow, Path=DataContext}">
                 <TextBlock Foreground="White"
                        VerticalAlignment="Center"
-                       Text="{DynamicResource Main_WordCount}" Margin="0,0,4,0"/>
+                       Text="{DynamicResource Main_WordCount}" Margin="0 0 4 0"/>
                 <TextBlock Foreground="White"
                        VerticalAlignment="Center"
-                       Text="{Binding SelectedItem.WordCount}"/>
+                       Text="{Binding Workspace.SelectedItem.WordCount}"/>
             </StackPanel>
         </Grid>
     </Grid>

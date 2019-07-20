@@ -170,6 +170,9 @@
     <Compile Include="Model\Outline.cs" />
     <Compile Include="Model\OutlineItem.cs" />
     <Compile Include="Model\Template.cs" />
+    <Compile Include="Model\User.cs" />
+    <Compile Include="Model\WebWorkspace.cs" />
+    <Compile Include="Model\WebWorkspaceItem.cs" />
     <Compile Include="Model\Workspace.cs" />
     <Compile Include="Model\WorkspaceChangeEventArgs.cs" />
     <Compile Include="Model\WorkspaceItem.cs" />
@@ -178,6 +181,7 @@
     <Compile Include="Util\DependencyPropertyUtility.cs" />
     <Compile Include="Util\Enumerable.cs" />
     <Compile Include="Util\ErrorUtility.cs" />
+    <Compile Include="Util\InputBox.cs" />
     <Compile Include="Util\IOUtility.cs" />
     <Compile Include="Util\MessageBox.cs" />
     <Compile Include="Util\PandocUtility.cs" />
@@ -189,6 +193,7 @@
     <Compile Include="Util\UIUtility.cs" />
     <Compile Include="Util\WebUtility.cs" />
     <Compile Include="Util\XamlUtility.cs" />
+    <Compile Include="ViewModel\AppViewModel.cs" />
     <Compile Include="ViewModel\Commands\ActionCommand.cs" />
     <Compile Include="ViewModel\ChangeListenerAttribute.cs" />
     <Compile Include="ViewModel\Commands\AddExistingFileCommand.cs" />
@@ -204,6 +209,8 @@
     <Compile Include="ViewModel\Commands\SearchFileCommand.cs" />
     <Compile Include="ViewModel\Commands\SearchFolderCommand.cs" />
     <Compile Include="ViewModel\Explorer.cs" />
+    <Compile Include="ViewModel\InputBoxViewModel.cs" />
+    <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MessageBoxViewModel.cs" />
     <Compile Include="ViewModel\MessageQueue.cs" />
     <Compile Include="ViewModel\Message.cs" />
@@ -214,10 +221,17 @@
     <Compile Include="ViewModel\SearchViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
     <Compile Include="ViewModel\SplashViewModel.cs" />
+    <Compile Include="ViewModel\UserViewModel.cs" />
     <Compile Include="ViewModel\WizardItemViewModel.cs" />
     <Compile Include="ViewModel\WizardViewModel.cs" />
     <Compile Include="ViewModel\WorkspaceItemViewModel.cs" />
     <Compile Include="ViewModel\WorkspaceViewModel.cs" />
+    <Compile Include="Windows\InputWindow.xaml.cs">
+      <DependentUpon>InputWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\LoginWindow.xaml.cs">
+      <DependentUpon>LoginWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\MessageWindow.xaml.cs">
       <DependentUpon>MessageWindow.xaml</DependentUpon>
     </Compile>
@@ -329,6 +343,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\Windows.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\InputWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

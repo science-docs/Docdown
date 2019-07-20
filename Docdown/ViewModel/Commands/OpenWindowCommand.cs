@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace Docdown.ViewModel.Commands
 {
-    public class OpenWindowCommand<T> : DelegateCommand where T : Window, new()
+    public class OpenWindowCommand<T> : DelegateCommand<bool?> where T : Window, new()
     {
         private static readonly TypeCache<T> windows = new TypeCache<T>();
 
@@ -27,9 +27,12 @@ namespace Docdown.ViewModel.Commands
             {
                 window = new T
                 {
-                    Owner = Application.Current.MainWindow,
-                    DataContext = dataContext
+                    Owner = Application.Current.MainWindow
                 };
+                if (dataContext != null)
+                {
+                    window.DataContext = dataContext;
+                }
                 if (keep)
                 {
                     windows.Add(typeof(T), window);

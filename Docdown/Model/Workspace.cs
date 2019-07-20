@@ -8,7 +8,7 @@ namespace Docdown.Model
         public abstract T Item { get; }
         public abstract T SelectedItem { get; set; }
         public ConverterType FromType => FromSelectedItem();
-        public ConverterType ToType { get; set; }
+        public ConverterType ToType { get; set; } = ConverterType.Pdf;
         public abstract event WorkspaceChangeEventHandler WorkspaceChanged;
 
         IWorkspaceItem IWorkspace.Item => Item;

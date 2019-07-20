@@ -141,15 +141,15 @@ namespace Docdown.ViewModel
         public const int MaxLastWorkspaces = 5;
 
         private readonly Settings settings;
-        private readonly WorkspaceViewModel workspace;
+        private readonly AppViewModel app;
         private Template[] templates;
         private string[] csls;
         private string selectedTemplateName;
         private ConnectionStatus connectionStatus;
 
-        public SettingsViewModel(WorkspaceViewModel workspace)
+        public SettingsViewModel(AppViewModel app)
         {
-            this.workspace = workspace;
+            this.app = app;
             settings = Settings.Default;
             if (settings.LastWorkspaces is null)
                 settings.LastWorkspaces = new StringCollection();
@@ -188,13 +188,13 @@ namespace Docdown.ViewModel
                 {
                     LoadTemplates();
                     LoadCsls();
-                    workspace.Messages.Success("Connected to server");
+                    app.Messages.Success("Connected to server");
                 }
                 else
                 {
                     Templates = new[] { Template.Empty };
                     Csls = new[] { string.Empty };
-                    workspace.Messages.Error("Could not connect to server");
+                    app.Messages.Error("Could not connect to server");
                 }
             }
         }
@@ -262,11 +262,11 @@ namespace Docdown.ViewModel
             {
                 await WebUtility.PostRequest(WebUtility.BuildTemplatesUrl(), parameter).Content.ReadAsStreamAsync();
                 LoadTemplates();
-                workspace.Messages.Success("Successfully uploaded template");
+                app.Messages.Success("Successfully uploaded template");
             }
             catch
             {
-                workspace.Messages.Error("Could not upload template");
+                app.Messages.Error("Could not upload template");
             }
         }
 
@@ -322,26 +322,26 @@ namespace Docdown.ViewModel
 
         private void SetLastWorkspaces(IEnumerable<string> values)
         {
-            LastWorkspaces = LastWorkspaceViewModel.FromPaths(workspace, values).ToArray();
+            LastWorkspaces = LastWorkspaceViewModel.FromPaths(app, values).ToArray();
         }
 
         public class LastWorkspaceViewModel
         {
-            public ICommand OpenWorkspaceCommand => new ActionCommand(() => Workspace.ChangeWorkspace(Location));
+            public ICommand OpenWorkspaceCommand => new ActionCommand(() => App.ChangeWorkspace(Location));
 
             public string Location { get; }
             public string Text => $"{Index} {Location}";
             public int Index { get; }
-            public WorkspaceViewModel Workspace { get; }
+            public AppViewModel App { get; }
 
-            public LastWorkspaceViewModel(string location, WorkspaceViewModel workspace, int index)
+            public LastWorkspaceViewModel(string location, AppViewModel workspace, int index)
             {
                 Location = location;
                 Index = index;
-                Workspace = workspace;
+                App = workspace;
             }
 
-            public static IEnumerable<LastWorkspaceViewModel> FromPaths(WorkspaceViewModel workspace, IEnumerable<string> paths)
+            public static IEnumerable<LastWorkspaceViewModel> FromPaths(AppViewModel workspace, IEnumerable<string> paths)
             {
                 int count = 1;
                 foreach (var path in paths)

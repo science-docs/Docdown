@@ -316,71 +316,65 @@ namespace Docdown.ViewModel
                 return;
 
             converterToken.Cancel();
-            Workspace.Messages.Warning(Language.Current.Get("Workspace.Compilation.Cancelled"));
+            Messages.Warning(Language.Current.Get("Workspace.Compilation.Cancelled"));
         }
 
-        public void Convert()
+        public async Task Convert()
         {
             if (!CanConvert)
                 return;
             
             converterToken = new CancelToken();
-            Workspace.Messages.Working(Language.Current.Get("Workspace.Compilation.Running"));
+            AppViewModel.Instance.Messages.Working(Language.Current.Get("Workspace.Compilation.Running"));
             IsConverting = true;
-            Save();
-            Task.Run(async () =>
+            await Save();
+            var watch = Stopwatch.StartNew();
+            try
             {
-                var watch = Stopwatch.StartNew();
-                try
-                {
-                    PdfPath = string.Empty;
-                    PdfPath = await Data.Convert(converterToken);
-                    watch.Stop();
-                    Workspace.Messages.Success(Language.Current.Get("Workspace.Compilation.Success", watch.Elapsed.Seconds, watch.Elapsed.Milliseconds));
-                }
-                catch (Exception e)
-                {
-                    if (!converterToken.IsCanceled)
-                    {
-                        Workspace.Messages.Error(ErrorUtility.GetErrorMessage(e));
-                    }
-                }
+                PdfPath = string.Empty;
+                PdfPath = await Data.Convert(converterToken);
                 watch.Stop();
+                Messages.Success(Language.Current.Get("Workspace.Compilation.Success", watch.Elapsed.Seconds, watch.Elapsed.Milliseconds));
+            }
+            catch (Exception e)
+            {
+                if (!converterToken.IsCanceled)
+                {
+                    Messages.Error(ErrorUtility.GetErrorMessage(e));
+                }
+            }
+            watch.Stop();
 
-                IsConverting = false;
-            });
+            IsConverting = false;
         }
 
-        public void Delete()
+        public async Task Delete()
         {
             var lang = Language.Current;
             if (!IsNameChanging && ShowMessage(lang.Get("Workspace.Delete.File.Title"), lang.Get("Workspace.Delete.File.Text", Name), MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                RemoveFromOpenItems();
-                Task.Run(async () =>
+                await RemoveFromOpenItemsAsync();
+                Workspace.IgnoreChange = true;
+                await Data.Delete();
+                Workspace.IgnoreChange = false;
+                if (Parent != null)
                 {
-                    Workspace.IgnoreChange = true;
-                    await Data.Delete();
-                    Workspace.IgnoreChange = false;
-                    if (Parent != null)
+                    Parent.childrenCache = Parent.childrenCache.Except(this).ToArray();
+                }
+                string hash = IOUtility.GetHashFile(Data.FullName);
+                if (File.Exists(hash))
+                {
+                    try
                     {
-                        Parent.childrenCache = Parent.childrenCache.Except(this).ToArray();
+                        File.Delete(hash);
                     }
-                    string hash = IOUtility.GetHashFile(Data.FullName);
-                    if (File.Exists(hash))
+                    catch
                     {
-                        try
-                        {
-                            File.Delete(hash);
-                        }
-                        catch
-                        {
-                            // Could not delete temp file. This is fine
-                        }
+                        // Could not delete temp file. This is fine
                     }
-                    Workspace.RefreshExplorer();
-                    Workspace.SendPropertyUpdate(nameof(Children));
-                });
+                }
+                Workspace.RefreshExplorer();
+                Workspace.SendPropertyUpdate(nameof(Children));
             }
         }
 
@@ -404,13 +398,18 @@ namespace Docdown.ViewModel
             }
         }
 
-        public void Rename(string newName)
+        private async Task RemoveFromOpenItemsAsync()
+        {
+            await Dispatcher.InvokeAsync(RemoveFromOpenItems);
+        }
+
+        public async Task Rename(string newName)
         {
             Workspace.IgnoreChange = true;
             try
             {
                 var oldHash = IOUtility.GetHashFile(FullName);
-                Data.Rename(newName);
+                await Data.Rename(newName);
                 try
                 {
                     if (File.Exists(oldHash))
@@ -436,23 +435,20 @@ namespace Docdown.ViewModel
             SendPropertyUpdate(nameof(RelativeName));
         }
 
-        public void Save()
+        public async Task Save()
         {
             if (view is IEditor editorWrapper)
             {
-                var text = editorWrapper.Editor.Text;
-                Task.Run(async () =>
-                {
-                    HasChanged = false;
-                    Workspace.IgnoreChange = true;
-                    await Data.Save(text);
-                    Workspace.IgnoreChange = false;
-                    UpdateFileStatus();
-                });
+                string text = await Dispatcher.InvokeAsync(() => editorWrapper.Editor.Text);
+                HasChanged = false;
+                Workspace.IgnoreChange = true;
+                await Data.Save(text);
+                Workspace.IgnoreChange = false;
+                UpdateFileStatus();
             }
         }
 
-        public void Close()
+        public async Task Close()
         {
             if (Workspace.OpenItems.Contains(this))
             {
@@ -462,7 +458,7 @@ namespace Docdown.ViewModel
                      switch (ShowMessage(lang.Get("Workspace.Save.File.Title"), lang.Get("Workspace.Save.File.Text"), MessageBoxButton.YesNoCancel))
                      {
                         case MessageBoxResult.Yes:
-                            Save();
+                            await Save();
                             break;
                         case MessageBoxResult.Cancel:
                             return;
@@ -498,9 +494,9 @@ namespace Docdown.ViewModel
             IsNameChanging = false;
         }
 
-        private void NameChangeEnd()
+        private async Task NameChangeEnd()
         {
-            Rename(tempName);
+            await Rename(tempName);
             CancelNameChange();
         }
 

@@ -36,7 +36,7 @@ namespace Docdown.ViewModel
 
         public override int GetHashCode()
         {
-            return Data.GetHashCode();
+            return Data?.GetHashCode() ?? base.GetHashCode();
         }
 
         public override string ToString()
@@ -54,6 +54,7 @@ namespace Docdown.ViewModel
 
         public string Version => VersionString;
         public Dispatcher Dispatcher => Application.Current.Dispatcher;
+        public MessageQueue Messages => AppViewModel.Instance.Messages;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -91,6 +92,11 @@ namespace Docdown.ViewModel
         protected MessageBoxResult ShowMessage(string title, string message, MessageBoxButton button)
         {
             return Util.MessageBox.Show(title, message, button);
+        }
+
+        protected string ShowInput(string title, string message, string pretext)
+        {
+            return InputBox.Show(title, message, pretext);
         }
         
         private void InspectChangeListener()

@@ -17,10 +17,7 @@ namespace Docdown.Controls
 
         private void Close()
         {
-            if (DataContext is WorkspaceViewModel workspace)
-            {
-                workspace.OutlineVisible = false;
-            }
+            AppViewModel.Instance.OutlineVisible = false;
         }
 
         private void OutlineSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

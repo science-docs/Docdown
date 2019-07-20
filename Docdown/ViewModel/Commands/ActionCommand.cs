@@ -9,7 +9,11 @@ namespace Docdown.ViewModel.Commands
         {
         }
 
-        public ActionCommand(Action action, bool runAsync) : base(runAsync ? (() => Task.Run(action)) : action)
+        public ActionCommand(Action action, bool runAsync) : this(runAsync ? () => Task.Run(action) : action)
+        {
+        }
+
+        public ActionCommand(Func<Task> action) : this(() => { Task.Run(action); })
         {
 
         }

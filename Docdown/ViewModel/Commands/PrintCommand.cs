@@ -39,11 +39,11 @@ namespace Docdown.ViewModel.Commands
                     {
                         File.Copy(pdfPath, dialog.FileName);
                     }
-                    workspace.Messages.Success(Language.Current.Get("Message.File.Save.Success"));
+                    AppViewModel.Instance.Messages.Success(Language.Current.Get("Message.File.Save.Success"));
                 }
                 catch
                 {
-                    workspace.Messages.Error((Language.Current.Get("Message.File.Save.Error")));
+                    AppViewModel.Instance.Messages.Error((Language.Current.Get("Message.File.Save.Error")));
                 }
             }
         }

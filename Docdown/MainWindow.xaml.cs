@@ -1,20 +1,25 @@
+using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel;
 using Docdown.Windows;
+using System.Diagnostics;
 
 namespace Docdown
 {
     public partial class MainWindow
     {
-        readonly WorkspaceViewModel workspaceViewModel;
+        readonly AppViewModel app;
 
         public MainWindow()
         {
+            if (Debugger.IsAttached)
+                Settings.Default.Reset();
+
             var splash = new SplashWindow();
             if (splash.ShowDialog().Value)
             {
                 InitializeComponent();
-                DataContext = workspaceViewModel = splash.ViewModel.Data;
+                DataContext = app = splash.ViewModel.Data;
                 Closing += OnClosing;
             }
             else
@@ -25,7 +30,7 @@ namespace Docdown
 
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            workspaceViewModel.OnClosing(e);
+            app.OnClosing(e);
         }
 
         private void MenuItemExitClicked(object sender, System.Windows.RoutedEventArgs e)

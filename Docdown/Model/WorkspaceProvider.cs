@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Docdown.ViewModel;
+using System;
+using System.Linq;
+using System.Net;
 
 namespace Docdown.Model
 {
@@ -10,11 +13,19 @@ namespace Docdown.Model
             {
                 case "http":
                 case "https":
-                    throw new NotImplementedException("Online workspaces are WIP");
+                    return LoadWebWorkspace(uri);
                 case "file":
                     return new FileWorkspace(uri.AbsolutePath);
             }
             throw new ArgumentException("Could not parse URI scheme: " + uri.Scheme);
+        }
+
+        private static WebWorkspace LoadWebWorkspace(Uri uri)
+        {
+            var user = AppViewModel.Instance.User.Data;
+            var lastSegment = uri.Segments.Last();
+            var decodedName = WebUtility.UrlDecode(lastSegment);
+            return new WebWorkspace(user, decodedName);
         }
     }
 }
