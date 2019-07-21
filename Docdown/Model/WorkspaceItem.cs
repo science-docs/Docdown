@@ -1,6 +1,7 @@
 using Docdown.Util;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Docdown.Model
@@ -63,8 +64,24 @@ namespace Docdown.Model
 
         public abstract Task<T> CopyExistingItem(string path);
 
-        public abstract Task<T> CopyExistingFolder(string path);
-        
+        public async virtual Task<T> CopyExistingFolder(string path)
+        {
+            var item = await CreateNewDirectory(Path.GetFileName(path));
+            foreach (var file in Directory.GetFiles(path))
+            {
+                var child = await CopyExistingItem(file);
+                item.Children.Add(child);
+                child.Parent = item;
+            }
+            foreach (var directory in Directory.GetDirectories(path))
+            {
+                var child = await CopyExistingFolder(directory);
+                item.Children.Add(child);
+                child.Parent = item;
+            }
+            return item;
+        }
+
         public bool IsDirectory => Type == WorkspaceItemType.Directory || Type == WorkspaceItemType.Web;
 
         public bool IsFile => !IsDirectory;

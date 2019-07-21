@@ -227,24 +227,6 @@ namespace Docdown.Model
             return Task.FromResult(item);
         }
 
-        public async override Task<FileWorkspaceItem> CopyExistingFolder(string path)
-        {
-            var item = await CreateNewDirectory(Path.GetFileName(path));
-            foreach (var file in Directory.GetFiles(path))
-            {
-                var child = await CopyExistingItem(file);
-                item.Children.Add(child);
-                child.Parent = item;
-            }
-            foreach (var directory in Directory.GetDirectories(path))
-            {
-                var child = await CopyExistingFolder(directory);
-                item.Children.Add(child);
-                child.Parent = item;
-            }
-            return item;
-        }
-
         public override string ToString()
         {
             return FileSystemInfo?.FullName ?? base.ToString();

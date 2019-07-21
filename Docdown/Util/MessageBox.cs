@@ -1,6 +1,8 @@
 ﻿using Docdown.ViewModel;
 using Docdown.Windows;
+using System;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Docdown.Util
 {
@@ -8,6 +10,7 @@ namespace Docdown.Util
     {
         public static MessageBoxResult Show(string title, string message, MessageBoxButton messageBoxButton)
         {
+            ReflectionUtility.EnsureMainThread();
             var viewModel = new MessageBoxViewModel(title, message, messageBoxButton);
             MessageWindow messageWindow = new MessageWindow
             {

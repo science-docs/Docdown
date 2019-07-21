@@ -1,5 +1,4 @@
 ﻿using Docdown.Util;
-using LibGit2Sharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,8 +15,6 @@ namespace Docdown.Model
             set => watcher.EnableRaisingEvents = !value;
         }
 
-        public bool GitEnabled => Repository != null;
-        public Repository Repository { get; }
         public override event WorkspaceChangeEventHandler WorkspaceChanged;
 
         private readonly FileSystemWatcher watcher;
@@ -29,7 +26,6 @@ namespace Docdown.Model
         public FileWorkspace(string path)
         {
             this.path = path;
-            Repository = SetupGit(path);
             Item = new FileWorkspaceItem(path);
 
             stackedChanges = new Stack<WorkspaceChangeEventArgs>();
@@ -69,21 +65,6 @@ namespace Docdown.Model
             var item = FindRelativeItem(full);
             WorkspaceChange change = (WorkspaceChange)e.ChangeType;
             return new WorkspaceChangeEventArgs(item, change);
-        }
-
-        private Repository SetupGit(string path)
-        {
-            if (!Directory.Exists(Path.Combine(path, ".git")))
-                return null;
-
-            try
-            {
-                return new Repository(path);
-            }
-            catch
-            {
-                return null;
-            }
         }
     }
 }

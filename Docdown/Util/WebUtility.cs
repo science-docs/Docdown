@@ -50,7 +50,7 @@ namespace Docdown.Util
 
         public static string BuildUrl(params string[] values)
         {
-            return Path.Combine(values).Replace('\\', '/');
+            return Path.Combine(values.Where(e => e != null).ToArray()).Replace('\\', '/');
         }
 
         public static HttpResponseMessage DeleteRequest(string url, IEnumerable<MultipartFormParameter> postParameters)
@@ -132,6 +132,11 @@ namespace Docdown.Util
         public static HttpResponseMessage PostRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
         {
             return PostRequest(postUrl, postParameters.ToArray());
+        }
+
+        public static HttpResponseMessage MoveRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
+        {
+            return SimpleRequest(postUrl, new HttpMethod("MOVE"), CancellationToken.None, postParameters.ToArray());
         }
 
         public static HttpResponseMessage PostRequest(string postUrl, params MultipartFormParameter[] postParameters)

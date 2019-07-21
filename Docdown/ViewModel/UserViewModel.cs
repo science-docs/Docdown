@@ -42,7 +42,7 @@ namespace Docdown.ViewModel
 
         private void TryLogin()
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 var settings = Settings.Default;
                 login.Username = settings.Username;
@@ -50,7 +50,7 @@ namespace Docdown.ViewModel
                 if (!string.IsNullOrEmpty(login.Username) &&
                     !string.IsNullOrEmpty(login.Password))
                 {
-                    login.Login();
+                    await login.Login();
                     Data = login.User;
                     ForceUpdate();
                 }

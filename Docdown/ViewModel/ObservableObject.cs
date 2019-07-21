@@ -94,11 +94,21 @@ namespace Docdown.ViewModel
             return Util.MessageBox.Show(title, message, button);
         }
 
+        protected async Task<MessageBoxResult> ShowMessageAsync(string title, string message, MessageBoxButton button)
+        {
+            return await Dispatcher.InvokeAsync(() => Util.MessageBox.Show(title, message, button));
+        }
+
         protected string ShowInput(string title, string message, string pretext)
         {
             return InputBox.Show(title, message, pretext);
         }
-        
+
+        protected async Task<string> ShowInputAsync(string title, string message, string pretext)
+        {
+            return await Dispatcher.InvokeAsync(() => InputBox.Show(title, message, pretext));
+        }
+
         private void InspectChangeListener()
         {
             var type = GetType();

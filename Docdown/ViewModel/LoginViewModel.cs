@@ -9,6 +9,7 @@ using Docdown.Util;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using Docdown.Properties;
+using System.Threading.Tasks;
 
 namespace Docdown.ViewModel
 {
@@ -43,7 +44,7 @@ namespace Docdown.ViewModel
         private readonly NetworkCredential credentials = new NetworkCredential(string.Empty, string.Empty);
         private string error;
 
-        public async void Register()
+        public async Task Register()
         {
             try
             {
@@ -53,7 +54,7 @@ namespace Docdown.ViewModel
 
                 await res.Content.ReadAsStringAsync();
 
-                Login();
+                await Login();
             }
             catch (Exception e)
             {
@@ -61,7 +62,7 @@ namespace Docdown.ViewModel
             }
         }
 
-        public async void Login()
+        public async Task Login()
         {
             try
             {

@@ -7,16 +7,9 @@
              xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:ViewModel="clr-namespace:Docdown.ViewModel"
-             xmlns:Git="clr-namespace:LibGit2Sharp;assembly=LibGit2Sharp"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="300"
              Tag="{DynamicResource Workspace_Explorer_Title}">
-    <UserControl.Resources>
-        <Git:FileStatus x:Key="FileModified">ModifiedInWorkdir</Git:FileStatus>
-        <Git:FileStatus x:Key="FileNew">NewInIndex</Git:FileStatus>
-        <Git:FileStatus x:Key="FileUnstaged">NewInWorkdir</Git:FileStatus>
-        <Git:FileStatus x:Key="FileIgnore">Ignored</Git:FileStatus>
-    </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="F2" Command="{Binding Workspace.ChangeSelectedItemNameCommand}"/>
         <KeyBinding Key="Delete" Command="{Binding Workspace.DeleteSelectedItemCommand}"/>
@@ -61,7 +54,7 @@
                             <TextBlock Text="{Binding WorkspaceItem.Name}"
                                        Focusable="False"
                                        FontSize="{StaticResource DefaultFontSize}">
-                                <TextBlock.Style>
+                                <!--<TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Foreground" Value="{DynamicResource BlackBrush}"/>
                                         <Style.Triggers>
@@ -83,7 +76,7 @@
                                             </MultiDataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </TextBlock.Style>
+                                </TextBlock.Style>-->
                             </TextBlock>
                         </ContentControl>
                         <StackPanel.ContextMenu>

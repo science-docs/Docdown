@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows;
 
 using Image = System.Windows.Controls.Image;
-using LibGit2Sharp;
 using System.Text;
 using Docdown.Editor;
 using Docdown.Editor.Commands;
@@ -92,12 +91,6 @@ namespace Docdown.ViewModel
         {
             get => pdfPath;
             set => Set(ref pdfPath, value);
-        }
-
-        public FileStatus FileStatus
-        {
-            get => fileStatus;
-            set => Set(ref fileStatus, value);
         }
 
         public ConverterType ConverterType
@@ -214,7 +207,6 @@ namespace Docdown.ViewModel
         private WorkspaceItemViewModel[] childrenCache;
         private OutlineViewModel outline;
         private CancelToken converterToken;
-        private FileStatus fileStatus;
         private ConverterType converterType;
 
         public WorkspaceItemViewModel(WorkspaceViewModel workspaceViewModel, WorkspaceItemViewModel parent, IWorkspaceItem workspaceItem) 
@@ -236,34 +228,6 @@ namespace Docdown.ViewModel
                     return true;
             }
             return false;
-        }
-
-        public void UpdateFileStatus()
-        {
-            // TODO: Repair this
-            //var repo = Workspace.Data.Repository;
-            //if (repo != null)
-            //{
-            //    if (Data.Type != WorkspaceItemType.Directory)
-            //    {
-            //        FileStatus = repo.RetrieveStatus(GitName());
-            //    }
-            //    else
-            //    {
-            //        foreach (var child in Children)
-            //        {
-            //            child.UpdateFileStatus();
-            //        }
-            //        if (Children.All(e => e.FileStatus == FileStatus.Ignored))
-            //        {
-            //            FileStatus = FileStatus.Ignored;
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    FileStatus = FileStatus.Unaltered;
-            //}
         }
 
         public void InsertTextAtPosition(string text)
@@ -351,7 +315,7 @@ namespace Docdown.ViewModel
         public async Task Delete()
         {
             var lang = Language.Current;
-            if (!IsNameChanging && ShowMessage(lang.Get("Workspace.Delete.File.Title"), lang.Get("Workspace.Delete.File.Text", Name), MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (!IsNameChanging && await ShowMessageAsync(lang.Get("Workspace.Delete.File.Title"), lang.Get("Workspace.Delete.File.Text", Name), MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 await RemoveFromOpenItemsAsync();
                 Workspace.IgnoreChange = true;
@@ -423,7 +387,6 @@ namespace Docdown.ViewModel
                 {
                     // Some IO error, this is fine
                 }
-                UpdateFileStatus();
             }
             catch
             {
@@ -444,7 +407,6 @@ namespace Docdown.ViewModel
                 Workspace.IgnoreChange = true;
                 await Data.Save(text);
                 Workspace.IgnoreChange = false;
-                UpdateFileStatus();
             }
         }
 
@@ -455,7 +417,7 @@ namespace Docdown.ViewModel
                 if (HasChanged)
                 {
                     var lang = Language.Current;
-                     switch (ShowMessage(lang.Get("Workspace.Save.File.Title"), lang.Get("Workspace.Save.File.Text"), MessageBoxButton.YesNoCancel))
+                     switch (await ShowMessageAsync(lang.Get("Workspace.Save.File.Title"), lang.Get("Workspace.Save.File.Text"), MessageBoxButton.YesNoCancel))
                      {
                         case MessageBoxResult.Yes:
                             await Save();
@@ -471,7 +433,7 @@ namespace Docdown.ViewModel
                     Workspace.SelectedItem = null; 
                 }
 
-                Workspace.OpenItems.Remove(this);
+                await Dispatcher.InvokeAsync(() => Workspace.OpenItems.Remove(this));
 
                 if (isSelected)
                 {
@@ -541,13 +503,18 @@ namespace Docdown.ViewModel
             {
                 PdfPath = temp;
             }
+            editorAndViewer.Editor.IsEnabled = false;
             Task.Run(async () =>
             {
                 string allText = ReadText(await Data.Read());
-                await Dispatcher.BeginInvoke((Action)(() =>
+                await Dispatcher.InvokeAsync(() =>
                 {
-                    editorAndViewer.Delay(100, () => editorAndViewer.Editor.Text = allText);
-                }));
+                    editorAndViewer.Delay(100, () =>
+                    {
+                        editorAndViewer.Editor.Text = allText;
+                        editorAndViewer.Editor.IsEnabled = true;
+                    });
+                });
             });
             
             return editorAndViewer;
@@ -556,14 +523,18 @@ namespace Docdown.ViewModel
         private MarkdownEditor ShowEditor()
         {
             var editor = new MarkdownEditor();
-
+            editor.Editor.IsEnabled = false;
             Task.Run(async () =>
             {
                 string allText = ReadText(await Data.Read());
-                await Dispatcher.BeginInvoke((Action)(() =>
+                await Dispatcher.InvokeAsync(() =>
                 {
-                    editor.Delay(100, () => editor.Editor.Text = allText);
-                }));
+                    editor.Delay(100, () =>
+                    {
+                        editor.Editor.Text = allText;
+                        editor.Editor.IsEnabled = true;
+                    });
+                });
             });
             return editor;
         }
@@ -601,7 +572,7 @@ namespace Docdown.ViewModel
             }
             catch
             {
-                Workspace.Messages.Error(Language.Current.Get("Workspace.Image.Failed"));
+                Messages.Error(Language.Current.Get("Workspace.Image.Failed"));
             }
             
             return image;

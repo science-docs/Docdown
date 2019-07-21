@@ -16,7 +16,7 @@ namespace Docdown.Model
         public override string FullName => fullName;
         public WebWorkspace Workspace { get; }
 
-        private readonly string fullName;
+        private string fullName;
 
         public WebWorkspaceItem(WebWorkspace workspace, WebWorkspaceItem parent, string fullName) : this(workspace, parent, fullName, null, null)
         {
@@ -69,19 +69,34 @@ namespace Docdown.Model
             return temp;
         }
 
-        public override Task<WebWorkspaceItem> CopyExistingFolder(string path)
+        public async override Task<WebWorkspaceItem> CopyExistingItem(string path)
         {
-            throw new NotImplementedException();
+            var fileName = Path.GetFileName(path);
+            var fullNewName = Path.Combine(FullName, fileName);
+
+            var item = new WebWorkspaceItem(Workspace, this, fullNewName);
+            Children.Add(item);
+            await item.SaveFile(path);
+            return item;
         }
 
-        public override Task<WebWorkspaceItem> CopyExistingItem(string path)
+        public async override Task<WebWorkspaceItem> CreateNewDirectory(string name)
         {
-            throw new NotImplementedException();
-        }
+            string fullName = name;
 
-        public override Task<WebWorkspaceItem> CreateNewDirectory(string name)
-        {
-            throw new NotImplementedException();
+            if (Parent != null)
+            {
+                fullName = FullName + "/" + name;
+            }
+
+            fullName += "/";
+
+            var item = new WebWorkspaceItem(Workspace, this, fullName);
+            var res = WebUtility.PostRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", "folder"),
+                MultipartFormParameter.FromWebWorkspace(Workspace).Concat(new[] { MultipartFormParameter.CreateField("name", name) }));
+            await res.Content.ReadAsStreamAsync();
+            Children.Add(item);
+            return item;
         }
 
         public async override Task<WebWorkspaceItem> CreateNewFile(string name, string autoExtension = null, byte[] content = null)
@@ -100,7 +115,7 @@ namespace Docdown.Model
 
             if (Parent != null)
             {
-                fullName = this.fullName + "/" + name;
+                fullName = FullName + "/" + name;
             }
 
             if (content is null)
@@ -144,17 +159,45 @@ namespace Docdown.Model
             return await response.Content.ReadAsByteArrayAsync();
         }
 
-        public override Task Rename(string newName)
+        public async override Task Rename(string newName)
         {
-            return null;
+            string fullName = newName;
+
+            if (Parent?.Parent != null)
+            {
+                fullName = Parent.FullName + "/" + newName;
+            }
+
+            string endPoint;
+            switch (Type)
+            {
+                case WorkspaceItemType.Directory:
+                    endPoint = "folder";
+                    break;
+                case WorkspaceItemType.Web:
+                    endPoint = null;
+                    break;
+                default:
+                    endPoint = "file";
+                    break;
+            }
+            var response = WebUtility.MoveRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", endPoint),
+                MultipartFormParameter.GetWebWorkspaceItem(this).Concat(new[] { MultipartFormParameter.CreateField("rename", fullName) }));
+            await response.Content.ReadAsStreamAsync();
+            this.fullName = fullName;
         }
 
         public async override Task Save(string text)
         {
             string temp = IOUtility.GetTempFile();
             File.WriteAllText(temp, text);
+            await SaveFile(temp);
+        }
+
+        public async Task SaveFile(string filePath)
+        {
             var res = WebUtility.PostRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", "file"),
-                MultipartFormParameter.PostWebWorkspaceItem(this, temp));
+                MultipartFormParameter.PostWebWorkspaceItem(this, filePath));
             await res.Content.ReadAsStreamAsync();
         }
 

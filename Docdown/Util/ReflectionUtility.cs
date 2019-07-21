@@ -3,12 +3,21 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Windows.Threading;
 
 namespace Docdown.Util
 {
     public static class ReflectionUtility
     {
         private static readonly TypeCache<Delegate> staticDelegateCache = new TypeCache<Delegate>();
+
+        public static void EnsureMainThread()
+        {
+            if (System.Windows.Application.Current.Dispatcher != Dispatcher.CurrentDispatcher)
+            {
+                throw new InvalidOperationException("Can only be called from the main thread. Try using a dispatcher");
+            }
+        }
 
         public static Delegate CreateDelegate(Type type, object instance)
         {
