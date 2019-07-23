@@ -51,8 +51,6 @@ namespace Docdown.Model
 
         public async override Task<string> Convert(CancelToken cancelToken)
         {
-            var folder = Path.GetDirectoryName(FullName);
-
             string temp = IOUtility.GetHashFile(FullName);
             var settings = Settings.Default;
             var onlySelected = settings.CompileOnlySelected;
@@ -92,7 +90,7 @@ namespace Docdown.Model
 
             Parent.Children.Remove(this);
             Parent = null;
-            return null;
+            return Task.CompletedTask;
         }
 
         public async override Task<byte[]> Read()
@@ -128,7 +126,7 @@ namespace Docdown.Model
                 File.Move(oldName, fullNewName);
                 FileSystemInfo = new FileInfo(fullNewName);
             }
-            return null;
+            return Task.CompletedTask;
         }
 
         public override Task Update()
@@ -145,7 +143,7 @@ namespace Docdown.Model
             {
                 FileSystemInfo = new FileInfo(newName);
             }
-            return null;
+            return Task.CompletedTask;
         }
 
         public async override Task<FileWorkspaceItem> CreateNewFile(string name, string autoExtension = null, byte[] content = null)

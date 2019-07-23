@@ -15,9 +15,10 @@ namespace Docdown.Util
 
         public static async Task WriteAllBytes(string fullName, byte[] bytes)
         {
-            using (FileStream stream = File.Open(fullName, FileMode.OpenOrCreate))
+            var fileMode = File.Exists(fullName) ? FileMode.Truncate : FileMode.Create;
+            using (FileStream stream = File.Open(fullName, fileMode))
             {
-                await stream.WriteAsync(bytes, 0, fullName.Length);
+                await stream.WriteAsync(bytes, 0, bytes.Length);
             }
         }
 

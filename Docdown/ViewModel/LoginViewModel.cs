@@ -88,7 +88,7 @@ namespace Docdown.ViewModel
                     Token = token
                 };
                 User.Workspaces.AddRange(workspaces);
-                CloseRequested?.Invoke(this, EventArgs.Empty);
+                await Dispatcher.InvokeAsync(() => CloseRequested?.Invoke(this, EventArgs.Empty));
             }
             catch (Exception e)
             {

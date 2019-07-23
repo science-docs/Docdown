@@ -15,7 +15,7 @@ namespace Docdown.Model
                 case "https":
                     return LoadWebWorkspace(uri);
                 case "file":
-                    return new FileWorkspace(uri.AbsolutePath);
+                    return new FileWorkspace(WebUtility.UrlDecode(uri.AbsolutePath));
             }
             throw new ArgumentException("Could not parse URI scheme: " + uri.Scheme);
         }
