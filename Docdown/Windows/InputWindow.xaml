@@ -32,7 +32,7 @@
                     <Setter Property="Margin" Value="0 0 8 8"/>
                 </Style>
             </StackPanel.Resources>
-            <Button Content="{DynamicResource Message_Window_OK}" Click="OkClicked"/>
+            <Button Content="{DynamicResource Message_Window_OK}" Click="OkClicked" IsDefault="True"/>
             <Button Content="{DynamicResource Message_Window_Cancel}" Click="CloseClicked"/>
         </StackPanel>
     </Grid>

@@ -34,5 +34,10 @@ namespace Docdown.Windows
             if (DataContext != null)
                 ((dynamic)DataContext).SecurePassword = ((PasswordBox)sender).SecurePassword;
         }
+
+        private void CloseClicked(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
     }
 }

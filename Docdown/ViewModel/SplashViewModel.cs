@@ -23,7 +23,6 @@ namespace Docdown.ViewModel
         public void Initialize()
         {
             var settings = Settings.Default;
-            settings.API = "http://localhost:3030";
             var workspacePath = settings.WorkspacePath;
             if (Args != null && Args.Length > 0 && File.Exists(Args[0]) && !IOUtility.IsParent(workspacePath, Args[0]))
             {

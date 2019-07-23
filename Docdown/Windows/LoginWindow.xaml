@@ -9,17 +9,17 @@
         Style="{StaticResource CleanWindowStyleKey}"
         TitleAlignment="Left"
         TitleCharacterCasing="Normal"
-        Title="User Credentials" Height="154" Width="400" ResizeMode="NoResize"
+        Title="User Credentials" Height="158" Width="400" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner">
     <Grid>
         <StackPanel Orientation="Vertical">
-            <TextBlock Text="{Binding Error}" Foreground="Red" Margin="8 2"/>
+            <TextBlock Text="{Binding Error}" Foreground="Red" Margin="8 2" FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"/>
             <TextBox Text="{Binding Username}" Metro:TextBoxHelper.Watermark="Username" Margin="8 4"/>
             <PasswordBox PasswordChanged="PasswordBox_PasswordChanged" Metro:TextBoxHelper.Watermark="Password" Margin="8 4"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="4 0">
                 <Button Content="Register" Style="{StaticResource MetroFlatButton}" Command="{Binding RegisterCommand}" Margin="4"/>
                 <Button Content="Login" Style="{StaticResource MetroFlatButton}" Command="{Binding LoginCommand}" Margin="4"/>
-                <Button Content="Cancel" Style="{StaticResource MetroFlatButton}" Margin="4"/>
+                <Button Content="Cancel" Style="{StaticResource MetroFlatButton}" Margin="4" IsCancel="True"/>
             </StackPanel>
         </StackPanel>
     </Grid>
