@@ -9,7 +9,7 @@ namespace Docdown.Util
 {
     public static class ReflectionUtility
     {
-        private static readonly TypeCache<Delegate> staticDelegateCache = new TypeCache<Delegate>();
+        private static readonly TypeCache<DelegateSTA> staticDelegateCache = new TypeCache<DelegateSTA>();
 
         public static void EnsureMainThread()
         {
@@ -19,11 +19,12 @@ namespace Docdown.Util
             }
         }
 
-        public static Delegate CreateDelegate(Type type, object instance)
+        public static Delegate CreateDelegate(Type type, object instance, out bool sta)
         {
-            if (staticDelegateCache.TryGetValue(type, out Delegate del))
+            if (staticDelegateCache.TryGetValue(type, out DelegateSTA del))
             {
-                return del;
+                sta = del.STA;
+                return del.Delegate;
             }
 
             var methods = type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
@@ -32,6 +33,8 @@ namespace Docdown.Util
                 var attr = method.GetCustomAttribute<DelegateAttribute>();
                 if (attr != null)
                 {
+                    sta = method.GetCustomAttribute<STAThreadAttribute>() != null;
+
                     Type delType;
                     var types = method.GetParameters().Select(e => e.ParameterType);
                     var isAction = method.ReturnType.Equals(typeof(void));
@@ -47,7 +50,9 @@ namespace Docdown.Util
 
                     if (method.IsStatic)
                     {
-                        return staticDelegateCache[type] = Delegate.CreateDelegate(delType, method);
+                        var created = Delegate.CreateDelegate(delType, method);
+                        staticDelegateCache[type] = new DelegateSTA(created, sta);
+                        return created;
                     }
                     else
                     {
@@ -56,6 +61,18 @@ namespace Docdown.Util
                 }
             }
             throw new IndexOutOfRangeException();
+        }
+
+        private struct DelegateSTA
+        {
+            public Delegate Delegate;
+            public bool STA;
+
+            public DelegateSTA(Delegate del, bool sta)
+            {
+                Delegate = del;
+                STA = sta;
+            }
         }
     }
 }

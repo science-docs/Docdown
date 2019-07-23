@@ -13,6 +13,7 @@ namespace Docdown.ViewModel.Commands
         }
 
         [Delegate]
+        [STAThread]
         private static string OpenFileDialog(string initialDirectory, string title, Action<string> callback, params CommonFileDialogFilter[] filters)
         {
             var dialog = new CommonOpenFileDialog

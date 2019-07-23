@@ -1,6 +1,8 @@
 ﻿using Docdown.Util;
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Docdown.ViewModel.Commands
@@ -56,6 +58,7 @@ namespace Docdown.ViewModel.Commands
         public object Result { get; private set; }
 
         private readonly Delegate del;
+        private readonly bool sta = false;
         private readonly object[] parameters;
         private bool usesAdditionalParameter = false;
 
@@ -65,7 +68,7 @@ namespace Docdown.ViewModel.Commands
 
         public DelegateCommand(params object[] parameters)
         {
-            del = ReflectionUtility.CreateDelegate(GetType(), this);
+            del = ReflectionUtility.CreateDelegate(GetType(), this, out sta);
             this.parameters = parameters ?? new object[0];
             CheckDelegateParameters();
         }
@@ -95,13 +98,20 @@ namespace Docdown.ViewModel.Commands
                 CheckAdditionalParameter(ref parameter);
                 param = param.Concat(parameter).ToArray();
             }
-            try
+            if (sta)
             {
-                Result = del?.DynamicInvoke(param);
+                Application.Current.Dispatcher.BeginInvoke(del, param);
             }
-            catch (Exception e)
+            else
             {
-                MessageBox.Show("An uncaught exception occured", e.Message, System.Windows.MessageBoxButton.OK);
+                try
+                {
+                    Result = del?.DynamicInvoke(param);
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine("Uncaught exception occured: " + e.Message);
+                }
             }
         }
 

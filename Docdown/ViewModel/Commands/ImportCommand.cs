@@ -18,6 +18,7 @@ namespace Docdown.ViewModel.Commands
         }
 
         [Delegate]
+        [STAThread]
         private async static void Import(WorkspaceViewModel workspace, ConverterType target)
         {
             var dialog = new CommonOpenFileDialog()

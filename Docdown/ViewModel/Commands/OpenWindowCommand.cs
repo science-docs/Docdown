@@ -21,6 +21,7 @@ namespace Docdown.ViewModel.Commands
         }
 
         [Delegate]
+        [STAThread]
         private static bool? OpenWindow(object dataContext, Action<bool?> callback, bool keep = false)
         {
             if (!windows.TryGetValue(typeof(T), out var window))

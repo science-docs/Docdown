@@ -13,6 +13,7 @@ namespace Docdown.ViewModel.Commands
         }
 
         [Delegate]
+        [STAThread]
         private async static void OpenAddExistingFileWindow(WorkspaceItemViewModel workspaceItem)
         {
             if (!workspaceItem.IsDirectory)

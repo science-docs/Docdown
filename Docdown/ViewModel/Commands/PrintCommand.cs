@@ -8,13 +8,14 @@ namespace Docdown.ViewModel.Commands
 {
     public class PrintCommand : DelegateCommand
     {
-        public PrintCommand(WorkspaceViewModel workspace, string fileName, string pdfPath) 
-            : base(workspace ?? throw new ArgumentNullException(nameof(workspace)), fileName, pdfPath)
+        public PrintCommand(string fileName, string pdfPath) 
+            : base(fileName, pdfPath)
         {
         }
 
         [Delegate]
-        private static void Print(WorkspaceViewModel workspace, string fileName, string pdfPath)
+        [STAThread]
+        private static void Print(string fileName, string pdfPath)
         {
             var dialog = new CommonSaveFileDialog
             {
