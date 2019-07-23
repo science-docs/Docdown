@@ -47,12 +47,10 @@ namespace Docdown.ViewModel
 
     public abstract class ObservableObject : INotifyPropertyChanged
     {
-        private static readonly string VersionString
-            = typeof(ObservableObject).Assembly.GetName().Version.ToString();
         private static readonly ListTypeCache<PropertyChangedEventHandler> eventHandlerCache
             = new ListTypeCache<PropertyChangedEventHandler>();
 
-        public string Version => VersionString;
+        public static string Version { get; } = typeof(ObservableObject).Assembly.GetName().Version.ToString();
         public Dispatcher Dispatcher => Application.Current.Dispatcher;
         public MessageQueue Messages => AppViewModel.Instance.Messages;
 

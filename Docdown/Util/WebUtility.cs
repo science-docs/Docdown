@@ -1,5 +1,6 @@
 using Docdown.Model;
 using Docdown.Properties;
+using Docdown.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -73,7 +74,7 @@ namespace Docdown.Util
                 Method = method,
                 RequestUri = new Uri(url)
             };
-            request.Headers.UserAgent.Add(new ProductInfoHeaderValue("Docdown", "1.0.0"));
+            request.Headers.UserAgent.Add(new ProductInfoHeaderValue("Docdown", ObservableObject.Version));
 
             if (postParameters != null && postParameters.Length > 0)
             {

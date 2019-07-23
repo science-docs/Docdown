@@ -7,7 +7,7 @@ namespace Docdown.ViewModel
 {
     public class ObservableList<T> : ObservableObject, ICollection<T>, INotifyCollectionChanged
     {
-        private ObservableCollection<T> collection = new ObservableCollection<T>();
+        private readonly ObservableCollection<T> collection = new ObservableCollection<T>();
 
         public int Count => collection.Count;
 

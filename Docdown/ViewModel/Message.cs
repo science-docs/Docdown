@@ -13,22 +13,9 @@
     {
         public static Message Empty { get; } = new Message(string.Empty, MessageType.Undefined);
 
-        public string Content
-        {
-            get;
-            set;
-        }
+        public string Content { get; }
 
-        public MessageType Type
-        {
-            get;
-            set;
-        }
-
-        public Message()
-        {
-
-        }
+        public MessageType Type { get; }
 
         public Message(string shortMessage, MessageType type)
         {

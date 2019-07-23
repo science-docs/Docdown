@@ -1,4 +1,5 @@
 ﻿using Docdown.ViewModel.Commands;
+using System;
 using System.Windows;
 using System.Windows.Input;
 
@@ -19,10 +20,10 @@ namespace Docdown.ViewModel
         [ChangeListener(nameof(Button))]
         public bool HasCancelButton => Index % 2 == 1;
 
-        public ICommand OkCommand => new ActionCommand(() => Result = MessageBoxResult.OK);
-        public ICommand CancelCommand => new ActionCommand(() => Result = MessageBoxResult.Cancel);
-        public ICommand YesCommand => new ActionCommand(() => Result = MessageBoxResult.Yes);
-        public ICommand NoCommand => new ActionCommand(() => Result = MessageBoxResult.No);
+        public ICommand OkCommand => new ActionCommand(Set(MessageBoxResult.OK));
+        public ICommand CancelCommand => new ActionCommand(Set(MessageBoxResult.Cancel));
+        public ICommand YesCommand => new ActionCommand(Set(MessageBoxResult.Yes));
+        public ICommand NoCommand => new ActionCommand(Set(MessageBoxResult.No));
 
         public MessageBoxButton Button
         {
@@ -46,6 +47,11 @@ namespace Docdown.ViewModel
             Title = title;
             Message = message;
             this.button = button;
+        }
+
+        public Action Set(MessageBoxResult result)
+        {
+            return () => Result = result;
         }
     }
 }
