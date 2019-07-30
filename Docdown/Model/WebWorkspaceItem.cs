@@ -57,7 +57,7 @@ namespace Docdown.Model
             string temp = IOUtility.GetHashFile(FullName);
             var settings = Settings.Default;
             var token = cancelToken?.ToCancellationToken() ?? CancellationToken.None;
-            var req = WebUtility.PostRequest(WebUtility.BuildWorkspaceConvertUrl(), token,
+            var req = await WebUtility.PostRequest(WebUtility.BuildWorkspaceConvertUrl(), token,
                 MultipartFormParameter.ApiParameter(FromType, ToType, settings.Template, settings.Csl, false).Concat(
                 MultipartFormParameter.FromWebWorkspace(Workspace)));
 
@@ -89,11 +89,16 @@ namespace Docdown.Model
                 fullName = FullName + "/" + name;
             }
 
+            if (FindChild(fullName, out var existing))
+            {
+                return await Task.FromResult(existing);
+            }
+
             fullName += "/";
 
             var item = new WebWorkspaceItem(Workspace, this, fullName);
-            var res = WebUtility.PostRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", "folder"),
-                MultipartFormParameter.FromWebWorkspace(Workspace).Concat(new[] { MultipartFormParameter.CreateField("name", name) }));
+            var res = await WebUtility.PostRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", "folder"),
+                MultipartFormParameter.FromWebWorkspace(Workspace).Concat(MultipartFormParameter.CreateField("name", name)));
             await res.Content.ReadAsStreamAsync();
             Children.Add(item);
             return item;
@@ -123,18 +128,16 @@ namespace Docdown.Model
                 content = new byte[0];
             }
 
-            
-
-            //if (FindChild(fullName, out var existing))
-            //{
-            //    return existing;
-            //}
+            if (FindChild(fullName, out var existing))
+            {
+                return existing;
+            }
 
             var item = new WebWorkspaceItem(Workspace, this, fullName);
 
             string temp = IOUtility.GetTempFile();
             File.WriteAllBytes(temp, content);
-            var res = WebUtility.PostRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", "file"),
+            var res = await WebUtility.PostRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", "file"),
                 MultipartFormParameter.PostWebWorkspaceItem(item, temp));
             await res.Content.ReadAsStreamAsync();
             Children.Add(item);
@@ -144,7 +147,7 @@ namespace Docdown.Model
         public async override Task Delete()
         {
             string endPoint = IsDirectory ? "folder" : "file";
-            var response = WebUtility.DeleteRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", endPoint),
+            var response = await WebUtility.DeleteRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", endPoint),
                 MultipartFormParameter.GetWebWorkspaceItem(this));
             await response.Content.ReadAsStreamAsync();
             Parent.Children.Remove(this);
@@ -153,7 +156,7 @@ namespace Docdown.Model
 
         public async override Task<byte[]> Read()
         {
-            var response = WebUtility.GetRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", "file"),
+            var response = await WebUtility.GetRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", "file"),
                 MultipartFormParameter.GetWebWorkspaceItem(this));
 
             return await response.Content.ReadAsByteArrayAsync();
@@ -181,8 +184,8 @@ namespace Docdown.Model
                     endPoint = "file";
                     break;
             }
-            var response = WebUtility.MoveRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", endPoint),
-                MultipartFormParameter.GetWebWorkspaceItem(this).Concat(new[] { MultipartFormParameter.CreateField("rename", fullName) }));
+            var response = await WebUtility.MoveRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", endPoint),
+                MultipartFormParameter.GetWebWorkspaceItem(this).Concat(MultipartFormParameter.CreateField("rename", fullName)));
             await response.Content.ReadAsStreamAsync();
             this.fullName = fullName;
         }
@@ -196,7 +199,7 @@ namespace Docdown.Model
 
         public async Task SaveFile(string filePath)
         {
-            var res = WebUtility.PostRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", "file"),
+            var res = await WebUtility.PostRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace", "file"),
                 MultipartFormParameter.PostWebWorkspaceItem(this, filePath));
             await res.Content.ReadAsStreamAsync();
         }

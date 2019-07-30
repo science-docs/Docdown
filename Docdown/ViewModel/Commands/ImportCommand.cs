@@ -53,7 +53,7 @@ namespace Docdown.ViewModel.Commands
                 throw new InvalidDataException("Could not determine import file type");
             }
             string url = WebUtility.BuildConvertUrl();
-            var req = WebUtility.PostRequest(url, BuildParameters(fileName, target).Concat(MultipartFormParameter.CreateFile("content", fileName)));
+            var req = await WebUtility.PostRequest(url, BuildParameters(fileName, target).Concat(MultipartFormParameter.CreateFile("content", fileName)));
             byte[] content = await req.Content.ReadAsByteArrayAsync();
             var item = await workspace.Item.Data.CreateNewFile(targetFileName, null, content);
             var itemViewModel = workspace.Item.AddChild(item);

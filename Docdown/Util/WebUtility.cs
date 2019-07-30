@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Docdown.Util
 {
@@ -54,17 +55,17 @@ namespace Docdown.Util
             return Path.Combine(values.Where(e => e != null).ToArray()).Replace('\\', '/');
         }
 
-        public static HttpResponseMessage DeleteRequest(string url, IEnumerable<MultipartFormParameter> postParameters)
+        public static async Task<HttpResponseMessage> DeleteRequest(string url, IEnumerable<MultipartFormParameter> postParameters)
         {
-            return SimpleRequest(url, HttpMethod.Delete, CancellationToken.None, postParameters.ToArray());
+            return await SimpleRequest(url, HttpMethod.Delete, CancellationToken.None, postParameters.ToArray());
         }
 
-        public static HttpResponseMessage GetRequest(string url, IEnumerable<MultipartFormParameter> postParameters)
+        public static async Task<HttpResponseMessage> GetRequest(string url, IEnumerable<MultipartFormParameter> postParameters)
         {
-            return GetRequest(url, postParameters.ToArray());
+            return await GetRequest(url, postParameters.ToArray());
         }
 
-        public static HttpResponseMessage SimpleRequest(string url, HttpMethod method, CancellationToken cancellationToken, params MultipartFormParameter[] postParameters)
+        public static async Task<HttpResponseMessage> SimpleRequest(string url, HttpMethod method, CancellationToken cancellationToken, params MultipartFormParameter[] postParameters)
         {
             var handler = new WinHttpHandler();
             var client = new HttpClient(handler);
@@ -94,34 +95,30 @@ namespace Docdown.Util
                 request.Content = content;
             }
 
-            var responseTask = client.SendAsync(request, cancellationToken);
-            responseTask.Wait();
-            var response = responseTask.Result;
+            var response = await client.SendAsync(request, cancellationToken);
             response.EnsureSuccessStatusCode();
-
             return response;
         }
 
-        public static HttpResponseMessage GetRequest(string url, params MultipartFormParameter[] postParameters)
+        public static async Task<HttpResponseMessage> GetRequest(string url, params MultipartFormParameter[] postParameters)
         {
-            return SimpleRequest(url, HttpMethod.Get, CancellationToken.None, postParameters);
+            return await SimpleRequest(url, HttpMethod.Get, CancellationToken.None, postParameters);
         }
 
-        public static string SimpleTextRequest(string url, params MultipartFormParameter[] postParameters)
+        public static async Task<string> SimpleTextRequest(string url, params MultipartFormParameter[] postParameters)
         {
-            using (var res = GetRequest(url, postParameters))
+            using (var res = await GetRequest(url, postParameters))
             {
-                var task = res.Content.ReadAsStringAsync();
-                task.Wait();
-                return task.Result;
+                return await res.Content.ReadAsStringAsync();
             }
         }
 
-        public static ConnectionStatus Ping()
+        public static async Task<ConnectionStatus> Ping()
         {
             try
             {
-                GetRequest(Settings.Default.API).Dispose();
+                var res = await GetRequest(Settings.Default.API);
+                res.Dispose();
             }
             catch
             {
@@ -130,24 +127,24 @@ namespace Docdown.Util
             return ConnectionStatus.Connected;
         }
 
-        public static HttpResponseMessage PostRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
+        public static async Task<HttpResponseMessage> PostRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
         {
-            return PostRequest(postUrl, postParameters.ToArray());
+            return await PostRequest(postUrl, postParameters.ToArray());
         }
 
-        public static HttpResponseMessage MoveRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
+        public static async Task<HttpResponseMessage> MoveRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
         {
-            return SimpleRequest(postUrl, new HttpMethod("MOVE"), CancellationToken.None, postParameters.ToArray());
+            return await SimpleRequest(postUrl, new HttpMethod("MOVE"), CancellationToken.None, postParameters.ToArray());
         }
 
-        public static HttpResponseMessage PostRequest(string postUrl, params MultipartFormParameter[] postParameters)
+        public static async Task<HttpResponseMessage> PostRequest(string postUrl, params MultipartFormParameter[] postParameters)
         {
-            return SimpleRequest(postUrl, HttpMethod.Post, CancellationToken.None, postParameters.ToArray());
+            return await SimpleRequest(postUrl, HttpMethod.Post, CancellationToken.None, postParameters.ToArray());
         }
 
-        public static HttpResponseMessage PostRequest(string postUrl, CancellationToken cancellationToken, IEnumerable<MultipartFormParameter> postParameters)
+        public static async Task<HttpResponseMessage> PostRequest(string postUrl, CancellationToken cancellationToken, IEnumerable<MultipartFormParameter> postParameters)
         {
-            return SimpleRequest(postUrl, HttpMethod.Post, cancellationToken, postParameters.ToArray());
+            return await SimpleRequest(postUrl, HttpMethod.Post, cancellationToken, postParameters.ToArray());
         }
 
         /// <summary>

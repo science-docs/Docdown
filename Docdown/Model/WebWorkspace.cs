@@ -20,8 +20,10 @@ namespace Docdown.Model
         public WebWorkspace(User user, string name)
         {
             User = user;
-            var json = WebUtility.SimpleTextRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace"), 
+            var jsonReq = WebUtility.SimpleTextRequest(WebUtility.BuildUrl(Settings.Default.API, "workspace"), 
                 MultipartFormParameter.CreateField("name", name), MultipartFormParameter.CreateField("token", user.Token));
+            jsonReq.Wait();
+            var json = jsonReq.Result;
 
             JObject workspaceJson = JObject.Parse(json);
 

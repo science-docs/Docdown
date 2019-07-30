@@ -48,7 +48,7 @@ namespace Docdown.ViewModel
         {
             try
             {
-                var res = WebUtility.PostRequest(WebUtility.BuildRegisterUrl(),
+                var res = await WebUtility.PostRequest(WebUtility.BuildRegisterUrl(),
                 MultipartFormParameter.CreateField("username", Username),
                 MultipartFormParameter.CreateField("password", Password));
 
@@ -71,7 +71,7 @@ namespace Docdown.ViewModel
                 settings.Password = Password;
                 settings.Save();
 
-                var res = WebUtility.PostRequest(WebUtility.BuildLoginUrl(),
+                var res = await WebUtility.PostRequest(WebUtility.BuildLoginUrl(),
                 MultipartFormParameter.CreateField("username", Username),
                 MultipartFormParameter.CreateField("password", Password));
 

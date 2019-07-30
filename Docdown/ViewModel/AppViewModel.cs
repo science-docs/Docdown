@@ -5,6 +5,7 @@ using MahApps.Metro;
 using MahApps.Metro.Controls;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -98,9 +99,9 @@ namespace Docdown.ViewModel
             Workspace.UpdateIcons(Workspace.Children);
         }
 
-        public void OnClosing(CancelEventArgs args)
+        public async Task OnClosing(CancelEventArgs args)
         {
-            Workspace.OnClosing(args);
+            await Workspace.OnClosing(args);
         }
     }
 }

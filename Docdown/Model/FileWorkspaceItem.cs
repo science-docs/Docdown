@@ -62,7 +62,7 @@ namespace Docdown.Model
             else
             {
                 var token = cancelToken?.ToCancellationToken() ?? CancellationToken.None;
-                var req = WebUtility.PostRequest(WebUtility.BuildConvertUrl(), token,
+                var req = await WebUtility.PostRequest(WebUtility.BuildConvertUrl(), token,
                 MultipartFormParameter.ApiParameter(FromType, ToType, settings.Template, settings.Csl, onlySelected).Concat(
                 MultipartFormParameter.FromWorkspaceItem(this, onlySelected)));
 
@@ -181,7 +181,7 @@ namespace Docdown.Model
         public override Task<FileWorkspaceItem> CreateNewDirectory(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("message", nameof(name));
+                throw new ArgumentException("Empty directory name invalid", nameof(name));
             if (Type != WorkspaceItemType.Directory)
                 throw new InvalidOperationException("Only Directories can contain other directories");
 
@@ -197,12 +197,6 @@ namespace Docdown.Model
             var item = new FileWorkspaceItem(fileInfo, this);
             Children.Add(item);
             return Task.FromResult(item);
-        }
-
-        private bool FindChild(string fullName, out FileWorkspaceItem item)
-        {
-            item = Children.FirstOrDefault(e => e.FullName == fullName);
-            return item != null;
         }
 
         public override Task<FileWorkspaceItem> CopyExistingItem(string path)

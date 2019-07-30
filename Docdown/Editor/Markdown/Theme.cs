@@ -21,7 +21,7 @@ namespace Docdown.Editor.Markdown
         private Highlight _highlightInlineCode = new Highlight { Name = "InlineCode", Foreground = "#AC884C" };
         private Highlight _highlightBlockCode = new Highlight { Name = "BlockCode", Foreground = "#AC884C" };
         private Highlight _highlightBlockQuote = new Highlight { Name = "BlockQuote", Foreground = "#8F9D67" };
-        private Highlight _highlightLink = new Highlight { Name = "Link", Foreground = "#2aa198", Underline = true };
+        private Highlight _highlightLink = new Highlight { Name = "Link", Foreground = "#2aa198" };
         private Highlight _highlightImage = new Highlight { Name = "Image", Foreground = "#6F8F3F" };
         private Highlight _highlightComment = new Highlight { Name = "Comment", Foreground = "#5F5A60" };
         private Highlight _highlightTex = new Highlight { Name = "Tex", Foreground = "#3786D4" };

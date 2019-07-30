@@ -484,14 +484,22 @@ namespace Docdown.ViewModel
         private DocumentViewer ShowPdf()
         {
             var docViewer = new DocumentViewer();
-            try
+
+            Task.Run(async () =>
             {
-                PdfPath = FullName;
-            }
-            catch (Exception e)
-            {
-                Workspace.Messages.Error(ErrorUtility.GetErrorMessage(e));
-            }
+                try
+                {
+                    var bytes = await Data.Read();
+                    var temp = IOUtility.GetTempFile();
+                    await IOUtility.WriteAllBytes(temp, bytes);
+                    PdfPath = temp;
+                }
+                catch (Exception e)
+                {
+                    Workspace.Messages.Error(ErrorUtility.GetErrorMessage(e));
+                }
+            });
+            
             return docViewer;
         }
 

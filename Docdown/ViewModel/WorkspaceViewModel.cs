@@ -165,19 +165,19 @@ namespace Docdown.ViewModel
             }
         }
 
-        public void OnClosing(CancelEventArgs args)
+        public async Task OnClosing(CancelEventArgs args)
         {
             if (OpenItems.Any(e => e.HasChanged))
             {
                 var lang = Language.Current;
-                switch (ShowMessage(lang.Get("Workspace.Save.Files.Title"), lang.Get("Workspace.Save.Files.Text"), MessageBoxButton.YesNoCancel))
+                switch (await ShowMessageAsync(lang.Get("Workspace.Save.Files.Title"), lang.Get("Workspace.Save.Files.Text"), MessageBoxButton.YesNoCancel))
                 {
                     case MessageBoxResult.Yes:
                         foreach (var openItem in OpenItems)
                         {
                             if (openItem.HasChanged)
                             {
-                                openItem.Save().Wait();
+                                await openItem.Save();
                             }
                         }
                         break;

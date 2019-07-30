@@ -188,9 +188,9 @@
             </Button>
             <Button Command="{Binding Workspace.SelectedItem.SaveCommand, FallbackValue={x:Null}}">
                 <Button.ToolTip>
-                    <ToolTip Content="{Binding SelectedItem.Name, FallbackValue={x:Null}}"
+                    <ToolTip Content="{Binding Workspace.SelectedItem.Name, FallbackValue={x:Null}}"
                              ContentStringFormat="{DynamicResource Main_Menu_Save_Tooltip}"
-                             Visibility="{Binding SelectedItem, Converter={StaticResource StringToVisibilityConverter}}"/>
+                             Visibility="{Binding Workspace.SelectedItem, Converter={StaticResource StringToVisibilityConverter}}"/>
                 </Button.ToolTip>
                 <Rectangle Fill="{DynamicResource SaveIcon}" 
                            Height="16" 

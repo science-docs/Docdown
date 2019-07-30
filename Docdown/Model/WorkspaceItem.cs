@@ -2,6 +2,7 @@ using Docdown.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Docdown.Model
@@ -115,6 +116,12 @@ namespace Docdown.Model
         public override string ToString()
         {
             return RelativeName ?? base.ToString();
+        }
+
+        protected bool FindChild(string fullName, out T item)
+        {
+            item = Children.FirstOrDefault(e => e.FullName == fullName);
+            return item != null;
         }
 
         public override bool Equals(object obj)

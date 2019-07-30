@@ -1226,6 +1226,8 @@ namespace PandocMark.Parser
             if (lab is null || lab.Value.Length > Reference.MaximumReferenceLabelLength)
                 goto INVALID;
 
+            bool footnote = lab.Value.Source[lab.Value.StartIndex] == '^';
+
             if (!Scanner.HasNonWhitespace(lab.Value))
                 goto INVALID;
 
@@ -1237,7 +1239,21 @@ namespace PandocMark.Parser
 
             // parse link url:
             Spnl(subj);
-            var matchlen = Scanner.ScanLinkUrl(subj.Buffer, subj.Position, subj.Length);
+            int matchlen;
+            if (footnote)
+            {
+                matchlen = subj.Buffer.IndexOf('\n', subj.Position);
+                if (matchlen == -1)
+                {
+                    matchlen = subj.Buffer.Length - subj.Position;
+                }
+                AddReference(subj.DocumentData.ReferenceMap, lab.Value, "", "");
+                return subj.Position = matchlen;
+            }
+            else
+            {
+                matchlen = Scanner.ScanLinkUrl(subj.Buffer, subj.Position, subj.Length);
+            }
             if (matchlen == 0)
                 goto INVALID;
 

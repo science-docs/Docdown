@@ -51,7 +51,7 @@ namespace Docdown.Util
 
         public static void Delay(this DispatcherObject dispatcherObject, Action asyncAction, Action syncAction)
         {
-            Task.Run((Action)AsyncAction);
+            Task.Run(AsyncAction);
 
             void AsyncAction()
             {

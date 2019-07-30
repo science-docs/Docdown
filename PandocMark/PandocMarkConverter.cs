@@ -13,13 +13,13 @@ namespace PandocMark
     /// </summary>
     public static class PandocMarkConverter
     {
-        private static Lazy<Assembly> _assembly = new Lazy<Assembly>(InitializeAssembly, LazyThreadSafetyMode.None);
+        private static readonly Lazy<Assembly> _assembly = new Lazy<Assembly>(InitializeAssembly, LazyThreadSafetyMode.None);
 
         private static Assembly Assembly => _assembly.Value;
 
         private static Assembly InitializeAssembly() => typeof(PandocMarkConverter).Assembly;
 
-        private static Lazy<Version> _version = new Lazy<Version>(InitializeVersion, LazyThreadSafetyMode.None);
+        private static readonly Lazy<Version> _version = new Lazy<Version>(InitializeVersion, LazyThreadSafetyMode.None);
 
         /// <summary>
         /// Gets the PandocMark package version number.

@@ -18,7 +18,7 @@ namespace Docdown.ViewModel
     {
         public ICommand SaveCommand => new ActionCommand(Save);
         public ICommand RestoreCommand => new ActionCommand(Restore);
-        public ICommand TestConnectionCommand => new ActionCommand(TestConnection, true);
+        public ICommand TestConnectionCommand => new ActionCommand(TestConnection);
         public ICommand UploadTemplateCommand => new ActionCommand(UploadTemplate);
         public ICommand SearchTemplateCommand => new SearchFileCommand(null, "Search template", template => SelectedLocalTemplate = template, TemplateFileFilter);
         public ICommand SearchCitationStyleCommand => new SearchFileCommand(null, "Search citation style", csl => SelectedLocalCsl = csl, CslFileFilter);
@@ -178,16 +178,16 @@ namespace Docdown.ViewModel
             settings.Save();
         }
 
-        public void TestConnection()
+        public async Task TestConnection()
         {
             if (ConnectionStatus != ConnectionStatus.Connecting)
             {
                 ConnectionStatus = ConnectionStatus.Connecting;
-                ConnectionStatus = WebUtility.Ping();
+                ConnectionStatus = await WebUtility.Ping();
                 if (IsConnected)
                 {
-                    LoadTemplates();
-                    LoadCsls();
+                    await LoadTemplates();
+                    await LoadCsls();
                     app.Messages.Success("Connected to server");
                 }
                 else
@@ -199,14 +199,14 @@ namespace Docdown.ViewModel
             }
         }
 
-        public void LoadCsls()
+        public async Task LoadCsls()
         {
             string cslUri = WebUtility.BuildCslUrl();
 
             string text;
             try
             {
-                text = WebUtility.SimpleTextRequest(cslUri);
+                text = await WebUtility.SimpleTextRequest(cslUri);
             }
             catch
             {
@@ -229,14 +229,14 @@ namespace Docdown.ViewModel
             }
         }
 
-        public void LoadTemplates()
+        public async Task LoadTemplates()
         {
             string templatesUrl = WebUtility.BuildTemplatesUrl();
 
             string text;
             try
             {
-                text = WebUtility.SimpleTextRequest(templatesUrl);
+                text = await WebUtility.SimpleTextRequest(templatesUrl);
             }
             catch
             {
@@ -260,8 +260,9 @@ namespace Docdown.ViewModel
             var parameter = MultipartFormParameter.FromFolder(path).Concat(nameParam);
             try
             {
-                await WebUtility.PostRequest(WebUtility.BuildTemplatesUrl(), parameter).Content.ReadAsStreamAsync();
-                LoadTemplates();
+                var res = await WebUtility.PostRequest(WebUtility.BuildTemplatesUrl(), parameter);
+                await res.Content.ReadAsStreamAsync();
+                await LoadTemplates();
                 app.Messages.Success("Successfully uploaded template");
             }
             catch
@@ -270,7 +271,7 @@ namespace Docdown.ViewModel
             }
         }
 
-        private void UploadTemplate()
+        private async Task UploadTemplate()
         {
             if (!IsConnected)
                 return;
@@ -278,10 +279,7 @@ namespace Docdown.ViewModel
             string templateFolder = new SearchFolderCommand(null, "Select template").ExecuteWithResult();
             if (!string.IsNullOrEmpty(templateFolder))
             {
-                Task.Run(async () =>
-                {
-                    await UploadTemplate(templateFolder);
-                });
+                await UploadTemplate(templateFolder);
             }
         }
 
@@ -294,7 +292,7 @@ namespace Docdown.ViewModel
             }
             else
             {
-                Task.Run((Action)TestConnection);
+                Task.Run(TestConnection);
             }
         }
 

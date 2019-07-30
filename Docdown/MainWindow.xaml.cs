@@ -2,7 +2,11 @@ using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel;
 using Docdown.Windows;
+using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace Docdown
 {
@@ -28,22 +32,31 @@ namespace Docdown
             }
         }
 
-        private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void OnClosing(object sender, CancelEventArgs e)
         {
-            app.OnClosing(e);
+            e.Cancel = true;
+            var newArgs = new CancelEventArgs();
+            Task.Run(async () =>
+            {
+                await app.OnClosing(newArgs);
+                if (!newArgs.Cancel)
+                {
+                    Environment.Exit(0);
+                }
+            });
         }
 
-        private void MenuItemExitClicked(object sender, System.Windows.RoutedEventArgs e)
+        private void MenuItemExitClicked(object sender, RoutedEventArgs e)
         {
             Close();
         }
 
-        private void MarkdownHelpMenuClicked(object sender, System.Windows.RoutedEventArgs e)
+        private void MarkdownHelpMenuClicked(object sender, RoutedEventArgs e)
         {
             ProgramUtility.Execute("https://pandoc.org/MANUAL.html#pandocs-markdown");
         }
 
-        private void AboutHelpMenuClicked(object sender, System.Windows.RoutedEventArgs e)
+        private void AboutHelpMenuClicked(object sender, RoutedEventArgs e)
         {
             ProgramUtility.Execute("https://github.com/Darkgaja/Docdown");
         }

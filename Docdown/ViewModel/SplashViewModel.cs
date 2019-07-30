@@ -29,10 +29,10 @@ namespace Docdown.ViewModel
                 workspacePath = Path.GetDirectoryName(Args[0]);
             }
 
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 var app = new AppViewModel();
-                app.Settings.TestConnection();
+                await app.Settings.TestConnection();
                 app.ChangeWorkspace(workspacePath);
 
                 Data = app;
