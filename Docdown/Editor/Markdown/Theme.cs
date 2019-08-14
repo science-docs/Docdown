@@ -1,5 +1,7 @@
-﻿using Docdown.ViewModel;
+﻿using Docdown.Util;
+using Docdown.ViewModel;
 using System;
+using System.Windows.Media;
 
 namespace Docdown.Editor.Markdown
 {
@@ -27,6 +29,7 @@ namespace Docdown.Editor.Markdown
         private Highlight _highlightTex = new Highlight { Name = "Tex", Foreground = "#3786D4" };
         private Highlight _highlightTodo = new Highlight { Name = "Todo", Foreground = "#B8D7A3" };
 
+        public static Brush BlueBrush { get; } = UIUtility.ConvertToBrush("#3786D4");
         public string Name
         {
             get => _name;

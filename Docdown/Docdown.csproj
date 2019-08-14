@@ -132,8 +132,12 @@
     <Compile Include="Editor\Markdown\BlockBackgroundRenderer.cs" />
     <Compile Include="Editor\Markdown\Highlight.cs" />
     <Compile Include="Editor\Markdown\ListInputHandler.cs" />
+    <Compile Include="Editor\Markdown\MarkdownCitationCompletionData.cs" />
+    <Compile Include="Editor\Markdown\MarkdownCompletionData.cs" />
+    <Compile Include="Editor\Markdown\MarkdownFootnoteCompletionData.cs" />
     <Compile Include="Editor\Markdown\MarkdownFoldingStrategy.cs" />
     <Compile Include="Editor\Markdown\MarkdownHighlightColorizer.cs" />
+    <Compile Include="Editor\Markdown\MarkdownLatexCompletionData.cs" />
     <Compile Include="Editor\Markdown\Theme.cs" />
     <Compile Include="Controls\OutlineView.xaml.cs">
       <DependentUpon>OutlineView.xaml</DependentUpon>

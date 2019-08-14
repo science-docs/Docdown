@@ -51,7 +51,7 @@ namespace PandocMark.Parser
             if (s.Length == 0)
                 return string.Empty;
 
-            return NormalizeWhitespace(s.Source, s.StartIndex, s.Length).ToUpperInvariant();
+            return NormalizeWhitespace(s.Source, s.StartIndex, s.Length);
         }
 
         /// <summary>
@@ -1247,7 +1247,13 @@ namespace PandocMark.Parser
                 {
                     matchlen = subj.Buffer.Length - subj.Position;
                 }
-                AddReference(subj.DocumentData.ReferenceMap, lab.Value, "", "");
+                var textLen = lab.Value.StartIndex + lab.Value.Length + 2;
+                string content = null;
+                if (textLen < lab.Value.Source.Length)
+                {
+                    content = lab.Value.Source.Substring(textLen).Trim();
+                }
+                AddReference(subj.DocumentData.ReferenceMap, lab.Value, content, "");
                 return subj.Position = matchlen;
             }
             else

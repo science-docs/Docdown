@@ -3,6 +3,7 @@ using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Folding;
 using PandocMark.Syntax;
 using System;
@@ -62,6 +63,7 @@ namespace Docdown.Editor
         private bool firstChange = false;
         private MarkdownFoldingStrategy foldingStrategy;
         private FoldingManager foldingManager;
+        private CompletionWindow completionWindow;
 
         public event EventHandler TextChanged;
         public event EventHandler<ThemeChangedEventArgs> ThemeChanged;
@@ -283,8 +285,65 @@ namespace Docdown.Editor
                 blockBackgroundRenderer.OnThemeChanged(e.Theme);
             };
 
+            EditBox.TextArea.TextEntered += TextEntered;
+            EditBox.TextArea.TextEntering += TextEntering;
+            EditBox.TextArea.PreviewKeyDown += ShowCompletionWindowKeyboard;
+
             EditBox.TextArea.TextView.LineTransformers.Add(colorizer);
             EditBox.TextArea.TextView.BackgroundRenderers.Add(blockBackgroundRenderer);
+        }
+
+        private void ShowCompletionWindowKeyboard(object sender, KeyEventArgs e)
+        {
+            if (completionWindow == null && e.Key == Key.Space && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+            {
+                ShowCompletionWindow();
+                e.Handled = true;
+            }
+        }
+
+        private void TextEntered(object sender, TextCompositionEventArgs e)
+        {
+            if (e.Text == "^")
+            {
+                ShowCompletionWindow();
+            }
+        }
+
+        void TextEntering(object sender, TextCompositionEventArgs e)
+        {
+            if (e.Text.Length > 0 && completionWindow != null)
+            {
+                if (!char.IsLetterOrDigit(e.Text[0]))
+                {
+                    // Whenever a non-letter is typed while the completion window is open,
+                    // insert the currently selected element.
+                    completionWindow.CompletionList.RequestInsertion(e);
+                }
+            }
+            // Do not set e.Handled=true.
+            // We still want to insert the character that was typed.
+        }
+
+        private void ShowCompletionWindow()
+        {
+            if (completionWindow == null)
+            {
+                completionWindow = new CompletionWindow(EditBox.TextArea);
+                IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+                foreach (var reference in MarkdownCompletionData.FromReferences(AbstractSyntaxTree))
+                {
+                    data.Add(reference);
+                }
+                foreach (var latex in MarkdownCompletionData.LatexData())
+                {
+                    data.Add(latex);
+                }
+                completionWindow.Show();
+                completionWindow.Closed += delegate {
+                    completionWindow = null;
+                };
+            }
         }
 
         private void JumpToLocation(int location)
