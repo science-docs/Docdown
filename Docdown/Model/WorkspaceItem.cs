@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Docdown.Model
@@ -23,10 +24,10 @@ namespace Docdown.Model
         Web
     }
 
-    public abstract class WorkspaceItem<T> : IWorkspaceItem<T>, IEquatable<WorkspaceItem<T>> where T : WorkspaceItem<T>
+    public class WorkspaceItem : IWorkspaceItem
     {
-        public abstract string Name { get; }
-        public abstract string FullName { get; }
+        public string Name => FileInfo.Name;
+        public string FullName => FileInfo.FullName;
         public string RelativeName
         {
             get
@@ -39,33 +40,42 @@ namespace Docdown.Model
                 return name;
             }
         }
+
+        public FileSystemInfo FileInfo { get; set; }
+
         public WorkspaceItemType Type { get; set; }
-        public List<T> Children { get; } = new List<T>();
-        public T Parent { get; set; }
-        public T TopParent => Parent ?? this as T;
+        public List<IWorkspaceItem> Children { get; } = new List<IWorkspaceItem>();
+        public IWorkspaceItem Parent { get; set; }
+        public IWorkspaceItem TopParent => Parent ?? this;
         public ConverterType FromType => FromFileType();
         public ConverterType ToType { get; set; } = ConverterType.Pdf;
-        //public bool IsHidden => (FileSystemInfo.Attributes & FileAttributes.Hidden) > 0 || (Parent != null && Parent.IsHidden);
-        
-        public abstract Task<string> Convert(CancelToken cancelToken);
 
-        public abstract Task Delete();
+        public IWorkspace Workspace { get; set; }
 
-        public abstract Task<byte[]> Read();
+        public bool IsDirectory => Type == WorkspaceItemType.Directory || Type == WorkspaceItemType.Web;
 
-        public abstract Task Save(string text);
+        public bool IsFile => !IsDirectory;
 
-        public abstract Task Rename(string newName);
+        public WorkspaceItem(FileSystemInfo info, IWorkspace workspace, IWorkspaceItem parent)
+        {
+            FileInfo = info;
+            Parent = parent;
+            Workspace = workspace;
+            SetType(info.Extension);
+        }
 
-        public abstract Task Update();
+        public async Task<string> Convert(CancelToken cancelToken)
+        {
+            string path = null;
+            var iterator = Workspace.Handlers.GetEnumerator();
+            while (path == null && iterator.MoveNext())
+            {
+                path = await iterator.Current.Convert(this, cancelToken);
+            }
+            return path;
+        }
 
-        public abstract Task<T> CreateNewFile(string name, string autoExtension = null, byte[] content = null);
-
-        public abstract Task<T> CreateNewDirectory(string name);
-
-        public abstract Task<T> CopyExistingItem(string path);
-
-        public async virtual Task<T> CopyExistingFolder(string path)
+        public async Task<IWorkspaceItem> CopyExistingFolder(string path)
         {
             var item = await CreateNewDirectory(Path.GetFileName(path));
             foreach (var file in Directory.GetFiles(path))
@@ -83,34 +93,140 @@ namespace Docdown.Model
             return item;
         }
 
-        public bool IsDirectory => Type == WorkspaceItemType.Directory || Type == WorkspaceItemType.Web;
-
-        public bool IsFile => !IsDirectory;
-
-        IReadOnlyCollection<IWorkspaceItem> IWorkspaceItem.Children => Children.AsReadOnly();
-
-        IWorkspaceItem IWorkspaceItem.Parent { get => Parent; set => Parent = (T)value; }
-
-        IWorkspaceItem IWorkspaceItem.TopParent => TopParent;
-
-        async Task<IWorkspaceItem> IWorkspaceItem.CreateNewFile(string name, string autoExtension, byte[] content)
+        public async Task<IWorkspaceItem> CreateNewFile(string name, string autoExtension = null, byte[] content = null)
         {
-            return await CreateNewFile(name, autoExtension, content);
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("message", nameof(name));
+            if (Type != WorkspaceItemType.Directory)
+                throw new InvalidOperationException("Only Directories can contain files");
+
+            if (autoExtension != null && !name.EndsWith(autoExtension))
+            {
+                name += autoExtension;
+            }
+
+            string fullName = Path.Combine(FullName, name);
+
+            if (content is null)
+            {
+                content = new byte[0];
+            }
+
+            if (FindChild(fullName, out var existing))
+            {
+                return existing;
+            }
+
+            var fileInfo = new FileInfo(fullName);
+            var item = new WorkspaceItem(fileInfo, Workspace, this);
+            await Task.WhenAll(Workspace.Handlers.Select(e => e.Save(item, content)));
+            Children.Add(item);
+            return item;
         }
 
-        async Task<IWorkspaceItem> IWorkspaceItem.CreateNewDirectory(string name)
+        public Task<IWorkspaceItem> CreateNewDirectory(string name)
         {
-            return await CreateNewDirectory(name);
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Empty directory name invalid", nameof(name));
+            if (Type != WorkspaceItemType.Directory)
+                throw new InvalidOperationException("Only Directories can contain other directories");
+
+            string fullName = Path.Combine(FullName, name);
+
+            if (FindChild(fullName, out var existing))
+            {
+                return Task.FromResult(existing);
+            }
+
+            Directory.CreateDirectory(fullName);
+            var fileInfo = new DirectoryInfo(fullName);
+            IWorkspaceItem item = new WorkspaceItem(fileInfo, Workspace, this);
+            Children.Add(item);
+            return Task.FromResult(item);
         }
 
-        async Task<IWorkspaceItem> IWorkspaceItem.CopyExistingItem(string path)
+        public Task<IWorkspaceItem> CopyExistingItem(string path)
         {
-            return await CopyExistingItem(path);
+            var fileName = Path.GetFileName(path);
+            var fullNewName = Path.Combine(FullName, fileName);
+
+            if (Children.Any(e => e.Name == fileName))
+            {
+                File.Replace(path, fullNewName, null);
+            }
+            else
+            {
+                File.Copy(path, fullNewName);
+            }
+
+            var fileInfo = new FileInfo(fullNewName);
+            IWorkspaceItem item = new WorkspaceItem(fileInfo, Workspace, this);
+            Children.Add(item);
+            return Task.FromResult(item);
         }
 
-        async Task<IWorkspaceItem> IWorkspaceItem.CopyExistingFolder(string path)
+        public async Task Delete()
         {
-            return await CopyExistingFolder(path);
+            foreach (var handler in Workspace.Handlers)
+            {
+                await handler.Delete(this);
+            }
+        }
+
+        public async Task<byte[]> Read()
+        {
+            byte[] bytes = null;
+            var iterator = Workspace.Handlers.GetEnumerator();
+            while (bytes == null && iterator.MoveNext())
+            {
+                bytes = await iterator.Current.Read(this);
+            }
+            return bytes;
+        }
+
+        public async Task Rename(string newName)
+        {
+            if (Parent == null)
+            {
+                var parent = Path.GetDirectoryName(Workspace.Settings.Path);
+                var name = Path.Combine(parent, newName);
+                Workspace.Settings.Path = name;
+            }
+            foreach (var handler in Workspace.Handlers)
+            {
+                await handler.Rename(this, newName);
+            }
+            await Update();
+        }
+
+        public async Task Save(string text)
+        {
+            var bytes = Encoding.UTF8.GetBytes(text);
+            foreach (var handler in Workspace.Handlers)
+            {
+                await handler.Save(this, bytes);
+            }
+        }
+
+        public async Task Update()
+        {
+            if (Parent != null)
+            {
+                var topName = Path.GetDirectoryName(TopParent.FullName);
+                var fullPath = Path.Combine(topName, RelativeName);
+                if (IsDirectory)
+                {
+                    FileInfo = new DirectoryInfo(fullPath);
+                }
+                else
+                {
+                    FileInfo = new FileInfo(fullPath);
+                }
+            }
+            foreach (var child in Children)
+            {
+                await child.Update();
+            }
         }
 
         public override string ToString()
@@ -118,7 +234,7 @@ namespace Docdown.Model
             return RelativeName ?? base.ToString();
         }
 
-        protected bool FindChild(string fullName, out T item)
+        private bool FindChild(string fullName, out IWorkspaceItem item)
         {
             item = Children.FirstOrDefault(e => e.FullName == fullName);
             return item != null;
@@ -126,7 +242,7 @@ namespace Docdown.Model
 
         public override bool Equals(object obj)
         {
-            if (obj is WorkspaceItem<T> item)
+            if (obj is WorkspaceItem item)
             {
                 return Equals(item);
             }
@@ -154,12 +270,12 @@ namespace Docdown.Model
             }
         }
 
-        public bool Equals(WorkspaceItem<T> other)
+        public bool Equals(WorkspaceItem other)
         {
             return ToString() == other?.ToString();
         }
 
-        protected void SetType(string fileExt)
+        private void SetType(string fileExt)
         {
             switch (fileExt)
             {

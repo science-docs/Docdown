@@ -148,7 +148,7 @@ namespace Docdown.ViewModel
             }
         }
 
-        public void OpenItem(string fullPath)
+        public async Task OpenItem(string fullPath)
         {
             var item = SearchForSelectedItem(Item, fullPath);
             if (item != null)
@@ -159,9 +159,10 @@ namespace Docdown.ViewModel
             else
             {
                 var parent = Path.GetDirectoryName(fullPath);
-                Data = WorkspaceProvider.Create(new Uri(parent));
+                var workspace = await WorkspaceProvider.Create(parent);
+                await DataAsync(workspace);
                 Data.ToType = ConverterType.Pdf;
-                OpenItem(fullPath);
+                await OpenItem(fullPath);
             }
         }
 
@@ -197,24 +198,24 @@ namespace Docdown.ViewModel
             RefreshExplorer();
         }
 
-        private void OnWorkspaceChanged(object sender, EventArgs args)
-        {
-            // in order to ignore multiple messages, simply ignore changes until the message has been answered
-            IgnoreChange = true;
-            var result = ShowMessage(
-                "Workspace changed", 
-                "Your workspace was changed externally. Do you want to reload your workspace?", 
-                MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes)
-            {
-                var openItems = OpenItems.ToArray();
-                var selectedItemName = SelectedItem?.RelativeName;
-                Data = WorkspaceProvider.Create(new Uri(Data.Item.FullName));
-                Data.ToType = ConverterType.Pdf;
-                RestoreWorkspace(Item, openItems, selectedItemName);
-            }
-            IgnoreChange = false;
-        }
+        //private void OnWorkspaceChanged(object sender, EventArgs args)
+        //{
+        //    // in order to ignore multiple messages, simply ignore changes until the message has been answered
+        //    IgnoreChange = true;
+        //    var result = ShowMessage(
+        //        "Workspace changed", 
+        //        "Your workspace was changed externally. Do you want to reload your workspace?", 
+        //        MessageBoxButton.YesNo);
+        //    if (result == MessageBoxResult.Yes)
+        //    {
+        //        var openItems = OpenItems.ToArray();
+        //        var selectedItemName = SelectedItem?.RelativeName;
+        //        Data = WorkspaceProvider.Create(Data.Item.FullName);
+        //        Data.ToType = ConverterType.Pdf;
+        //        RestoreWorkspace(Item, openItems, selectedItemName);
+        //    }
+        //    IgnoreChange = false;
+        //}
 
         private void RestoreWorkspace(WorkspaceItemViewModel item, IEnumerable<WorkspaceItemViewModel> openItems, string selectedItemName)
         {

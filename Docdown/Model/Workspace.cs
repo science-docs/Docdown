@@ -1,19 +1,108 @@
-﻿using System;
+﻿using Docdown.Util;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Docdown.Model
 {
-    public abstract class Workspace<T> : IWorkspace<T> where T: class, IWorkspaceItem<T>
+    public class Workspace : IWorkspace
     {
-        public abstract T Item { get; }
-        public abstract T SelectedItem { get; set; }
+        public string Name => Item.Name;
+        public IWorkspaceItem Item { get; private set; }
+        public IWorkspaceItem SelectedItem { get; set; }
         public ConverterType FromType => FromSelectedItem();
-        public ConverterType ToType { get; set; } = ConverterType.Pdf;
-        public abstract event WorkspaceChangeEventHandler WorkspaceChanged;
+        public ConverterType ToType { get; set; }
+        public WorkspaceSettings Settings { get; }
+        public List<IWorkspaceItemHandler> Handlers { get; } = new List<IWorkspaceItemHandler>();
+        public event WorkspaceChangeEventHandler WorkspaceChanged;
 
-        IWorkspaceItem IWorkspace.Item => Item;
+        public Workspace(WorkspaceSettings settings)
+        {
+            Settings = settings;
+        }
 
-        IWorkspaceItem IWorkspace.SelectedItem { get => SelectedItem; set => SelectedItem = (T)value; }
+        public async Task Initialize()
+        {
+
+            var webHandler = Handlers.OfType<WebWorkspaceItemHandler>().FirstOrDefault();
+
+            if (webHandler != null)
+            {
+                await DownloadWorkspace(webHandler);
+            }
+
+            var dir = new DirectoryInfo(Settings.Path);
+            Item = new WorkspaceItem(dir, this, null);
+
+            if (webHandler == null)
+                Item.Type = WorkspaceItemType.Directory;
+            else
+                Item.Type = WorkspaceItemType.Web;
+
+
+            foreach (var info in dir.EnumerateFileSystemInfos())
+            {
+                InitItem(info, Item, webHandler);
+            }
+        }
+
+        private async Task DownloadWorkspace(WebWorkspaceItemHandler handler)
+        {
+            var req = await WebUtility.GetRequest(WebUtility.BuildWorkspaceUrl(), MultipartFormParameter.FromWebWorkspace(this, handler.User));
+            var json = await req.Content.ReadAsStringAsync();
+
+            var obj = JObject.Parse(json);
+
+            var items = obj.SelectToken("items");
+
+            foreach (var item in items)
+            {
+                var path = item.SelectToken("path").Value<string>();
+                var dateString = item.SelectToken("date").Value<string>();
+                var date = DateTime.Parse(dateString, null, DateTimeStyles.RoundtripKind);
+
+                var filePath = Path.Combine(Settings.Path, path);
+
+                var lastWrite = DateTime.MinValue;
+                if (File.Exists(filePath))
+                {
+                    lastWrite = File.GetLastWriteTimeUtc(filePath);
+                }
+
+                if (date > lastWrite)
+                {
+                    var itemReq = await WebUtility.GetRequest(WebUtility.BuildWorkspaceItemUrl(), 
+                        MultipartFormParameter.FromWebWorkspace(this, handler.User).Concat(MultipartFormParameter.CreateField("name", path)));
+
+                    var parent = Path.GetDirectoryName(filePath);
+                    Directory.CreateDirectory(parent);
+                    using (var fs = File.Open(filePath, FileMode.Create))
+                    {
+                        await itemReq.Content.CopyToAsync(fs);
+                    }
+                }
+            }
+        }
+
+        private void InitItem(FileSystemInfo fileInfo, IWorkspaceItem parent, WebWorkspaceItemHandler handler)
+        {
+            var item = new WorkspaceItem(fileInfo, this, parent);
+
+            if (fileInfo is DirectoryInfo dirInfo)
+            {
+                item.Type = WorkspaceItemType.Directory;
+                foreach (var info in dirInfo.EnumerateFileSystemInfos())
+                {
+                    InitItem(info, Item, handler);
+                }
+            }
+
+            parent.Children.Add(item);
+        }
 
         private ConverterType FromSelectedItem()
         {
@@ -31,7 +120,7 @@ namespace Docdown.Model
             }
         }
 
-        public T FindRelativeItem(string relativePath)
+        public IWorkspaceItem FindRelativeItem(string relativePath)
         {
             if (string.IsNullOrWhiteSpace(relativePath))
             {
@@ -58,7 +147,7 @@ namespace Docdown.Model
             return lastItem;
         }
 
-        private T FindNextRelativeItem(T item, string name)
+        private IWorkspaceItem FindNextRelativeItem(IWorkspaceItem item, string name)
         {
             return item.Children.FirstOrDefault(e => e.Name == name);
         }

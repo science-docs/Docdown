@@ -53,11 +53,13 @@ namespace Docdown.ViewModel.Commands
                 throw new InvalidDataException("Could not determine import file type");
             }
             string url = WebUtility.BuildConvertUrl();
-            var req = await WebUtility.PostRequest(url, BuildParameters(fileName, target).Concat(MultipartFormParameter.CreateFile("content", fileName)));
-            byte[] content = await req.Content.ReadAsByteArrayAsync();
-            var item = await workspace.Item.Data.CreateNewFile(targetFileName, null, content);
-            var itemViewModel = workspace.Item.AddChild(item);
-            workspace.SelectedItem = itemViewModel;
+            using (var req = await WebUtility.PostRequest(url, BuildParameters(fileName, target).Concat(MultipartFormParameter.CreateFile("content", fileName))))
+            {
+                byte[] content = await req.Content.ReadAsByteArrayAsync();
+                var item = await workspace.Item.Data.CreateNewFile(targetFileName, null, content);
+                var itemViewModel = workspace.Item.AddChild(item);
+                workspace.SelectedItem = itemViewModel;
+            }
         }
 
         private static IEnumerable<MultipartFormParameter> BuildParameters(string fileName, ConverterType target)

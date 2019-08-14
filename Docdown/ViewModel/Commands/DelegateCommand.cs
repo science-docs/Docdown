@@ -100,7 +100,9 @@ namespace Docdown.ViewModel.Commands
             }
             if (sta)
             {
-                Application.Current.Dispatcher.BeginInvoke(del, param);
+                var task = Application.Current.Dispatcher.BeginInvoke(del, param);
+                task.Wait();
+                Result = task.Result;
             }
             else
             {

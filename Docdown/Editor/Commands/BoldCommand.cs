@@ -7,11 +7,10 @@ using ICSharpCode.AvalonEdit;
 
 namespace Docdown.Editor.Commands
 {
-    internal class BoldCommand : EditorCommand
+    internal class BoldCommand : SorroundCommand
     {
-        public override void Execute(TextEditor editor)
+        public BoldCommand() : base("**")
         {
-            SorroundSelection(editor, "**");
         }
     }
 }

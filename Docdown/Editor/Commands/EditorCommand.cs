@@ -1,9 +1,5 @@
 ﻿using ICSharpCode.AvalonEdit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Docdown.Editor.Commands
 {
@@ -12,6 +8,7 @@ namespace Docdown.Editor.Commands
         public static EditorCommand Bold { get; } = new BoldCommand();
         public static EditorCommand Italic { get; } = new ItalicCommand();
         public static EditorCommand Quote { get; } = new QuoteCommand();
+        public static EditorCommand Verbatim { get; } = new VerbatimCommand();
     }
 
     public abstract class EditorCommand
@@ -38,18 +35,33 @@ namespace Docdown.Editor.Commands
         {
             int start = editor.SelectionStart;
             var text = editor.SelectedText;
-            var newText = sorroundingStart + text + sorroundingEnd;
-            editor.TextArea.Selection.ReplaceSelectionWithText(newText);
+            StringBuilder newText = new StringBuilder(text);
+            bool both = false;
 
-            if (string.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(sorroundingStart) && !text.StartsWith(sorroundingStart))
             {
-                editor.SelectionStart = start + sorroundingStart.Length;
+                newText.Insert(0, sorroundingStart);
             }
             else
             {
-                editor.SelectionStart = start;
-                editor.SelectionLength = newText.Length;
+                both = true;
             }
+            if (!string.IsNullOrEmpty(sorroundingEnd) && !text.EndsWith(sorroundingEnd))
+            {
+                newText.Append(sorroundingEnd);
+                both = false;
+            }
+
+            if (both)
+            {
+                newText.Remove(0, sorroundingStart.Length);
+                newText.Remove(newText.Length - sorroundingEnd.Length, sorroundingEnd.Length);
+            }
+
+            editor.TextArea.Selection.ReplaceSelectionWithText(newText.ToString());
+
+            editor.SelectionStart = start;
+            editor.SelectionLength = newText.Length;
         }
 
         protected void SorroundParagraph(TextEditor editor)

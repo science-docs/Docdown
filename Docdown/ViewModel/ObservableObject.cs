@@ -25,6 +25,11 @@ namespace Docdown.ViewModel
             this.data = data;
         }
 
+        public async Task DataAsync(T data)
+        {
+            await Dispatcher.InvokeAsync(() => Data = data);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is ObservableObject<T> oo)

@@ -232,7 +232,7 @@
             </Button>
             <Button Command="{Binding Workspace.SelectedItem.PrintCommand, FallbackValue={x:Null}}" 
                     ToolTip="{DynamicResource Main_Menu_Print_Tooltip}" 
-                    IsEnabled="{Binding Workspace.SelectedItem.PdfPath, Converter={StaticResource StringLengthToBooleanConverter}, FallbackValue=False}">
+                    IsEnabled="{Binding Workspace.SelectedItem.IsCompiled, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource PrintIcon}" 
                            Height="16" 
                            Width="16"/>
@@ -276,6 +276,13 @@
                     ToolTip="Quote" 
                     IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource QuoteIcon}" 
+                           Height="16" 
+                           Width="16"/>
+            </Button>
+            <Button Command="{Binding Workspace.SelectedItem.VerbatimCommand}"
+                    ToolTip="Verbatim" 
+                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource MonospaceIcon}" 
                            Height="16" 
                            Width="16"/>
             </Button>

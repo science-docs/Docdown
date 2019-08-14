@@ -11,18 +11,27 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Docdown.Util
 {
     public static class WebUtility
     {
-        private static readonly Encoding encoding = Encoding.UTF8;
-
-        public static string UserAgent { get; } = $"Docdown_v" + typeof(WebUtility).Assembly.GetName().Version.ToString();
+        public static ProductInfoHeaderValue UserAgent { get; } = new ProductInfoHeaderValue("Docdown", typeof(WebUtility).Assembly.GetName().Version.ToString());
 
         public static string BuildConvertUrl()
         {
             return BuildUrl(Settings.Default.API, "convert");
+        }
+
+        public static string BuildWorkspaceUrl()
+        {
+            return BuildUrl(Settings.Default.API, "workspace");
+        }
+
+        public static string BuildWorkspaceItemUrl()
+        {
+            return BuildUrl(Settings.Default.API, "workspace", "file");
         }
 
         public static string BuildWorkspaceConvertUrl()
@@ -75,7 +84,7 @@ namespace Docdown.Util
                 Method = method,
                 RequestUri = new Uri(url)
             };
-            request.Headers.UserAgent.Add(new ProductInfoHeaderValue("Docdown", ObservableObject.Version));
+            request.Headers.UserAgent.Add(UserAgent);
 
             if (postParameters != null && postParameters.Length > 0)
             {
@@ -96,7 +105,11 @@ namespace Docdown.Util
             }
 
             var response = await client.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var exception = await ServerException.Create(response);
+                throw exception;
+            }
             return response;
         }
 
@@ -120,8 +133,9 @@ namespace Docdown.Util
                 var res = await GetRequest(Settings.Default.API);
                 res.Dispose();
             }
-            catch
+            catch (Exception e)
             {
+                ErrorUtility.WriteLog(e);
                 return ConnectionStatus.Disconnected;
             }
             return ConnectionStatus.Connected;
@@ -132,9 +146,11 @@ namespace Docdown.Util
             return await PostRequest(postUrl, postParameters.ToArray());
         }
 
+        private static HttpMethod Move = new HttpMethod("MOVE");
+
         public static async Task<HttpResponseMessage> MoveRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
         {
-            return await SimpleRequest(postUrl, new HttpMethod("MOVE"), CancellationToken.None, postParameters.ToArray());
+            return await SimpleRequest(postUrl, Move, CancellationToken.None, postParameters.ToArray());
         }
 
         public static async Task<HttpResponseMessage> PostRequest(string postUrl, params MultipartFormParameter[] postParameters)
@@ -145,116 +161,6 @@ namespace Docdown.Util
         public static async Task<HttpResponseMessage> PostRequest(string postUrl, CancellationToken cancellationToken, IEnumerable<MultipartFormParameter> postParameters)
         {
             return await SimpleRequest(postUrl, HttpMethod.Post, cancellationToken, postParameters.ToArray());
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="postUrl"></param>
-        /// <param name="userAgent"></param>
-        /// <param name="postParameters"></param>
-        /// <returns></returns>
-        /// <exception cref="WebException"/>
-        public static HttpWebRequest MultipartFormDataPost(string postUrl, params MultipartFormParameter[] postParameters)
-        {
-            string formDataBoundary = $"----------{Guid.NewGuid()}";
-            string contentType = "multipart/form-data; boundary=" + formDataBoundary;
-
-            byte[] formData = GetMultipartFormData(postParameters, formDataBoundary);
-            return PostForm(postUrl, UserAgent, contentType, formData);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="postUrl"></param>
-        /// <param name="userAgent"></param>
-        /// <param name="contentType"></param>
-        /// <param name="formData"></param>
-        /// <returns></returns>
-        /// <exception cref="WebException"/>
-        private static HttpWebRequest PostForm(string postUrl, string userAgent, string contentType, byte[] formData)
-        {
-            var request = WebRequest.CreateHttp(postUrl);
-
-            // Set up the request properties.
-            request.Method = "POST";
-            request.ContentType = contentType;
-            request.UserAgent = userAgent;
-            request.CookieContainer = new CookieContainer();
-            request.ContentLength = formData.Length;
-            request.Timeout = 120_000;
-
-            // Send the form data to the request.
-            using (var requestStream = request.GetRequestStream())
-            {
-                requestStream.Write(formData, 0, formData.Length);
-            }
-
-            return request;
-        }
-
-        private static byte[] GetMultipartFormData(IEnumerable<MultipartFormParameter> postParameters, string boundary)
-        {
-            bool needsCLRF = false;
-            string CRLF = Environment.NewLine;
-
-            using (var formDataStream = new MemoryStream())
-            {
-                foreach (var param in postParameters)
-                {
-                    if (needsCLRF)
-                        Write(formDataStream, CRLF);
-
-                    needsCLRF = true;
-
-                    if (param.Type == MultipartFormParameterType.File)
-                    {
-                        // Add just the first part of this param, since we will write the file data directly to the Stream
-                        string header = $"--{boundary}{CRLF}Content-Disposition: form-data; name=\"{param.Name}\"; filename=\"{param.FileName}\"{CRLF}Content-Type: {param.ContentType}{CRLF}{CRLF}";
-
-                        Write(formDataStream, header);
-
-                        // Write the file data directly to the Stream, rather than serializing it to a string.
-                        Write(formDataStream, param.Data);
-                    }
-                    else if (param.Type == MultipartFormParameterType.Field)
-                    {
-                        if (param.Array)
-                        {
-                            foreach (var value in param.Value)
-                            {
-                                AddField(formDataStream, param.Name + "[]", value);
-                            }
-                        }
-                        else
-                        {
-                            AddField(formDataStream, param.Name, param.Value[0]);
-                        }
-                    }
-                }
-
-                // Add the end of the request.  Start with a newline
-                Write(formDataStream, $"{CRLF}--{boundary}--{CRLF}");
-
-                return formDataStream.ToArray();
-            }
-
-            void AddField(MemoryStream ms, string name, string value)
-            {
-                string postData = $"--{boundary}{CRLF}Content-Disposition: form-data; name=\"{name}\"{CRLF}{CRLF}{value}";
-                Write(ms, postData);
-            }
-        }
-
-        private static void Write(Stream stream, string text)
-        {
-            Write(stream, encoding.GetBytes(text));
-        }
-
-        private static void Write(Stream stream, byte[] data)
-        {
-            stream.Write(data, 0, data.Length);
         }
     }
 
@@ -402,37 +308,43 @@ namespace Docdown.Util
 
         public static IEnumerable<MultipartFormParameter> FromFolder(string folderPath)
         {
-            var item = new FileWorkspaceItem(folderPath);
+            var item = new WorkspaceItem(new DirectoryInfo(folderPath), null, null);
             return CreateFormData(item, item, null, false).Where(e => e != null);
         }
 
-        public static IEnumerable<MultipartFormParameter> FromWebWorkspace(WebWorkspace workspace)
+        // TODO fix this
+
+        public static IEnumerable<MultipartFormParameter> FromWebWorkspace(IWorkspace workspace, User user)
         {
-            yield return CreateField("token", workspace.User.Token);
-            yield return CreateField("workspace", workspace.Name);
+            yield return CreateField("token", user.Token);
+            yield return CreateField("workspace", workspace.Settings.Sync);
         }
 
-        public static IEnumerable<MultipartFormParameter> GetWebWorkspaceItem(WebWorkspaceItem item)
+        public static IEnumerable<MultipartFormParameter> GetWebWorkspaceItem(IWorkspaceItem item, User user)
         {
-            yield return CreateField("token", item.Workspace.User.Token);
-            yield return CreateField("workspace", item.Workspace.Name);
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+            yield return CreateField("token", user.Token);
+            yield return CreateField("workspace", item.Workspace.Settings.Sync);
             yield return CreateField("name", item.FullName);
         }
 
-        public static IEnumerable<MultipartFormParameter> PostWebWorkspaceItem(WebWorkspaceItem item, string file)
+        public static IEnumerable<MultipartFormParameter> PostWebWorkspaceItem(IWorkspaceItem item, string file)
         {
-            yield return CreateField("token", item.Workspace.User.Token);
-            yield return CreateField("workspace", item.Workspace.Name);
+            //yield return CreateField("token", item.Workspace.User.Token);
+            //yield return CreateField("workspace", item.Workspace.Name);
             yield return CreateField("name", item.FullName);
             yield return CreateFile("content", file);
         }
 
-        public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(FileWorkspaceItem workspaceItem, bool onlySelected)
+        public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(IWorkspaceItem workspaceItem, bool onlySelected)
         {
             return CreateFormData(workspaceItem.Parent, workspaceItem, null, onlySelected).Where(e => e != null).Distinct();
         }
 
-        private static IEnumerable<MultipartFormParameter> CreateFormData(FileWorkspaceItem item, FileWorkspaceItem root, string current, bool onlySelected)
+        private static IEnumerable<MultipartFormParameter> CreateFormData(IWorkspaceItem item, IWorkspaceItem root, string current, bool onlySelected)
         {
             if (item is null)
             {
@@ -440,7 +352,7 @@ namespace Docdown.Util
             }
             else if (item.IsDirectory)
             {
-                string folder = item.FileSystemInfo.Name;
+                string folder = item.Name;
                 if (!string.IsNullOrWhiteSpace(current))
                     folder = Path.Combine(current, folder);
                 if (item.Equals(root) || item.Equals(root.Parent))
@@ -456,17 +368,15 @@ namespace Docdown.Util
             }
             else if (onlySelected && item.Equals(root))
             {
-                yield return CreateFile(MainFile, root.FileSystemInfo.FullName);
+                yield return CreateFile(MainFile, root.FullName);
             }
             else
             {
-                var fsi = item.FileSystemInfo;
-                string name = fsi.Name;
-
+                string name = item.Name;
                 if (!string.IsNullOrWhiteSpace(current))
                     name = Path.Combine(current, name);
 
-                yield return CreateFile(name, fsi.FullName);
+                yield return CreateFile(name, item.FullName);
             }
         }
     }

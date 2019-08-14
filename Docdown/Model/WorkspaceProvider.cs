@@ -1,31 +1,28 @@
 ﻿using Docdown.ViewModel;
-using System;
-using System.Linq;
-using System.Net;
+using System.Threading.Tasks;
 
 namespace Docdown.Model
 {
     public static class WorkspaceProvider
     {
-        public static IWorkspace Create(Uri uri)
+        public static async Task<IWorkspace> Create(string path)
         {
-            switch (uri.Scheme)
+            var settings = WorkspaceSettings.Create(path);
+            var workspace = new Workspace(settings);
+            workspace.Handlers.Add(new FileWorkspaceItemHandler());
+            if (!string.IsNullOrEmpty(settings.Sync))
             {
-                case "http":
-                case "https":
-                    return LoadWebWorkspace(uri);
-                case "file":
-                    return new FileWorkspace(WebUtility.UrlDecode(uri.AbsolutePath));
+                var user = AppViewModel.Instance.User;
+                if (user.EnsureLoggedIn())
+                {
+                    var webHandler = new WebWorkspaceItemHandler(user.Data);
+                    workspace.Handlers.Add(webHandler);
+                }
             }
-            throw new ArgumentException("Could not parse URI scheme: " + uri.Scheme);
-        }
 
-        private static WebWorkspace LoadWebWorkspace(Uri uri)
-        {
-            var user = AppViewModel.Instance.User.Data;
-            var lastSegment = uri.Segments.Last();
-            var decodedName = WebUtility.UrlDecode(lastSegment);
-            return new WebWorkspace(user, decodedName);
+            await workspace.Initialize();
+
+            return workspace;
         }
     }
 }

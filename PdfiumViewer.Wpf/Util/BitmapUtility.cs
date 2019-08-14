@@ -68,16 +68,5 @@ namespace PdfiumViewer.Wpf.Util
 
             return result;
         }
-
-        public static void Save(this BitmapSource image, string filePath)
-        {
-            BitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(image));
-
-            using (var fileStream = File.OpenWrite(filePath))
-            {
-                encoder.Save(fileStream);
-            }
-        }
     }
 }

@@ -262,6 +262,7 @@ namespace Docdown.ViewModel
             {
                 var res = await WebUtility.PostRequest(WebUtility.BuildTemplatesUrl(), parameter);
                 await res.Content.ReadAsStreamAsync();
+                res.Dispose();
                 await LoadTemplates();
                 app.Messages.Success("Successfully uploaded template");
             }

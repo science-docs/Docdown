@@ -59,6 +59,12 @@ namespace Docdown.ViewModel
             }
         }
 
+        public bool IsCompiled
+        {
+            get => isCompiled;
+            set => Set(ref isCompiled, value);
+        }
+
         public bool IsExpanded
         {
             get => isExpanded;
@@ -196,6 +202,7 @@ namespace Docdown.ViewModel
         public WorkspaceItemViewModel Parent { get; }
 
         private string pdfPath;
+        private bool isCompiled;
         private bool isExpanded = false;
         private bool canConvert;
         private bool isConverting;
@@ -297,6 +304,7 @@ namespace Docdown.ViewModel
             {
                 PdfPath = string.Empty;
                 PdfPath = await Data.Convert(converterToken);
+                IsCompiled = true;
                 watch.Stop();
                 Messages.Success(Language.Current.Get("Workspace.Compilation.Success", watch.Elapsed.Seconds, watch.Elapsed.Milliseconds));
             }
@@ -306,6 +314,7 @@ namespace Docdown.ViewModel
                 {
                     Messages.Error(ErrorUtility.GetErrorMessage(e));
                 }
+                IsCompiled = false;
             }
             watch.Stop();
 
@@ -402,6 +411,7 @@ namespace Docdown.ViewModel
         {
             if (view is IEditor editorWrapper)
             {
+                IsCompiled = false;
                 string text = await Dispatcher.InvokeAsync(() => editorWrapper.Editor.Text);
                 HasChanged = false;
                 Workspace.IgnoreChange = true;

@@ -31,7 +31,7 @@ namespace Docdown.ViewModel
 
         public ICommand EnsureLoginCommand => new ActionCommand(() => EnsureLoggedIn());
 
-        private readonly DelegateCommand loginCommand = new OpenWindowCommand<LoginWindow>();
+        private readonly DelegateCommand loginCommand;
         private readonly LoginViewModel login = new LoginViewModel();
 
         public UserViewModel() : base(null)

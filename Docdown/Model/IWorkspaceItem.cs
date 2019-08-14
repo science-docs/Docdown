@@ -1,5 +1,6 @@
 ﻿using Docdown.Util;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Docdown.Model
@@ -9,8 +10,10 @@ namespace Docdown.Model
         string RelativeName { get; }
         string Name { get; }
         string FullName { get; }
+        FileSystemInfo FileInfo { get; set; }
         WorkspaceItemType Type { get; set; }
-        IReadOnlyCollection<IWorkspaceItem> Children { get; }
+        List<IWorkspaceItem> Children { get; }
+        IWorkspace Workspace { get; set; }
         IWorkspaceItem Parent { get; set; }
         IWorkspaceItem TopParent { get; }
         ConverterType FromType { get; }
@@ -29,16 +32,5 @@ namespace Docdown.Model
         Task<IWorkspaceItem> CreateNewDirectory(string name);
         Task<IWorkspaceItem> CopyExistingItem(string path);
         Task<IWorkspaceItem> CopyExistingFolder(string path);
-    }
-
-    public interface IWorkspaceItem<T> : IWorkspaceItem where T : class, IWorkspaceItem<T>
-    {
-        new List<T> Children { get; }
-        new T Parent { get; set; }
-        new T TopParent { get; }
-        new Task<T> CreateNewFile(string name, string autoExtension = null, byte[] content = null);
-        new Task<T> CreateNewDirectory(string name);
-        new Task<T> CopyExistingItem(string path);
-        new Task<T> CopyExistingFolder(string path);
     }
 }

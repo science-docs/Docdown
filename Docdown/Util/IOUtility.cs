@@ -15,8 +15,7 @@ namespace Docdown.Util
 
         public static async Task WriteAllBytes(string fullName, byte[] bytes)
         {
-            var fileMode = File.Exists(fullName) ? FileMode.Truncate : FileMode.Create;
-            using (FileStream stream = File.Open(fullName, fileMode))
+            using (FileStream stream = File.Open(fullName, FileMode.Create))
             {
                 await stream.WriteAsync(bytes, 0, bytes.Length);
             }
@@ -29,7 +28,7 @@ namespace Docdown.Util
 
         public static async Task<byte[]> ReadAllBytes(string fullName)
         {
-            using (FileStream stream = File.Open(fullName, FileMode.Open))
+            using (FileStream stream = File.OpenRead(fullName))
             {
                 var result = new byte[stream.Length];
                 await stream.ReadAsync(result, 0, (int)stream.Length);
@@ -106,6 +105,26 @@ namespace Docdown.Util
                     }
                 }
             }
+        }
+
+        public static IEnumerable<Tuple<string, string>> ParseProperties(string path)
+        {
+            using (var fs = File.OpenRead(path))
+            {
+                return ParseProperties(fs);
+            }
+        }
+
+        public static void WriteProperties(string path, IEnumerable<Tuple<string, string>> properties)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var prop in properties)
+            {
+                sb.Append(prop.Item1);
+                sb.Append('=');
+                sb.AppendLine(prop.Item2);
+            }
+            File.WriteAllText(path, sb.ToString());
         }
     }
 }

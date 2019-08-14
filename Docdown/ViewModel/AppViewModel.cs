@@ -72,8 +72,11 @@ namespace Docdown.ViewModel
             Settings.Save();
             try
             {
-                var workspace = WorkspaceProvider.Create(new Uri(newWorkspace, UriKind.Absolute));
-                Workspace.Data = workspace;
+                Task.Run(async () =>
+                {
+                    var workspace = await WorkspaceProvider.Create(newWorkspace);
+                    await Workspace.DataAsync(workspace);
+                });
             }
             catch
             {
