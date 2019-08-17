@@ -965,7 +965,7 @@ namespace PandocMark.Parser
                     title = subj.Buffer.Substring(starttitle, endtitle - starttitle);
                     title = CleanTitle(title);
 
-                    return new Reference() { Title = title, Url = url };
+                    return new Reference { Title = title, Url = url };
                 }
             }
             else if (c == '[')

@@ -206,6 +206,10 @@ namespace Docdown.Model
             {
                 await handler.Save(this, bytes);
             }
+            if (Type == WorkspaceItemType.Bibliography)
+            {
+                Workspace.Bibliography.Parse(this, text);
+            }
         }
 
         public async Task Update()

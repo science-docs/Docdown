@@ -196,6 +196,8 @@ namespace Docdown.Editor
 
         public Outline Outline { get; set; }
 
+
+
         //public MyEncodingInfo Encoding
         //{
         //    get => (MyEncodingInfo)GetValue(MyEncodingInfoProperty);
@@ -304,7 +306,7 @@ namespace Docdown.Editor
 
         private void TextEntered(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text == "^")
+            if (e.Text == "^" || e.Text == "@" || e.Text == "\\")
             {
                 ShowCompletionWindow();
             }
@@ -312,15 +314,15 @@ namespace Docdown.Editor
 
         void TextEntering(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text.Length > 0 && completionWindow != null)
-            {
-                if (!char.IsLetterOrDigit(e.Text[0]))
-                {
-                    // Whenever a non-letter is typed while the completion window is open,
-                    // insert the currently selected element.
-                    completionWindow.CompletionList.RequestInsertion(e);
-                }
-            }
+            //if (e.Text.Length > 0 && completionWindow != null)
+            //{
+            //    if (!char.IsLetterOrDigit(e.Text[0]))
+            //    {
+            //        // Whenever a non-letter is typed while the completion window is open,
+            //        // insert the currently selected element.
+            //        completionWindow.CompletionList.RequestInsertion(e);
+            //    }
+            //}
             // Do not set e.Handled=true.
             // We still want to insert the character that was typed.
         }
@@ -330,15 +332,7 @@ namespace Docdown.Editor
             if (completionWindow == null)
             {
                 completionWindow = new CompletionWindow(EditBox.TextArea);
-                IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
-                foreach (var reference in MarkdownCompletionData.FromReferences(AbstractSyntaxTree))
-                {
-                    data.Add(reference);
-                }
-                foreach (var latex in MarkdownCompletionData.LatexData())
-                {
-                    data.Add(latex);
-                }
+                MarkdownCompletionData.FromAST(EditBox.Text, EditBox.SelectionStart, AbstractSyntaxTree, completionWindow.CompletionList);
                 completionWindow.Show();
                 completionWindow.Closed += delegate {
                     completionWindow = null;

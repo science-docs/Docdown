@@ -146,7 +146,7 @@ namespace Docdown.Util
             return await PostRequest(postUrl, postParameters.ToArray());
         }
 
-        private static HttpMethod Move = new HttpMethod("MOVE");
+        private static readonly HttpMethod Move = new HttpMethod("MOVE");
 
         public static async Task<HttpResponseMessage> MoveRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
         {

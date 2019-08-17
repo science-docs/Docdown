@@ -12,7 +12,7 @@ namespace Docdown.Util
         public CancellationToken ToCancellationToken()
         {
             var token = new CancellationTokenSource();
-            Canceled += (_, __) => token.Cancel();
+            Canceled += delegate { token.Cancel(); };
             return token.Token;
         }
 

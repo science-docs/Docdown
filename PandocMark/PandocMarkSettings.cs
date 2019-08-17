@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PandocMark.Syntax;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,6 +17,8 @@ namespace PandocMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         private PandocMarkSettings()
         { }
+
+        public List<Reference> ExternalReferences { get; } = new List<Reference>();
 
         /// <summary>
         /// Gets or sets the output format used by the last stage of conversion.
@@ -35,7 +38,7 @@ namespace PandocMark
                 if (_outputDelegate != value)
                 {
                     _outputDelegate = value;
-                    OutputFormat = value is null ? default(OutputFormat) : OutputFormat.CustomDelegate;
+                    OutputFormat = value is null ? default : OutputFormat.CustomDelegate;
                 }
             }
         }

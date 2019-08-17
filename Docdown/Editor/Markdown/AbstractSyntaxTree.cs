@@ -9,7 +9,7 @@ namespace Docdown.Editor.Markdown
 {
     public static class AbstractSyntaxTree
     {
-        private static readonly PandocMarkSettings CommonMarkSettings;
+        public static PandocMarkSettings CommonMarkSettings { get; }
 
         static AbstractSyntaxTree()
         {

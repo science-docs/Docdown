@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace PandocMark.Syntax
 {
@@ -32,13 +33,13 @@ namespace PandocMark.Syntax
         /// <summary>
         /// Creates a new top-level document block.
         /// </summary>
-        internal static Block CreateDocument()
+        internal static Block CreateDocument(PandocMarkSettings settings)
         {
             Block e = new Block(BlockTag.Document, 0)
             {
                 Document = new DocumentData
                 {
-                    ReferenceMap = new Dictionary<string, Reference>()
+                    ReferenceMap = settings.ExternalReferences.ToDictionary(i => i.Label)
                 }
             };
             e.Top = e;

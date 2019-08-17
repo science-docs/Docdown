@@ -10,6 +10,7 @@ namespace Docdown.Model
         ConverterType FromType { get; }
         ConverterType ToType { get; set; }
         List<IWorkspaceItemHandler> Handlers { get; }
+        Bibliography Bibliography { get; }
         WorkspaceSettings Settings { get; }
         event WorkspaceChangeEventHandler WorkspaceChanged;
     }

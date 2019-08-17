@@ -72,7 +72,7 @@ namespace PandocMark
             if (settings is null)
                 settings = PandocMarkSettings.Default;
 
-            var cur = Syntax.Block.CreateDocument();
+            var cur = Syntax.Block.CreateDocument(settings);
             var doc = cur;
             var line = new LineInfo(settings.TrackSourcePosition);
 

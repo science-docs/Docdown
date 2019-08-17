@@ -1,8 +1,10 @@
-﻿using ICSharpCode.AvalonEdit.Document;
+﻿using Docdown.Controls;
+using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using PandocMark.Syntax;
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
@@ -16,18 +18,14 @@ namespace Docdown.Editor.Markdown
 
         public override object Content => Text;
 
-        public override object Description
-        {
-            get
-            {
-                var span = new Span();
-                span.Inlines.Add(new Run("footnote ") { Foreground = Theme.BlueBrush });
-                span.Inlines.Add(new Run(Text) { Foreground = Brushes.Aquamarine });
-                span.Inlines.Add(new LineBreak());
-                span.Inlines.Add(reference.Url);
-                return span;
-            }
-        }
+        public override TextBlock DescriptionBlock =>
+            new TextBlockBuilder()
+                .Image(Image)
+                .Text(" footnote ", Theme.BlueBrush)
+                .Text(Text, Brushes.Aquamarine)
+                .LineBreak()
+                .Text(reference.Url)
+                .Build();
 
         private readonly Reference reference;
 

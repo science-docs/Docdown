@@ -14,6 +14,18 @@
 
     <DrawingImage x:Key="FootnoteImage" Drawing="{DynamicResource FootnoteDrawing}"/>
 
+    <DrawingGroup x:Key="CitationDrawing">
+        <DrawingGroup.Children>
+            <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M48,48L0,48 0,0 48,0z"/>
+            <GeometryDrawing Brush="{DynamicResource BlackBrush}" Geometry="M4,20v12h8c0,4.41-3.586,8-8,8v4c6.617,0,12-5.383,12-12V20H4z"/>
+            <GeometryDrawing Brush="{DynamicResource BlackBrush}" Geometry="M24,20v12h8c0,4.41-3.586,8-8,8v4c6.617,0,12-5.383,12-12V20H24z"/>
+        </DrawingGroup.Children>
+    </DrawingGroup>
+
+    <DrawingBrush x:Key="CitationIcon"  Drawing="{DynamicResource CitationDrawing}"/>
+
+    <DrawingImage x:Key="CitationImage" Drawing="{DynamicResource CitationDrawing}"/>
+
     <DrawingBrush x:Key="BoldIcon">
         <DrawingBrush.Drawing>
             <DrawingGroup>

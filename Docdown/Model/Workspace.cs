@@ -18,6 +18,7 @@ namespace Docdown.Model
         public ConverterType ToType { get; set; }
         public WorkspaceSettings Settings { get; }
         public List<IWorkspaceItemHandler> Handlers { get; } = new List<IWorkspaceItemHandler>();
+        public Bibliography Bibliography { get; } = new Bibliography();
         public event WorkspaceChangeEventHandler WorkspaceChanged;
 
         public Workspace(WorkspaceSettings settings)
@@ -99,6 +100,10 @@ namespace Docdown.Model
                 {
                     InitItem(info, Item, handler);
                 }
+            }
+            else if (item.Type == WorkspaceItemType.Bibliography)
+            {
+                Bibliography.Parse(item);
             }
 
             parent.Children.Add(item);
