@@ -306,7 +306,7 @@ namespace Docdown.Editor
 
         private void TextEntered(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text == "^" || e.Text == "@" || e.Text == "\\")
+            if (e.Text == "^" || e.Text == "@" || e.Text == "\\" || e.Text == "<")
             {
                 ShowCompletionWindow();
             }

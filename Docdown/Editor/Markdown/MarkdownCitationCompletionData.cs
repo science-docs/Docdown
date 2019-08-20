@@ -1,5 +1,4 @@
-﻿using Docdown.Controls;
-using ICSharpCode.AvalonEdit.Document;
+﻿using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using PandocMark.Syntax;
 using System;
@@ -15,21 +14,7 @@ namespace Docdown.Editor.Markdown
 
         public override string Text => reference.Label.Substring(1);
 
-        public override object Content => Text;
-
-        public override TextBlock DescriptionBlock
-        {
-            get
-            {
-                var builder = new TextBlockBuilder();
-                builder.Image(Image).Text(" citation ", Theme.BlueBrush).Text(Text, Brushes.Aquamarine);
-                if (!string.IsNullOrEmpty(reference.Url))
-                {
-                    builder.LineBreak().Text(reference.Url);
-                }
-                return builder.Build();
-            }
-        }
+        public override TextBlock DescriptionBlock => BuildDescriptionBase("citation", reference.Url);
 
         private readonly Reference reference;
 

@@ -1,4 +1,6 @@
-﻿using Docdown.Model;
+﻿using Docdown.Controls;
+using Docdown.Model;
+using Docdown.Util;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
@@ -6,6 +8,8 @@ using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -17,18 +21,32 @@ namespace Docdown.Editor.Markdown
         public const char LatexMarker = '\\';
         public const char CitationMarker = '@';
         public const char FootnoteMarker = '^';
+        public const char HtmlMarker = '<';
 
         public abstract ImageSource Image { get; }
 
         public abstract string Text { get; }
 
-        public abstract object Content { get; }
+        public object Content => Text;
 
         public object Description => DescriptionBlock;
 
         public abstract TextBlock DescriptionBlock { get; }
 
         public virtual double Priority => 0;
+
+        protected TextBlock BuildDescriptionBase(string keyword, string description)
+        {
+            var builder = new TextBlockBuilder()
+                .Image(Image)
+                .Text($" {keyword} ", Theme.BlueBrush)
+                .Text(Text, Brushes.Aquamarine);
+            if (!string.IsNullOrWhiteSpace(description))
+            {
+                builder.LineBreak().Text(description);
+            }
+            return builder.Build();
+        }
 
         public virtual void Complete(TextArea textArea, ISegment completionSegment, EventArgs insertionRequestEventArgs)
         {
@@ -146,6 +164,10 @@ namespace Docdown.Editor.Markdown
             {
                 data.AddRange(FromBibliography(ast));
             }
+            if (marker == null || marker == HtmlMarker)
+            {
+                data.AddRange(HtmlData());
+            }
             if (marker == null || marker == LatexMarker)
             {
                 data.AddRange(LatexData());
@@ -194,7 +216,7 @@ namespace Docdown.Editor.Markdown
 
         private static bool IsMarker(char c)
         {
-            return c == LatexMarker || c == CitationMarker || c == FootnoteMarker;
+            return c == LatexMarker || c == CitationMarker || c == FootnoteMarker || c == HtmlMarker;
         }
 
         public static MarkdownFootnoteCompletionData FromReference(Reference reference)
@@ -214,6 +236,22 @@ namespace Docdown.Editor.Markdown
         public static IEnumerable<MarkdownLatexCompletionData> LatexData()
         {
             yield break;
+        }
+
+        private static readonly IEnumerable<MarkdownHtmlCompletionData> cachedHtmlData = BuildHtmlData();
+
+        private static IEnumerable<MarkdownHtmlCompletionData> BuildHtmlData()
+        {
+            var stream = IOUtility.LoadResource("Docdown.Resources.Completion.HtmlEN.properties");
+            foreach (var pair in IOUtility.ParseProperties(stream))
+            {
+                yield return new MarkdownHtmlCompletionData(pair.Item1, pair.Item2);
+            }
+        }
+
+        public static IEnumerable<MarkdownHtmlCompletionData> HtmlData()
+        {
+            return cachedHtmlData;
         }
 
         public static IEnumerable<MarkdownCitationCompletionData> FromBibliography(Block ast)

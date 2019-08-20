@@ -10,8 +10,6 @@ namespace Docdown.Editor.Markdown
 
         public override string Text => throw new NotImplementedException();
 
-        public override object Content => throw new NotImplementedException();
-
         public override TextBlock DescriptionBlock => throw new NotImplementedException();
     }
 }

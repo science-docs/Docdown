@@ -26,6 +26,19 @@
 
     <DrawingImage x:Key="CitationImage" Drawing="{DynamicResource CitationDrawing}"/>
 
+    <DrawingGroup x:Key="HtmlDrawing">
+        <DrawingGroup.Children>
+            <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M640,640L0,640 0,0 640,0z"/>
+            <GeometryDrawing Brush="{DynamicResource BlackBrush}" Geometry="M416 468l48 48 160-160-160-160-48 48 112 112z"/>
+            <GeometryDrawing Brush="{DynamicResource BlackBrush}" Geometry="M224 244l-48-48-160 160 160 160 48-48-112-112z"/>
+            <GeometryDrawing Brush="{DynamicResource BlackBrush}" Geometry="M350.649 175.26l34.734 9.472-95.993 352.013-34.734-9.472 95.994-352.013z"/>
+        </DrawingGroup.Children>
+    </DrawingGroup>
+
+    <DrawingBrush x:Key="HtmlIcon"  Drawing="{DynamicResource HtmlDrawing}"/>
+
+    <DrawingImage x:Key="HtmlImage" Drawing="{DynamicResource HtmlDrawing}"/>
+
     <DrawingBrush x:Key="BoldIcon">
         <DrawingBrush.Drawing>
             <DrawingGroup>
