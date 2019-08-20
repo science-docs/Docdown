@@ -41,7 +41,15 @@ namespace Docdown.Model
             }
         }
 
-        public FileSystemInfo FileInfo { get; set; }
+        public FileSystemInfo FileInfo
+        {
+            get => fileInfo;
+            set
+            {
+                fileInfo = value;
+                SetType(fileInfo.Extension);
+            }
+        }
 
         public WorkspaceItemType Type { get; set; }
         public List<IWorkspaceItem> Children { get; } = new List<IWorkspaceItem>();
@@ -56,12 +64,13 @@ namespace Docdown.Model
 
         public bool IsFile => !IsDirectory;
 
+        private FileSystemInfo fileInfo;
+
         public WorkspaceItem(FileSystemInfo info, IWorkspace workspace, IWorkspaceItem parent)
         {
             FileInfo = info;
             Parent = parent;
             Workspace = workspace;
-            SetType(info.Extension);
         }
 
         public async Task<string> Convert(CancelToken cancelToken)

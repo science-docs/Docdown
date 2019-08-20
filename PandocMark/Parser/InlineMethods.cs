@@ -392,7 +392,7 @@ namespace PandocMark.Parser
 
         private static Inline HandleTilde(Subject subj)
         {
-            return HandleOpenerCloser(subj, (InlineTag)0, InlineTag.Strikethrough);
+            return HandleOpenerCloser(subj, 0, InlineTag.Strikethrough);
         }
 
         private static Inline HandleOpenerCloser(Subject subj, InlineTag singleCharTag, InlineTag doubleCharTag)
