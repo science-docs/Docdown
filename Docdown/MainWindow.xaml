@@ -286,6 +286,20 @@
                            Height="16" 
                            Width="16"/>
             </Button>
+            <Button Command="{Binding Workspace.SelectedItem.BulletListCommand}"
+                    ToolTip="Bullet Point List" 
+                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource MonospaceIcon}" 
+                           Height="16" 
+                           Width="16"/>
+            </Button>
+            <Button Command="{Binding Workspace.SelectedItem.NumberListCommand}"
+                    ToolTip="Numbered List" 
+                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource MonospaceIcon}" 
+                           Height="16" 
+                           Width="16"/>
+            </Button>
         </StackPanel>
 
         <Grid Grid.Column="0" 

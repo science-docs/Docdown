@@ -9,6 +9,8 @@ namespace Docdown.Editor.Commands
         public static EditorCommand Italic { get; } = new ItalicCommand();
         public static EditorCommand Quote { get; } = new QuoteCommand();
         public static EditorCommand Verbatim { get; } = new VerbatimCommand();
+        public static EditorCommand BulletList { get; } = new BulletListCommand();
+        public static EditorCommand NumberList { get; } = new NumberListCommand();
     }
 
     public abstract class EditorCommand

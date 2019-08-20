@@ -409,14 +409,29 @@ namespace PandocMark.Parser
                     Start = start,
                     Delimiter = (c == '.' ? ListDelimiter.Period : ListDelimiter.Parenthesis)
                 };
+            }
+            else if (c == '#' || (c >= 'a' && c <= 'z'))
+            {
+                pos++;
 
+                if (pos >= len - 1 || (ln[pos] != '.' && ln[pos] != ')' && !Utilities.IsWhitespace(ln[++pos])))
+                    return 0;
+
+                if (interruptsParagraph && Scanner.ScanSpacechars(ln, pos + 1, ln.Length) == ln.Length - pos - 1)
+                    return 0;
+
+                data = new ListData
+                {
+                    BulletChar = c == '#' ? c : '\0',
+                    Start = 1
+                };
             }
             else
             {
                 return 0;
             }
 
-            return (pos - startpos);
+            return pos - startpos;
         }
 
         private static bool ListsMatch(ListData listData, ListData itemData)

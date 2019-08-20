@@ -1,4 +1,5 @@
-﻿using ICSharpCode.AvalonEdit;
+﻿using Docdown.Util;
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,10 @@ namespace Docdown.Editor.Markdown
     {
         public static readonly Regex UnorderedListCheckboxPattern = new Regex(@"^[ ]{0,3}[-\*\+][ ]{1,3}\[[ xX]\](?=[ ]{1,3}\S)", RegexOptions.Compiled);
         public static readonly Regex UnorderedListCheckboxEndPattern = new Regex(@"^[ ]{0,3}[-\*\+][ ]{1,3}\[[ xX]\]\s*", RegexOptions.Compiled);
-        public static readonly Regex OrderedListPattern = new Regex(@"^[ ]{0,3}(\d+)\.(?=[ ]{1,3}\S)", RegexOptions.Compiled);
-        public static readonly Regex OrderedListEndPattern = new Regex(@"^[ ]{0,3}(\d+)\.(?=[ ]{1,3}\s*)", RegexOptions.Compiled);
-        public static readonly Regex UnorderedListPattern = new Regex(@"^[ ]{0,3}[-\*\+](?=[ ]{1,3}\S)", RegexOptions.Compiled);
-        public static readonly Regex UnorderedListEndPattern = new Regex(@"^[ ]{0,3}[-\*\+](?=[ ]{1,3}\s*)", RegexOptions.Compiled);
+        public static readonly Regex OrderedListPattern = new Regex(@"^[ ]{0,3}([0-9]+|[a-z#])(\.|\))(?=[ ]{1,3}\S)", RegexOptions.Compiled);
+        public static readonly Regex OrderedListEndPattern = new Regex(@"^[ ]{0,3}([0-9]+|[a-z#])(\.|\))(?=[ ]{1,3}\s*)", RegexOptions.Compiled);
+        public static readonly Regex UnorderedListPattern = new Regex(@"^[ ]{0,3}[-\*\+\•](?=[ ]{1,3}\S)", RegexOptions.Compiled);
+        public static readonly Regex UnorderedListEndPattern = new Regex(@"^[ ]{0,3}[-\*\+\•](?=[ ]{1,3}\s*)", RegexOptions.Compiled);
         public static readonly Regex BlockQuotePattern = new Regex(@"^(([ ]{0,4}>)+)[ ]{0,4}.{2}", RegexOptions.Compiled);
         public static readonly Regex BlockQuoteEndPattern = new Regex(@"^([ ]{0,4}>)+[ ]{0,4}\s*", RegexOptions.Compiled);
 
@@ -45,10 +46,8 @@ namespace Docdown.Editor.Markdown
 
             void atEndOfList(string symbol, Action action)
             {
-                var previous = line.PreviousLine;
-                if (previous is null || previous.Length == 0) return;
-                var previousText = document.GetText(previous.Offset, previous.Length);
-                if (previousText.StartsWith(symbol)) action();
+                var lineText = document.GetText(line.Offset, line.Length);
+                if (lineText.StartsWith(symbol)) action();
             }
 
             document.BeginUpdate();
@@ -69,14 +68,28 @@ namespace Docdown.Editor.Markdown
 
                 new PM(OrderedListPattern, m =>
                 {
-                    var number = int.Parse(m.Groups[1].Value);
-                    if (lineCountIncreased)
+                    var numberText = m.Groups[1].Value;
+                    var type = m.Groups[2].Value;
+                    var num = "#";
+                    bool isNumber = false;
+                    if (int.TryParse(numberText, out int number))
                     {
-                        number += 1;
-                        document.Insert(editor.SelectionStart, number + ". ");
+                        num = (++number).ToString();
+                        isNumber = true;
+                    }
+                    else if (numberText.Length == 1 && char.IsLower(numberText[0]))
+                    {
+                        num = TextUtility.Increase(numberText[0]);
+                    }
+                    if (lineCountIncreased && !string.IsNullOrEmpty(num))
+                    {
+                        document.Insert(editor.SelectionStart, num + type + " ");
                         line = line.NextLine;
                     }
-                    RenumberOrderedList(document, line, number);
+                    if (isNumber)
+                    {
+                        RenumberOrderedList(document, line, number);
+                    }
                 }),
 
                 new PM(OrderedListEndPattern,

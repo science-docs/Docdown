@@ -5,6 +5,20 @@ namespace Docdown.Util
 {
     public static class TextUtility
     {
+        public static string Increase(char c)
+        {
+            if (c >= 'z')
+            {
+                return null;
+            }
+            if (c < 'a')
+            {
+                return null;
+            }
+            var next = (char)(c + 1);
+            return next.ToString();
+        }
+
         public static string InsertOnUpper(string value, string insert = " ")
         {
             return InsertOn(value, insert, c => char.IsUpper(c));

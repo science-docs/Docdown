@@ -122,6 +122,10 @@
       <DependentUpon>EditorAndViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TextBlockBuilder.cs" />
+    <Compile Include="Editor\Commands\BulletListCommand.cs" />
+    <Compile Include="Editor\Commands\HeaderCommand.cs" />
+    <Compile Include="Editor\Commands\ListCommand.cs" />
+    <Compile Include="Editor\Commands\NumberListCommand.cs" />
     <Compile Include="Editor\DefaultEditor.xaml.cs">
       <DependentUpon>DefaultEditor.xaml</DependentUpon>
     </Compile>
