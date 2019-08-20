@@ -10,18 +10,36 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="4"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition>
+                <ColumnDefinition.Style>
+                    <Style TargetType="ColumnDefinition">
+                        <Setter Property="Width" Value="*"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ShowPreview}" Value="False">
+                                <Setter Property="Width" Value="0"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ColumnDefinition.Style>
+            </ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Border Grid.Column="0"
-                BorderThickness="0 0 1 0"
-                BorderBrush="{DynamicResource GrayBrush9}">
-            <Editor:MarkdownEditor x:Name="MdEditor"/>
-        </Border>
-        <Border Grid.Column="2"
+        <Editor:MarkdownEditor Grid.Column="0" x:Name="MdEditor"/>
+        <Border Grid.Column="1"
+                BorderThickness="1 0 0 0"
+                BorderBrush="{DynamicResource GrayBrush9}"
+                Visibility="{Binding ShowPreview, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border 
+                Margin="4 0 0 0"
                 BorderThickness="1 0 0 0"
                 BorderBrush="{DynamicResource GrayBrush9}">
-            <local:DocumentViewer x:Name="Viewer"/>
+                <local:DocumentViewer x:Name="Viewer">
+                    <local:DocumentViewer.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Close Preview" Command="{Binding HidePreviewCommand}"/>
+                        </ContextMenu>
+                    </local:DocumentViewer.ContextMenu>
+                </local:DocumentViewer>
+            </Border>
         </Border>
     </Grid>
 </UserControl>

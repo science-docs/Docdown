@@ -122,6 +122,9 @@
       <DependentUpon>EditorAndViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TextBlockBuilder.cs" />
+    <Compile Include="Editor\DefaultEditor.xaml.cs">
+      <DependentUpon>DefaultEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Model\BibliographyParser.cs" />
     <Compile Include="Editor\Commands\BoldCommand.cs" />
     <Compile Include="Editor\Commands\ItalicCommand.cs" />
@@ -255,6 +258,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\DocumentViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Editor\DefaultEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

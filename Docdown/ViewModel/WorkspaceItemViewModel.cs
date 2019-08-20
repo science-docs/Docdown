@@ -93,6 +93,12 @@ namespace Docdown.ViewModel
             set => Set(ref isNameChanging, value);
         }
 
+        public bool ShowPreview
+        {
+            get => showPreview;
+            set => Set(ref showPreview, value);
+        }
+
         public string PdfPath
         {
             get => pdfPath;
@@ -135,6 +141,8 @@ namespace Docdown.ViewModel
         public ICommand CloseCommand => new ActionCommand(Close);
         public ICommand ConvertCommand => new ActionCommand(Convert);
         public ICommand StopConvertCommand => new ActionCommand(StopConvert);
+        public ICommand HidePreviewCommand => new ActionCommand(() => ShowPreview = false);
+        public ICommand ShowPreviewCommand => new ActionCommand(() => ShowPreview = true);
         [ChangeListener(nameof(PdfPath))]
         public ICommand PrintCommand => string.IsNullOrEmpty(PdfPath) ? null : new PrintCommand(Name, PdfPath);
         public ICommand RenameCommand => new ActionCommand(() => IsNameChanging = true);
@@ -208,6 +216,7 @@ namespace Docdown.ViewModel
         private bool isConverting;
         private bool hasChanged;
         private bool isNameChanging;
+        private bool showPreview;
         private string tempName;
         private object view;
         private int? wordCount;
@@ -305,6 +314,7 @@ namespace Docdown.ViewModel
                 PdfPath = string.Empty;
                 PdfPath = await Data.Convert(converterToken);
                 IsCompiled = true;
+                ShowPreview = true;
                 watch.Stop();
                 Messages.Success(Language.Current.Get("Workspace.Compilation.Success", watch.Elapsed.Seconds, watch.Elapsed.Milliseconds));
             }
@@ -405,6 +415,7 @@ namespace Docdown.ViewModel
             SendPropertyUpdate(nameof(TabName));
             SendPropertyUpdate(nameof(Name));
             SendPropertyUpdate(nameof(RelativeName));
+            SendPropertyUpdate(nameof(IconName));
         }
 
         public async Task Save()
@@ -483,7 +494,7 @@ namespace Docdown.ViewModel
                     return ShowMdEditorAndPdf();
                 case WorkspaceItemType.Bibliography:
                 case WorkspaceItemType.Text:
-                    return ShowEditor();
+                    return ShowDefaultEditor();
                 case WorkspaceItemType.Image:
                     return ShowImage();
                 default:
@@ -513,13 +524,14 @@ namespace Docdown.ViewModel
             return docViewer;
         }
 
-        private EditorAndViewer ShowMdEditorAndPdf()
+        private IEditor ShowMdEditorAndPdf()
         {
             var editorAndViewer = new EditorAndViewer();
             var temp = IOUtility.GetHashFile(Data.FullName);
             if (File.Exists(temp))
             {
                 PdfPath = temp;
+                ShowPreview = true;
             }
             editorAndViewer.Editor.IsEnabled = false;
             Task.Run(async () =>
@@ -538,9 +550,9 @@ namespace Docdown.ViewModel
             return editorAndViewer;
         }
 
-        private MarkdownEditor ShowEditor()
+        private IEditor ShowDefaultEditor()
         {
-            var editor = new MarkdownEditor();
+            var editor = new DefaultEditor();
             editor.Editor.IsEnabled = false;
             Task.Run(async () =>
             {
