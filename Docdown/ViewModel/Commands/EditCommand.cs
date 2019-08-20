@@ -1,10 +1,7 @@
 ﻿using Docdown.Editor;
 using Docdown.Editor.Commands;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Docdown.ViewModel.Commands
 {
@@ -22,6 +19,7 @@ namespace Docdown.ViewModel.Commands
             if (view is IEditor editor)
             {
                 command.Execute(editor.Editor);
+                Keyboard.Focus(editor.Editor);
             }
         }
     }

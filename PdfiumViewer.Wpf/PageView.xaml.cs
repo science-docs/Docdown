@@ -13,7 +13,7 @@ namespace PdfiumViewer.Wpf
     {
         private bool alreadySet = false;
         private Size? lastSize;
-        private DispatcherTimer timer;
+        private readonly DispatcherTimer timer;
 
         public PageView()
         {
