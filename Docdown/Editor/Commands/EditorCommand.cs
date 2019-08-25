@@ -9,8 +9,12 @@ namespace Docdown.Editor.Commands
         public static EditorCommand Italic { get; } = new ItalicCommand();
         public static EditorCommand Quote { get; } = new QuoteCommand();
         public static EditorCommand Verbatim { get; } = new VerbatimCommand();
+        public static EditorCommand RemoveList { get; } = new RemoveListCommand();
         public static EditorCommand BulletList { get; } = new BulletListCommand();
-        public static EditorCommand NumberList { get; } = new NumberListCommand(ListFinisher.Dot);
+        public static EditorCommand DotNumberList { get; } = new NumberListCommand(ListFinisher.Dot);
+        public static EditorCommand ParenthesisNumberList { get; } = new NumberListCommand(ListFinisher.Parentheses);
+        public static EditorCommand DotAlphabeticalList { get; } = new AlphabeticalListCommand(ListFinisher.Dot);
+        public static EditorCommand ParenthesisAlphabeticalList { get; } = new AlphabeticalListCommand(ListFinisher.Parentheses);
     }
 
     public abstract class EditorCommand

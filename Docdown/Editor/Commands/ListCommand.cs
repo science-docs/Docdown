@@ -16,7 +16,7 @@ namespace Docdown.Editor.Commands
         private readonly ListFinisher finisher;
         private readonly Func<int, string> markerSupplier;
 
-        protected ListCommand(string marker, ListFinisher finisher) : this(delegate { return marker; }, finisher)
+        protected ListCommand(string marker, ListFinisher finisher) : this(delegate { return marker ?? string.Empty; }, finisher)
         {
 
         }
@@ -33,7 +33,7 @@ namespace Docdown.Editor.Commands
             InsertMarkerAtParagraph(editor, markerSupplier);
         }
 
-        protected void InsertMarkerAtParagraph(TextEditor editor, Func<int, string> marker)
+        protected void InsertMarkerAtParagraph(TextEditor editor, Func<int, string> markerFactory)
         {
             var paragraphs = Paragraph.Create(editor);
             var sb = new StringBuilder();
@@ -46,20 +46,32 @@ namespace Docdown.Editor.Commands
                 {
                     onlyWhitespace = false;
                     paragraph.RemoveListMarker();
-                    sb.Append(marker(counter++));
+                    var marker = markerFactory(counter++);
+                    sb.Append(markerFactory(counter++));
                     sb.Append(GetFinisher());
-                    if (!paragraph.Text.StartsWith(" "))
+                    if (!string.IsNullOrEmpty(marker))
                     {
-                        sb.Append(' ');
+                        if (!paragraph.Text.StartsWith(" "))
+                        {
+                            sb.Append(' ');
+                        }
+                    }
+                    else
+                    {
+                        paragraph.Text = paragraph.Text.TrimStart();
                     }
                 }
                 sb.Append(paragraph.Text);
             }
             if (onlyWhitespace)
             {
-                sb.Append(marker(counter));
-                sb.Append(GetFinisher());
-                sb.Append(' ');
+                var marker = markerFactory(counter);
+                if (!string.IsNullOrEmpty(marker))
+                {
+                    sb.Append(marker);
+                    sb.Append(GetFinisher());
+                    sb.Append(' ');
+                }
             }
             editor.SelectedText = sb.ToString();
         }

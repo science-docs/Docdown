@@ -51,8 +51,12 @@ namespace Docdown.ViewModel
         public ICommand BoldCommand => new EditCommand(this, EditorCommands.Bold);
         public ICommand ItalicCommand => new EditCommand(this, EditorCommands.Italic);
         public ICommand QuoteCommand => new EditCommand(this, EditorCommands.Quote);
+        public ICommand RemoveListCommand => new EditCommand(this, EditorCommands.RemoveList);
         public ICommand BulletListCommand => new EditCommand(this, EditorCommands.BulletList);
-        public ICommand NumberListCommand => new EditCommand(this, EditorCommands.NumberList);
+        public ICommand DotNumberListCommand => new EditCommand(this, EditorCommands.DotNumberList);
+        public ICommand ParenthesisNumberListCommand => new EditCommand(this, EditorCommands.ParenthesisNumberList);
+        public ICommand DotAlphabeticalListCommand => new EditCommand(this, EditorCommands.DotAlphabeticalList);
+        public ICommand ParenthesisAlphabeticalListCommand => new EditCommand(this, EditorCommands.ParenthesisAlphabeticalList);
 
         private Theme theme;
 

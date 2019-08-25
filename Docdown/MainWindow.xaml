@@ -298,10 +298,11 @@
                                   Width="30" 
                                   Margin="2 0 0 0"
                                   IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
-                <MenuItem Icon="#." Header="Numbered Dot List" Command="{Binding NumberListCommand}"/>
-                <MenuItem Icon="#)" Header="Numbered Bracket List"/>
-                <MenuItem Icon="a." Header="Alphabetical Dot List"/>
-                <MenuItem Icon="a)" Header="Alphabetical Bracket List"/>
+                <MenuItem Icon="x" Header="Remove List" Command="{Binding RemoveListCommand}"/>
+                <MenuItem Icon="#." Header="Numbered Dot List" Command="{Binding DotNumberListCommand}"/>
+                <MenuItem Icon="#)" Header="Numbered Bracket List" Command="{Binding ParenthesisNumberListCommand}"/>
+                <MenuItem Icon="a." Header="Alphabetical Dot List" Command="{Binding DotAlphabeticalListCommand}"/>
+                <MenuItem Icon="a)" Header="Alphabetical Bracket List" Command="{Binding DotAlphabeticalListCommand}"/>
                 <MenuItem Icon="•" Header="Unordered List" Command="{Binding BulletListCommand}"/>
                 <Controls:SplitButton.SelectedIndex>0</Controls:SplitButton.SelectedIndex>
             </Controls:SplitButton>
