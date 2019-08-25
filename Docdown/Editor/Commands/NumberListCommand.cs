@@ -8,7 +8,7 @@ namespace Docdown.Editor.Commands
 {
     public class NumberListCommand : ListCommand
     {
-        public NumberListCommand() : base("#.")
+        public NumberListCommand(ListFinisher finisher) : base("#", finisher)
         {
         }
     }

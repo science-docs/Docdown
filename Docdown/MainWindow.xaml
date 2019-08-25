@@ -251,55 +251,52 @@
             <Rectangle Width="1" 
                        Margin="0 2" 
                        Fill="{DynamicResource GrayBrush9}"/>
-            <Button Command="{Binding Workspace.SelectedItem.BoldCommand}"
+            <Button Command="{Binding BoldCommand}"
                     ToolTip="Bold" 
                     IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource BoldIcon}" 
                            Height="16" 
                            Width="16"/>
             </Button>
-            <Button Command="{Binding Workspace.SelectedItem.ItalicCommand}"
+            <Button Command="{Binding ItalicCommand}"
                     ToolTip="Italic" 
                     IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource ItalicIcon}" 
                            Height="16" 
                            Width="16"/>
             </Button>
-            <Button Command="{Binding Workspace.SelectedItem.ItalicCommand}"
+            <Button Command="{Binding ItalicCommand}"
                     ToolTip="Underline" 
                     IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource UnderlineIcon}" 
                            Height="16" 
                            Width="16"/>
             </Button>
-            <Button Command="{Binding Workspace.SelectedItem.QuoteCommand}"
+            <Button Command="{Binding QuoteCommand}"
                     ToolTip="Quote" 
                     IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource QuoteIcon}" 
                            Height="16" 
                            Width="16"/>
             </Button>
-            <Button Command="{Binding Workspace.SelectedItem.VerbatimCommand}"
+            <Button Command="{Binding VerbatimCommand}"
                     ToolTip="Verbatim" 
                     IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource MonospaceIcon}" 
                            Height="16" 
                            Width="16"/>
             </Button>
-            <Button Command="{Binding Workspace.SelectedItem.BulletListCommand}"
-                    ToolTip="Bullet Point List" 
-                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
-                <Rectangle Fill="{DynamicResource MonospaceIcon}" 
-                           Height="16" 
-                           Width="16"/>
-            </Button>
-            <Button Command="{Binding Workspace.SelectedItem.NumberListCommand}"
-                    ToolTip="Numbered List" 
-                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
-                <Rectangle Fill="{DynamicResource MonospaceIcon}" 
-                           Height="16" 
-                           Width="16"/>
-            </Button>
+            <Controls:SplitButton Style="{StaticResource SplitButtonStyle}" 
+                                  Width="30" 
+                                  Margin="2 0 0 0"
+                                  IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                <MenuItem Icon="#." Header="Numbered Dot List" Command="{Binding NumberListCommand}"/>
+                <MenuItem Icon="#)" Header="Numbered Bracket List"/>
+                <MenuItem Icon="a." Header="Alphabetical Dot List"/>
+                <MenuItem Icon="a)" Header="Alphabetical Bracket List"/>
+                <MenuItem Icon="•" Header="Unordered List" Command="{Binding BulletListCommand}"/>
+                <Controls:SplitButton.SelectedIndex>0</Controls:SplitButton.SelectedIndex>
+            </Controls:SplitButton>
         </StackPanel>
 
         <Grid Grid.Column="0" 

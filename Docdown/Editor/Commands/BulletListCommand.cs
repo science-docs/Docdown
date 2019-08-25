@@ -8,7 +8,7 @@ namespace Docdown.Editor.Commands
 {
     public class BulletListCommand : ListCommand
     {
-        public BulletListCommand() : base("*")
+        public BulletListCommand() : base("*", ListFinisher.None)
         {
         }
     }

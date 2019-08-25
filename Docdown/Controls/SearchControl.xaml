@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Docdown.Controls"
              xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
-             d:DesignHeight="100" d:DesignWidth="190">
+             d:DesignHeight="60" d:DesignWidth="190">
     <UserControl.InputBindings>
         <KeyBinding Key="Return" Command="{Binding Search.SearchCommand}"/>
         <KeyBinding Key="Esc" Command="{Binding Search.HideCommand}"/>

@@ -1,41 +1,53 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using ICSharpCode.AvalonEdit;
 
 namespace Docdown.Editor.Commands
 {
+    public enum ListFinisher
+    {
+        None, Dot, Parentheses
+    }
+
     public abstract class ListCommand : EditorCommand
     {
-        private readonly string marker;
+        private readonly ListFinisher finisher;
+        private readonly Func<int, string> markerSupplier;
 
-        private static readonly HashSet<string> PossibleMarkers = new HashSet<string> { "#.", "•", "*", "+", "-" };
-
-        protected ListCommand(string marker)
+        protected ListCommand(string marker, ListFinisher finisher) : this(delegate { return marker; }, finisher)
         {
-            this.marker = marker;
+
+        }
+
+        protected ListCommand(Func<int, string> supplier, ListFinisher finisher)
+        {
+            this.finisher = finisher;
+            markerSupplier = supplier;
         }
 
         public override void Execute(TextEditor editor)
         {
             SorroundParagraph(editor);
-            InsertMarkerAtParagraph(editor, marker);
+            InsertMarkerAtParagraph(editor, markerSupplier);
         }
 
-        protected void InsertMarkerAtParagraph(TextEditor editor, string marker)
+        protected void InsertMarkerAtParagraph(TextEditor editor, Func<int, string> marker)
         {
-            var paragraphs = Paragraph.Create(editor).ToArray();
+            var paragraphs = Paragraph.Create(editor);
             var sb = new StringBuilder();
 
-            for (int i = 0; i < paragraphs.Length; i++)
+            int counter = 0;
+            bool onlyWhitespace = true;
+            foreach (var paragraph in paragraphs)
             {
-                var paragraph = paragraphs[i];
-                
                 if (!string.IsNullOrWhiteSpace(paragraph.Text))
                 {
+                    onlyWhitespace = false;
                     paragraph.RemoveListMarker();
-                    sb.Append(marker);
+                    sb.Append(marker(counter++));
+                    sb.Append(GetFinisher());
                     if (!paragraph.Text.StartsWith(" "))
                     {
                         sb.Append(' ');
@@ -43,8 +55,23 @@ namespace Docdown.Editor.Commands
                 }
                 sb.Append(paragraph.Text);
             }
-
+            if (onlyWhitespace)
+            {
+                sb.Append(marker(counter));
+                sb.Append(GetFinisher());
+                sb.Append(' ');
+            }
             editor.SelectedText = sb.ToString();
+        }
+
+        private string GetFinisher()
+        {
+            switch (finisher)
+            {
+                case ListFinisher.Dot: return ".";
+                case ListFinisher.Parentheses: return ")";
+                default: return string.Empty;
+            }
         }
 
         private class Paragraph
@@ -52,7 +79,7 @@ namespace Docdown.Editor.Commands
             public TextEditor Editor { get; set; }
             public string Text { get; set; }
 
-            private static readonly Regex NumberRegex = new Regex(@"^((?:[0-9]+|[#\*\+\•\-a-z])[\.\)])", RegexOptions.Compiled);
+            private static readonly Regex NumberRegex = new Regex(@"^((?:[0-9]+|[#a-z])[\.\)]|[*\+\•\-])", RegexOptions.Compiled);
 
             public Paragraph(TextEditor editor, string text)
             {
@@ -62,16 +89,8 @@ namespace Docdown.Editor.Commands
 
             public void RemoveListMarker()
             {
-                foreach (var marker in PossibleMarkers)
-                {
-                    if (Text.StartsWith(marker))
-                    {
-                        Text = Text.Substring(marker.Length);
-                        return;
-                    }
-                }
                 var match = NumberRegex.Match(Text);
-                if (match.Groups.Count > 0)
+                if (match.Success)
                 {
                     Text = Text.Substring(match.Groups[1].Length);
                 }

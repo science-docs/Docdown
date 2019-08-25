@@ -155,11 +155,7 @@ namespace Docdown.ViewModel
         public ICommand NewFileCommand => new CreateNewFileCommand(this);
         public ICommand ExistingFileCommand => new AddExistingFileCommand(this);
 
-        public ICommand BoldCommand => new EditCommand(this, EditorCommands.Bold);
-        public ICommand ItalicCommand => new EditCommand(this, EditorCommands.Italic);
-        public ICommand QuoteCommand => new EditCommand(this, EditorCommands.Quote);
-        public ICommand BulletListCommand => new EditCommand(this, EditorCommands.BulletList);
-        public ICommand NumberListCommand => new EditCommand(this, EditorCommands.NumberList);
+        
 
         public object View
         {

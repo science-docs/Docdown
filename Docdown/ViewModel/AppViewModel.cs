@@ -1,4 +1,5 @@
-﻿using Docdown.Model;
+﻿using Docdown.Editor.Commands;
+using Docdown.Model;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
 using MahApps.Metro;
@@ -46,6 +47,11 @@ namespace Docdown.ViewModel
         public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(Settings);
         public ICommand SwitchThemeCommand => new ActionCommand(SwitchTheme);
         public ICommand ChangeLanguageCommand => new ChangeLanguageCommand();
+        public ICommand BoldCommand => new EditCommand(this, EditorCommands.Bold);
+        public ICommand ItalicCommand => new EditCommand(this, EditorCommands.Italic);
+        public ICommand QuoteCommand => new EditCommand(this, EditorCommands.Quote);
+        public ICommand BulletListCommand => new EditCommand(this, EditorCommands.BulletList);
+        public ICommand NumberListCommand => new EditCommand(this, EditorCommands.NumberList);
 
         private Theme theme;
 
