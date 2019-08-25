@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using ICSharpCode.AvalonEdit.Document;
 
 namespace Docdown.Editor.Markdown
 {
@@ -61,6 +62,57 @@ namespace Docdown.Editor.Markdown
                     }
                 }
             }
+
+            var segments = new TextSegmentCollection<IssueMarker>();
+            foreach (var issue in ast.Document.Issues)
+            {
+                segments.Add(new IssueMarker(issue));
+            }
+
+            var visualLines = textView.VisualLines;
+            if (visualLines.Count == 0)
+                return;
+            int viewStart = visualLines.First().FirstDocumentLine.Offset;
+            int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
+            foreach (IssueMarker marker in segments.FindOverlappingSegments(viewStart, viewEnd - viewStart))
+            {
+                var brush = marker.Brush;
+                Pen usedPen = new Pen(brush, 1);
+                usedPen.Freeze();
+                if (brush == null)
+                {
+                    continue;
+                }
+
+                foreach (Rect r in BackgroundGeometryBuilder.GetRectsForSegment(textView, marker))
+                {
+                    Point startPoint = r.BottomLeft;
+                    Point endPoint = r.BottomRight;
+
+                    double offset = 2.5;
+
+                    int count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
+
+                    StreamGeometry geometry = new StreamGeometry();
+
+                    using (StreamGeometryContext ctx = geometry.Open())
+                    {
+                        ctx.BeginFigure(startPoint, false, false);
+                        ctx.PolyLineTo(CreatePoints(startPoint, endPoint, offset, count).ToArray(), true, false);
+                    }
+
+                    geometry.Freeze();
+
+                    
+                    drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
+                }
+            }
+        }
+
+        IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
+        {
+            for (int i = 0; i < count; i++)
+                yield return new Point(start.X + i * offset, start.Y - ((i + 1) % 2 == 0 ? offset : 0));
         }
 
         public void UpdateAbstractSyntaxTree(Block ast) { _abstractSyntaxTree = ast; }
@@ -97,6 +149,37 @@ namespace Docdown.Editor.Markdown
             catch (NotSupportedException)
             {
                 return null;
+            }
+        }
+
+        private class IssueMarker : TextSegment
+        {
+            public Brush Brush
+            {
+                get
+                {
+                    switch (issue.Type)
+                    {
+                        case IssueType.Info:
+                            return Brushes.Blue;
+                        case IssueType.Warning:
+                            return Brushes.Yellow;
+                        case IssueType.Error:
+                            return Brushes.Red;
+                        default:
+                            return null;
+                    }
+                }
+            }
+
+            private Issue issue;
+
+            public IssueMarker(Issue issue)
+            {
+                this.issue = issue;
+                StartOffset = issue.Offset;
+                Length = issue.Length;
+                EndOffset = issue.Offset + issue.Length;
             }
         }
     }

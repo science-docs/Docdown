@@ -39,7 +39,8 @@ namespace PandocMark.Syntax
             {
                 Document = new DocumentData
                 {
-                    ReferenceMap = settings.ExternalReferences.ToDictionary(i => i.Label)
+                    ReferenceMap = settings.ExternalReferences.ToDictionary(i => i.Label),
+                    Issues = new List<Issue>()
                 }
             };
             e.Top = e;

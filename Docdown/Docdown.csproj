@@ -132,6 +132,7 @@
       <DependentUpon>DefaultEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Editor\Markdown\MarkdownHtmlCompletionData.cs" />
+    <Compile Include="Editor\Markdown\MarkdownValidator.cs" />
     <Compile Include="Model\BibliographyParser.cs" />
     <Compile Include="Editor\Commands\BoldCommand.cs" />
     <Compile Include="Editor\Commands\ItalicCommand.cs" />

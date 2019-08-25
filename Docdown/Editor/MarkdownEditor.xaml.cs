@@ -9,6 +9,7 @@ using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -247,32 +248,33 @@ namespace Docdown.Editor
             foldingManager = FoldingManager.Install(EditBox.TextArea);
             foldingStrategy = new MarkdownFoldingStrategy();
 
+            var debounced = ((Action)UpdateDebounced).Debounce(500);
+
             TextChanged += (s, e) =>
             {
                 try
                 {
+                    Stopwatch watch = Stopwatch.StartNew();
                     var text = EditBox.Text;
                     AbstractSyntaxTree = GenerateAbstractSyntaxTree(text);
                     colorizer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
                     blockBackgroundRenderer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
                     foldingStrategy.UpdateFoldings(foldingManager, AbstractSyntaxTree, text);
                     
-                    var headers = EnumerateHeader(AbstractSyntaxTree);
-                    Outline = new Outline(headers);
                     if (DataContext is WorkspaceItemViewModel workspaceItem)
                     {
                         if (firstChange)
                         {
                             workspaceItem.HasChanged = true;
                         }
-                        WordCount = CountWords(AbstractSyntaxTree, text);
-                        workspaceItem.WordCount = WordCount;
-                        workspaceItem.Outline = new OutlineViewModel(Outline, JumpToLocation);
+                        debounced();
                     }
                     firstChange = true;
                     // The block nature of markdown causes edge cases in the syntax hightlighting.
                     // This is the nuclear option but it doesn't seem to cause issues.
                     EditBox.TextArea.TextView.Redraw();
+                    watch.Stop();
+                    Debug.WriteLine("Rendered document in " + watch.Elapsed.TotalMilliseconds);
                 }
                 catch
                 {
@@ -293,6 +295,31 @@ namespace Docdown.Editor
 
             EditBox.TextArea.TextView.LineTransformers.Add(colorizer);
             EditBox.TextArea.TextView.BackgroundRenderers.Add(blockBackgroundRenderer);
+        }
+
+        private void UpdateDebounced()
+        {
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                if (DataContext is WorkspaceItemViewModel workspaceItem)
+                {
+                    var headers = EnumerateHeader(AbstractSyntaxTree);
+                    Outline = new Outline(headers);
+                    WordCount = CountWords(AbstractSyntaxTree, Text);
+                    workspaceItem.WordCount = WordCount;
+                    workspaceItem.Outline = new OutlineViewModel(Outline, JumpToLocation);
+                }
+
+                foreach (var issue in MarkdownValidator.Validate(AbstractSyntaxTree, Text))
+                {
+                    AbstractSyntaxTree.Document.Issues.Add(issue);
+                }
+
+                if (AbstractSyntaxTree.Document.Issues.Count > 0)
+                {
+                    EditBox.TextArea.TextView.Redraw();
+                }
+            }));
         }
 
         private void ShowCompletionWindowKeyboard(object sender, KeyEventArgs e)
@@ -342,8 +369,11 @@ namespace Docdown.Editor
 
         private void JumpToLocation(int location)
         {
-            EditBox.TextArea.Caret.Offset = location;
-            EditBox.TextArea.Caret.BringCaretToView();
+        //    EditBox.TextArea.Caret.Offset = location;
+        //    EditBox.TextArea.Caret.BringCaretToView();
+            var line = Editor.Document.GetLineByOffset(location);
+            double vertOffset = Editor.TextArea.TextView.DefaultLineHeight * line.LineNumber;
+            Editor.ScrollToVerticalOffset(vertOffset);
         }
 
         private void OnEditBoxPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)

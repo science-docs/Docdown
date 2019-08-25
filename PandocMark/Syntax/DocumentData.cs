@@ -12,5 +12,7 @@ namespace PandocMark.Syntax
         /// and not used for all other elements.
         /// </summary>
         public Dictionary<string, Reference> ReferenceMap { get; set; }
+
+        public List<Issue> Issues { get; set; }
     }
 }
