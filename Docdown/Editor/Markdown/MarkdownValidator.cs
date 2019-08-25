@@ -1,14 +1,39 @@
-﻿using PandocMark.Syntax;
+﻿using Docdown.Util;
+using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Docdown.Editor.Markdown
 {
     public static class MarkdownValidator
     {
-        private static Regex ReferenceRegex = new Regex("[^}]\\[([^\\]]+)\\]", RegexOptions.Compiled);
-        private static Regex NotAllowedWords = new Regex("(?:[\\s\\.\\[\\]]|^)(ich|man)(?:[\\s\\.\\[\\]]|$)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex ReferenceRegex = new Regex("[^}]\\[([^\\]]+)\\]", RegexOptions.Compiled);
+        private static Regex ForbiddenWords;
+
+        static MarkdownValidator()
+        {
+            LoadForbiddenWords("German");
+        }
+
+        public static void LoadForbiddenWords(string language)
+        {
+            string text;
+            using (var res = IOUtility.LoadResource($"Docdown.Resources.Validation.Forbidden.{language}.properties"))
+            using (var reader = new StreamReader(res))
+            {
+                text = reader.ReadToEnd();
+            }
+            var split = text.Split('\r', '\n');
+            var sb = new StringBuilder("(?:[\\s\\.\\[\\]]|^)(");
+            sb.Append(string.Join("|", split.Where(e => !string.IsNullOrEmpty(e)).Select(e => Regex.Escape(e))));
+            sb.Append(")(?:[\\s\\.\\[\\]]|$)");
+
+            ForbiddenWords = new Regex(sb.ToString(), RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        }
 
         public static IEnumerable<Issue> Validate(Block document, string text)
         {
@@ -47,7 +72,7 @@ namespace Docdown.Editor.Markdown
             {
                 yield return referenceIssue;
             }
-            foreach (var notAllowedIssue in ValidateRegex(NotAllowedWords, sub, DefaultIssueFactory(block)))
+            foreach (var notAllowedIssue in ValidateRegex(ForbiddenWords, sub, DefaultIssueFactory(block)))
             {
                 yield return notAllowedIssue;
             }

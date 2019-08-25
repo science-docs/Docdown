@@ -1,5 +1,6 @@
 ﻿using Docdown.Controls;
 using Docdown.Model;
+using Docdown.Properties;
 using Docdown.Util;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
@@ -238,19 +239,25 @@ namespace Docdown.Editor.Markdown
             yield break;
         }
 
-        private static readonly IEnumerable<MarkdownHtmlCompletionData> cachedHtmlData = BuildHtmlData();
+        private static IEnumerable<MarkdownHtmlCompletionData> cachedHtmlData;
 
-        private static IEnumerable<MarkdownHtmlCompletionData> BuildHtmlData()
+        public static void BuildHtmlData(string language)
         {
-            var stream = IOUtility.LoadResource("Docdown.Resources.Completion.HtmlEN.properties");
+            var stream = IOUtility.LoadResource($"Docdown.Resources.Completion.Html.{language}.properties");
+            var list = new List<MarkdownHtmlCompletionData>();
             foreach (var pair in IOUtility.ParseProperties(stream))
             {
-                yield return new MarkdownHtmlCompletionData(pair.Item1, pair.Item2);
+                list.Add(new MarkdownHtmlCompletionData(pair.Item1, pair.Item2));
             }
+            cachedHtmlData = list;
         }
 
         public static IEnumerable<MarkdownHtmlCompletionData> HtmlData()
         {
+            if (cachedHtmlData == null)
+            {
+                BuildHtmlData(Settings.Default.DocumentLocale);
+            }
             return cachedHtmlData;
         }
 

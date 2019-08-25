@@ -151,6 +151,14 @@
                               Command="{Binding ChangeLanguageCommand}" 
                               CommandParameter="German"/>
                 </MenuItem>
+                <MenuItem Header="Document Language">
+                    <MenuItem Header="English"
+                              Command="{Binding ChangeDocumentLanguageCommand}"
+                              CommandParameter="English"/>
+                    <MenuItem Header="German"
+                              Command="{Binding ChangeDocumentLanguageCommand}"
+                              CommandParameter="German"/>
+                </MenuItem>
                 <MenuItem Header="{DynamicResource Main_Menu_Options_Settings}" 
                           Command="{Binding OpenSettingsCommand}">
                     <MenuItem.Icon>

@@ -44,5 +44,8 @@
     <Setting Name="Password" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="DocumentLocale" Type="System.String" Scope="User">
+      <Value Profile="(Default)">English</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

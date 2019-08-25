@@ -189,5 +189,17 @@ namespace Docdown.Properties {
                 this["Password"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("English")]
+        public string DocumentLocale {
+            get {
+                return ((string)(this["DocumentLocale"]));
+            }
+            set {
+                this["DocumentLocale"] = value;
+            }
+        }
     }
 }

@@ -214,6 +214,7 @@
     <Compile Include="ViewModel\Commands\ActionCommand.cs" />
     <Compile Include="ViewModel\ChangeListenerAttribute.cs" />
     <Compile Include="ViewModel\Commands\AddExistingFileCommand.cs" />
+    <Compile Include="ViewModel\Commands\ChangeDocumentLanguageCommand.cs" />
     <Compile Include="ViewModel\Commands\ChangeLanguageCommand.cs" />
     <Compile Include="ViewModel\Commands\CreateNewFileCommand.cs" />
     <Compile Include="ViewModel\Commands\DelegateCommand.cs" />
@@ -415,7 +416,10 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Locale\German.properties" />
-    <EmbeddedResource Include="Resources\Completion\HtmlEN.properties" />
+    <EmbeddedResource Include="Resources\Completion\Html\English.properties" />
+    <EmbeddedResource Include="Resources\Validation\Forbidden\German.properties" />
+    <EmbeddedResource Include="Resources\Validation\Forbidden\English.properties" />
+    <EmbeddedResource Include="Resources\Completion\Html\German.properties" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
