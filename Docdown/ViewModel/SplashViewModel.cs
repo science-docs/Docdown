@@ -31,7 +31,7 @@ namespace Docdown.ViewModel
 
             Task.Run(async () =>
             {
-                var app = new AppViewModel();
+                var app = AppViewModel.Instance;
                 await app.Settings.TestConnection();
                 app.ChangeWorkspace(workspacePath);
 

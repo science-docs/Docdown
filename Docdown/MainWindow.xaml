@@ -251,7 +251,7 @@
             <Button Command="{Binding Workspace.OpenWizardCommand, FallbackValue={x:Null}}" 
                     CommandParameter="{StaticResource True}"
                     ToolTip="Open Markdown Wizard" 
-                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                    IsEnabled="{Binding Workspace.SelectedItem.IsConvertable, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource WizardIcon}" 
                            Height="16" 
                            Width="16"/>
@@ -261,35 +261,35 @@
                        Fill="{DynamicResource GrayBrush9}"/>
             <Button Command="{Binding BoldCommand}"
                     ToolTip="Bold" 
-                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                    IsEnabled="{Binding Workspace.SelectedItem.IsConvertable, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource BoldIcon}" 
                            Height="16" 
                            Width="16"/>
             </Button>
             <Button Command="{Binding ItalicCommand}"
                     ToolTip="Italic" 
-                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                    IsEnabled="{Binding Workspace.SelectedItem.IsConvertable, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource ItalicIcon}" 
                            Height="16" 
                            Width="16"/>
             </Button>
             <Button Command="{Binding ItalicCommand}"
                     ToolTip="Underline" 
-                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                    IsEnabled="{Binding Workspace.SelectedItem.IsConvertable, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource UnderlineIcon}" 
                            Height="16" 
                            Width="16"/>
             </Button>
             <Button Command="{Binding QuoteCommand}"
                     ToolTip="Quote" 
-                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                    IsEnabled="{Binding Workspace.SelectedItem.IsConvertable, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource QuoteIcon}" 
                            Height="16" 
                            Width="16"/>
             </Button>
             <Button Command="{Binding VerbatimCommand}"
                     ToolTip="Verbatim" 
-                    IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                    IsEnabled="{Binding Workspace.SelectedItem.IsConvertable, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource MonospaceIcon}" 
                            Height="16" 
                            Width="16"/>
@@ -297,7 +297,7 @@
             <Controls:SplitButton Style="{StaticResource SplitButtonStyle}" 
                                   Width="30" 
                                   Margin="2 0 0 0"
-                                  IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}">
+                                  IsEnabled="{Binding Workspace.SelectedItem.IsConvertable, FallbackValue=False}">
                 <MenuItem Icon="x" Header="Remove List" Command="{Binding RemoveListCommand}"/>
                 <MenuItem Icon="#." Header="Numbered Dot List" Command="{Binding DotNumberListCommand}"/>
                 <MenuItem Icon="#)" Header="Numbered Bracket List" Command="{Binding ParenthesisNumberListCommand}"/>

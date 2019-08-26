@@ -2,6 +2,7 @@
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -142,8 +143,8 @@ namespace Docdown.ViewModel
 
             if (listenerAttribute != null)
             {
-                string emitterProperty = listenerAttribute.Property;
-                PropertyChangedEventHandler handler = CreatePropertyListenerHandler(emitterProperty, property);
+                var emitterProperty = listenerAttribute.Properties;
+                var handler = CreatePropertyListenerHandler(emitterProperty, property);
                 eventHandlerCache.Add(GetType(), handler);
                 PropertyChanged += handler;
             }
@@ -160,21 +161,21 @@ namespace Docdown.ViewModel
                 if (param.Length > 0)
                     throw new IndexOutOfRangeException("Only methods without parameters are supported");
 
-                string emitterProperty = listenerAttribute.Property;
-                PropertyChangedEventHandler handler = CreateCallListenerHandler(emitterProperty, method);
+                var emitterProperty = listenerAttribute.Properties;
+                var handler = CreateCallListenerHandler(emitterProperty, method);
                 eventHandlerCache.Add(GetType(), handler);
                 PropertyChanged += handler;
             }
         }
 
-        private static PropertyChangedEventHandler CreatePropertyListenerHandler(string emitter, PropertyInfo listener)
+        private static PropertyChangedEventHandler CreatePropertyListenerHandler(string[] emitter, PropertyInfo listener)
         {
             string listenerName = listener.Name;
             return AttributePropertyChanged;
 
             void AttributePropertyChanged(object sender, PropertyChangedEventArgs e)
             {
-                if (e.PropertyName == emitter &&
+                if (emitter.Contains(e.PropertyName) &&
                     sender is ObservableObject observableObject)
                 {
                     observableObject.PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(listenerName));
@@ -182,13 +183,13 @@ namespace Docdown.ViewModel
             }
         }
 
-        private static PropertyChangedEventHandler CreateCallListenerHandler(string emitter, MethodInfo listener)
+        private static PropertyChangedEventHandler CreateCallListenerHandler(string[] emitter, MethodInfo listener)
         {
             return CallListenerMethod;
 
             void CallListenerMethod(object sender, PropertyChangedEventArgs e)
             {
-                if (e.PropertyName == emitter)
+                if (emitter.Contains(e.PropertyName))
                 {
                     listener.Invoke(sender, new object[0]);
                 }

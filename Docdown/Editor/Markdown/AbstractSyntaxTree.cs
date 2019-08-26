@@ -112,6 +112,11 @@ namespace Docdown.Editor.Markdown
                 .TakeWhile(b => b.SourcePosition < endOffset);
         }
 
+        public static Block SpanningBlock(Block ast, int index)
+        {
+            return EnumerateBlocks(ast.FirstChild).FirstOrDefault(e => e.SourcePosition + e.SourceLength >= index);
+        }
+
         public static IEnumerable<Block> EnumerateBlocks(Block block)
         {
             if (block is null) yield break;
@@ -138,6 +143,20 @@ namespace Docdown.Editor.Markdown
                 if (next.NextSibling != null) stack.Push(next.NextSibling);
                 if (next.FirstChild != null) stack.Push(next.FirstChild);
             }
+        }
+
+        public static Inline SpanningInline(Block ast, int index)
+        {
+            var block = SpanningBlock(ast, index);
+            if (block != null)
+            {
+                var inline = EnumerateInlines(block.InlineContent).FirstOrDefault(e => e.SourcePosition + e.SourceLength > index);
+                if (inline != null && index >= inline.SourcePosition)
+                {
+                    return inline;
+                }
+            }
+            return null;
         }
 
         public static bool PositionSafeForSmartLink(Block ast, int start, int length)

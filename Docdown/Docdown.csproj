@@ -133,7 +133,9 @@
       <DependentUpon>DefaultEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Editor\Markdown\MarkdownHtmlCompletionData.cs" />
+    <Compile Include="Editor\Markdown\MarkdownMetaCompletionData.cs" />
     <Compile Include="Editor\Markdown\MarkdownValidator.cs" />
+    <Compile Include="Editor\Markdown\MetaDataModel.cs" />
     <Compile Include="Model\BibliographyParser.cs" />
     <Compile Include="Editor\Commands\BoldCommand.cs" />
     <Compile Include="Editor\Commands\ItalicCommand.cs" />
@@ -418,8 +420,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Locale\German.properties" />
     <EmbeddedResource Include="Resources\Completion\Html\English.properties" />
-    <EmbeddedResource Include="Resources\Validation\Forbidden\German.properties" />
-    <EmbeddedResource Include="Resources\Validation\Forbidden\English.properties" />
+    <EmbeddedResource Include="Resources\Validation\Discouraged\German.properties" />
+    <EmbeddedResource Include="Resources\Validation\Discouraged\English.properties" />
     <EmbeddedResource Include="Resources\Completion\Html\German.properties" />
   </ItemGroup>
   <ItemGroup>

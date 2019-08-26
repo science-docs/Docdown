@@ -91,7 +91,7 @@
 
         internal static Inline CreateLink(Inline label, string url, string title)
         {
-            return new Inline()
+            return new Inline
             {
                 Tag = InlineTag.Link,
                 FirstChild = label,

@@ -1,5 +1,4 @@
 ﻿using Docdown.Controls;
-using Docdown.Model;
 using Docdown.Properties;
 using Docdown.Util;
 using ICSharpCode.AvalonEdit.CodeCompletion;
@@ -9,10 +8,7 @@ using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Docdown.Editor.Markdown

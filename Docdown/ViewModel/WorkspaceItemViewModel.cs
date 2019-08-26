@@ -71,20 +71,25 @@ namespace Docdown.ViewModel
             set => Set(ref isExpanded, value);
         }
 
-        public bool CanConvert
+        [ChangeListener(nameof(IsConverting), nameof(HasValidationErrors), nameof(IsConvertable))]
+        public bool CanConvert => IsConvertable && !IsConverting && !HasValidationErrors;
+
+        public bool IsConvertable
         {
-            get => canConvert && !isConverting;
-            set => Set(ref canConvert, value);
+            get => isConvertable;
+            set => Set(ref isConvertable, value);
         }
 
         public bool IsConverting
         {
             get => isConverting;
-            set
-            {
-                Set(ref isConverting, value);
-                SendPropertyUpdate(nameof(CanConvert));
-            }
+            set => Set(ref isConverting, value);
+        }
+
+        public bool HasValidationErrors
+        {
+            get => hasValidationErrors;
+            set => Set(ref hasValidationErrors, value);
         }
 
         public bool IsNameChanging
@@ -210,8 +215,9 @@ namespace Docdown.ViewModel
         private string pdfPath;
         private bool isCompiled;
         private bool isExpanded = false;
-        private bool canConvert;
+        private bool isConvertable;
         private bool isConverting;
+        private bool hasValidationErrors;
         private bool hasChanged;
         private bool isNameChanging;
         private bool showPreview;
@@ -229,7 +235,7 @@ namespace Docdown.ViewModel
             Workspace = workspaceViewModel ?? throw new ArgumentNullException(nameof(workspaceViewModel));
             Parent = parent;
 
-            CanConvert = IsPlainText(workspaceItem);
+            IsConvertable = IsPlainText(workspaceItem);
         }
 
         private bool IsPlainText(IWorkspaceItem item)

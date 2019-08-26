@@ -5,11 +5,11 @@ namespace Docdown.ViewModel
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
     public class ChangeListenerAttribute : Attribute
     {
-        public string Property { get; set; }
+        public string[] Properties { get; set; }
 
-        public ChangeListenerAttribute(string property)
+        public ChangeListenerAttribute(params string[] properties)
         {
-            Property = property;
+            Properties = properties;
         }
     }
 }

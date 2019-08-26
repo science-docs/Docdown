@@ -172,7 +172,7 @@ namespace Docdown.Editor.Markdown
                 }
             }
 
-            private Issue issue;
+            private readonly Issue issue;
 
             public IssueMarker(Issue issue)
             {

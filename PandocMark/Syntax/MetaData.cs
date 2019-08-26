@@ -7,6 +7,10 @@ namespace PandocMark.Syntax
         public string Name { get; set; }
         public string Value { get; set; }
         public List<MetaDataEntry> Entries { get; } = new List<MetaDataEntry>();
+        public int NameStartPosition { get; set; }
+        public int NameLength => Name.Length;
+        public int ValueStartPosition { get; set; }
+        public int ValueLength { get; set; }
     }
 
     public sealed class MetaData

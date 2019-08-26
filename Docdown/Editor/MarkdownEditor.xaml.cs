@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -65,6 +66,7 @@ namespace Docdown.Editor
         private MarkdownFoldingStrategy foldingStrategy;
         private FoldingManager foldingManager;
         private CompletionWindow completionWindow;
+        private readonly ToolTip toolTip = new ToolTip();
 
         public event EventHandler TextChanged;
         public event EventHandler<ThemeChangedEventArgs> ThemeChanged;
@@ -242,6 +244,7 @@ namespace Docdown.Editor
 
         private void SetupSyntaxHighlighting()
         {
+            ToolTipService.SetInitialShowDelay(this, 0);
             var colorizer = new MarkdownHighlightingColorizer();
             var blockBackgroundRenderer = new BlockBackgroundRenderer();
 
@@ -267,6 +270,7 @@ namespace Docdown.Editor
                         {
                             workspaceItem.HasChanged = true;
                         }
+                        workspaceItem.HasValidationErrors = true;
                         debounced();
                     }
                     firstChange = true;
@@ -278,8 +282,7 @@ namespace Docdown.Editor
                 }
                 catch
                 {
-                    // See #159
-                    //Notify.Alert($"Abstract Syntax Tree generation failed: {ex.ToString()}");
+                    Trace.WriteLine("Abstract Syntax Tree generation failed", "Editor");
                 }
             };
 
@@ -295,6 +298,9 @@ namespace Docdown.Editor
 
             EditBox.TextArea.TextView.LineTransformers.Add(colorizer);
             EditBox.TextArea.TextView.BackgroundRenderers.Add(blockBackgroundRenderer);
+
+            EditBox.MouseHover += TextEditorMouseHover;
+            EditBox.MouseHoverStopped += TextEditorMouseHoverStopped;
         }
 
         private void UpdateDebounced()
@@ -308,18 +314,112 @@ namespace Docdown.Editor
                     WordCount = CountWords(AbstractSyntaxTree, Text);
                     workspaceItem.WordCount = WordCount;
                     workspaceItem.Outline = new OutlineViewModel(Outline, JumpToLocation);
-                }
 
-                foreach (var issue in MarkdownValidator.Validate(AbstractSyntaxTree, Text))
-                {
-                    AbstractSyntaxTree.Document.Issues.Add(issue);
-                }
-
-                if (AbstractSyntaxTree.Document.Issues.Count > 0)
-                {
-                    EditBox.TextArea.TextView.Redraw();
+                    foreach (var issue in MarkdownValidator.Validate(AbstractSyntaxTree, Text, workspaceItem.Data))
+                    {
+                        AbstractSyntaxTree.Document.Issues.Add(issue);
+                    }
+                    if (AbstractSyntaxTree.Document.Issues.Count > 0)
+                    {
+                        EditBox.TextArea.TextView.Redraw();
+                    }
+                    workspaceItem.HasValidationErrors = AbstractSyntaxTree.Document.Issues.Any(e => e.Type == IssueType.Error);
                 }
             }));
+        }
+
+        
+
+        void TextEditorMouseHover(object sender, MouseEventArgs e)
+        {
+            var pos = EditBox.GetPositionFromPoint(e.GetPosition(EditBox));
+            if (pos != null)
+            {
+                int index = EditBox.Document.GetOffset(pos.Value.Line, pos.Value.Column);
+                var content = FindHoverContent(index);
+                if (content != null)
+                {
+                    toolTip.PlacementTarget = this;
+                    toolTip.Content = content;
+                    toolTip.IsOpen = true;
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private object FindHoverContent(int index)
+        {
+            foreach (var issue in AbstractSyntaxTree.Document.Issues)
+            {
+                if (issue.Offset <= index && issue.Offset + issue.Length >= index)
+                {
+                    return issue.Tooltip;
+                }
+            }
+
+            var inline = SpanningInline(AbstractSyntaxTree, index);
+            if (inline != null)
+            {
+                switch (inline.Tag)
+                {
+                    case InlineTag.Link:
+                        return GetLinkInlineTooltip(inline);
+                }
+            }
+            else
+            {
+                var metaDataDesc = FindMetaEntry(AbstractSyntaxTree, index);
+                if (metaDataDesc != null)
+                {
+                    return metaDataDesc;
+                }
+            }
+
+            return null;
+        }
+
+        private object FindMetaEntry(Block ast, int index)
+        {
+            var block = SpanningBlock(ast, index);
+
+            if (block.Tag == BlockTag.Meta)
+            {
+                foreach (var entry in block.MetaData.Entries)
+                {
+                    if (entry.NameStartPosition <= index && entry.ValueStartPosition + entry.ValueLength >= index)
+                    {
+                        var modelEntry = MetaDataModel.Instance.Entries.FirstOrDefault(e => e.Name == entry.Name);
+                        if (modelEntry != null)
+                        {
+                            return new MarkdownMetaCompletionData(modelEntry).Description;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        private object GetLinkInlineTooltip(Inline link)
+        {
+            string text = link.FirstChild.LiteralContent;
+            if (AbstractSyntaxTree.Document.ReferenceMap.TryGetValue(text, out var reference))
+            {
+                char marker = text[0];
+                if (marker == '@')
+                {
+                    return new MarkdownCitationCompletionData(reference).Description;
+                }
+                else if (marker == '^')
+                {
+                    return new MarkdownFootnoteCompletionData(reference).Description;
+                }
+            }
+            return null;
+        }
+
+        void TextEditorMouseHoverStopped(object sender, MouseEventArgs e)
+        {
+            toolTip.IsOpen = false;
         }
 
         private void ShowCompletionWindowKeyboard(object sender, KeyEventArgs e)

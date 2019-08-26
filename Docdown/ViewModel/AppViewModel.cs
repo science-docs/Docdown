@@ -14,7 +14,17 @@ namespace Docdown.ViewModel
 {
     public class AppViewModel : ObservableObject
     {
-        public static AppViewModel Instance { get; private set; }
+        public static AppViewModel Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new AppViewModel();
+                }
+                return instance;
+            }
+        }
 
         public SettingsViewModel Settings { get; }
         public UserViewModel User { get; }
@@ -60,13 +70,10 @@ namespace Docdown.ViewModel
 
         private Theme theme;
 
-        public AppViewModel()
+        private static AppViewModel instance;
+
+        private AppViewModel()
         {
-            if (Instance != null)
-            {
-                throw new InvalidOperationException("Cannot create a second app view model");
-            }
-            Instance = this;
             Workspace = new WorkspaceViewModel();
             Settings = new SettingsViewModel(this);
             Messages = new MessageQueue();

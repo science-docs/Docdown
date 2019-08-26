@@ -35,12 +35,22 @@ namespace PandocMark.Parser
 
         private static void AddMetaDataEntry(Block block, LineInfo lineInfo, string ln, int offset, int remainingSpaces, int length = -1, bool isAddOffsetRequired = true)
         {
+            int pos = lineInfo.Offsets[0].Position - ln.Length + 1;
             int index = ln.IndexOf(':');
             if (index > -1)
             {
                 string name = ln.Substring(0, index);
-                string value = ln.Substring(index + 1).Trim('\n', ' ', '\t', '"');
-                var entry = new MetaDataEntry() { Name = name };
+
+                var entry = new MetaDataEntry { Name = name, NameStartPosition = pos };
+                for (int i = index + 1; i < ln.Length; i++)
+                {
+                    if (ln[i] == '[' || ln[i] == '"' || char.IsLetterOrDigit(ln[i]))
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+                string value = ln.Substring(index).Trim('\n', ' ', '\t', '"');
                 if (value.Length > 0)
                 {
                     if (value[0] == '[')
@@ -49,13 +59,15 @@ namespace PandocMark.Parser
                         for (int i = 0; i < values.Length; i++)
                         {
                             values[i] = values[i].Trim('[', ']', ' ', '"');
-                            entry.Entries.Add(new MetaDataEntry() { Value = values[i] });
+                            entry.Entries.Add(new MetaDataEntry { Value = values[i] });
                         }
                     }
                     else
                     {
                         entry.Value = value;
                     }
+                    entry.ValueStartPosition = index + pos;
+                    entry.ValueLength = ln.Length - index;
                 }
 
                 block.MetaData.Entries.Add(entry);

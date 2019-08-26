@@ -1,4 +1,5 @@
-﻿using Docdown.Model;
+﻿using Docdown.Editor.Markdown;
+using Docdown.Model;
 using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -88,6 +89,13 @@ namespace Docdown.ViewModel
                 }
                 selectedTemplateName = value.Name;
                 settings.Template = value.Name;
+                if (IsConnected)
+                {
+                    Task.Run(async () =>
+                    {
+                        await LoadTemplateMetaData(selectedTemplateName);
+                    });
+                }
                 SendPropertyUpdate();
             }
         }
@@ -252,6 +260,28 @@ namespace Docdown.ViewModel
                 SelectedTemplate = null;
                 Templates = new[] { Template.Empty };
             }
+            var selectedTemplate = SelectedTemplate;
+            if (selectedTemplate != Template.Empty)
+            {
+                await LoadTemplateMetaData(selectedTemplate.Name);
+            }
+        }
+
+        private async Task LoadTemplateMetaData(string name)
+        {
+            string templatesUrl = WebUtility.BuildTemplatesUrl() + "/" + Uri.EscapeUriString(name);
+
+            string text;
+            try
+            {
+                text = await WebUtility.SimpleTextRequest(templatesUrl);
+            }
+            catch
+            {
+                text = "{}";
+            }
+
+            MetaDataModel.Instance.Load(text);
         }
 
         public async Task UploadTemplate(string path)

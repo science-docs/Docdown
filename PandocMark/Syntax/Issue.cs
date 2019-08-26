@@ -25,11 +25,16 @@ namespace PandocMark.Syntax
 
         }
 
-        public Issue(IssueType type, int offset, int length)
+        public Issue(IssueType type, int offset, int length) : this(type, offset, length, null)
+        {
+        }
+
+        public Issue(IssueType type, int offset, int length, object tooltip)
         {
             Type = type;
             Offset = offset;
             Length = length;
+            Tooltip = tooltip;
         }
     }
 }
