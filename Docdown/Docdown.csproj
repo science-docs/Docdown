@@ -212,6 +212,7 @@
     <Compile Include="Util\ResourceUtility.cs" />
     <Compile Include="Util\ServerException.cs" />
     <Compile Include="Util\TextUtility.cs" />
+    <Compile Include="Util\ThesaurusUtility.cs" />
     <Compile Include="Util\TypeCache.cs" />
     <Compile Include="Util\UIUtility.cs" />
     <Compile Include="Util\WebUtility.cs" />
