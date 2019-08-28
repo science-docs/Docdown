@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Docdown.Model
 {
     public class BibliographyEntry
     {
-        public string Key { get; }
-        public IWorkspaceItem Item { get; }
-        public string Type { get; }
+        public string Key { get; set; }
+        public IWorkspaceItem Item { get; set; }
+        public string Type { get; set; }
+        public Dictionary<string, string> Fields { get; } = new Dictionary<string, string>();
 
-        public Dictionary<string, string> Fields { get; }
+        public BibliographyEntry()
+        {
+
+        }
 
         public BibliographyEntry(IWorkspaceItem item, string key, string type, Dictionary<string, string> fields)
         {
@@ -19,6 +24,48 @@ namespace Docdown.Model
             Key = key;
             Type = type;
             Fields = fields;
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder("@");
+
+            sb.Append(Type);
+            sb.Append('{');
+            sb.Append(Key);
+            if (Fields.Count > 0)
+            {
+                sb.AppendLine(",");
+            }
+
+            foreach (var field in Fields)
+            {
+                sb.Append(' ');
+                sb.Append(field.Key);
+                sb.Append(" = {");
+                bool useDouble = false;
+                if (field.Key == "title")
+                {
+                    useDouble = true;
+                    sb.Append('{');
+                }
+                sb.Append(field.Value);
+                sb.Append('}');
+                if (useDouble)
+                {
+                    sb.Append('}');
+                }
+                sb.AppendLine(",");
+            }
+
+            if (Fields.Count > 0)
+            {
+                sb.Remove(sb.Length - 3, 3);
+                sb.AppendLine();
+            }
+            sb.Append('}');
+
+            return sb.ToString();
         }
     }
 
