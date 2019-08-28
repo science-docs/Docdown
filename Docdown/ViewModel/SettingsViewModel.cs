@@ -287,7 +287,8 @@ namespace Docdown.ViewModel
         public async Task UploadTemplate(string path)
         {
             var nameParam = MultipartFormParameter.CreateField("name", Path.GetFileName(path));
-            var parameter = MultipartFormParameter.FromFolder(path).Concat(nameParam);
+            var info = AppViewModel.Instance.FileSystem.DirectoryInfo.FromDirectoryName(path);
+            var parameter = MultipartFormParameter.FromFolder(info).Concat(nameParam);
             try
             {
                 var res = await WebUtility.PostRequest(WebUtility.BuildTemplatesUrl(), parameter);

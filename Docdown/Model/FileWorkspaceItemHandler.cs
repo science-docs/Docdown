@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Docdown.Util;
 using Docdown.Properties;
 using System.Threading;
+using System;
+using System.IO.Abstractions;
 
 namespace Docdown.Model
 {
@@ -42,34 +44,40 @@ namespace Docdown.Model
         {
             if (item.IsDirectory)
             {
-                Directory.Delete(item.FullName);
+                item.FileInfo.FileSystem.Directory.Delete(item.FullName);
             }
             else
             {
-                File.Delete(item.FullName);
+                item.FileInfo.FileSystem.File.Delete(item.FullName);
             }
             return Task.CompletedTask;
         }
 
         public async Task<byte[]> Read(IWorkspaceItem item)
         {
-            return await IOUtility.ReadAllBytes(item.FullName);
+            if (item.IsDirectory)
+            {
+                throw new InvalidOperationException("Cannot read content of directory");
+            }
+
+            return await IOUtility.ReadAllBytes(item.FileInfo as IFileInfo);
         }
 
         public Task Rename(IWorkspaceItem item, string newName)
         {
             var dir = Path.GetDirectoryName(item.FullName);
             var name = Path.Combine(dir, newName);
+            var fs = item.FileInfo.FileSystem;
 
             if (item.IsDirectory)
             {
                 Directory.Move(item.FullName, name);
-                item.FileInfo = new DirectoryInfo(name);
+                item.FileInfo = fs.DirectoryInfo.FromDirectoryName(name);
             }
             else
             {
                 File.Move(item.FullName, name);
-                item.FileInfo = new FileInfo(name);
+                item.FileInfo = fs.FileInfo.FromFileName(name);
             }
 
             return Task.CompletedTask;
@@ -77,7 +85,8 @@ namespace Docdown.Model
 
         public async Task Save(IWorkspaceItem item, byte[] bytes)
         {
-            await IOUtility.WriteAllBytes(item.FullName, bytes);
+            
+            await IOUtility.WriteAllBytes(item.FileInfo as IFileInfo, bytes);
         }
     }
 }

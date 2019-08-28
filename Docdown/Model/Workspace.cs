@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ namespace Docdown.Model
     public class Workspace : IWorkspace
     {
         public string Name => Item.Name;
+        public IFileSystem FileSystem { get; }
         public IWorkspaceItem Item { get; private set; }
         public IWorkspaceItem SelectedItem { get; set; }
         public ConverterType FromType => FromSelectedItem();
@@ -21,8 +23,9 @@ namespace Docdown.Model
         public Bibliography Bibliography { get; } = new Bibliography();
         public event WorkspaceChangeEventHandler WorkspaceChanged;
 
-        public Workspace(WorkspaceSettings settings)
+        public Workspace(WorkspaceSettings settings, IFileSystem fileSystem)
         {
+            FileSystem = fileSystem;
             Settings = settings;
         }
 
@@ -36,7 +39,7 @@ namespace Docdown.Model
                 await DownloadWorkspace(webHandler);
             }
 
-            var dir = new DirectoryInfo(Settings.Path);
+            var dir = FileSystem.DirectoryInfo.FromDirectoryName(Settings.Path);
             Item = new WorkspaceItem(dir, this, null);
 
             if (webHandler == null)
@@ -89,11 +92,11 @@ namespace Docdown.Model
             }
         }
 
-        private void InitItem(FileSystemInfo fileInfo, IWorkspaceItem parent, WebWorkspaceItemHandler handler)
+        private void InitItem(IFileSystemInfo fileInfo, IWorkspaceItem parent, WebWorkspaceItemHandler handler)
         {
             var item = new WorkspaceItem(fileInfo, this, parent);
 
-            if (fileInfo is DirectoryInfo dirInfo)
+            if (fileInfo is IDirectoryInfo dirInfo)
             {
                 item.Type = WorkspaceItemType.Directory;
                 foreach (var info in dirInfo.EnumerateFileSystemInfos())

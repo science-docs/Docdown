@@ -1,10 +1,12 @@
 using Docdown.Util;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Path = System.IO.Path;
 
 namespace Docdown.Model
 {
@@ -41,7 +43,7 @@ namespace Docdown.Model
             }
         }
 
-        public FileSystemInfo FileInfo
+        public IFileSystemInfo FileInfo
         {
             get => fileInfo;
             set
@@ -64,9 +66,10 @@ namespace Docdown.Model
 
         public bool IsFile => !IsDirectory;
 
-        private FileSystemInfo fileInfo;
+        private IFileSystemInfo fileInfo;
+        private IFileSystem FS => fileInfo.FileSystem;
 
-        public WorkspaceItem(FileSystemInfo info, IWorkspace workspace, IWorkspaceItem parent)
+        public WorkspaceItem(IFileSystemInfo info, IWorkspace workspace, IWorkspaceItem parent)
         {
             FileInfo = info;
             Parent = parent;
@@ -87,13 +90,13 @@ namespace Docdown.Model
         public async Task<IWorkspaceItem> CopyExistingFolder(string path)
         {
             var item = await CreateNewDirectory(Path.GetFileName(path));
-            foreach (var file in Directory.GetFiles(path))
+            foreach (var file in FS.Directory.GetFiles(path))
             {
                 var child = await CopyExistingItem(file);
                 item.Children.Add(child);
                 child.Parent = item;
             }
-            foreach (var directory in Directory.GetDirectories(path))
+            foreach (var directory in FS.Directory.GetDirectories(path))
             {
                 var child = await CopyExistingFolder(directory);
                 item.Children.Add(child);
@@ -126,7 +129,7 @@ namespace Docdown.Model
                 return existing;
             }
 
-            var fileInfo = new FileInfo(fullName);
+            var fileInfo = FS.FileInfo.FromFileName(fullName);
             var item = new WorkspaceItem(fileInfo, Workspace, this);
             await Task.WhenAll(Workspace.Handlers.Select(e => e.Save(item, content)));
             Children.Add(item);
@@ -147,8 +150,7 @@ namespace Docdown.Model
                 return Task.FromResult(existing);
             }
 
-            Directory.CreateDirectory(fullName);
-            var fileInfo = new DirectoryInfo(fullName);
+            var fileInfo = FS.Directory.CreateDirectory(fullName);
             IWorkspaceItem item = new WorkspaceItem(fileInfo, Workspace, this);
             Children.Add(item);
             return Task.FromResult(item);
@@ -161,14 +163,14 @@ namespace Docdown.Model
 
             if (Children.Any(e => e.Name == fileName))
             {
-                File.Replace(path, fullNewName, null);
+                FS.File.Replace(path, fullNewName, null);
             }
             else
             {
-                File.Copy(path, fullNewName);
+                FS.File.Copy(path, fullNewName);
             }
 
-            var fileInfo = new FileInfo(fullNewName);
+            var fileInfo = FS.FileInfo.FromFileName(fullNewName);
             IWorkspaceItem item = new WorkspaceItem(fileInfo, Workspace, this);
             Children.Add(item);
             return Task.FromResult(item);
@@ -229,11 +231,11 @@ namespace Docdown.Model
                 var fullPath = Path.Combine(topName, RelativeName);
                 if (IsDirectory)
                 {
-                    FileInfo = new DirectoryInfo(fullPath);
+                    FileInfo = FS.DirectoryInfo.FromDirectoryName(fullPath);
                 }
                 else
                 {
-                    FileInfo = new FileInfo(fullPath);
+                    FileInfo = FS.FileInfo.FromFileName(fullPath);
                 }
             }
             foreach (var child in Children)

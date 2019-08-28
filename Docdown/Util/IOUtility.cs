@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,22 +14,22 @@ namespace Docdown.Util
         private static readonly Regex InvalidFileNameRegex = new Regex("[" + new string(Path.GetInvalidFileNameChars()) + "]", RegexOptions.Compiled);
         private static readonly MD5 md5 = MD5.Create();
 
-        public static async Task WriteAllBytes(string fullName, byte[] bytes)
+        public static async Task WriteAllBytes(IFileInfo fileInfo, byte[] bytes)
         {
-            using (FileStream stream = File.Open(fullName, FileMode.Create))
+            using (var stream = fileInfo.OpenWrite())
             {
                 await stream.WriteAsync(bytes, 0, bytes.Length);
             }
         }
 
-        public static async Task WriteAllText(string fullName, string text)
+        public static async Task WriteAllText(IFileInfo fileInfo, string text)
         {
-            await WriteAllBytes(fullName, Encoding.UTF8.GetBytes(text));
+            await WriteAllBytes(fileInfo, Encoding.UTF8.GetBytes(text));
         }
 
-        public static async Task<byte[]> ReadAllBytes(string fullName)
+        public static async Task<byte[]> ReadAllBytes(IFileInfo fileInfo)
         {
-            using (FileStream stream = File.OpenRead(fullName))
+            using (var stream = fileInfo.OpenRead())
             {
                 var result = new byte[stream.Length];
                 await stream.ReadAsync(result, 0, (int)stream.Length);
@@ -36,9 +37,37 @@ namespace Docdown.Util
             }
         }
 
-        public static async Task<string> ReadAllText(string fullName)
+        public static async Task<string> ReadAllText(IFileInfo fileInfo)
         {
-            return Encoding.UTF8.GetString(await ReadAllBytes(fullName));
+            return Encoding.UTF8.GetString(await ReadAllBytes(fileInfo));
+        }
+
+        public static async Task WriteAllBytes(string fullName, IFile file, byte[] bytes)
+        {
+            using (var stream = file.Open(fullName, FileMode.Create))
+            {
+                await stream.WriteAsync(bytes, 0, bytes.Length);
+            }
+        }
+
+        public static async Task WriteAllText(string fullName, IFile file, string text)
+        {
+            await WriteAllBytes(fullName, file, Encoding.UTF8.GetBytes(text));
+        }
+
+        public static async Task<byte[]> ReadAllBytes(string fullName, IFile file)
+        {
+            using (var stream = file.OpenRead(fullName))
+            {
+                var result = new byte[stream.Length];
+                await stream.ReadAsync(result, 0, (int)stream.Length);
+                return result;
+            }
+        }
+
+        public static async Task<string> ReadAllText(string fullName, IFile file)
+        {
+            return Encoding.UTF8.GetString(await ReadAllBytes(fullName, file));
         }
 
         public static string GetTempFile(string name = null)

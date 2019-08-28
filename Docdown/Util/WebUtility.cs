@@ -4,6 +4,7 @@ using Docdown.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -306,9 +307,9 @@ namespace Docdown.Util
                 yield return CreateField("csl", csl);
         }
 
-        public static IEnumerable<MultipartFormParameter> FromFolder(string folderPath)
+        public static IEnumerable<MultipartFormParameter> FromFolder(IDirectoryInfo directoryInfo)
         {
-            var item = new WorkspaceItem(new DirectoryInfo(folderPath), null, null);
+            var item = new WorkspaceItem(directoryInfo, null, null);
             return CreateFormData(item, item, null, false).Where(e => e != null);
         }
 

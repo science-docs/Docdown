@@ -1,6 +1,6 @@
 ﻿using Docdown.Util;
 using System.Collections.Generic;
-using System.IO;
+using System.IO.Abstractions;
 using System.Threading.Tasks;
 
 namespace Docdown.Model
@@ -10,7 +10,7 @@ namespace Docdown.Model
         string RelativeName { get; }
         string Name { get; }
         string FullName { get; }
-        FileSystemInfo FileInfo { get; set; }
+        IFileSystemInfo FileInfo { get; set; }
         WorkspaceItemType Type { get; set; }
         List<IWorkspaceItem> Children { get; }
         IWorkspace Workspace { get; set; }

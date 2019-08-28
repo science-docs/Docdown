@@ -6,6 +6,7 @@ using MahApps.Metro;
 using MahApps.Metro.Controls;
 using System;
 using System.ComponentModel;
+using System.IO.Abstractions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -37,6 +38,7 @@ namespace Docdown.ViewModel
             set => Set(ref theme, value);
         }
         public WorkspaceViewModel Workspace { get; set; }
+        public IFileSystem FileSystem { get; set; }
 
         public bool ExplorerVisible
         {
@@ -74,6 +76,7 @@ namespace Docdown.ViewModel
 
         private AppViewModel()
         {
+            FileSystem = new FileSystem();
             Workspace = new WorkspaceViewModel();
             Settings = new SettingsViewModel(this);
             Messages = new MessageQueue();
@@ -92,7 +95,7 @@ namespace Docdown.ViewModel
             {
                 Task.Run(async () =>
                 {
-                    var workspace = await WorkspaceProvider.Create(newWorkspace);
+                    var workspace = await WorkspaceProvider.Create(newWorkspace, FileSystem);
                     await Workspace.DataAsync(workspace);
                 });
             }
