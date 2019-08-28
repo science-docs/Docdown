@@ -39,8 +39,14 @@ namespace Docdown.Editor.Commands
 
         protected void SorroundSelection(TextEditor editor, string sorroundingStart, string sorroundingEnd)
         {
+            var fullText = editor.Text;
             int start = editor.SelectionStart;
-            var text = editor.SelectedText;
+            var end = editor.SelectionStart + editor.SelectionLength;
+
+            for (; start < fullText.Length && fullText[start] == ' '; start++) ;
+            for (; end > 0 && fullText[end - 1] == ' '; end--) ;
+
+            var text = fullText.Substring(start, end - start);
             StringBuilder newText = new StringBuilder(text);
             bool both = false;
 
@@ -63,6 +69,9 @@ namespace Docdown.Editor.Commands
                 newText.Remove(0, sorroundingStart.Length);
                 newText.Remove(newText.Length - sorroundingEnd.Length, sorroundingEnd.Length);
             }
+
+            editor.SelectionStart = start;
+            editor.SelectionLength = end - start;
 
             editor.TextArea.Selection.ReplaceSelectionWithText(newText.ToString());
 
