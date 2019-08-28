@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Editing;
 
 namespace Docdown.Editor.Markdown
 {
-    class MarkdownMetaCompletionData : MarkdownCompletionData
+    public class MarkdownMetaCompletionData : MarkdownCompletionData
     {
         public override ImageSource Image => null;
 
@@ -57,6 +56,19 @@ namespace Docdown.Editor.Markdown
             }
 
             return sb.ToString();
+        }
+
+        public override void Complete(TextArea textArea, ISegment completionSegment, EventArgs insertionRequestEventArgs)
+        {
+            var sb = new StringBuilder(metaDataEntry.Name);
+            sb.Append(": ");
+            if (metaDataEntry.IsArray)
+            {
+                sb.Append("[]");
+            }
+
+            var segment = CreateSegment(textArea, completionSegment, Text, null, null);
+            textArea.Document.Replace(segment, sb.ToString());
         }
     }
 }

@@ -40,6 +40,11 @@ namespace Docdown.Editor.Markdown
             DiscouragedWords = new Regex(sb.ToString(), RegexOptions.Compiled | RegexOptions.IgnoreCase);
         }
 
+        public static IEnumerable<Issue> Validate(string text, IWorkspaceItem item)
+        {
+            return Validate(AbstractSyntaxTree.GenerateAbstractSyntaxTree(text), text, item);
+        }
+
         public static IEnumerable<Issue> Validate(Block document, string text, IWorkspaceItem item)
         {
             foreach (var block in AbstractSyntaxTree.EnumerateBlocks(document))

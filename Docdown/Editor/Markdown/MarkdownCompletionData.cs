@@ -34,6 +34,11 @@ namespace Docdown.Editor.Markdown
 
         protected TextBlock BuildDescriptionBase(string keyword, string description)
         {
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                throw new ArgumentException("Keyword cannot be empty");
+            }
+
             var builder = new TextBlockBuilder()
                 .Image(Image)
                 .Text($" {keyword} ", Theme.BlueBrush)
@@ -151,24 +156,36 @@ namespace Docdown.Editor.Markdown
 
         public static void FromAST(string text, int index, Block ast, CompletionList list)
         {
-            char? marker = IdentifyMarker(text, index, out string pre);
+            var spanningBlock = AbstractSyntaxTree.SpanningBlock(ast, index);
+            string pre = string.Empty;
             var data = new List<ICompletionData>();
-            if (marker == null || marker == FootnoteMarker)
+            if (spanningBlock.Tag == BlockTag.Meta)
             {
-                data.AddRange(FromReferences(ast));
+                pre = FindMetaPretext(text, index);
+                data.AddRange(FromMetaModel(MetaDataModel.Instance));
             }
-            if (marker == null || marker == CitationMarker)
+            else
             {
-                data.AddRange(FromBibliography(ast));
+                char? marker = IdentifyMarker(text, index, out pre);
+                
+                if (marker == null || marker == FootnoteMarker)
+                {
+                    data.AddRange(FromReferences(ast));
+                }
+                if (marker == null || marker == CitationMarker)
+                {
+                    data.AddRange(FromBibliography(ast));
+                }
+                if (marker == null || marker == HtmlMarker)
+                {
+                    data.AddRange(HtmlData());
+                }
+                if (marker == null || marker == LatexMarker)
+                {
+                    data.AddRange(LatexData());
+                }
             }
-            if (marker == null || marker == HtmlMarker)
-            {
-                data.AddRange(HtmlData());
-            }
-            if (marker == null || marker == LatexMarker)
-            {
-                data.AddRange(LatexData());
-            }
+            
             data.Sort((a, b) => a.Text.CompareTo(b.Text));
             foreach (var item in data)
             {
@@ -204,6 +221,24 @@ namespace Docdown.Editor.Markdown
             {
                 return text.Substring(i + 1, index - i - 1);
             }
+        }
+
+        private static string FindMetaPretext(string text, int index)
+        {
+            int lineStartIndex = 0;
+            for (int i = index; i > 0; i--)
+            {
+                if (text[i] == '\n')
+                {
+                    lineStartIndex = i + 1;
+                    break;
+                }
+            }
+            if (lineStartIndex > index)
+            {
+                return string.Empty;
+            }
+            return text.Substring(lineStartIndex, index - lineStartIndex);
         }
 
         private static bool IsEndCharacter(char c)
@@ -262,6 +297,14 @@ namespace Docdown.Editor.Markdown
             foreach (var entry in ast.Document.ReferenceMap.Values.Where(e => StartsWith(e.Label, CitationMarker)))
             {
                 yield return new MarkdownCitationCompletionData(entry);
+            }
+        }
+
+        public static IEnumerable<MarkdownMetaCompletionData> FromMetaModel(MetaDataModel model)
+        {
+            foreach (var entry in model.Entries)
+            {
+                yield return new MarkdownMetaCompletionData(entry);
             }
         }
 
