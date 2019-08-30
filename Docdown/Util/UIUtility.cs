@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ICSharpCode.AvalonEdit.CodeCompletion;
+using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,6 +12,11 @@ namespace Docdown.Util
 {
     public static class UIUtility
     {
+        public static bool IsEmpty(this CompletionList completionList)
+        {
+            return !completionList.ListBox.ItemsSource.OfType<ICompletionData>().Any();
+        }
+
         public static Action Debounce(this Action func, int milliseconds = 300)
         {
             var action = Debounce<int>(_ => func(), milliseconds);

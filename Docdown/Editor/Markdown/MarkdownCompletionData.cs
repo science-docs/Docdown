@@ -154,7 +154,7 @@ namespace Docdown.Editor.Markdown
             return char.ToLowerInvariant(a) != char.ToLowerInvariant(b);
         }
 
-        public static void FromAST(string text, int index, Block ast, CompletionList list)
+        public static bool FromAST(string text, int index, Block ast, CompletionList list)
         {
             var spanningBlock = AbstractSyntaxTree.SpanningBlock(ast, index);
             string pre = string.Empty;
@@ -195,7 +195,12 @@ namespace Docdown.Editor.Markdown
             {
                 list.IsFiltering = true;
                 list.SelectItem(pre);
+                if (list.IsEmpty())
+                {
+                    return false;
+                }
             }
+            return true;
         }
 
         private static char? IdentifyMarker(string text, int index, out string pretext)

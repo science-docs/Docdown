@@ -441,17 +441,10 @@ namespace Docdown.Editor
 
         void TextEntering(object sender, TextCompositionEventArgs e)
         {
-            //if (e.Text.Length > 0 && completionWindow != null)
-            //{
-            //    if (!char.IsLetterOrDigit(e.Text[0]))
-            //    {
-            //        // Whenever a non-letter is typed while the completion window is open,
-            //        // insert the currently selected element.
-            //        completionWindow.CompletionList.RequestInsertion(e);
-            //    }
-            //}
-            // Do not set e.Handled=true.
-            // We still want to insert the character that was typed.
+            if (e.Text.Length > 0 && completionWindow != null && completionWindow.CompletionList.IsEmpty())
+            {
+                completionWindow.Close();
+            }
         }
 
         private void ShowCompletionWindow()
@@ -459,11 +452,17 @@ namespace Docdown.Editor
             if (completionWindow == null)
             {
                 completionWindow = new CompletionWindow(EditBox.TextArea);
-                MarkdownCompletionData.FromAST(EditBox.Text, EditBox.SelectionStart, AbstractSyntaxTree, completionWindow.CompletionList);
-                completionWindow.Show();
-                completionWindow.Closed += delegate {
+                if (MarkdownCompletionData.FromAST(EditBox.Text, EditBox.SelectionStart, AbstractSyntaxTree, completionWindow.CompletionList))
+                {
+                    completionWindow.Show();
+                    completionWindow.Closed += delegate {
+                        completionWindow = null;
+                    };
+                }
+                else
+                {
                     completionWindow = null;
-                };
+                }
             }
         }
 
