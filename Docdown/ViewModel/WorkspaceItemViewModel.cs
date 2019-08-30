@@ -516,7 +516,7 @@ namespace Docdown.ViewModel
                 {
                     var bytes = await Data.Read();
                     var temp = IOUtility.GetTempFile();
-                    await IOUtility.WriteAllBytes(temp, bytes);
+                    await IOUtility.WriteAllBytes(temp, Data.FileInfo.FileSystem.File, bytes);
                     PdfPath = temp;
                 }
                 catch (Exception e)

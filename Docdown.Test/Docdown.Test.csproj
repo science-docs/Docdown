@@ -69,6 +69,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <EmbeddedResource Include="Files\Workspace\Main.md" />
+    <EmbeddedResource Include="Files\Copy\Test.md" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -76,7 +78,12 @@
       <Project>{B6F91467-AEB1-43DF-B01D-3E3C72116CFE}</Project>
       <Name>Docdown</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PandocMark\PandocMark.csproj">
+      <Project>{7EF49B44-F1CE-41F4-AF9E-2F7B4185E5BF}</Project>
+      <Name>PandocMark</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

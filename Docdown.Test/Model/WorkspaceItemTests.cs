@@ -1,20 +1,102 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Docdown.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO.Abstractions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Docdown.Model.Test
 {
     [TestClass]
-    public class WorkspaceItemTests
+    public class WorkspaceItemTests : WorkspaceTestBase
     {
+        const string MainFullName = @"C:\Workspace\Main.md";
+        const string RenamedFullName = @"C:\Workspace\Renamed.md";
+
         [TestMethod]
-        public void ConvertTest()
+        public async Task LoadStringTest()
         {
-            Assert.Fail();
+            var main = FindItem("Main.md");
+            var bytes = await main.Read();
+            Assert.IsTrue(bytes.Length > 0);
+            string text = Encoding.UTF8.GetString(bytes);
+            Assert.IsTrue(text.StartsWith("---"));
+        }
+
+        [TestMethod]
+        public async Task SaveTest()
+        {
+            var main = FindItem("Main.md");
+            const string text = "# Only Header";
+            await main.Save(text);
+            var newText = FileSystem.File.ReadAllText(MainFullName);
+            Assert.AreEqual(text, newText);
+        }
+
+        [TestMethod]
+        public async Task DeleteTest()
+        {
+            var main = FindItem("Main.md");
+            await main.Delete();
+            Assert.IsNull(main.Parent);
+            Assert.AreSame(main, main.TopParent);
+            Assert.IsFalse(Workspace.Item.Children.Contains(main));
+            Assert.IsFalse(FileSystem.FileExists(MainFullName));
+        }
+
+        [TestMethod]
+        public async Task RenameTest()
+        {
+            var main = FindItem("Main.md");
+            const string newName = "Renamed.md";
+            await main.Rename(newName);
+            Assert.IsFalse(FileSystem.FileExists(MainFullName));
+            Assert.IsTrue(FileSystem.FileExists(RenamedFullName));
+        }
+
+        [TestMethod]
+        public void DirectoryFileTest()
+        {
+            var main = FindItem("Main.md");
+            Assert.IsTrue(main.IsFile);
+            Assert.IsFalse(main.IsDirectory);
+            Assert.IsInstanceOfType(main.FileInfo, typeof(IFileInfo));
+            Assert.IsTrue(Workspace.Item.Children.Contains(main));
+            Assert.IsTrue(Workspace.Item.IsDirectory);
+            Assert.IsFalse(Workspace.Item.IsFile);
+            Assert.IsInstanceOfType(Workspace.Item.FileInfo, typeof(IDirectoryInfo));
+        }
+
+        [TestMethod]
+        public async Task CreateNewFileTest()
+        {
+            var bytes = Encoding.UTF8.GetBytes("Some Text");
+            var item = await Workspace.Item.CreateNewFile("Renamed", ".md", bytes);
+            Assert.IsTrue(Workspace.Item.Children.Contains(item));
+            Assert.IsTrue(FileSystem.FileExists(RenamedFullName));
+        }
+
+        [TestMethod]
+        public async Task CreateNewDirectoryTest()
+        {
+            var dir = await Workspace.Item.CreateNewDirectory("TestDir");
+            Assert.IsTrue(Workspace.Item.Children.Contains(dir));
+            Assert.IsTrue(FileSystem.Directory.Exists(WorkspacePath + "TestDir"));
+        }
+
+        [TestMethod]
+        public async Task CopyFileTest()
+        {
+            var item = await Workspace.Item.CopyExistingItem(@"C:\Copy\Test.md");
+            Assert.IsTrue(Workspace.Item.Children.Contains(item));
+            Assert.IsTrue(FileSystem.FileExists(WorkspacePath + "Test.md"));
+        }
+
+        [TestMethod]
+        public async Task CopyFolderTest()
+        {
+            var dir = await Workspace.Item.CopyExistingFolder(@"C:\Copy");
+            Assert.IsTrue(Workspace.Item.Children.Contains(dir), "Workspace does not contain item");
+            Assert.IsTrue(FileSystem.Directory.Exists(WorkspacePath + "Copy"), "Directory was not correctly copied");
+            Assert.IsTrue(FileSystem.FileExists(WorkspacePath + @"Copy\Test.md"), "File was not correctly copied");
         }
     }
 }

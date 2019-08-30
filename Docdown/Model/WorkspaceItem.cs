@@ -92,15 +92,11 @@ namespace Docdown.Model
             var item = await CreateNewDirectory(Path.GetFileName(path));
             foreach (var file in FS.Directory.GetFiles(path))
             {
-                var child = await CopyExistingItem(file);
-                item.Children.Add(child);
-                child.Parent = item;
+                await item.CopyExistingItem(file);
             }
             foreach (var directory in FS.Directory.GetDirectories(path))
             {
-                var child = await CopyExistingFolder(directory);
-                item.Children.Add(child);
-                child.Parent = item;
+                await item.CopyExistingFolder(directory);
             }
             return item;
         }
@@ -182,6 +178,8 @@ namespace Docdown.Model
             {
                 await handler.Delete(this);
             }
+            Parent.Children.Remove(this);
+            Parent = null;
         }
 
         public async Task<byte[]> Read()

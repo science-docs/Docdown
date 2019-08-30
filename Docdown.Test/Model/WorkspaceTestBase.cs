@@ -1,7 +1,6 @@
 ﻿using Docdown.Editor.Markdown;
-using Docdown.Model;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PandocMark.Syntax;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
@@ -10,12 +9,26 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Docdown.Test.Model
+namespace Docdown.Model.Test
 {
     public abstract class WorkspaceTestBase
     {
         public IWorkspace Workspace { get; set; }
         public MockFileSystem FileSystem { get; set; }
+
+        public const string WorkspacePath = @"C:\Workspace\";
+
+        [TestInitialize]
+        public async Task Init()
+        {
+            await Initialize();
+        }
+
+        [TestMethod]
+        public void WorkspaceWasInitialized()
+        {
+            Assert.IsNotNull(Workspace);
+        }
 
         public async Task Initialize()
         {
@@ -28,6 +41,8 @@ namespace Docdown.Test.Model
             foreach (var name in names)
             {
                 var fileName = name.Substring(prefix.Length, name.Length - prefix.Length).Replace('.', '\\');
+                var lastIndex = fileName.LastIndexOf('\\');
+                fileName = fileName.Remove(lastIndex, 1).Insert(lastIndex, ".");
                 byte[] bytes;
                 using (var stream = asm.GetManifestResourceStream(name))
                 {
@@ -42,7 +57,34 @@ namespace Docdown.Test.Model
 
             FileSystem = new MockFileSystem(dict, @"C:\");
 
-            Workspace = await WorkspaceProvider.Create(@"C:\Workspace", FileSystem);
+            Workspace = await WorkspaceProvider.Create(WorkspacePath, FileSystem);
+        }
+
+        public IWorkspaceItem FindItem(string name)
+        {
+            return FindItem(Workspace.Item, name);
+        }
+
+        private IWorkspaceItem FindItem(IWorkspaceItem item, string name)
+        {
+            if (!item.IsDirectory)
+            {
+                return null;
+            }
+
+            foreach (var child in item.Children)
+            {
+                if (child.Name == name)
+                {
+                    return child;
+                }
+                var childItem = FindItem(child, name);
+                if (childItem != null)
+                {
+                    return childItem;
+                }
+            }
+            return null;
         }
 
         public static IEnumerable<Issue> Validate(IWorkspaceItem item)

@@ -4,6 +4,8 @@ namespace Docdown.Model
 {
     public static class BibliographyParser
     {
+        static HashSet<char> FieldOpener = new HashSet<char> { '{', '"' };
+
         public static IEnumerable<BibliographyEntry> Parse(IWorkspaceItem item, string text)
         {
             for (int i = 0; i < text.Length; i++)
@@ -119,7 +121,7 @@ namespace Docdown.Model
             int start = index;
             for (int i = start; i < text.Length; i++)
             {
-                if (text[i] == '{')
+                if (FieldOpener.Contains(text[i]))
                 {
                     start = i;
                     break;
@@ -139,7 +141,7 @@ namespace Docdown.Model
                 else if (text[i] == '}' && --stack == 0)
                 {
                     index = i;
-                    return text.Substring(start, i - start).TrimStart('{').TrimEnd('}');
+                    return text.Substring(start, i - start).TrimStart('{', '"').TrimEnd('}', '"');
                 }
             }
             return null;

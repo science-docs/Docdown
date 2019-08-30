@@ -16,10 +16,7 @@ namespace Docdown.Util
 
         public static async Task WriteAllBytes(IFileInfo fileInfo, byte[] bytes)
         {
-            using (var stream = fileInfo.OpenWrite())
-            {
-                await stream.WriteAsync(bytes, 0, bytes.Length);
-            }
+            await WriteAllBytes(fileInfo.FullName, fileInfo.FileSystem.File, bytes);
         }
 
         public static async Task WriteAllText(IFileInfo fileInfo, string text)

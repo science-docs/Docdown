@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2016
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docdown", "Docdown\Docdown.csproj", "{B6F91467-AEB1-43DF-B01D-3E3C72116CFE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfiumViewer.Wpf", "PdfiumViewer.Wpf\PdfiumViewer.Wpf.csproj", "{068EC25F-B400-4FA0-A006-41CE018F1B65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PandocMark", "PandocMark\PandocMark.csproj", "{7EF49B44-F1CE-41F4-AF9E-2F7B4185E5BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PandocMark", "PandocMark\PandocMark.csproj", "{7EF49B44-F1CE-41F4-AF9E-2F7B4185E5BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docdown.Test", "Docdown.Test\Docdown.Test.csproj", "{B137E83B-773C-4E56-95CE-356F18DCCDF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,14 @@ Global
 		{7EF49B44-F1CE-41F4-AF9E-2F7B4185E5BF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7EF49B44-F1CE-41F4-AF9E-2F7B4185E5BF}.Release|x64.ActiveCfg = Release|Any CPU
 		{7EF49B44-F1CE-41F4-AF9E-2F7B4185E5BF}.Release|x64.Build.0 = Release|Any CPU
+		{B137E83B-773C-4E56-95CE-356F18DCCDF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B137E83B-773C-4E56-95CE-356F18DCCDF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B137E83B-773C-4E56-95CE-356F18DCCDF1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B137E83B-773C-4E56-95CE-356F18DCCDF1}.Debug|x64.Build.0 = Debug|Any CPU
+		{B137E83B-773C-4E56-95CE-356F18DCCDF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B137E83B-773C-4E56-95CE-356F18DCCDF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B137E83B-773C-4E56-95CE-356F18DCCDF1}.Release|x64.ActiveCfg = Release|Any CPU
+		{B137E83B-773C-4E56-95CE-356F18DCCDF1}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

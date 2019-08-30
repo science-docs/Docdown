@@ -31,7 +31,7 @@ namespace Docdown.Model
                     MultipartFormParameter.ApiParameter(item.FromType, item.ToType, settings.Template, settings.Csl, onlySelected).Concat(
                     MultipartFormParameter.FromWorkspaceItem(item, onlySelected))))
                 {
-                    using (var fs = File.Open(temp, FileMode.Create))
+                    using (var fs = item.FileInfo.FileSystem.File.Open(temp, FileMode.Create))
                     {
                         await req.Content.CopyToAsync(fs);
                     }
@@ -71,12 +71,12 @@ namespace Docdown.Model
 
             if (item.IsDirectory)
             {
-                Directory.Move(item.FullName, name);
+                item.FileInfo.FileSystem.Directory.Move(item.FullName, name);
                 item.FileInfo = fs.DirectoryInfo.FromDirectoryName(name);
             }
             else
             {
-                File.Move(item.FullName, name);
+                item.FileInfo.FileSystem.File.Move(item.FullName, name);
                 item.FileInfo = fs.FileInfo.FromFileName(name);
             }
 
@@ -85,7 +85,11 @@ namespace Docdown.Model
 
         public async Task Save(IWorkspaceItem item, byte[] bytes)
         {
-            
+            if (item.IsDirectory)
+            {
+                throw new InvalidOperationException("Cannot save the contents of a directory");
+            }
+
             await IOUtility.WriteAllBytes(item.FileInfo as IFileInfo, bytes);
         }
     }
