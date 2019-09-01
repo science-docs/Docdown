@@ -1,6 +1,7 @@
 ﻿using Docdown.Model;
 using Docdown.Properties;
 using Docdown.Util;
+using Docdown.ViewModel;
 using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
@@ -102,7 +103,7 @@ namespace Docdown.Editor.Markdown
             {
                 var index = block.SourcePosition + group.Index;
                 var issue = new Issue(IssueType.Info, index, group.Length, "This string is probably an acronym.\nPlease use the appropriate LaTeX Package");
-                if (!IsPreceededBy(text, group.Index, "\\ac{", "\\acro{"))
+                if (!IsPreceededBy(text, group.Index, "\\ac{", "\\acro{", "^", "@"))
                 {
                     return issue;
                 }
@@ -114,7 +115,7 @@ namespace Docdown.Editor.Markdown
         {
             foreach (var value in values)
             {
-                if (index > value.Length)
+                if (index >= value.Length)
                 {
                     var before = text.Substring(index - value.Length, value.Length);
                     if (before == value)
@@ -174,7 +175,7 @@ namespace Docdown.Editor.Markdown
 
         private static IEnumerable<Issue> ValidateMeta(Block block, IWorkspaceItem item)
         {
-            var model = MetaDataModel.Instance;
+            var model = AppViewModel.Instance.Settings.SelectedTemplate.MetaData;
 
             // When no entries are found, either no meta.json exists for the template
             // or the client cannot connect to the server.

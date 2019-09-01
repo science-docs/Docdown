@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Docdown.Editor.Markdown;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 
 namespace Docdown.Model
@@ -7,13 +8,20 @@ namespace Docdown.Model
     {
         public string Name { get; set; }
         public string Icon { get; set; }
+        public MetaDataModel MetaData
+        {
+            get => metaData;
+            set => metaData = value ?? new MetaDataModel();
+        }
+
+        private MetaDataModel metaData = new MetaDataModel();
 
         public static Template Empty { get; } = new Template();
 
         public static Template[] FromJson(string json)
         {
-            List<Template> templates = new List<Template> { Empty };
-            JArray array = JArray.Parse(json);
+            var templates = new List<Template>();
+            var array = JArray.Parse(json);
 
             foreach (var token in array)
             {
@@ -22,6 +30,14 @@ namespace Docdown.Model
                     Name = (string)token.SelectToken("name"),
                     Icon = (string)token.SelectToken("icon")
                 };
+                if (token.SelectToken("meta") is JObject meta)
+                {
+                    template.MetaData = MetaDataModel.Load(meta);
+                }
+                else
+                {
+                    template.MetaData = new MetaDataModel();
+                }
                 templates.Add(template);
             }
             return templates.ToArray();

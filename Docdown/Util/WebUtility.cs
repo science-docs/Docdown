@@ -127,21 +127,6 @@ namespace Docdown.Util
             }
         }
 
-        public static async Task<ConnectionStatus> Ping()
-        {
-            try
-            {
-                var res = await GetRequest(Settings.Default.API);
-                res.Dispose();
-            }
-            catch (Exception e)
-            {
-                ErrorUtility.WriteLog(e);
-                return ConnectionStatus.Disconnected;
-            }
-            return ConnectionStatus.Connected;
-        }
-
         public static async Task<HttpResponseMessage> PostRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
         {
             return await PostRequest(postUrl, postParameters.ToArray());

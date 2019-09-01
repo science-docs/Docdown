@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
@@ -20,24 +21,65 @@ namespace Docdown.Editor.Markdown
 
     public class MetaDataModel
     {
-        public static MetaDataModel Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new MetaDataModel();
-                }
-                return instance;
-            }
-        }
-
         public List<Entry> Entries { get; } = new List<Entry>();
 
-        private static MetaDataModel instance;
-
-        private MetaDataModel()
+        public static MetaDataModel Load(JObject json)
         {
+            var meta = new MetaDataModel();
+            
+            foreach (KeyValuePair<string, JToken> child in json)
+            {
+                var entry = new Entry
+                {
+                    Name = child.Key
+                };
+
+                var token = child.Value;
+                entry.IssueMessage = token.SelectToken("message")?.Value<string>();
+                entry.IsOptional = token.SelectToken("optional")?.Value<bool>() ?? false;
+                entry.Type = Parse<MetaDataType>(token.SelectToken("type"));
+                entry.IssueType = Parse<IssueType>(token.SelectToken("issue"));
+                entry.IsArray = token.SelectToken("array")?.Value<bool>() ?? false;
+                var regex = token.SelectToken("regex")?.Value<string>();
+                if (regex != null)
+                {
+                    try
+                    {
+                        entry.Regex = new Regex(regex);
+                    }
+                    catch
+                    {
+                        // Regex was not valid
+                    }
+                }
+
+                meta.Entries.Add(entry);
+            }
+
+            return meta;
+        }
+
+        private static T Parse<T>(JToken token)
+        {
+            if (token == null || token.Value<string>() == null)
+            {
+                return default;
+            }
+
+            var type = typeof(T);
+            if (type.IsEnum)
+            {
+                var text = token.Value<string>();
+                try
+                {
+                    return (T)Enum.Parse(type, text, true);
+                }
+                catch
+                {
+                    return default;
+                }
+            }
+            return default;
         }
 
         public void Load(string text)

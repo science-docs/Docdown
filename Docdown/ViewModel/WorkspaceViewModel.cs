@@ -158,7 +158,7 @@ namespace Docdown.ViewModel
             else
             {
                 var parent = Path.GetDirectoryName(fullPath);
-                var workspace = await WorkspaceProvider.Create(parent, AppViewModel.Instance.FileSystem);
+                var workspace = await WorkspaceProvider.Create(parent, AppViewModel.Instance.FileSystem, AppViewModel.Instance.ConverterService);
                 await DataAsync(workspace);
                 Data.ToType = ConverterType.Pdf;
                 await OpenItem(fullPath);

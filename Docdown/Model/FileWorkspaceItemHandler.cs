@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Docdown.Util;
 using Docdown.Properties;
-using System.Threading;
 using System;
 using System.IO.Abstractions;
 
@@ -13,9 +12,13 @@ namespace Docdown.Model
     {
         public int Order => 0;
 
-
         public async Task<string> Convert(IWorkspaceItem item, CancelToken cancelToken)
         {
+            if (item.IsDirectory)
+            {
+                throw new InvalidOperationException("Can only convert files");
+            }
+
             string temp = IOUtility.GetHashFile(item.FullName);
             var settings = Settings.Default;
             var onlySelected = settings.CompileOnlySelected;
@@ -26,16 +29,11 @@ namespace Docdown.Model
             }
             else
             {
-                var token = cancelToken?.ToCancellationToken() ?? CancellationToken.None;
-                using (var req = await WebUtility.PostRequest(WebUtility.BuildConvertUrl(), token,
-                    MultipartFormParameter.ApiParameter(item.FromType, item.ToType, settings.Template, settings.Csl, onlySelected).Concat(
-                    MultipartFormParameter.FromWorkspaceItem(item, onlySelected))))
-                {
-                    using (var fs = item.FileInfo.FileSystem.File.Open(temp, FileMode.Create))
-                    {
-                        await req.Content.CopyToAsync(fs);
-                    }
-                }
+                var bytes = await item.Workspace.ConverterService.Convert(MultipartFormParameter
+                    .ApiParameter(item.FromType, item.ToType, settings.Template, settings.Csl, onlySelected)
+                    .Concat(MultipartFormParameter
+                    .FromWorkspaceItem(item, onlySelected)), cancelToken);
+                await IOUtility.WriteAllBytes(temp, item.FileInfo.FileSystem.File, bytes);
                 return temp;
             }
         }

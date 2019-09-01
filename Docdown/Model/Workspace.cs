@@ -16,6 +16,7 @@ namespace Docdown.Model
         public IFileSystem FileSystem { get; }
         public IWorkspaceItem Item { get; private set; }
         public IWorkspaceItem SelectedItem { get; set; }
+        public IConverterService ConverterService { get; }
         public ConverterType FromType => FromSelectedItem();
         public ConverterType ToType { get; set; }
         public WorkspaceSettings Settings { get; }
@@ -23,10 +24,11 @@ namespace Docdown.Model
         public Bibliography Bibliography { get; } = new Bibliography();
         public event WorkspaceChangeEventHandler WorkspaceChanged;
 
-        public Workspace(WorkspaceSettings settings, IFileSystem fileSystem)
+        public Workspace(WorkspaceSettings settings, IFileSystem fileSystem, IConverterService converterService)
         {
             FileSystem = fileSystem;
             Settings = settings;
+            ConverterService = converterService;
         }
 
         public async Task Initialize()

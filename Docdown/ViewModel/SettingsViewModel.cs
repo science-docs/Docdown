@@ -89,13 +89,6 @@ namespace Docdown.ViewModel
                 }
                 selectedTemplateName = value.Name;
                 settings.Template = value.Name;
-                if (IsConnected)
-                {
-                    Task.Run(async () =>
-                    {
-                        await LoadTemplateMetaData(selectedTemplateName);
-                    });
-                }
                 SendPropertyUpdate();
             }
         }
@@ -191,7 +184,7 @@ namespace Docdown.ViewModel
             if (ConnectionStatus != ConnectionStatus.Connecting)
             {
                 ConnectionStatus = ConnectionStatus.Connecting;
-                ConnectionStatus = await WebUtility.Ping();
+                ConnectionStatus = await app.ConverterService.Connect();
                 if (IsConnected)
                 {
                     await LoadTemplates();
@@ -209,28 +202,13 @@ namespace Docdown.ViewModel
 
         public async Task LoadCsls()
         {
-            string cslUri = WebUtility.BuildCslUrl();
-
-            string text;
-            try
+            var csl = await app.ConverterService.LoadCsls();
+            if (csl.Length > 0)
             {
-                text = await WebUtility.SimpleTextRequest(cslUri);
-            }
-            catch
-            {
-                text = "[]";
-            }
-
-            try
-            {
-                Csls = JArray.Parse(text)
-                    .Select(e => e.Value<string>())
-                    .Concat(string.Empty)
-                    .OrderBy(e => e)
-                    .ToArray();
+                Csls = csl.Concat(string.Empty).OrderBy(e => e).ToArray();
                 SelectedCsl = settings.Csl;
             }
-            catch
+            else
             {
                 SelectedCsl = string.Empty;
                 Csls = new[] { string.Empty };
@@ -239,49 +217,17 @@ namespace Docdown.ViewModel
 
         public async Task LoadTemplates()
         {
-            string templatesUrl = WebUtility.BuildTemplatesUrl();
+            var templates = await app.ConverterService.LoadTemplates();
 
-            string text;
-            try
+            if (templates.Length > 0)
             {
-                text = await WebUtility.SimpleTextRequest(templatesUrl);
+                Templates = templates.Concat(Template.Empty).OrderBy(e => e.Name).ToArray();
             }
-            catch
-            {
-                text = "[]";
-            }
-
-            try
-            {
-                Templates = Template.FromJson(text).OrderBy(e => e.Name).ToArray();
-            }
-            catch
+            else
             {
                 SelectedTemplate = null;
                 Templates = new[] { Template.Empty };
             }
-            var selectedTemplate = SelectedTemplate;
-            if (selectedTemplate != Template.Empty)
-            {
-                await LoadTemplateMetaData(selectedTemplate.Name);
-            }
-        }
-
-        private async Task LoadTemplateMetaData(string name)
-        {
-            string templatesUrl = WebUtility.BuildTemplatesUrl() + "/" + Uri.EscapeUriString(name);
-
-            string text;
-            try
-            {
-                text = await WebUtility.SimpleTextRequest(templatesUrl);
-            }
-            catch
-            {
-                text = "{}";
-            }
-
-            MetaDataModel.Instance.Load(text);
         }
 
         public async Task UploadTemplate(string path)
@@ -331,6 +277,7 @@ namespace Docdown.ViewModel
         [ChangeListener(nameof(Api))]
         private void ApiChanged()
         {
+            app.ConverterService.Url = Api;
             ConnectionStatus = ConnectionStatus.Undefined;
         }
 

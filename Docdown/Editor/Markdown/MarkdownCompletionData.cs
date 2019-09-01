@@ -1,6 +1,7 @@
 ﻿using Docdown.Controls;
 using Docdown.Properties;
 using Docdown.Util;
+using Docdown.ViewModel;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
@@ -162,7 +163,7 @@ namespace Docdown.Editor.Markdown
             if (spanningBlock.Tag == BlockTag.Meta)
             {
                 pre = FindMetaPretext(text, index);
-                data.AddRange(FromMetaModel(MetaDataModel.Instance));
+                data.AddRange(FromMetaModel(AppViewModel.Instance.Settings.SelectedTemplate.MetaData));
             }
             else
             {

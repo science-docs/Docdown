@@ -184,8 +184,10 @@
     <Compile Include="Converters\SvgToBrushConverter.cs" />
     <Compile Include="Model\Bibliography.cs" />
     <Compile Include="Model\ConnectionStatus.cs" />
+    <Compile Include="Model\ConverterService.cs" />
     <Compile Include="Model\ConverterType.cs" />
     <Compile Include="Model\FileWorkspaceItemHandler.cs" />
+    <Compile Include="Model\IConverterService.cs" />
     <Compile Include="Model\IWorkspace.cs" />
     <Compile Include="Model\IWorkspaceItem.cs" />
     <Compile Include="Model\IWorkspaceItemHandler.cs" />

@@ -7,12 +7,7 @@ namespace Docdown.Model
 {
     public static class WorkspaceProvider
     {
-        public static async Task<IWorkspace> Create(string path)
-        {
-            return await Create(path, new FileSystem());
-        }
-
-        public static async Task<IWorkspace> Create(string path, IFileSystem fileSystem)
+        public static async Task<IWorkspace> Create(string path, IFileSystem fileSystem, IConverterService converterService)
         {
             if (fileSystem == null)
             {
@@ -24,7 +19,7 @@ namespace Docdown.Model
             }
 
             var settings = WorkspaceSettings.Create(path);
-            var workspace = new Workspace(settings, fileSystem);
+            var workspace = new Workspace(settings, fileSystem, converterService);
             workspace.Handlers.Add(new FileWorkspaceItemHandler());
             if (!string.IsNullOrEmpty(settings.Sync))
             {

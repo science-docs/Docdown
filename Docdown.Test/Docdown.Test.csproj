@@ -63,6 +63,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Model\MockConverterService.cs" />
     <Compile Include="Model\WorkspaceItemTests.cs" />
     <Compile Include="Model\WorkspaceTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

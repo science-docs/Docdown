@@ -9,6 +9,7 @@ namespace Docdown.Model
         IFileSystem FileSystem { get; }
         IWorkspaceItem Item { get; }
         IWorkspaceItem SelectedItem { get; set; }
+        IConverterService ConverterService { get; }
         ConverterType FromType { get; }
         ConverterType ToType { get; set; }
         List<IWorkspaceItemHandler> Handlers { get; }

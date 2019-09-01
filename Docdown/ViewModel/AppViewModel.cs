@@ -38,6 +38,7 @@ namespace Docdown.ViewModel
             set => Set(ref theme, value);
         }
         public WorkspaceViewModel Workspace { get; set; }
+        public IConverterService ConverterService { get; set; }
         public IFileSystem FileSystem { get; set; }
 
         public bool ExplorerVisible
@@ -77,6 +78,10 @@ namespace Docdown.ViewModel
         private AppViewModel()
         {
             FileSystem = new FileSystem();
+            ConverterService = new ConverterService
+            {
+                Url = Properties.Settings.Default.API
+            };
             Workspace = new WorkspaceViewModel();
             Settings = new SettingsViewModel(this);
             Messages = new MessageQueue();
@@ -95,7 +100,7 @@ namespace Docdown.ViewModel
             {
                 Task.Run(async () =>
                 {
-                    var workspace = await WorkspaceProvider.Create(newWorkspace, FileSystem);
+                    var workspace = await WorkspaceProvider.Create(newWorkspace, FileSystem, ConverterService);
                     await Workspace.DataAsync(workspace);
                 });
             }

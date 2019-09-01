@@ -388,7 +388,7 @@ namespace Docdown.Editor
                 {
                     if (entry.NameStartPosition <= index && entry.ValueStartPosition + entry.ValueLength >= index)
                     {
-                        var modelEntry = MetaDataModel.Instance.Entries.FirstOrDefault(e => e.Name == entry.Name);
+                        var modelEntry = AppViewModel.Instance.Settings.SelectedTemplate.MetaData.Entries.FirstOrDefault(e => e.Name == entry.Name);
                         if (modelEntry != null)
                         {
                             return new MarkdownMetaCompletionData(modelEntry).Description;
