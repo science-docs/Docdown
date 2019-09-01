@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Document;
@@ -9,7 +10,7 @@ namespace Docdown.Editor.Markdown
 {
     public class MarkdownMetaCompletionData : MarkdownCompletionData
     {
-        public override ImageSource Image => null;
+        public override ImageSource Image => Application.Current.TryFindResource("TagImage") as ImageSource;
 
         public override string Text => metaDataEntry.Name;
 
