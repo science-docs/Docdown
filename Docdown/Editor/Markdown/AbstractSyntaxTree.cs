@@ -147,16 +147,16 @@ namespace Docdown.Editor.Markdown
 
         public static Inline SpanningInline(Block ast, int index)
         {
-            var block = SpanningBlock(ast, index);
-            if (block != null)
-            {
-                var inline = EnumerateInlines(block.InlineContent).FirstOrDefault(e => e.SourcePosition + e.SourceLength > index);
-                if (inline != null && index >= inline.SourcePosition)
-                {
-                    return inline;
-                }
-            }
-            return null;
+            return SpanningBlockInline(SpanningBlock(ast, index), index);
+        }
+
+        public static Inline SpanningBlockInline(Block block, int index)
+        {
+            if (block == null)
+                return null;
+
+            var inline = EnumerateInlines(block.InlineContent).Where(e => e.Tag != InlineTag.String && e.SourcePosition + e.SourceLength > index && index >= e.SourcePosition);
+            return inline.OrderByDescending(e => e.SourcePosition).FirstOrDefault();
         }
 
         public static bool PositionSafeForSmartLink(Block ast, int start, int length)

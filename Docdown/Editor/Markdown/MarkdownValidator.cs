@@ -15,9 +15,9 @@ namespace Docdown.Editor.Markdown
 {
     public static class MarkdownValidator
     {
-        private static readonly Regex ReferenceRegex = new Regex("[^}]\\[([^\\]]+)\\]", RegexOptions.Compiled);
-        private static readonly Regex LocaleRegex = new Regex("^[a-z]{2}-[A-Z]{2}$", RegexOptions.Compiled);
-        private static readonly Regex AcronymRegex = new Regex("\\b([A-Z]{2,5})\\b", RegexOptions.Compiled);
+        private static readonly Regex ReferenceRegex = new Regex(@"[^}!]\[([^\]]+)\]", RegexOptions.Compiled);
+        private static readonly Regex LocaleRegex = new Regex(@"^[a-z]{2}-[A-Z]{2}$", RegexOptions.Compiled);
+        private static readonly Regex AcronymRegex = new Regex(@"\b([A-Z]{2,5})\b", RegexOptions.Compiled);
         private static Regex DiscouragedWords;
 
         static MarkdownValidator()
@@ -61,9 +61,7 @@ namespace Docdown.Editor.Markdown
         {
             switch (block.Tag)
             {
-                case BlockTag.ListItem:
                 case BlockTag.Paragraph:
-                case BlockTag.BlockQuote:
                 case BlockTag.ReferenceDefinition:
                     foreach (var issue in ValidateText(block, text))
                         yield return issue;
@@ -82,16 +80,16 @@ namespace Docdown.Editor.Markdown
         {
             var sub = text.Substring(block.SourcePosition, block.SourceLength);
             var referenceMatches = ReferenceRegex.Matches(sub);
-            foreach (var referenceIssue in ValidateRegex(ReferenceRegex, sub, ReferenceIssueFactory(block)))
+            foreach (var referenceIssue in ValidateRegex(ReferenceRegex, block, sub, ReferenceIssueFactory(block)))
             {
                 yield return referenceIssue;
             }
-            foreach (var discouragedIssue in ValidateRegex(DiscouragedWords, sub, 
+            foreach (var discouragedIssue in ValidateRegex(DiscouragedWords, block, sub, 
                 DefaultIssueFactory(block, IssueType.Info, Language.Current.Get("Editor.Discouraged.Word"))))
             {
                 yield return discouragedIssue;
             }
-            foreach (var acronymIssue in ValidateRegex(AcronymRegex, sub, AcronymIssueFactory(block)))
+            foreach (var acronymIssue in ValidateRegex(AcronymRegex, block, sub, AcronymIssueFactory(block)))
             {
                 yield return acronymIssue;
             }
@@ -158,19 +156,39 @@ namespace Docdown.Editor.Markdown
             };
         }
 
-        private static IEnumerable<Issue> ValidateRegex(Regex regex, string text, Func<Group, string, Issue> issueFactory)
+        private static IEnumerable<Issue> ValidateRegex(Regex regex, Block block, string text, Func<Group, string, Issue> issueFactory)
         {
             var matches = regex.Matches(text);
             for (int i = 0; i < matches.Count; i++)
             {
                 var match = matches[i];
                 var group = match.Groups[1];
+                if (IsInlined(block, group))
+                {
+                    continue;
+                }
                 var issue = issueFactory(group, text);
                 if (issue != null)
                 {
                     yield return issue;
                 }
             }
+        }
+
+        private static bool IsInlined(Block block, Group group)
+        {
+            var index = group.Index + block.SourcePosition;
+            var inline = AbstractSyntaxTree.SpanningBlockInline(block, index);
+            if (inline != null)
+            {
+                switch (inline.Tag)
+                {
+                    case InlineTag.Code:
+                    case InlineTag.RawHtml:
+                        return true;
+                }
+            }
+            return false;
         }
 
         private static IEnumerable<Issue> ValidateMeta(Block block, IWorkspaceItem item)

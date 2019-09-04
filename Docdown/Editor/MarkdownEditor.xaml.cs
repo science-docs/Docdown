@@ -307,23 +307,30 @@ namespace Docdown.Editor
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
-                if (DataContext is WorkspaceItemViewModel workspaceItem)
+                try
                 {
-                    var headers = EnumerateHeader(AbstractSyntaxTree);
-                    Outline = new Outline(headers);
-                    WordCount = CountWords(AbstractSyntaxTree, Text);
-                    workspaceItem.WordCount = WordCount;
-                    workspaceItem.Outline = new OutlineViewModel(Outline, JumpToLocation);
+                    if (DataContext is WorkspaceItemViewModel workspaceItem)
+                    {
+                        var headers = EnumerateHeader(AbstractSyntaxTree);
+                        Outline = new Outline(headers);
+                        WordCount = CountWords(AbstractSyntaxTree, Text);
+                        workspaceItem.WordCount = WordCount;
+                        workspaceItem.Outline = new OutlineViewModel(Outline, JumpToLocation);
 
-                    foreach (var issue in MarkdownValidator.Validate(AbstractSyntaxTree, Text, workspaceItem.Data))
-                    {
-                        AbstractSyntaxTree.Document.Issues.Add(issue);
+                        foreach (var issue in MarkdownValidator.Validate(AbstractSyntaxTree, Text, workspaceItem.Data))
+                        {
+                            AbstractSyntaxTree.Document.Issues.Add(issue);
+                        }
+                        if (AbstractSyntaxTree.Document.Issues.Count > 0)
+                        {
+                            EditBox.TextArea.TextView.Redraw();
+                        }
+                        workspaceItem.HasValidationErrors = AbstractSyntaxTree.Document.Issues.Any(e => e.Type == IssueType.Error);
                     }
-                    if (AbstractSyntaxTree.Document.Issues.Count > 0)
-                    {
-                        EditBox.TextArea.TextView.Redraw();
-                    }
-                    workspaceItem.HasValidationErrors = AbstractSyntaxTree.Document.Issues.Any(e => e.Type == IssueType.Error);
+                }
+                catch
+                {
+                    Trace.WriteLine("Debounced update failed", "Editor");
                 }
             }));
         }

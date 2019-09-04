@@ -19,7 +19,7 @@ namespace Docdown.Model
 
         private OutlineItem(Block block)
         {
-            Text = block.InlineContent.LiteralContent;
+            Text = block.InlineContent?.LiteralContent ?? string.Empty;
             Level = block.Heading.Level;
             TextPosition = block.SourcePosition;
             JumpPosition = block.SourcePosition + block.SourceLength - 1;
