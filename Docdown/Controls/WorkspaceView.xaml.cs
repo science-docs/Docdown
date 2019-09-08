@@ -72,7 +72,6 @@ namespace Docdown.Controls
                 // handling code you have defined.
                 var workspaceItem = explorer.WorkspaceItem;
                 var workspace = workspaceItem.Workspace;
-                workspace.IgnoreChange = true;
                 var item = workspaceItem.Data;
                 try
                 {
@@ -87,7 +86,6 @@ namespace Docdown.Controls
                 {
                     workspace.Messages.Error("Something went wrong moving files");
                 }
-                workspace.IgnoreChange = false;
                 e.Handled = true;
             }
         }

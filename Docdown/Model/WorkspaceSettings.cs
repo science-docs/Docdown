@@ -1,6 +1,7 @@
 ﻿using Docdown.Util;
 using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Linq;
 
 namespace Docdown.Model
@@ -14,24 +15,27 @@ namespace Docdown.Model
         }
         public string Path { get; set; }
 
+        public IFileSystem FileSystem { get; set; }
+
         public string FullPath => System.IO.Path.Combine(Path, ".dc");
 
         private Dictionary<string, string> properties = new Dictionary<string, string>();
 
-        private WorkspaceSettings(string path)
+        private WorkspaceSettings(IFileSystem fileSystem, string path)
         {
             Path = path;
+            FileSystem = fileSystem;
         }
 
-        public static WorkspaceSettings Create(string workspacePath)
+        public static WorkspaceSettings Create(IFileSystem fileSystem, string workspacePath)
         {
-            var settings = new WorkspaceSettings(workspacePath);
+            var settings = new WorkspaceSettings(fileSystem, workspacePath);
             if (!System.IO.File.Exists(settings.FullPath))
             {
                 return settings;
             }
 
-            IEnumerable<Tuple<string, string>> tuples = IOUtility.ParseProperties(settings.FullPath);
+            IEnumerable<Tuple<string, string>> tuples = IOUtility.ParseProperties(fileSystem.File, settings.FullPath);
             settings.properties = tuples.ToDictionary(e => e.Item1, e => e.Item2);
 
             return settings;
@@ -39,7 +43,7 @@ namespace Docdown.Model
 
         public void Save()
         {
-            IOUtility.WriteProperties(FullPath, properties
+            IOUtility.WriteProperties(FileSystem.File, FullPath, properties
                 .Where(e => e.Value != null)
                 .Select(e => new Tuple<string, string>(e.Key, e.Value)));
         }

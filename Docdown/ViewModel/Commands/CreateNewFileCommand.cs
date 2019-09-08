@@ -19,7 +19,6 @@ namespace Docdown.ViewModel.Commands
             }
 
             var workspace = workspaceItem.Workspace;
-            workspace.IgnoreChange = true;
             IWorkspaceItem newItem;
             if (isDirectory)
             {
@@ -35,7 +34,6 @@ namespace Docdown.ViewModel.Commands
                 vm.IsNameChanging = true;
             }
             workspaceItem.AddChild(vm);
-            workspace.IgnoreChange = false;
         }
     }
 }

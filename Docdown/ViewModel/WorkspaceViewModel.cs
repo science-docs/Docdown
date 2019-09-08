@@ -5,6 +5,7 @@ using Docdown.Windows;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -79,28 +80,16 @@ namespace Docdown.ViewModel
         
 
         [ChangeListener(nameof(SelectedItem))]
-        public ConverterType FromType => Data.FromType;
+        public ConverterType FromType => Data?.FromType ?? ConverterType.Markdown;
 
         public ConverterType ToType
         {
-            get => Data.ToType;
+            get => Data?.ToType ?? ConverterType.Pdf;
             set
             {
                 Data.ToType = value;
                 SendPropertyUpdate();
             }
-        }
-
-
-        /// <summary>
-        /// Indicates whether the workspace is currently being changed programmatically in order to ignore the change message.
-        /// </summary>
-        public bool IgnoreChange
-        {
-            // TODO: Fix this
-            get; set;
-            //get => Data.IgnoreChange;
-            //set => Data.IgnoreChange = value;
         }
 
         public WizardViewModel Wizard { get; }
@@ -147,21 +136,13 @@ namespace Docdown.ViewModel
             }
         }
 
-        public async Task OpenItem(string fullPath)
+        public void OpenItem(string fullPath)
         {
             var item = SearchForSelectedItem(Item, fullPath);
             if (item != null)
             {
                 OpenItems.Add(item);
                 SelectedItem = item;
-            }
-            else
-            {
-                var parent = Path.GetDirectoryName(fullPath);
-                var workspace = await WorkspaceProvider.Create(parent, AppViewModel.Instance.FileSystem, AppViewModel.Instance.ConverterService);
-                await DataAsync(workspace);
-                Data.ToType = ConverterType.Pdf;
-                await OpenItem(fullPath);
             }
         }
 
@@ -173,12 +154,9 @@ namespace Docdown.ViewModel
                 switch (await ShowMessageAsync(lang.Get("Workspace.Save.Files.Title"), lang.Get("Workspace.Save.Files.Text"), MessageBoxButton.YesNoCancel))
                 {
                     case MessageBoxResult.Yes:
-                        foreach (var openItem in OpenItems)
+                        foreach (var openItem in OpenItems.Where(e => e.HasChanged))
                         {
-                            if (openItem.HasChanged)
-                            {
-                                await openItem.Save();
-                            }
+                            await openItem.Save();
                         }
                         break;
                     case MessageBoxResult.None:
@@ -195,26 +173,50 @@ namespace Docdown.ViewModel
             SelectedItem = null;
             OpenItems.Clear();
             RefreshExplorer();
+
+            Data.WorkspaceChanged += OnWorkspaceChanged;
         }
 
-        //private void OnWorkspaceChanged(object sender, EventArgs args)
-        //{
-        //    // in order to ignore multiple messages, simply ignore changes until the message has been answered
-        //    IgnoreChange = true;
-        //    var result = ShowMessage(
-        //        "Workspace changed", 
-        //        "Your workspace was changed externally. Do you want to reload your workspace?", 
-        //        MessageBoxButton.YesNo);
-        //    if (result == MessageBoxResult.Yes)
-        //    {
-        //        var openItems = OpenItems.ToArray();
-        //        var selectedItemName = SelectedItem?.RelativeName;
-        //        Data = WorkspaceProvider.Create(Data.Item.FullName);
-        //        Data.ToType = ConverterType.Pdf;
-        //        RestoreWorkspace(Item, openItems, selectedItemName);
-        //    }
-        //    IgnoreChange = false;
-        //}
+        private async void OnWorkspaceChanged(IWorkspace workspace, IEnumerable<WorkspaceChangeEventArgs> args)
+        {
+            if (workspace != Data)
+            {
+                return;
+            }
+
+            foreach (var e in args)
+            {
+                switch (e.Change)
+                {
+                    case WorkspaceChange.Deleted:
+                        var item = SearchForSelectedItem(Item, e.Item);
+                        // Item may have already been deleted, so nothing will be found
+                        if (item != null)
+                        {
+                            await item.Remove();
+
+                            if (item == Item)
+                            {
+                                Explorer = null;
+                            }
+                        }
+                        break;
+                    case WorkspaceChange.Created:
+                        var parentItem = e.Item.Parent;
+                        item = SearchForSelectedItem(Item, parentItem);
+                        item.AddChild(e.Item);
+                        break;
+                    case WorkspaceChange.Renamed:
+                        item = SearchForSelectedItem(Item, e.Item);
+                        item?.SendPropertyUpdate(nameof(WorkspaceItemViewModel.Name));
+                        break;
+                    case WorkspaceChange.Changed:
+                        Data.Bibliography.Parse(e.Item);
+                        item = SearchForSelectedItem(Item, e.Item);
+                        break;
+                }
+            }
+        }
 
         private void RestoreWorkspace(WorkspaceItemViewModel item, IEnumerable<WorkspaceItemViewModel> openItems, string selectedItemName)
         {
@@ -266,22 +268,7 @@ namespace Docdown.ViewModel
 
         private WorkspaceItemViewModel SearchForSelectedItem(WorkspaceItemViewModel vm, IWorkspaceItem item)
         {
-            if (vm.Data == item)
-            {
-                return vm;
-            }
-            else
-            {
-                foreach (var child in vm.Children)
-                {
-                    var found = SearchForSelectedItem(child, item);
-                    if (found != null)
-                    {
-                        return found;
-                    }
-                }
-                return null;
-            }
+            return SearchForSelectedItem(vm, item.FullName);
         }
 
         private WorkspaceItemViewModel SearchForSelectedItem(WorkspaceItemViewModel vm, string fullPath)
@@ -290,18 +277,15 @@ namespace Docdown.ViewModel
             {
                 return vm;
             }
-            else
+            foreach (var child in vm.Children)
             {
-                foreach (var child in vm.Children)
+                var found = SearchForSelectedItem(child, fullPath);
+                if (found != null)
                 {
-                    var found = SearchForSelectedItem(child, fullPath);
-                    if (found != null)
-                    {
-                        return found;
-                    }
+                    return found;
                 }
-                return null;
             }
+            return null;
         }
 
         public void UpdateIcons(IEnumerable<WorkspaceItemViewModel> items)

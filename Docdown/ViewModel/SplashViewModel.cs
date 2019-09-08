@@ -24,16 +24,26 @@ namespace Docdown.ViewModel
         {
             var settings = Settings.Default;
             var workspacePath = settings.WorkspacePath;
-            if (Args != null && Args.Length > 0 && File.Exists(Args[0]) && !IOUtility.IsParent(workspacePath, Args[0]))
+            var app = AppViewModel.Instance;
+            bool isFile = false;
+            if (Args != null && Args.Length > 0 && app.FileSystem.File.Exists(Args[0]))
             {
-                workspacePath = Path.GetDirectoryName(Args[0]);
+                isFile = true;
+                if (!IOUtility.IsParent(workspacePath, Args[0]))
+                {
+                    workspacePath = Path.GetDirectoryName(Args[0]);
+                }
             }
 
             Task.Run(async () =>
             {
-                var app = AppViewModel.Instance;
                 await app.Settings.TestConnection();
                 app.ChangeWorkspace(workspacePath);
+
+                if (isFile)
+                {
+                    app.Workspace.OpenItem(Args[0]);
+                }
 
                 Data = app;
 

@@ -74,6 +74,7 @@ namespace Docdown.Editor
 
         public MarkdownEditor()
         {
+            Theme = new Theme();
             InitializeComponent();
             SetupSyntaxHighlighting(); // won't paint on first load unless here.
             IsVisibleChanged += OnIsVisibleChanged;
@@ -212,27 +213,9 @@ namespace Docdown.Editor
         {
             IsVisibleChanged -= OnIsVisibleChanged;
 
-            EditBox.Options.IndentationSize = 4;
-            EditBox.Options.EnableHyperlinks = false;
-            EditBox.Options.ConvertTabsToSpaces = true;
-            EditBox.Options.AllowScrollBelowDocument = true;
-            EditBox.Options.EnableHyperlinks = false;
-            EditBox.Options.EnableEmailHyperlinks = false;
-            EditBox.TextChanged += EditBoxOnTextChanged;
-
             Dispatcher.InvokeAsync(() =>
             {
-                //var executeAutoSave = Utility.Debounce<string>(s => Dispatcher?.Invoke(ExecuteAutoSave), 4000);
-                //EditBox.TextChanged += (s, e) => executeAutoSave(null);
-                //EditBox.PreviewKeyDown += (s, e) => EditorSpellCheck.AppsKeyDown = e.Key == Key.Apps && e.IsDown;
                 EditBox.Document.PropertyChanged += OnEditBoxPropertyChanged;
-                //DataObject.AddPastingHandler(EditBox, OnPaste);
-                //RestyleScrollBar();
-                //EditorUtilities.AllowImagePaste(this);
-                //RemoveIndentationCommandBinding();
-                //SetupTabSnippetHandler();
-                Theme = new Theme();
-                //ThemeChangedCallback(this, new DependencyPropertyChangedEventArgs());
                 EditBox.Focus();
             });
         }
@@ -245,15 +228,22 @@ namespace Docdown.Editor
         private void SetupSyntaxHighlighting()
         {
             ToolTipService.SetInitialShowDelay(this, 0);
-            var colorizer = new MarkdownHighlightingColorizer();
-            var blockBackgroundRenderer = new BlockBackgroundRenderer();
+            var colorizer = new MarkdownHighlightingColorizer(Theme);
+            var blockBackgroundRenderer = new BlockBackgroundRenderer(Theme);
 
             foldingManager = FoldingManager.Install(EditBox.TextArea);
             foldingStrategy = new MarkdownFoldingStrategy();
 
             var debounced = ((Action)UpdateDebounced).Debounce(500);
 
-            TextChanged += (s, e) =>
+            EditBox.Options.IndentationSize = 4;
+            EditBox.Options.ConvertTabsToSpaces = true;
+            EditBox.Options.AllowScrollBelowDocument = true;
+            EditBox.Options.EnableHyperlinks = false;
+            EditBox.Options.EnableEmailHyperlinks = false;
+            EditBox.Options.EnableRectangularSelection = false;
+            
+            EditBox.TextChanged += (s, e) =>
             {
                 try
                 {

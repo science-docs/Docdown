@@ -3,7 +3,10 @@ using Docdown.ViewModel.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Docdown.ViewModel
@@ -73,6 +76,77 @@ namespace Docdown.ViewModel
                 Items.Add(explorer);
                 Children.Add(explorer);
             }
+            WorkspaceItem.Children.CollectionChanged += Children_CollectionChanged;
+            WorkspaceItem.Changed("Name", Rename);
+        }
+
+        private async void Rename()
+        {
+            await Dispatcher.InvokeAsync(() =>
+            {
+                Parent.Children.Remove(this);
+                if (Contains(search))
+                {
+                    Parent.Insert(this);
+                }
+            });
+        }
+
+        private void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    var vmItem = item as WorkspaceItemViewModel;
+                    var explorer = new Explorer(this, vmItem);
+                    explorer.SetSearch(Search);
+                    Insert(explorer);
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (var item in e.OldItems)
+                {
+                    var explorer = Items.Find(i => i.WorkspaceItem == item);
+                    Items.Remove(explorer);
+                    Children.Remove(explorer);
+                }
+            }
+        }
+
+        private void Insert(Explorer explorer)
+        {
+            Items.Add(explorer);
+            if (explorer.Contains(Search))
+            {
+                bool isFile = explorer.WorkspaceItem.IsFile;
+                bool same = false;
+                for (int i = 0; i < Children.Count; i++)
+                {
+                    var child = Children[i];
+                    if (isFile == child.WorkspaceItem.IsFile)
+                    {
+                        same = true;
+                        if (string.Compare(explorer.WorkspaceItem.Name, child.WorkspaceItem.Name, true) < 0)
+                        {
+                            Children.Insert(i, explorer);
+                            return;
+                        }
+                    }
+                    else if (same)
+                    {
+                        Children.Insert(i - 1, explorer);
+                        return;
+                    }
+                }
+                Children.Add(explorer);
+            }
+        }
+
+        public void Update()
+        {
+
         }
 
         private void SetSearch(string value)
@@ -89,7 +163,9 @@ namespace Docdown.ViewModel
             {
                 Children.Clear();
 
-                foreach (var child in SearchChildren())
+                foreach (var child in SearchChildren()
+                    .OrderByDescending(e => e.WorkspaceItem.IsDirectory)
+                    .ThenBy(e => e.WorkspaceItem.Name))
                 {
                     Children.Add(child);
                 }

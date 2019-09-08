@@ -96,18 +96,18 @@ namespace Docdown.ViewModel
 
             Settings.WorkspacePath = newWorkspace;
             Settings.Save();
-            try
+            Task.Run(async () =>
             {
-                Task.Run(async () =>
+                try
                 {
                     var workspace = await WorkspaceProvider.Create(newWorkspace, FileSystem, ConverterService);
                     await Workspace.DataAsync(workspace);
-                });
-            }
-            catch
-            {
-                // Unable to open workspace
-            }
+                }
+                catch
+                {
+                    Messages.Error("Could not open workspace");
+                }
+            });
             SendPropertyUpdate(nameof(SearchWorkspaceCommand));
         }
 

@@ -24,16 +24,21 @@ namespace Docdown.Model
         public Bibliography Bibliography { get; } = new Bibliography();
         public event WorkspaceChangeEventHandler WorkspaceChanged;
 
+        private readonly Queue<FileSystemEventArgs> changeQueue = new Queue<FileSystemEventArgs>();
+        private readonly Action debouncedChange;
+        private IFileSystemWatcher watcher;
+
         public Workspace(WorkspaceSettings settings, IFileSystem fileSystem, IConverterService converterService)
         {
             FileSystem = fileSystem;
             Settings = settings;
             ConverterService = converterService;
+
+            debouncedChange = UIUtility.Debounce(ExecuteChanges, 1000);
         }
 
         public async Task Initialize()
         {
-
             var webHandler = Handlers.OfType<WebWorkspaceItemHandler>().FirstOrDefault();
 
             if (webHandler != null)
@@ -53,6 +58,74 @@ namespace Docdown.Model
             foreach (var info in dir.EnumerateFileSystemInfos())
             {
                 InitItem(info, Item, webHandler);
+            }
+            SetupFileSystemWatcher();
+        }
+
+        private void SetupFileSystemWatcher()
+        {
+            watcher = FileSystem.FileSystemWatcher.FromPath(Settings.Path);
+            watcher.IncludeSubdirectories = true;
+            watcher.EnableRaisingEvents = true;
+
+            watcher.Changed += QueueChange;
+            watcher.Created += QueueChange;
+            watcher.Deleted += QueueChange;
+            watcher.Renamed += QueueChange;
+        }
+
+        private void QueueChange(object obj, FileSystemEventArgs e)
+        {
+            changeQueue.Enqueue(e);
+            debouncedChange();
+        }
+
+        private async void ExecuteChanges()
+        {
+            if (WorkspaceChanged == null)
+            {
+                changeQueue.Clear();
+                return;
+            }
+
+            var eventArgs = new List<WorkspaceChangeEventArgs>();
+
+            while (changeQueue.Count > 0)
+            {
+                var change = changeQueue.Dequeue();
+                var item = await IdentifyItem(change);
+                var changeValue = (WorkspaceChange)(int)change.ChangeType;
+                var args = new WorkspaceChangeEventArgs(item, changeValue);
+                eventArgs.Add(args);
+            }
+
+            WorkspaceChanged(this, eventArgs);
+        }
+
+        private async Task<IWorkspaceItem> IdentifyItem(FileSystemEventArgs e)
+        {
+            var path = e.FullPath;
+            if (e is RenamedEventArgs renamed)
+            {
+                path = renamed.OldFullPath;
+                var item = FindItem(path);
+                if (item.FullName != e.FullPath)
+                {
+                    if (item.IsDirectory)
+                    {
+                        item.FileInfo = FileSystem.DirectoryInfo.FromDirectoryName(e.FullPath);
+                    }
+                    else if (item.IsFile)
+                    {
+                        item.FileInfo = FileSystem.FileInfo.FromFileName(e.FullPath);
+                    }
+                    await item.Update();
+                }
+                return item;
+            }
+            else
+            {
+                return FindItem(path);
             }
         }
 
@@ -128,6 +201,46 @@ namespace Docdown.Model
                 default:
                     return ConverterType.Text;
             }
+        }
+
+        private IWorkspaceItem FindItem(string fullPath)
+        {
+            var normalized = fullPath.Replace('/', '\\');
+            return FindItem(Item, normalized);
+        }
+
+        private IWorkspaceItem FindItem(IWorkspaceItem parent, string fullPath)
+        {
+            var normalized = parent.FullName;
+            if (normalized == fullPath)
+            {
+                return parent;
+            }
+
+            var parentPath = Path.GetDirectoryName(fullPath);
+            bool isParent = parentPath == normalized;
+
+            foreach (var child in parent.Children)
+            {
+                var item = FindItem(child, fullPath);
+                if (item != null)
+                {
+                    return item;
+                }
+            }
+
+            if (isParent)
+            {
+                // At that point we know, that although the item is logically
+                // a child of the current item, it was not registered as a
+                // part of the workspace, meaning it was created just now.
+                var info = FileSystem.FileInfo.FromFileName(fullPath);
+                var item = new WorkspaceItem(info, this, parent);
+                parent.Children.Add(item);
+                return item;
+            }
+
+            return null;
         }
 
         public IWorkspaceItem FindRelativeItem(string relativePath)

@@ -18,7 +18,7 @@ namespace Docdown.Model
                 throw new ArgumentException("Path does not exist in specified file system: " + (path ?? "<null>"));
             }
 
-            var settings = WorkspaceSettings.Create(path);
+            var settings = WorkspaceSettings.Create(fileSystem, path);
             var workspace = new Workspace(settings, fileSystem, converterService);
             workspace.Handlers.Add(new FileWorkspaceItemHandler());
             if (!string.IsNullOrEmpty(settings.Sync))

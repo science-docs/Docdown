@@ -15,6 +15,11 @@ namespace Docdown.Editor.Markdown
         private Block _abstractSyntaxTree;
         private Theme _theme;
 
+        public MarkdownHighlightingColorizer(Theme theme)
+        {
+            OnThemeChanged(theme);
+        }
+
         protected override void ColorizeLine(DocumentLine line)
         {
             var ast = _abstractSyntaxTree;

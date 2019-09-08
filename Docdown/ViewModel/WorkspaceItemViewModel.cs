@@ -16,20 +16,22 @@ using Image = System.Windows.Controls.Image;
 using System.Text;
 using Docdown.Editor;
 using Docdown.Editor.Commands;
+using System.Collections.ObjectModel;
 
 namespace Docdown.ViewModel
 {
     public class WorkspaceItemViewModel : ObservableObject<IWorkspaceItem>, IExpandable<WorkspaceItemViewModel>, IComparable<WorkspaceItemViewModel>
     {
-        [ChangeListener(nameof(HasChanged))]
+        [ChangeListener(nameof(HasChanged), nameof(Name))]
         public string TabName => HasChanged ? Name + "*" : Name;
         public string Name
         {
             get => tempName ?? Data.Name;
             set => tempName = value;
         }
+        [ChangeListener(nameof(Name))]
         public string RelativeName => Data.RelativeName;
-        [ChangeListener(nameof(TabName))]
+        [ChangeListener(nameof(Name))]
         public string FullName => Data.FullName;
 
         public bool HasChanged
@@ -38,7 +40,7 @@ namespace Docdown.ViewModel
             set => Set(ref hasChanged, value);
         }
 
-        [ChangeListener(nameof(IsExpanded))]
+        [ChangeListener(nameof(IsExpanded), nameof(Name))]
         public string IconName
         {
             get
@@ -54,6 +56,7 @@ namespace Docdown.ViewModel
                     case WorkspaceItemType.Video: return "VideoIcon";
                     case WorkspaceItemType.Markdown: return "MarkdownIcon";
                     case WorkspaceItemType.Web: return "WebIcon";
+                    case WorkspaceItemType.Bibliography: return "BibliographyIcon";
                     default: return "DocumentIcon";
                 }
             }
@@ -127,21 +130,7 @@ namespace Docdown.ViewModel
 
         public SearchViewModel Search { get; private set; }
 
-        public IEnumerable<WorkspaceItemViewModel> Children
-        {
-            get
-            {
-                if (childrenCache is null)
-                {
-                    childrenCache = Data?.Children
-                        .OrderByDescending(e => e.IsDirectory)
-                        .ThenBy(e => e.Name)
-                        .Select(e => new WorkspaceItemViewModel(Workspace, this, e))
-                        .ToArray();
-                }
-                return childrenCache;
-            }
-        }
+        public ObservableCollection<WorkspaceItemViewModel> Children { get; private set; } = new ObservableCollection<WorkspaceItemViewModel>();
         public ICommand SaveCommand => new ActionCommand(Save);
         public ICommand CloseCommand => new ActionCommand(Close);
         public ICommand ConvertCommand => new ActionCommand(Convert);
@@ -212,6 +201,8 @@ namespace Docdown.ViewModel
         public WorkspaceViewModel Workspace { get; }
         public WorkspaceItemViewModel Parent { get; }
 
+        IEnumerable<WorkspaceItemViewModel> IExpandable<WorkspaceItemViewModel>.Children => Children;
+
         private string pdfPath;
         private bool isCompiled;
         private bool isExpanded = false;
@@ -224,7 +215,6 @@ namespace Docdown.ViewModel
         private string tempName;
         private object view;
         private int? wordCount;
-        private WorkspaceItemViewModel[] childrenCache;
         private OutlineViewModel outline;
         private CancelToken converterToken;
         private ConverterType converterType;
@@ -236,6 +226,11 @@ namespace Docdown.ViewModel
             Parent = parent;
 
             IsConvertable = IsPlainText(workspaceItem);
+
+            foreach (var child in workspaceItem.Children)
+            {
+                Children.Add(new WorkspaceItemViewModel(workspaceViewModel, this, child));
+            }
         }
 
         private bool IsPlainText(IWorkspaceItem item)
@@ -280,18 +275,15 @@ namespace Docdown.ViewModel
                 throw new ArgumentNullException(nameof(child));
             }
 
-            // TODO: Repair this
-            //if (Workspace.Data.Repository != null)
-            //{
-            //    child.FileStatus = FileStatus.NewInWorkdir;
-            //}
             if (!Data.Children.Contains(child.Data))
             {
                 throw new InvalidDataException("Underlying WorkspaceItem has to contain the specified child");
             }
-            childrenCache = childrenCache.Concat(child).OrderByDescending(e => e.IsDirectory).ThenBy(e => e.Name).ToArray();
-            Workspace.RefreshExplorer();
-            SendPropertyUpdate(nameof(Children));
+            if (Children.Any(e => e.FullName == child.FullName))
+            {
+                return;
+            }
+            Children.Add(child);
         }
 
         public void StopConvert()
@@ -340,28 +332,29 @@ namespace Docdown.ViewModel
             var lang = Language.Current;
             if (!IsNameChanging && await ShowMessageAsync(lang.Get("Workspace.Delete.File.Title"), lang.Get("Workspace.Delete.File.Text", Name), MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                await RemoveFromOpenItemsAsync();
-                Workspace.IgnoreChange = true;
-                await Data.Delete();
-                Workspace.IgnoreChange = false;
-                if (Parent != null)
+                await Remove();
+            }
+        }
+
+        public async Task Remove()
+        {
+            await RemoveFromOpenItemsAsync();
+            await Data.Delete();
+            if (Parent != null)
+            {
+                await Dispatcher.InvokeAsync(() => Parent.Children.Remove(this));
+            }
+            string hash = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, Data.FullName);
+            if (File.Exists(hash))
+            {
+                try
                 {
-                    Parent.childrenCache = Parent.childrenCache.Except(this).ToArray();
+                    File.Delete(hash);
                 }
-                string hash = IOUtility.GetHashFile(Data.FullName);
-                if (File.Exists(hash))
+                catch
                 {
-                    try
-                    {
-                        File.Delete(hash);
-                    }
-                    catch
-                    {
-                        // Could not delete temp file. This is fine
-                    }
+                    // Could not delete temp file. This is fine
                 }
-                Workspace.RefreshExplorer();
-                Workspace.SendPropertyUpdate(nameof(Children));
             }
         }
 
@@ -376,12 +369,9 @@ namespace Docdown.ViewModel
                 Workspace.PreSelectedItem = null;
             }
             Workspace.OpenItems.Remove(this);
-            if (childrenCache != null)
+            foreach (var child in Children)
             {
-                foreach (var child in Children)
-                {
-                    child.RemoveFromOpenItems();
-                }
+                child.RemoveFromOpenItems();
             }
         }
 
@@ -392,16 +382,15 @@ namespace Docdown.ViewModel
 
         public async Task Rename(string newName)
         {
-            Workspace.IgnoreChange = true;
             try
             {
-                var oldHash = IOUtility.GetHashFile(FullName);
+                var oldHash = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, FullName);
                 await Data.Rename(newName);
                 try
                 {
                     if (File.Exists(oldHash))
                     {
-                        var newHash = IOUtility.GetHashFile(FullName);
+                        var newHash = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, FullName);
                         File.Move(oldHash, newHash);
                         PdfPath = newHash;
                     }
@@ -415,11 +404,7 @@ namespace Docdown.ViewModel
             {
                 Trace.WriteLine("Could not rename file to: " + newName);
             }
-            Workspace.IgnoreChange = false;
-            SendPropertyUpdate(nameof(TabName));
             SendPropertyUpdate(nameof(Name));
-            SendPropertyUpdate(nameof(RelativeName));
-            SendPropertyUpdate(nameof(IconName));
         }
 
         public async Task Save()
@@ -429,9 +414,7 @@ namespace Docdown.ViewModel
                 IsCompiled = false;
                 string text = await Dispatcher.InvokeAsync(() => editorWrapper.Editor.Text);
                 HasChanged = false;
-                Workspace.IgnoreChange = true;
                 await Data.Save(text);
-                Workspace.IgnoreChange = false;
             }
         }
 
@@ -466,13 +449,6 @@ namespace Docdown.ViewModel
                 }
                 view = null;
             }
-        }
-
-        private string GitName()
-        {
-            var rel = Data.RelativeName;
-            rel = rel.Substring(rel.IndexOf('/') + 1);
-            return rel;
         }
 
         private void CancelNameChange()
@@ -515,7 +491,7 @@ namespace Docdown.ViewModel
                 try
                 {
                     var bytes = await Data.Read();
-                    var temp = IOUtility.GetTempFile();
+                    var temp = IOUtility.GetTempFile(Data.FileInfo.FileSystem.Directory);
                     await IOUtility.WriteAllBytes(temp, Data.FileInfo.FileSystem.File, bytes);
                     PdfPath = temp;
                 }
@@ -531,24 +507,16 @@ namespace Docdown.ViewModel
         private IEditor ShowMdEditorAndPdf()
         {
             var editorAndViewer = new EditorAndViewer();
-            var temp = IOUtility.GetHashFile(Data.FullName);
+            var temp = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, Data.FullName);
             if (File.Exists(temp))
             {
                 PdfPath = temp;
                 ShowPreview = true;
             }
-            editorAndViewer.Editor.IsEnabled = false;
             Task.Run(async () =>
             {
                 string allText = ReadText(await Data.Read());
-                await Dispatcher.InvokeAsync(() =>
-                {
-                    editorAndViewer.Delay(100, () =>
-                    {
-                        editorAndViewer.Editor.Text = allText;
-                        editorAndViewer.Editor.IsEnabled = true;
-                    });
-                });
+                await Dispatcher.InvokeAsync(() => editorAndViewer.Editor.Text = allText);
             });
             
             return editorAndViewer;
@@ -557,18 +525,10 @@ namespace Docdown.ViewModel
         private IEditor ShowDefaultEditor()
         {
             var editor = new DefaultEditor();
-            editor.Editor.IsEnabled = false;
             Task.Run(async () =>
             {
                 string allText = ReadText(await Data.Read());
-                await Dispatcher.InvokeAsync(() =>
-                {
-                    editor.Delay(100, () =>
-                    {
-                        editor.Editor.Text = allText;
-                        editor.Editor.IsEnabled = true;
-                    });
-                });
+                await Dispatcher.InvokeAsync(() => editor.Editor.Text = allText);
             });
             return editor;
         }

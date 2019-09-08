@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Docdown.Util;
 using Newtonsoft.Json.Linq;
@@ -28,7 +29,7 @@ namespace Docdown.Model
 
         public async Task<byte[]> Convert(IEnumerable<MultipartFormParameter> parameters, CancelToken cancelToken)
         {
-            var token = cancelToken.ToCancellationToken();
+            var token = cancelToken?.ToCancellationToken() ?? new CancellationToken();
             using (var req = await WebUtility.PostRequest(BuildConvertUrl(), token, parameters))
             {
                 using (var ms = new MemoryStream())

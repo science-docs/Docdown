@@ -67,21 +67,21 @@ namespace Docdown.Util
             return Encoding.UTF8.GetString(await ReadAllBytes(fullName, file));
         }
 
-        public static string GetTempFile(string name = null)
+        public static string GetTempFile(IDirectory directory, string name = null)
         {
             string temp = Path.GetTempPath();
             const string docdown = "Docdown";
             string randomFile = (name ?? Guid.NewGuid().ToString()) + ".tmp";
             string file = Path.Combine(temp, docdown, randomFile);
             string dir = Path.Combine(temp, docdown);
-            Directory.CreateDirectory(dir);
+            directory.CreateDirectory(dir);
             return file;
         }
 
-        public static string GetHashFile(string valueToHash)
+        public static string GetHashFile(IDirectory directory, string valueToHash)
         {
             var bytes = md5.ComputeHash(Encoding.UTF8.GetBytes(valueToHash));
-            return GetTempFile(ByteArrayToString(bytes));
+            return GetTempFile(directory, ByteArrayToString(bytes));
         }
 
         public static bool IsValidFileName(string fileName)
@@ -133,15 +133,15 @@ namespace Docdown.Util
             }
         }
 
-        public static IEnumerable<Tuple<string, string>> ParseProperties(string path)
+        public static IEnumerable<Tuple<string, string>> ParseProperties(IFile file, string path)
         {
-            using (var fs = File.OpenRead(path))
+            using (var fs = file.OpenRead(path))
             {
                 return ParseProperties(fs);
             }
         }
 
-        public static void WriteProperties(string path, IEnumerable<Tuple<string, string>> properties)
+        public static void WriteProperties(IFile file, string path, IEnumerable<Tuple<string, string>> properties)
         {
             StringBuilder sb = new StringBuilder();
             foreach (var prop in properties)
@@ -150,7 +150,7 @@ namespace Docdown.Util
                 sb.Append('=');
                 sb.AppendLine(prop.Item2);
             }
-            File.WriteAllText(path, sb.ToString());
+            file.WriteAllText(path, sb.ToString());
         }
     }
 }

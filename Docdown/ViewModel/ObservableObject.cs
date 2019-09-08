@@ -68,6 +68,22 @@ namespace Docdown.ViewModel
             InspectChangeListener();
         }
 
+        public void Changed(string name, Action handler)
+        {
+            Changed(name, (o, e) => handler());
+        }
+
+        public void Changed(string name, PropertyChangedEventHandler handler)
+        {
+            PropertyChanged += (o, e) =>
+            {
+                if (e.PropertyName == name)
+                {
+                    handler(o, e);
+                }
+            };
+        }
+
         protected virtual void OnPropertyChanged(string name)
         {
 

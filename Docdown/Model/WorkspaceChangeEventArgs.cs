@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Docdown.Model
 {
@@ -12,7 +13,7 @@ namespace Docdown.Model
         All = 15
     }
 
-    public delegate void WorkspaceChangeEventHandler(IWorkspace workspace, WorkspaceChangeEventArgs args);
+    public delegate void WorkspaceChangeEventHandler(IWorkspace workspace, IEnumerable<WorkspaceChangeEventArgs> args);
 
     public class WorkspaceChangeEventArgs : EventArgs
     {

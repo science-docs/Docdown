@@ -23,8 +23,14 @@ namespace Docdown.Editor.Markdown
 
         private readonly Dictionary<BlockTag, Brush> _brushes = new Dictionary<BlockTag, Brush>();
         private Block _abstractSyntaxTree;
+        private Theme _theme;
 
         public KnownLayer Layer => KnownLayer.Background;
+
+        public BlockBackgroundRenderer(Theme theme)
+        {
+            OnThemeChanged(theme);
+        }
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
@@ -66,7 +72,7 @@ namespace Docdown.Editor.Markdown
             var segments = new TextSegmentCollection<IssueMarker>();
             foreach (var issue in ast.Document.Issues)
             {
-                segments.Add(new IssueMarker(issue));
+                segments.Add(new IssueMarker(_theme, issue));
             }
 
             var visualLines = textView.VisualLines;
@@ -74,31 +80,31 @@ namespace Docdown.Editor.Markdown
                 return;
             int viewStart = visualLines.First().FirstDocumentLine.Offset;
             int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
-            foreach (IssueMarker marker in segments.FindOverlappingSegments(viewStart, viewEnd - viewStart))
+            foreach (var marker in segments.FindOverlappingSegments(viewStart, viewEnd - viewStart))
             {
                 var brush = marker.Brush;
-                Pen usedPen = new Pen(brush, 1);
+                var usedPen = new Pen(brush, 1);
                 usedPen.Freeze();
                 if (brush == null)
                 {
                     continue;
                 }
 
-                foreach (Rect r in BackgroundGeometryBuilder.GetRectsForSegment(textView, marker))
+                foreach (var r in BackgroundGeometryBuilder.GetRectsForSegment(textView, marker))
                 {
-                    Point startPoint = r.BottomLeft;
-                    Point endPoint = r.BottomRight;
+                    var startPoint = r.BottomLeft;
+                    var endPoint = r.BottomRight;
 
                     double offset = 2.5;
 
                     int count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
 
-                    StreamGeometry geometry = new StreamGeometry();
+                    var geometry = new StreamGeometry();
 
                     using (StreamGeometryContext ctx = geometry.Open())
                     {
                         ctx.BeginFigure(startPoint, false, false);
-                        ctx.PolyLineTo(CreatePoints(startPoint, endPoint, offset, count).ToArray(), true, false);
+                        ctx.PolyLineTo(CreatePoints(startPoint, offset, count).ToArray(), true, false);
                     }
 
                     geometry.Freeze();
@@ -109,7 +115,7 @@ namespace Docdown.Editor.Markdown
             }
         }
 
-        IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
+        IEnumerable<Point> CreatePoints(Point start, double offset, int count)
         {
             for (int i = 0; i < count; i++)
                 yield return new Point(start.X + i * offset, start.Y - ((i + 1) % 2 == 0 ? offset : 0));
@@ -119,6 +125,7 @@ namespace Docdown.Editor.Markdown
 
         public void OnThemeChanged(Theme theme)
         {
+            _theme = theme;
             _brushes.Clear();
             var codeBrush = ColorBrush(theme.HighlightBlockCode.Background);
             _brushes[BlockTag.FencedCode] = codeBrush;
@@ -161,11 +168,11 @@ namespace Docdown.Editor.Markdown
                     switch (issue.Type)
                     {
                         case IssueType.Info:
-                            return Brushes.Blue;
+                            return theme.Info ?? Brushes.Blue;
                         case IssueType.Warning:
-                            return Brushes.Yellow;
+                            return theme.Warning ?? Brushes.Yellow;
                         case IssueType.Error:
-                            return Brushes.Red;
+                            return theme.Error ?? Brushes.Red;
                         default:
                             return null;
                     }
@@ -173,9 +180,11 @@ namespace Docdown.Editor.Markdown
             }
 
             private readonly Issue issue;
+            private readonly Theme theme;
 
-            public IssueMarker(Issue issue)
+            public IssueMarker(Theme theme, Issue issue)
             {
+                this.theme = theme;
                 this.issue = issue;
                 StartOffset = issue.Offset;
                 Length = issue.Length;
