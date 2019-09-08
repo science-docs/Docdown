@@ -288,9 +288,9 @@
                            Width="16"/>
             </Button>
             <Button Command="{Binding VerbatimCommand}"
-                    ToolTip="Verbatim" 
+                    ToolTip="Verbatim Code" 
                     IsEnabled="{Binding Workspace.SelectedItem.IsConvertable, FallbackValue=False}">
-                <Rectangle Fill="{DynamicResource MonospaceIcon}" 
+                <Rectangle Fill="{DynamicResource HtmlIcon}" 
                            Height="16" 
                            Width="16"/>
             </Button>
