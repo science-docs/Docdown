@@ -26,6 +26,8 @@ namespace Docdown.Editor.Markdown
         public static MetaDataModel Load(JObject json)
         {
             var meta = new MetaDataModel();
+            if (json == null)
+                return meta;
             
             foreach (KeyValuePair<string, JToken> child in json)
             {

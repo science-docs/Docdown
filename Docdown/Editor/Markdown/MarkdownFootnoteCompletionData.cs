@@ -20,7 +20,7 @@ namespace Docdown.Editor.Markdown
 
         internal MarkdownFootnoteCompletionData(Reference reference)
         {
-            this.reference = reference;
+            this.reference = reference ?? throw new ArgumentNullException(nameof(reference));
         }
 
         public override void Complete(TextArea textArea, ISegment completionSegment, EventArgs insertionRequestEventArgs)
@@ -29,6 +29,11 @@ namespace Docdown.Editor.Markdown
             const string end = "]";
             var segment = CreateSegment(textArea, completionSegment, Text, start, end);
             textArea.Document.Replace(segment, start + Text + end);
+        }
+
+        public override string ToString()
+        {
+            return reference.Label;
         }
     }
 }

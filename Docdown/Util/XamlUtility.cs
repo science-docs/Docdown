@@ -53,42 +53,49 @@ namespace Docdown.Util
             return await ParseAsync(xamlNode.ToString());
         }
 
+        public static FlowDocument ParseDocument(XNode node)
+        {
+            return ParseDocument(node.ToString());
+        }
+
+        public static FlowDocument ParseDocument(string xamlString)
+        {
+            if (string.IsNullOrEmpty(xamlString))
+            {
+                return null;
+            }
+
+            try
+            {
+                var item = XamlReader.Parse(xamlString);
+                FlowDocument doc = null;
+                switch (item)
+                {
+                    case FlowDocument document:
+                        doc = document;
+                        break;
+                    case Block block:
+                        doc = new FlowDocument();
+                        doc.Blocks.Add(block);
+                        break;
+                    case Inline inline:
+                        doc = new FlowDocument();
+                        var paragraph = new Paragraph();
+                        paragraph.Inlines.Add(inline);
+                        doc.Blocks.Add(paragraph);
+                        break;
+                }
+                return doc;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public static async Task<FlowDocument> ParseDocumentAsync(string xamlString)
         {
-            return await Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                if (string.IsNullOrEmpty(xamlString))
-                {
-                    return null;
-                }
-
-                try
-                {
-                    var item = XamlReader.Parse(xamlString);
-                    FlowDocument doc = null;
-                    switch (item)
-                    {
-                        case FlowDocument document:
-                            doc = document;
-                            break;
-                        case Block block:
-                            doc = new FlowDocument();
-                            doc.Blocks.Add(block);
-                            break;
-                        case Inline inline:
-                            doc = new FlowDocument();
-                            var paragraph = new Paragraph();
-                            paragraph.Inlines.Add(inline);
-                            doc.Blocks.Add(paragraph);
-                            break;
-                    }
-                    return doc;
-                }
-                catch
-                {
-                    return null;
-                }
-            });
+            return await Application.Current.Dispatcher.InvokeAsync(() => ParseDocument(xamlString));
         }
 
         public static async Task<FlowDocument> ParseDocumentAsync(XmlNode xamlNode)

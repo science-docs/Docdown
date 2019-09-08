@@ -20,7 +20,7 @@ namespace Docdown.Editor.Markdown
 
         public MarkdownMetaCompletionData(MetaDataModel.Entry metaDataEntry)
         {
-            this.metaDataEntry = metaDataEntry;
+            this.metaDataEntry = metaDataEntry ?? throw new ArgumentNullException(nameof(metaDataEntry));
         }
 
         private string BuildDescription()
@@ -70,6 +70,11 @@ namespace Docdown.Editor.Markdown
 
             var segment = CreateSegment(textArea, completionSegment, Text, null, null);
             textArea.Document.Replace(segment, sb.ToString());
+        }
+
+        public override string ToString()
+        {
+            return Text;
         }
     }
 }

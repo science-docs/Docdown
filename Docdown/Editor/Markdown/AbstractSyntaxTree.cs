@@ -19,6 +19,11 @@ namespace Docdown.Editor.Markdown
 
         public static int CountWords(Block ast, string text)
         {
+            if (ast == null)
+                throw new ArgumentNullException(nameof(ast));
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
             int words = 0;
             foreach (var block in EnumerateBlocks(ast))
             {
@@ -27,7 +32,6 @@ namespace Docdown.Editor.Markdown
                     case BlockTag.AtxHeading:
                     case BlockTag.SetextHeading:
                     case BlockTag.Paragraph:
-                    case BlockTag.BlockQuote:
                         words += CountSingleWords(block, text);
                         break;
                 }
@@ -66,6 +70,9 @@ namespace Docdown.Editor.Markdown
 
         public static Block GenerateAbstractSyntaxTree(string text)
         {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
             using (var reader = new StringReader(Normalize(text)))
             {
                 var ast = PandocMarkConverter.ProcessStage1(reader, CommonMarkSettings);
@@ -102,11 +109,17 @@ namespace Docdown.Editor.Markdown
 
         public static IEnumerable<Block> EnumerateHeader(Block ast)
         {
+            if (ast == null)
+                throw new ArgumentNullException(nameof(ast));
+
             return EnumerateBlocks(ast).Where(e => e.Tag == BlockTag.AtxHeading || e.Tag == BlockTag.SetextHeading);
         }
 
         public static IEnumerable<Block> EnumerateSpanningBlocks(Block ast, int startOffset, int endOffset)
         {
+            if (ast == null)
+                throw new ArgumentNullException(nameof(ast));
+
             return EnumerateBlocks(ast.FirstChild)
                 .Where(b => b.SourcePosition + b.SourceLength > startOffset)
                 .TakeWhile(b => b.SourcePosition < endOffset);
@@ -157,33 +170,6 @@ namespace Docdown.Editor.Markdown
 
             var inline = EnumerateInlines(block.InlineContent).Where(e => e.Tag != InlineTag.String && e.SourcePosition + e.SourceLength > index && index >= e.SourcePosition);
             return inline.OrderByDescending(e => e.SourcePosition).FirstOrDefault();
-        }
-
-        public static bool PositionSafeForSmartLink(Block ast, int start, int length)
-        {
-            if (ast is null) return true;
-            var end = start + length;
-            var blockTags = new[] { BlockTag.FencedCode, BlockTag.HtmlBlock, BlockTag.IndentedCode, BlockTag.ReferenceDefinition };
-            var inlineTags = new[] { InlineTag.Code, InlineTag.Link, InlineTag.RawHtml, InlineTag.Image };
-            var lastBlockTag = BlockTag.Document;
-
-            foreach (var block in EnumerateBlocks(ast.FirstChild))
-            {
-                if (block.SourcePosition + block.SourceLength < start)
-                {
-                    lastBlockTag = block.Tag;
-                    continue;
-                }
-
-                if (block.SourcePosition >= end) return !blockTags.Any(tag => tag == lastBlockTag);
-                if (blockTags.Any(tag => tag == block.Tag)) return false;
-
-                return !EnumerateInlines(block.InlineContent)
-                    .TakeWhile(il => il.SourcePosition < end)
-                    .Where(il => il.SourcePosition + il.SourceLength > start)
-                    .Any(il => inlineTags.Any(tag => tag == il.Tag));
-            }
-            return true;
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Docdown.Editor.Markdown
 
         public MarkdownHtmlCompletionData(string name, string description)
         {
-            this.name = name;
+            this.name = name ?? throw new ArgumentNullException(nameof(name));
             selfClosing = SelfClosingTags.Contains(name);
             desc = description;
         }
@@ -47,6 +47,11 @@ namespace Docdown.Editor.Markdown
 
             var segment = CreateSegment(textArea, completionSegment, Text, start, end);
             textArea.Document.Replace(segment, start + Text + end);
+        }
+
+        public override string ToString()
+        {
+            return "<" + name + ">";
         }
     }
 }

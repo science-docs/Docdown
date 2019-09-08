@@ -43,9 +43,7 @@ namespace Docdown.ViewModel
                 Name = xml.Attribute(nameof(Name))?.Value,
                 Content = xml.Element(nameof(Content))?.FirstNode?.ToString().Trim()
             };
-            var task = XamlUtility.ParseDocumentAsync(xml.Element(nameof(Preview))?.FirstNode);
-            task.Wait();
-            item.Preview = task.Result;
+            item.Preview = XamlUtility.ParseDocument(xml.Element(nameof(Preview))?.FirstNode);
             return item;
         }
     }

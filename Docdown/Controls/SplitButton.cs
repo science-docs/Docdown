@@ -236,8 +236,7 @@ namespace Docdown.Controls
         /// </summary>
         private static void OnPlacementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            SplitButton s = d as SplitButton;
-            if (s == null) return;
+            if (!(d is SplitButton s)) return;
 
             s.EnsureContextMenuIsValid();
             s.ContextMenu.Placement = (PlacementMode)e.NewValue;
@@ -248,8 +247,7 @@ namespace Docdown.Controls
         /// </summary>
         private static void OnPlacementRectangleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            SplitButton s = d as SplitButton;
-            if (s == null) return;
+            if (!(d is SplitButton s)) return;
 
             s.EnsureContextMenuIsValid();
             s.ContextMenu.PlacementRectangle = (Rect)e.NewValue;
@@ -260,8 +258,7 @@ namespace Docdown.Controls
         /// </summary>
         private static void OnHorizontalOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            SplitButton s = d as SplitButton;
-            if (s == null) return;
+            if (!(d is SplitButton s)) return;
 
             s.EnsureContextMenuIsValid();
             s.ContextMenu.HorizontalOffset = (double)e.NewValue;
@@ -272,8 +269,7 @@ namespace Docdown.Controls
         /// </summary>
         private static void OnVerticalOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            SplitButton s = d as SplitButton;
-            if (s == null) return;
+            if (!(d is SplitButton s)) return;
 
             s.EnsureContextMenuIsValid();
             s.ContextMenu.VerticalOffset = (double)e.NewValue;
@@ -301,7 +297,7 @@ namespace Docdown.Controls
                 ContextMenu.Closed += delegate { IsContextMenuOpen = false; };
 
                 var setter = new EventSetter(MenuItem.ClickEvent, new RoutedEventHandler(OnMenuItemClicked));
-                var style = new Style(typeof(MenuItem));
+                var style = ContextMenu.ItemContainerStyle ?? new Style(typeof(MenuItem));
 
                 style.Setters.Add(setter);
                 ContextMenu.ItemContainerStyle = style;

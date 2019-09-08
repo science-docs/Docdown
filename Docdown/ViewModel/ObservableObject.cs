@@ -2,6 +2,7 @@
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -97,7 +98,14 @@ namespace Docdown.ViewModel
 
         protected internal void SendPropertyUpdate([CallerMemberName]string property = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+            try
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine("Property update exception: " + e.Message);
+            }
         }
 
         protected internal void ForceUpdate()
