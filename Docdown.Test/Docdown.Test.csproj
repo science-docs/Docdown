@@ -63,7 +63,10 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Model\FileWorkspaceItemHandlerTest.cs" />
     <Compile Include="Model\MockConverterService.cs" />
+    <Compile Include="Model\FileSystemWatcherFactory.cs" />
+    <Compile Include="Model\WorkspaceTests.cs" />
     <Compile Include="Model\WorkspaceItemTests.cs" />
     <Compile Include="Model\WorkspaceTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,6 +75,7 @@
     <None Include="app.config" />
     <EmbeddedResource Include="Files\Workspace\Main.md" />
     <EmbeddedResource Include="Files\Copy\Test.md" />
+    <EmbeddedResource Include="Files\Template.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -84,7 +88,9 @@
       <Name>PandocMark</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Files\Result.txt" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

@@ -15,7 +15,8 @@ namespace Docdown.Model.Test
     {
         public IWorkspace Workspace { get; set; }
         public MockFileSystem FileSystem { get; set; }
-
+        public FileWorkspaceItemHandler FileHandler { get; set; }
+        public FileSystemWatcherFactory Watcher { get; set; }
         public const string WorkspacePath = @"C:\Workspace\";
 
         [TestInitialize]
@@ -55,9 +56,15 @@ namespace Docdown.Model.Test
                 dict.Add(fileName, new MockFileData(bytes));
             }
 
-            FileSystem = new MockFileSystem(dict, @"C:\");
+            FileSystem = new MockFileSystem(dict, @"C:\")
+            {
+                FileSystemWatcher = Watcher = new FileSystemWatcherFactory()
+            };
 
-            Workspace = await WorkspaceProvider.Create(WorkspacePath, FileSystem);
+
+            Workspace = await WorkspaceProvider.Create(WorkspacePath, FileSystem, new MockConverterService());
+            Workspace.WorkspaceChanged += delegate { };
+            FileHandler = Workspace.Handlers.OfType<FileWorkspaceItemHandler>().First();
         }
 
         public IWorkspaceItem FindItem(string name)

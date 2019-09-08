@@ -12,13 +12,22 @@ namespace Docdown.Model.Test
         const string RenamedFullName = @"C:\Workspace\Renamed.md";
 
         [TestMethod]
+        public async Task ConvertTest()
+        {
+            var main = FindItem("Main.md");
+            var path = await main.Convert(null);
+            Assert.IsNotNull(path, "Could not create file from converter service");
+        }
+
+        [TestMethod]
         public async Task LoadStringTest()
         {
             var main = FindItem("Main.md");
             var bytes = await main.Read();
-            Assert.IsTrue(bytes.Length > 0);
+            Assert.IsNotNull(bytes, "Reading a file should never return NULL");
+            Assert.IsTrue(bytes.Length > 0, "This file is specified as having more than zero bytes");
             string text = Encoding.UTF8.GetString(bytes);
-            Assert.IsTrue(text.StartsWith("---"));
+            Assert.IsTrue(text.StartsWith("---"), "Text does not start with '---', found instead '{0}'", text.Substring(0, 10));
         }
 
         [TestMethod]
@@ -28,7 +37,7 @@ namespace Docdown.Model.Test
             const string text = "# Only Header";
             await main.Save(text);
             var newText = FileSystem.File.ReadAllText(MainFullName);
-            Assert.AreEqual(text, newText);
+            Assert.AreEqual(text, newText, false, "Text was not correctly written to file system");
         }
 
         [TestMethod]
@@ -50,6 +59,15 @@ namespace Docdown.Model.Test
             await main.Rename(newName);
             Assert.IsFalse(FileSystem.FileExists(MainFullName));
             Assert.IsTrue(FileSystem.FileExists(RenamedFullName));
+        }
+
+        [TestMethod]
+        public async Task UpdateTest()
+        {
+            var main = FindItem("Main.md");
+            var fullName = main.FullName;
+            await main.Update();
+            Assert.AreEqual(fullName, main.FullName);
         }
 
         [TestMethod]

@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using Docdown.Util;
 
@@ -14,19 +15,29 @@ namespace Docdown.Model.Test
             return Task.FromResult(ConnectionStatus.Connected);
         }
 
-        public Task<byte[]> Convert(IEnumerable<MultipartFormParameter> parameters, CancelToken cancelToken)
+        public async Task<byte[]> Convert(IEnumerable<MultipartFormParameter> parameters, CancelToken cancelToken)
         {
-            return Task.FromResult(new byte[0]);
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Docdown.Test.Files.Result.txt");
+            using (var ms = new MemoryStream())
+            {
+                await stream.CopyToAsync(ms);
+                return ms.ToArray();
+            }
         }
 
         public Task<string[]> LoadCsls()
         {
-            throw new NotImplementedException();
+            return Task.FromResult(new string[] { "IEEE" });
         }
 
-        public Task<Template[]> LoadTemplates()
+        public async Task<Template[]> LoadTemplates()
         {
-            throw new NotImplementedException();
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Docdown.Test.Files.Result.txt");
+            using (var sr = new StreamReader(stream))
+            {
+                var text = await sr.ReadToEndAsync();
+                return Template.FromJson(text);
+            }
         }
     }
 }
