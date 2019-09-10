@@ -14,7 +14,7 @@ namespace Docdown.Model.Test
         {
             FileSystem.File.Create(NewName);
             Watcher.Trigger(new FileSystemEventArgs(WatcherChangeTypes.Created, "C:/Workspace", "New.txt"));
-            await Task.Delay(1010);
+            await Task.Delay(1100);
             var newItem = FindItem("New.txt");
             Assert.IsNotNull(newItem);
         }

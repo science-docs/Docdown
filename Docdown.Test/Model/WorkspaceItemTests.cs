@@ -112,9 +112,14 @@ namespace Docdown.Model.Test
         public async Task CopyFolderTest()
         {
             var dir = await Workspace.Item.CopyExistingFolder(@"C:\Copy");
+            Assert.AreSame(Workspace.Item, dir.Parent);
             Assert.IsTrue(Workspace.Item.Children.Contains(dir), "Workspace does not contain item");
             Assert.IsTrue(FileSystem.Directory.Exists(WorkspacePath + "Copy"), "Directory was not correctly copied");
             Assert.IsTrue(FileSystem.FileExists(WorkspacePath + @"Copy\Test.md"), "File was not correctly copied");
+            var test = FindItem("Test.md");
+            Assert.IsNotNull(test);
+            Assert.AreSame(dir, test.Parent);
+            Assert.AreSame(Workspace.Item, test.Parent.Parent);
         }
     }
 }

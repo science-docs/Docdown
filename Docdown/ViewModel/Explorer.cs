@@ -73,11 +73,10 @@ namespace Docdown.ViewModel
             foreach (var child in WorkspaceItem.Children)
             {
                 var explorer = new Explorer(this, child);
-                Items.Add(explorer);
-                Children.Add(explorer);
+                Insert(explorer, true);
             }
             WorkspaceItem.Children.CollectionChanged += Children_CollectionChanged;
-            WorkspaceItem.Changed("Name", Rename);
+            WorkspaceItem.Changed(nameof(WorkspaceItemViewModel.Name), Rename);
         }
 
         private async void Rename()
@@ -115,13 +114,14 @@ namespace Docdown.ViewModel
             }
         }
 
-        private void Insert(Explorer explorer)
+        private void Insert(Explorer explorer, bool ignore = false)
         {
             Items.Add(explorer);
-            if (explorer.Contains(Search))
+            if (ignore || explorer.Contains(Search))
             {
                 bool isFile = explorer.WorkspaceItem.IsFile;
-                bool same = false;
+                bool same = explorer.WorkspaceItem.IsDirectory;
+                bool first = true;
                 for (int i = 0; i < Children.Count; i++)
                 {
                     var child = Children[i];
@@ -134,11 +134,12 @@ namespace Docdown.ViewModel
                             return;
                         }
                     }
-                    else if (same)
+                    else if (same && !first)
                     {
                         Children.Insert(i - 1, explorer);
                         return;
                     }
+                    first = false;
                 }
                 Children.Add(explorer);
             }

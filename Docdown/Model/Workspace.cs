@@ -174,9 +174,9 @@ namespace Docdown.Model
             if (fileInfo is IDirectoryInfo dirInfo)
             {
                 item.Type = WorkspaceItemType.Directory;
-                foreach (var info in dirInfo.EnumerateFileSystemInfos())
+                foreach (var info in dirInfo.EnumerateFileSystemInfos().Where(e => !e.Name.StartsWith(".")))
                 {
-                    InitItem(info, Item, handler);
+                    InitItem(info, item, handler);
                 }
             }
             else if (item.Type == WorkspaceItemType.Bibliography)

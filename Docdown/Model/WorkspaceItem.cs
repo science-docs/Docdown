@@ -49,7 +49,7 @@ namespace Docdown.Model
             set
             {
                 fileInfo = value;
-                SetType(fileInfo.Extension);
+                SetType(fileInfo);
             }
         }
 
@@ -288,8 +288,15 @@ namespace Docdown.Model
             return ToString() == other?.ToString();
         }
 
-        private void SetType(string fileExt)
+        private void SetType(IFileSystemInfo info)
         {
+            if (info is IDirectoryInfo)
+            {
+                Type = WorkspaceItemType.Directory;
+                return;
+            }
+
+            var fileExt = info.Extension;
             switch (fileExt)
             {
                 case ".md":
