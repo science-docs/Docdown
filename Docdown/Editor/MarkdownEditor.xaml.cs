@@ -465,11 +465,7 @@ namespace Docdown.Editor
 
         private void JumpToLocation(int location)
         {
-        //    EditBox.TextArea.Caret.Offset = location;
-        //    EditBox.TextArea.Caret.BringCaretToView();
-            var line = Editor.Document.GetLineByOffset(location);
-            double vertOffset = Editor.TextArea.TextView.DefaultLineHeight * line.LineNumber;
-            Editor.ScrollToVerticalOffset(vertOffset);
+            Editor.ScrollTo(location);
         }
 
         private void OnEditBoxPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -478,7 +474,7 @@ namespace Docdown.Editor
             {
 
                 var currentLineCount = EditBox.LineCount;
-                // Magic number, yeah baby! -1 means the editor has never had text in it.
+                // -1 means the editor has never had text in it.
                 if (_previousLineCount != -1)
                 {
                     ListInputHandler.AdjustList(EditBox, currentLineCount > _previousLineCount);

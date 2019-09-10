@@ -1,5 +1,5 @@
-﻿using Docdown.Controls;
-using Docdown.Editor;
+﻿using Docdown.Editor;
+using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using System;
 using System.Text.RegularExpressions;
@@ -39,6 +39,8 @@ namespace Docdown.ViewModel
 
         public bool CaseSensitive { get; set; }
 
+        public bool UseRegex { get; set; }
+
         public ICommand SearchCommand => new ActionCommand(Search);
         public ICommand ShowCommand => new ActionCommand(ShowSearch);
         public ICommand HideCommand => new ActionCommand(HideSearch);
@@ -51,6 +53,7 @@ namespace Docdown.ViewModel
         private string fullText;
         private bool visible;
         private bool expanded;
+        private Regex searchRegex;
 
         public SearchViewModel(IEditor editor)
         {
@@ -61,7 +64,7 @@ namespace Docdown.ViewModel
         private void TextChanged(object sender, EventArgs e)
         {
             fullText = null;
-            SearchIndex = -1;
+            SearchIndex = Math.Min(SearchIndex, Editor.Editor.Document.TextLength);
         }
 
         public void SelectSearchText()
@@ -86,28 +89,20 @@ namespace Docdown.ViewModel
                 return;
             }
 
-            if (fullText is null)
-            {
-                fullText = Editor.Editor.Text;
+            fullText = fullText ?? Editor.Editor.Text;
 
-                if (!CaseSensitive)
-                {
-                    fullText = fullText.ToLower();
-                }
+            var match = searchRegex.Match(fullText, SearchIndex == -1 ? 0 : SearchIndex);
+
+            if (match.Success)
+            {
+                SetSelection(match);
             }
-
-            int index = fullText.IndexOf(actualSearch, SearchIndex == -1 ? 0 : SearchIndex);
-
-            if (index > -1)
+            else if (SearchIndex > -1)
             {
-                SetSelection(index);
-            }
-            else if (SearchIndex > actualSearch.Length)
-            {
-                index = fullText.IndexOf(actualSearch, 0, SearchIndex - actualSearch.Length - 1);
-                if (index > -1)
+                match = searchRegex.Match(fullText, 0);
+                if (match.Success)
                 {
-                    SetSelection(index);
+                    SetSelection(match);
                 }
             }
         }
@@ -140,16 +135,15 @@ namespace Docdown.ViewModel
             Editor.Editor.Text = Regex.Replace(Editor.Editor.Text, actualSearch, replaceText, CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase);
         }
 
-        private void SetSelection(int index)
+        private void SetSelection(Match match)
         {
             try
             {
-                SearchIndex = index + actualSearch.Length;
+                SearchIndex = match.Index + 1;
                 Editor.Editor.SelectionLength = 0;
-                Editor.Editor.SelectionStart = index;
-                Editor.Editor.SelectionLength = actualSearch.Length;
-                Editor.Editor.TextArea.Caret.Offset = index;
-                Editor.Editor.TextArea.Caret.BringCaretToView();
+                Editor.Editor.SelectionStart = match.Index;
+                Editor.Editor.SelectionLength = match.Length;
+                Editor.Editor.ScrollTo(match.Index);
             }
             catch
             {
@@ -180,10 +174,16 @@ namespace Docdown.ViewModel
         private void SearchChanged()
         {
             actualSearch = SearchText ?? string.Empty;
+            RegexOptions options = RegexOptions.None;
             if (!CaseSensitive)
             {
-                actualSearch = actualSearch.ToLower();
+                options |= RegexOptions.IgnoreCase;
             }
+            if (!UseRegex)
+            {
+                actualSearch = Regex.Escape(actualSearch);
+            }
+            searchRegex = new Regex(actualSearch, options);
         }
     }
 }

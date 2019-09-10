@@ -1,4 +1,5 @@
-﻿using ICSharpCode.AvalonEdit.CodeCompletion;
+﻿using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using System;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,13 @@ namespace Docdown.Util
 {
     public static class UIUtility
     {
+        public static void ScrollTo(this TextEditor editor, int index)
+        {
+            var line = editor.Document.GetLineByOffset(index);
+            var column = index - line.Offset;
+            editor.ScrollTo(line.LineNumber, column);
+        }
+
         public static bool IsEmpty(this CompletionList completionList)
         {
             return !completionList.ListBox.ItemsSource.OfType<ICompletionData>().Any();
