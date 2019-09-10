@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Docdown.Util
@@ -13,7 +14,7 @@ namespace Docdown.Util
             var url = "https://www.openthesaurus.de/synonyme/search?q=" + encodedWord + "&format=application/json";
             var text = await WebUtility.SimpleTextRequest(url);
             var jsonObj = JObject.Parse(text);
-            var synonyms = new List<string>();
+            var synonyms = new LinkedList<string>();
 
             var synsets = jsonObj.SelectToken("synsets");
             foreach (var synset in synsets)
@@ -22,11 +23,11 @@ namespace Docdown.Util
                 foreach (var term in terms)
                 {
                     var termText = term.SelectToken("term").Value<string>();
-                    synonyms.Add(termText);
+                    synonyms.AddLast(termText);
                 }
             }
 
-            return synonyms.ToArray();
+            return synonyms.Distinct().ToArray();
         }
     }
 }

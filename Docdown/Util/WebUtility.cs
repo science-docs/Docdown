@@ -75,7 +75,7 @@ namespace Docdown.Util
             return await GetRequest(url, postParameters.ToArray());
         }
 
-        public static async Task<HttpResponseMessage> SimpleRequest(string url, HttpMethod method, CancellationToken cancellationToken, params MultipartFormParameter[] postParameters)
+        public static async Task<HttpResponseMessage> SimpleRequest(string url, HttpMethod method, CancellationToken cancellationToken, IEnumerable<MultipartFormParameter> postParameters)
         {
             var handler = new WinHttpHandler();
             var client = new HttpClient(handler);
@@ -87,7 +87,7 @@ namespace Docdown.Util
             };
             request.Headers.UserAgent.Add(UserAgent);
 
-            if (postParameters != null && postParameters.Length > 0)
+            if (postParameters != null && postParameters.Any())
             {
                 string formDataBoundary = $"----------{Guid.NewGuid()}";
                 var content = new MultipartFormDataContent(formDataBoundary);
@@ -111,6 +111,7 @@ namespace Docdown.Util
                 var exception = await ServerException.Create(response);
                 throw exception;
             }
+            client.Dispose();
             return response;
         }
 
@@ -141,7 +142,7 @@ namespace Docdown.Util
 
         public static async Task<HttpResponseMessage> PostRequest(string postUrl, params MultipartFormParameter[] postParameters)
         {
-            return await SimpleRequest(postUrl, HttpMethod.Post, CancellationToken.None, postParameters.ToArray());
+            return await SimpleRequest(postUrl, HttpMethod.Post, CancellationToken.None, postParameters);
         }
 
         public static async Task<HttpResponseMessage> PostRequest(string postUrl, CancellationToken cancellationToken, IEnumerable<MultipartFormParameter> postParameters)
@@ -297,8 +298,6 @@ namespace Docdown.Util
             var item = new WorkspaceItem(directoryInfo, null, null);
             return CreateFormData(item, item, null, false).Where(e => e != null);
         }
-
-        // TODO fix this
 
         public static IEnumerable<MultipartFormParameter> FromWebWorkspace(IWorkspace workspace, User user)
         {
