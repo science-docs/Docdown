@@ -35,7 +35,7 @@ namespace PandocMark.Parser
 
         private static void AddMetaDataEntry(Block block, LineInfo lineInfo, string ln, int offset, int remainingSpaces, int length = -1, bool isAddOffsetRequired = true)
         {
-            int pos = lineInfo.Offsets[0].Position - ln.Length + 1;
+            int pos = lineInfo.LineOffset;
             int index = ln.IndexOf(':');
             if (index > -1)
             {
