@@ -93,6 +93,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Files\Result.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Files\Workspace\_Ignore\Hidden.txt" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

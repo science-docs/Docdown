@@ -133,6 +133,7 @@
     <Compile Include="Controls\TextBlockBuilder.cs" />
     <Compile Include="Editor\Commands\AlphabeticalListCommand.cs" />
     <Compile Include="Editor\Commands\BulletListCommand.cs" />
+    <Compile Include="Editor\Commands\CommentCommand.cs" />
     <Compile Include="Editor\Commands\HeaderCommand.cs" />
     <Compile Include="Editor\Commands\ListCommand.cs" />
     <Compile Include="Editor\Commands\NumberListCommand.cs" />

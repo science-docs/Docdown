@@ -3,6 +3,8 @@ using Docdown.Properties;
 using Docdown.ViewModel;
 using MahApps.Metro;
 using System;
+using System.IO;
+using System.Text;
 using System.Windows;
 
 namespace Docdown
@@ -11,6 +13,8 @@ namespace Docdown
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionCrash;
+
             ThemeManager.AddAccent("BlueDoc", GetResourceUri("Resources/Accents/Blue.xaml"));
             ThemeManager.AddAppTheme("DarkDoc", GetResourceUri("Resources/Themes/Dark.xaml"));
             ThemeManager.AddAppTheme("LightDoc", GetResourceUri("Resources/Themes/Light.xaml"));
@@ -19,6 +23,17 @@ namespace Docdown
             ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent("BlueDoc"), ThemeManager.GetAppTheme(theme + "Doc"));
             SplashViewModel.Args = e.Args;
             base.OnStartup(e);
+        }
+
+        private void UnhandledExceptionCrash(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.IsTerminating && e.ExceptionObject is Exception ex)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine(ex.Message);
+                sb.Append(ex.StackTrace);
+                File.WriteAllText("log.txt", sb.ToString());
+            }
         }
 
         public static Uri GetResourceUri(string resource)

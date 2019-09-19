@@ -29,6 +29,16 @@ namespace Docdown.Model.Test
         public void WorkspaceWasInitialized()
         {
             Assert.IsNotNull(Workspace);
+            Assert.IsNotNull(Workspace.Settings);
+            Assert.IsNotNull(Workspace.ConverterService);
+            Assert.IsNotNull(Workspace.FileSystem);
+            Assert.IsNotNull(Workspace.Item);
+        }
+
+        public void AssertParentChild(IWorkspaceItem parent, IWorkspaceItem child)
+        {
+            CollectionAssert.Contains(parent.Children, child, "Item '{0}' does not contain '{1}'", parent, child);
+            Assert.AreSame(parent, child.Parent, "Item '{0}' is not the parent of '{1}'", parent, child);
         }
 
         public async Task Initialize()
@@ -43,7 +53,7 @@ namespace Docdown.Model.Test
             {
                 var fileName = name.Substring(prefix.Length, name.Length - prefix.Length).Replace('.', '\\');
                 var lastIndex = fileName.LastIndexOf('\\');
-                fileName = fileName.Remove(lastIndex, 1).Insert(lastIndex, ".");
+                fileName = fileName.Remove(lastIndex, 1).Insert(lastIndex, ".").Replace('_', '.');
                 byte[] bytes;
                 using (var stream = asm.GetManifestResourceStream(name))
                 {
