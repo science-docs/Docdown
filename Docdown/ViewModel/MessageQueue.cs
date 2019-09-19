@@ -1,4 +1,5 @@
 ﻿using System.Collections.Specialized;
+using System.Windows.Documents;
 
 namespace Docdown.ViewModel
 {
@@ -14,6 +15,11 @@ namespace Docdown.ViewModel
         public void Add(string shortMessage, MessageType type)
         {
             Add(new Message(shortMessage, type));
+        }
+
+        public void Add(Inline message, MessageType type)
+        {
+            Add(new Message(message, type));
         }
 
         public void Success(string shortMessage)
@@ -37,6 +43,31 @@ namespace Docdown.ViewModel
         }
 
         public void Working(string shortMessage)
+        {
+            Add(shortMessage, MessageType.Working);
+        }
+
+        public void Success(Inline shortMessage)
+        {
+            Add(shortMessage, MessageType.Success);
+        }
+
+        public void Error(Inline shortMessage)
+        {
+            Add(shortMessage, MessageType.Error);
+        }
+
+        public void Warning(Inline shortMessage)
+        {
+            Add(shortMessage, MessageType.Warning);
+        }
+
+        public void Info(Inline shortMessage)
+        {
+            Add(shortMessage, MessageType.Undefined);
+        }
+
+        public void Working(Inline shortMessage)
         {
             Add(shortMessage, MessageType.Working);
         }

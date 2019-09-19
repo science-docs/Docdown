@@ -37,7 +37,7 @@ namespace Docdown.ViewModel.Commands
                 }
                 catch (Exception e)
                 {
-                    string errorText = ErrorUtility.GetErrorMessage(e);
+                    var errorText = await ErrorUtility.GetErrorMessage(e);
                     workspace.Messages.Error(errorText);
                 }
             }

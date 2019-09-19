@@ -122,6 +122,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\BindableTextBlock.cs" />
     <Compile Include="Controls\BindedRichTextBox.xaml.cs">
       <DependentUpon>BindedRichTextBox.xaml</DependentUpon>
     </Compile>
@@ -143,7 +144,6 @@
     <Compile Include="Editor\Markdown\MarkdownMetaCompletionData.cs" />
     <Compile Include="Editor\Markdown\MarkdownValidator.cs" />
     <Compile Include="Editor\Markdown\MetaDataModel.cs" />
-    <Compile Include="Model\BibliographyParser.cs" />
     <Compile Include="Editor\Commands\BoldCommand.cs" />
     <Compile Include="Editor\Commands\ItalicCommand.cs" />
     <Compile Include="Editor\Commands\QuoteCommand.cs" />

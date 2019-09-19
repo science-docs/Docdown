@@ -404,14 +404,14 @@
                      Margin="5 3 3 3" 
                      DataContext="{Binding NewestMessage.Type}" 
                      Style="{StaticResource StatusStyle}"/>
-            <TextBlock Grid.Column="1"
+            <Controls:BindableTextBlock Grid.Column="1"
                        x:Name="StatusIndicator"
                        Foreground="White"
                        TextWrapping="NoWrap"
                        TextTrimming="WordEllipsis"
                        VerticalAlignment="Center"
                        Margin="4 0 0 0"
-                       Text="{Binding NewestMessage.Content}"/>
+                       Inline="{Binding NewestMessage.Content}"/>
             <StackPanel Grid.Column="2"
                         Orientation="Horizontal" 
                         Visibility="{Binding Workspace.SelectedItem, Converter={StaticResource StringToVisibilityConverter}}"

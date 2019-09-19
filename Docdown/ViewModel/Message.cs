@@ -1,4 +1,6 @@
-﻿namespace Docdown.ViewModel
+﻿using System.Windows.Documents;
+
+namespace Docdown.ViewModel
 {
     public enum MessageType : byte
     {
@@ -13,14 +15,34 @@
     {
         public static Message Empty { get; } = new Message(string.Empty, MessageType.Undefined);
 
-        public string Content { get; }
+        public Inline Content
+        {
+            get => content;
+            private set => Set(ref content, value);
+        }
 
         public MessageType Type { get; }
 
+        private Inline content;
+
         public Message(string shortMessage, MessageType type)
         {
-            Content = shortMessage;
+            SetContentAsync(shortMessage);
             Type = type;
+        }
+
+        public Message(Inline message, MessageType type)
+        {
+            Content = message;
+            Type = type;
+        }
+
+        private void SetContentAsync(string text)
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                Content = new Run(text);
+            });
         }
     }
 }

@@ -8,8 +8,10 @@ namespace Docdown.Util
     public class ServerException : Exception
     {
         public override string Message => message;
+        public string PandocMessage => pandoc;
 
         private string message;
+        private string pandoc;
 
         public static async Task<ServerException> Create(HttpResponseMessage response)
         {
@@ -21,7 +23,9 @@ namespace Docdown.Util
                 var json = JObject.Parse(text);
                 var error = json.SelectToken("error");
                 var message = error.SelectToken("message").Value<string>();
+                var pandoc = (string)error.SelectToken("pandoc");
 
+                e.pandoc = pandoc;
                 e.message = message;
             }
             catch

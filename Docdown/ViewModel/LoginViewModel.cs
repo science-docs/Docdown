@@ -10,6 +10,7 @@ using System.Net;
 using Newtonsoft.Json.Linq;
 using Docdown.Properties;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace Docdown.ViewModel
 {
@@ -27,7 +28,7 @@ namespace Docdown.ViewModel
             set => credentials.SecurePassword = value;
         }
 
-        public string Error
+        public Inline Error
         {
             get => error;
             set => Set(ref error, value);
@@ -42,7 +43,7 @@ namespace Docdown.ViewModel
         public ICommand LoginCommand => new ActionCommand(Login);
 
         private readonly NetworkCredential credentials = new NetworkCredential(string.Empty, string.Empty);
-        private string error;
+        private Inline error;
 
         public async Task Register()
         {
@@ -58,7 +59,7 @@ namespace Docdown.ViewModel
             }
             catch (Exception e)
             {
-                Error = ErrorUtility.GetErrorMessage(e);
+                Error = await ErrorUtility.GetErrorMessage(e);
             }
         }
 
@@ -92,7 +93,7 @@ namespace Docdown.ViewModel
             }
             catch (Exception e)
             {
-                Error = ErrorUtility.GetErrorMessage(e);
+                Error = await ErrorUtility.GetErrorMessage(e);
             }
 
         }

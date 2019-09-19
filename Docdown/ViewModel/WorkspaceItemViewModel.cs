@@ -321,7 +321,7 @@ namespace Docdown.ViewModel
             {
                 if (!converterToken.IsCanceled)
                 {
-                    Messages.Error(ErrorUtility.GetErrorMessage(e));
+                    Messages.Error(await ErrorUtility.GetErrorMessage(e));
                 }
                 IsCompiled = false;
             }
@@ -500,7 +500,7 @@ namespace Docdown.ViewModel
                 }
                 catch (Exception e)
                 {
-                    Workspace.Messages.Error(ErrorUtility.GetErrorMessage(e));
+                    Workspace.Messages.Error(await ErrorUtility.GetErrorMessage(e));
                 }
             });
             
