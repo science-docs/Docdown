@@ -237,6 +237,7 @@
     <Compile Include="ViewModel\Commands\PrintCommand.cs" />
     <Compile Include="ViewModel\Commands\SearchFileCommand.cs" />
     <Compile Include="ViewModel\Commands\SearchFolderCommand.cs" />
+    <Compile Include="ViewModel\EditorViewModel.cs" />
     <Compile Include="ViewModel\Explorer.cs" />
     <Compile Include="ViewModel\InputBoxViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />

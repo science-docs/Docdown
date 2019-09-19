@@ -56,7 +56,7 @@ namespace Docdown.ViewModel
                     case WorkspaceItemType.Video: return "VideoIcon";
                     case WorkspaceItemType.Markdown: return "MarkdownIcon";
                     case WorkspaceItemType.Web: return "WebIcon";
-                    case WorkspaceItemType.Bibliography: return "BibliographyIcon";
+                    case WorkspaceItemType.Bibliography: return "CitationIcon";
                     default: return "DocumentIcon";
                 }
             }
@@ -130,6 +130,8 @@ namespace Docdown.ViewModel
 
         public SearchViewModel Search { get; private set; }
 
+        public EditorViewModel Editor { get; private set; }
+
         public ObservableCollection<WorkspaceItemViewModel> Children { get; private set; } = new ObservableCollection<WorkspaceItemViewModel>();
         public ICommand SaveCommand => new ActionCommand(Save);
         public ICommand CloseCommand => new ActionCommand(Close);
@@ -161,6 +163,7 @@ namespace Docdown.ViewModel
                     if (view is IEditor editor)
                     {
                         Search = new SearchViewModel(editor);
+                        Editor = new EditorViewModel(this);
                     }
                 }
                 return view;

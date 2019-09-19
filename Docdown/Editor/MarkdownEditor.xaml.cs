@@ -54,15 +54,11 @@ namespace Docdown.Editor
         public static readonly DependencyProperty SpellCheckProperty = DependencyProperty.Register(
             nameof(SpellCheck), typeof(bool), typeof(MarkdownEditor), new PropertyMetadata(default(bool), SpellCheckPropertyChanged));
 
-        public static readonly DependencyProperty AbstractSyntaxTreeProperty = DependencyProperty.Register(
-            nameof(AbstractSyntaxTree), typeof(Block), typeof(MarkdownEditor), new PropertyMetadata(default(Block)));
-
         private string _displayName = string.Empty;
         private EditorState _editorState = new EditorState();
         private string _fileName;
         private bool _isModified;
         private int _previousLineCount = -1;
-        private bool firstChange = false;
         private MarkdownFoldingStrategy foldingStrategy;
         private FoldingManager foldingManager;
         private CompletionWindow completionWindow;
@@ -190,11 +186,17 @@ namespace Docdown.Editor
             set => SetValue(SpellCheckProperty, value);
         }
 
-        public Block AbstractSyntaxTree
-        {
-            get => (Block)GetValue(AbstractSyntaxTreeProperty);
-            set => SetValue(AbstractSyntaxTreeProperty, value);
-        }
+        //public Block AbstractSyntaxTree
+        //{
+        //    get
+        //    {
+        //        if (DataContext is WorkspaceItemViewModel item)
+        //        {
+        //            return item.Editor.AbstractSyntaxTree;
+        //        }
+        //        return new Block(BlockTag.Document, 0);
+        //    }
+        //}
 
         public int WordCount { get; set; }
 
@@ -245,34 +247,14 @@ namespace Docdown.Editor
             
             EditBox.TextChanged += (s, e) =>
             {
-                try
+                if (DataContext is WorkspaceItemViewModel item)
                 {
-                    Stopwatch watch = Stopwatch.StartNew();
-                    var text = EditBox.Text;
-                    AbstractSyntaxTree = GenerateAbstractSyntaxTree(text);
-                    colorizer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
-                    blockBackgroundRenderer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
-                    foldingStrategy.UpdateFoldings(foldingManager, AbstractSyntaxTree, text);
-                    
-                    if (DataContext is WorkspaceItemViewModel workspaceItem)
-                    {
-                        if (firstChange)
-                        {
-                            workspaceItem.HasChanged = true;
-                        }
-                        workspaceItem.HasValidationErrors = true;
-                        debounced();
-                    }
-                    firstChange = true;
-                    // The block nature of markdown causes edge cases in the syntax hightlighting.
-                    // This is the nuclear option but it doesn't seem to cause issues.
-                    EditBox.TextArea.TextView.Redraw();
-                    watch.Stop();
-                    Debug.WriteLine("Rendered document in " + watch.Elapsed.TotalMilliseconds);
-                }
-                catch
-                {
-                    Trace.WriteLine("Abstract Syntax Tree generation failed", "Editor");
+                    var editor = item.Editor;
+                    editor.Text = EditBox.Text;
+                    foldingStrategy.UpdateFoldings(foldingManager, editor.AbstractSyntaxTree, editor.Text);
+                    colorizer.UpdateAbstractSyntaxTree(editor.AbstractSyntaxTree);
+                    blockBackgroundRenderer.UpdateAbstractSyntaxTree(editor.AbstractSyntaxTree);
+                    debounced();
                 }
             };
 
@@ -297,30 +279,9 @@ namespace Docdown.Editor
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
-                try
+                if (DataContext is WorkspaceItemViewModel item)
                 {
-                    if (DataContext is WorkspaceItemViewModel workspaceItem)
-                    {
-                        var headers = EnumerateHeader(AbstractSyntaxTree);
-                        Outline = new Outline(headers);
-                        WordCount = CountWords(AbstractSyntaxTree, Text);
-                        workspaceItem.WordCount = WordCount;
-                        workspaceItem.Outline = new OutlineViewModel(Outline, JumpToLocation);
-
-                        foreach (var issue in MarkdownValidator.Validate(AbstractSyntaxTree, Text, workspaceItem.Data))
-                        {
-                            AbstractSyntaxTree.Document.Issues.Add(issue);
-                        }
-                        if (AbstractSyntaxTree.Document.Issues.Count > 0)
-                        {
-                            EditBox.TextArea.TextView.Redraw();
-                        }
-                        workspaceItem.HasValidationErrors = AbstractSyntaxTree.Document.Issues.Any(e => e.Type == IssueType.Error);
-                    }
-                }
-                catch
-                {
-                    Trace.WriteLine("Debounced update failed", "Editor");
+                    item.Editor.Update(EditBox);
                 }
             }));
         }
@@ -330,10 +291,10 @@ namespace Docdown.Editor
         void TextEditorMouseHover(object sender, MouseEventArgs e)
         {
             var pos = EditBox.GetPositionFromPoint(e.GetPosition(EditBox));
-            if (pos != null)
+            if (pos != null && DataContext is WorkspaceItemViewModel item)
             {
                 int index = EditBox.Document.GetOffset(pos.Value.Line, pos.Value.Column);
-                var content = FindHoverContent(index);
+                var content = item.Editor.FindHoverContent(index);
                 if (content != null)
                 {
                     toolTip.PlacementTarget = this;
@@ -342,76 +303,6 @@ namespace Docdown.Editor
                     e.Handled = true;
                 }
             }
-        }
-
-        private object FindHoverContent(int index)
-        {
-            foreach (var issue in AbstractSyntaxTree.Document.Issues)
-            {
-                if (issue.Offset <= index && issue.Offset + issue.Length >= index)
-                {
-                    return issue.Tooltip;
-                }
-            }
-
-            var inline = SpanningInline(AbstractSyntaxTree, index);
-            if (inline != null)
-            {
-                switch (inline.Tag)
-                {
-                    case InlineTag.Link:
-                        return GetLinkInlineTooltip(inline);
-                }
-            }
-            else
-            {
-                var metaDataDesc = FindMetaEntry(AbstractSyntaxTree, index);
-                if (metaDataDesc != null)
-                {
-                    return metaDataDesc;
-                }
-            }
-
-            return null;
-        }
-
-        private object FindMetaEntry(Block ast, int index)
-        {
-            var block = SpanningBlock(ast, index);
-
-            if (block.Tag == BlockTag.Meta)
-            {
-                foreach (var entry in block.MetaData.Entries)
-                {
-                    if (entry.NameStartPosition <= index && entry.ValueStartPosition + entry.ValueLength >= index)
-                    {
-                        var modelEntry = AppViewModel.Instance.Settings.SelectedTemplate.MetaData.Entries.FirstOrDefault(e => e.Name == entry.Name);
-                        if (modelEntry != null)
-                        {
-                            return new MarkdownMetaCompletionData(modelEntry).Description;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        private object GetLinkInlineTooltip(Inline link)
-        {
-            string text = link.FirstChild.LiteralContent;
-            if (AbstractSyntaxTree.Document.ReferenceMap.TryGetValue(text, out var reference))
-            {
-                char marker = text[0];
-                if (marker == '@')
-                {
-                    return new MarkdownCitationCompletionData(reference).Description;
-                }
-                else if (marker == '^')
-                {
-                    return new MarkdownFootnoteCompletionData(reference).Description;
-                }
-            }
-            return null;
         }
 
         void TextEditorMouseHoverStopped(object sender, MouseEventArgs e)
@@ -446,13 +337,14 @@ namespace Docdown.Editor
 
         private void ShowCompletionWindow()
         {
-            if (completionWindow == null)
+            if (completionWindow == null && DataContext is WorkspaceItemViewModel item)
             {
                 completionWindow = new CompletionWindow(EditBox.TextArea);
-                if (MarkdownCompletionData.FromAST(EditBox.Text, EditBox.SelectionStart, AbstractSyntaxTree, completionWindow.CompletionList))
+                if (item.Editor.FillCompletionList(completionWindow.CompletionList, EditBox.SelectionStart))
                 {
                     completionWindow.Show();
-                    completionWindow.Closed += delegate {
+                    completionWindow.Closed += delegate
+                    {
                         completionWindow = null;
                     };
                 }
@@ -460,12 +352,8 @@ namespace Docdown.Editor
                 {
                     completionWindow = null;
                 }
-            }
-        }
 
-        private void JumpToLocation(int location)
-        {
-            Editor.ScrollTo(location);
+            }
         }
 
         private void OnEditBoxPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -521,32 +409,32 @@ namespace Docdown.Editor
         //    SnippetManager.Initialize();
         //}
 
-        public Tuple<int, int> VisibleBlockNumber()
-        {
-            if (AbstractSyntaxTree is null) return new Tuple<int, int>(1, 0);
-            var textView = EditBox.TextArea.TextView;
+        //public Tuple<int, int> VisibleBlockNumber()
+        //{
+        //    if (AbstractSyntaxTree is null) return new Tuple<int, int>(1, 0);
+        //    var textView = EditBox.TextArea.TextView;
 
-            var max = GetScrollMax();
-            if (textView.ScrollOffset.Y >= max) return new Tuple<int, int>(int.MaxValue, 0);
+        //    var max = GetScrollMax();
+        //    if (textView.ScrollOffset.Y >= max) return new Tuple<int, int>(int.MaxValue, 0);
 
-            var line = textView.GetDocumentLineByVisualTop(textView.ScrollOffset.Y);
-            var number = 1;
-            var blockOffset = line.Offset;
-            var skipListItem = true;
+        //    var line = textView.GetDocumentLineByVisualTop(textView.ScrollOffset.Y);
+        //    var number = 1;
+        //    var blockOffset = line.Offset;
+        //    var skipListItem = true;
 
-            foreach (var block in EnumerateBlocks(AbstractSyntaxTree.FirstChild))
-            {
-                if (block.Tag == BlockTag.List) skipListItem = block.ListData.IsTight;
-                blockOffset = block.SourcePosition;
-                if (block.SourcePosition >= line.Offset) break;
-                if (block.Tag == BlockTag.ListItem && skipListItem) continue;
-                number += 1;
-            }
+        //    foreach (var block in EnumerateBlocks(AbstractSyntaxTree.FirstChild))
+        //    {
+        //        if (block.Tag == BlockTag.List) skipListItem = block.ListData.IsTight;
+        //        blockOffset = block.SourcePosition;
+        //        if (block.SourcePosition >= line.Offset) break;
+        //        if (block.Tag == BlockTag.ListItem && skipListItem) continue;
+        //        number += 1;
+        //    }
 
-            var startOfBlock = EditBox.Document.GetLineByOffset(blockOffset);
-            var extra = line.LineNumber - startOfBlock.LineNumber;
-            return new Tuple<int, int>(number, extra);
-        }
+        //    var startOfBlock = EditBox.Document.GetLineByOffset(blockOffset);
+        //    var extra = line.LineNumber - startOfBlock.LineNumber;
+        //    return new Tuple<int, int>(number, extra);
+        //}
 
         //private void OnPaste(object sender, DataObjectPastingEventArgs pasteEventArgs)
         //{
