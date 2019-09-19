@@ -3,6 +3,14 @@ using System.Threading.Tasks;
 
 namespace Docdown.ViewModel.Commands
 {
+    public class ActionCommand<T> : DelegateCommand
+    {
+        public ActionCommand(Action<T> action) : base(action)
+        {
+
+        }
+    }
+
     public class ActionCommand : DelegateCommand
     {
         public ActionCommand(Action action) : base(action)

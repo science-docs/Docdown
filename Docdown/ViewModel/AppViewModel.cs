@@ -91,25 +91,22 @@ namespace Docdown.ViewModel
             theme = (Theme)Enum.Parse(typeof(Theme), Properties.Settings.Default.Theme);
         }
 
-        public void ChangeWorkspace(string newWorkspace)
+        public async Task ChangeWorkspace(string newWorkspace)
         {
             if (string.IsNullOrEmpty(newWorkspace))
                 return;
 
             Settings.WorkspacePath = newWorkspace;
             Settings.Save();
-            Task.Run(async () =>
+            try
             {
-                try
-                {
-                    var workspace = await WorkspaceProvider.Create(newWorkspace, FileSystem, ConverterService);
-                    await Workspace.DataAsync(workspace);
-                }
-                catch
-                {
-                    Messages.Error("Could not open workspace");
-                }
-            });
+                var workspace = await WorkspaceProvider.Create(newWorkspace, FileSystem, ConverterService);
+                await Workspace.DataAsync(workspace);
+            }
+            catch
+            {
+                Messages.Error("Could not open workspace");
+            }
             SendPropertyUpdate(nameof(SearchWorkspaceCommand));
         }
 

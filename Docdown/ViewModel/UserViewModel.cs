@@ -115,13 +115,13 @@ namespace Docdown.ViewModel
                     {
                         location = location.Trim();
                         App.User.Data.Workspaces.Add(location);
-                        App.ChangeWorkspace(Settings.Default.API + "/" + location);
+                        Dispatcher.InvokeAsync(() => App.ChangeWorkspace(Settings.Default.API + "/" + location));
                         App.User.SendPropertyUpdate(nameof(Workspaces));
                     }
                 }
                 else
                 {
-                    App.ChangeWorkspace(Settings.Default.API + "/" + Location);
+                    Dispatcher.InvokeAsync(() => App.ChangeWorkspace(Settings.Default.API + "/" + Location));
                 }
             }
 

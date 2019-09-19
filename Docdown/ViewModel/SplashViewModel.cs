@@ -38,7 +38,7 @@ namespace Docdown.ViewModel
             Task.Run(async () =>
             {
                 await app.Settings.TestConnection();
-                app.ChangeWorkspace(workspacePath);
+                await app.ChangeWorkspace(workspacePath);
 
                 if (isFile)
                 {
