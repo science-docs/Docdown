@@ -76,16 +76,16 @@
     <SolidColorBrush x:Key="FlatButtonPressedBackgroundBrush" Color="#222222" options:Freeze="True" />
 
     <!--  menu brushes  -->
-    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="{StaticResource WhiteColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="ContextMenuBackgroundBrush" Color="{StaticResource WhiteColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="SubMenuBackgroundBrush" Color="{StaticResource WhiteColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="{StaticResource EditorBackgroundColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="ContextMenuBackgroundBrush" Color="{StaticResource EditorBackgroundColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="SubMenuBackgroundBrush" Color="{StaticResource EditorBackgroundColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="MenuItemBackgroundBrush" Color="{StaticResource WhiteColor}" options:Freeze="True" />
 
-    <SolidColorBrush x:Key="ContextMenuBorderBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="SubMenuBorderBrush" Color="{StaticResource BlackColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="ContextMenuBorderBrush" Color="{StaticResource WhiteColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="SubMenuBorderBrush" Color="{StaticResource WhiteColor}" options:Freeze="True" />
 
-    <SolidColorBrush x:Key="MenuItemSelectionFill" Color="#DEDEDE" options:Freeze="True" />
-    <SolidColorBrush x:Key="MenuItemSelectionStroke" Color="#DEDEDE" options:Freeze="True" />
+    <SolidColorBrush x:Key="MenuItemSelectionFill" Color="{StaticResource EditorBackgroundColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MenuItemSelectionStroke" Color="{StaticResource EditorBackgroundColor}" options:Freeze="True" />
 
     <SolidColorBrush x:Key="TopMenuItemPressedFill" Color="#DEDEDE" options:Freeze="True" />
     <SolidColorBrush x:Key="TopMenuItemPressedStroke" Color="#E0717070" options:Freeze="True" />

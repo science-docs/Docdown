@@ -33,6 +33,7 @@
                 <Setter Property="Background" Value="{DynamicResource WhiteBrush}"/>
                 <Setter Property="Foreground" Value="{DynamicResource BlackBrush}"/>
             </Style>
+            <Style x:Key="{x:Type ContextMenu}" BasedOn="{StaticResource VSContextMenu}" TargetType="{x:Type ContextMenu}"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

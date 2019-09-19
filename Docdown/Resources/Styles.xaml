@@ -451,7 +451,7 @@
     <Style x:Key="VSContextMenu" TargetType="{x:Type ContextMenu}">
         <Setter Property="Background" Value="{DynamicResource ContextMenuBackgroundBrush}" />
         <Setter Property="Block.TextAlignment" Value="Left" />
-        <Setter Property="BorderBrush" Value="{DynamicResource WhiteBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource ContextMenuBorderBrush}"/>
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" />
         <Setter Property="FontSize" Value="{StaticResource DefaultFontSize}" />
@@ -475,7 +475,6 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-
                             <ScrollViewer x:Name="SubMenuScrollViewer"
                                           CanContentScroll="True"
                                           Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
