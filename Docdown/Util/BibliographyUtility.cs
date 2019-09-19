@@ -1,4 +1,5 @@
-﻿using Docdown.Model;
+﻿using BibTeXLibrary;
+using Docdown.Model;
 using HtmlAgilityPack;
 using System.Threading.Tasks;
 
@@ -13,10 +14,9 @@ namespace Docdown.Util
 
         public static async Task<string> SearchUrl(string url)
         {
-            var entry = new BibliographyEntry()
+            var entry = new BibEntry()
             {
                 Type = "online"
-
             };
 
             var html = await WebUtility.SimpleTextRequest(url);
@@ -24,7 +24,7 @@ namespace Docdown.Util
             doc.LoadHtml(html);
 
             var title = doc.DocumentNode.SelectSingleNode(".//title").InnerText;
-            entry.Fields.Add("title", title);
+            entry.Title = title;
 
             return entry.ToString();
         }
