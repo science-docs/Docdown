@@ -7,9 +7,9 @@ using ICSharpCode.AvalonEdit;
 
 namespace Docdown.Editor.Commands
 {
-    internal class QuoteCommand : SorroundCommand
+    internal class QuoteCommand : ListCommand
     {
-        public QuoteCommand() : base(">", "")
+        public QuoteCommand() : base(">", ListFinisher.None)
         {
         }
     }

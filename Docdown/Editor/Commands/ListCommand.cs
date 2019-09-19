@@ -47,7 +47,7 @@ namespace Docdown.Editor.Commands
                     onlyWhitespace = false;
                     paragraph.RemoveListMarker();
                     var marker = markerFactory(counter++);
-                    sb.Append(markerFactory(counter++));
+                    sb.Append(marker);
                     sb.Append(GetFinisher());
                     if (!string.IsNullOrEmpty(marker))
                     {

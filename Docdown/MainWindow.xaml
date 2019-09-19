@@ -287,6 +287,13 @@
                            Height="16" 
                            Width="16"/>
             </Button>
+            <Button Command="{Binding CommentCommand}"
+                    ToolTip="Comment" 
+                    IsEnabled="{Binding Workspace.SelectedItem.IsConvertable, FallbackValue=False}">
+                <Rectangle Fill="{DynamicResource HtmlIcon}" 
+                           Height="16" 
+                           Width="16"/>
+            </Button>
             <Button Command="{Binding VerbatimCommand}"
                     ToolTip="Verbatim Code" 
                     IsEnabled="{Binding Workspace.SelectedItem.IsConvertable, FallbackValue=False}">

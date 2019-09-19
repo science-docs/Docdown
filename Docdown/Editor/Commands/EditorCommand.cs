@@ -9,6 +9,7 @@ namespace Docdown.Editor.Commands
         public static EditorCommand Italic { get; } = new ItalicCommand();
         public static EditorCommand Quote { get; } = new QuoteCommand();
         public static EditorCommand Verbatim { get; } = new VerbatimCommand();
+        public static EditorCommand Comment { get; } = new CommentCommand();
         public static EditorCommand RemoveList { get; } = new RemoveListCommand();
         public static EditorCommand BulletList { get; } = new BulletListCommand();
         public static EditorCommand DotNumberList { get; } = new NumberListCommand(ListFinisher.Dot);
@@ -43,8 +44,8 @@ namespace Docdown.Editor.Commands
             int start = editor.SelectionStart;
             var end = editor.SelectionStart + editor.SelectionLength;
 
-            for (; start < fullText.Length && fullText[start] == ' '; start++) ;
-            for (; end > 0 && fullText[end - 1] == ' '; end--) ;
+            for (; start < end && fullText[start] == ' '; start++) ;
+            for (; end > start && fullText[end - 1] == ' '; end--) ;
 
             var text = fullText.Substring(start, end - start);
             StringBuilder newText = new StringBuilder(text);
