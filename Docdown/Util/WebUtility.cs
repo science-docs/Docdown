@@ -339,7 +339,7 @@ namespace Docdown.Util
             {
                 string folder = item.Name;
                 if (!string.IsNullOrWhiteSpace(current))
-                    folder = Path.Combine(current, folder);
+                    folder = UnixCombine(current, folder);
                 if (item.Equals(root) || item.Equals(root.Parent))
                     folder = null;
 
@@ -359,10 +359,15 @@ namespace Docdown.Util
             {
                 string name = item.Name;
                 if (!string.IsNullOrWhiteSpace(current))
-                    name = Path.Combine(current, name);
+                    name = UnixCombine(current, name);
 
                 yield return CreateFile(name, item.FullName);
             }
+        }
+
+        private static string UnixCombine(params string[] values)
+        {
+            return Path.Combine(values).Replace('\\', '/');
         }
     }
 }
