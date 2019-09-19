@@ -5,6 +5,7 @@ using Docdown.Util;
 using Docdown.Properties;
 using System;
 using System.IO.Abstractions;
+using System.Diagnostics;
 
 namespace Docdown.Model
 {
@@ -40,13 +41,20 @@ namespace Docdown.Model
 
         public Task Delete(IWorkspaceItem item)
         {
-            if (item.IsDirectory)
+            try
             {
-                item.FileInfo.FileSystem.Directory.Delete(item.FullName);
+                if (item.IsDirectory)
+                {
+                    item.FileInfo.FileSystem.Directory.Delete(item.FullName, true);
+                }
+                else
+                {
+                    item.FileInfo.FileSystem.File.Delete(item.FullName);
+                }
             }
-            else
+            catch (Exception e)
             {
-                item.FileInfo.FileSystem.File.Delete(item.FullName);
+                Trace.WriteLine("Error deleting item: " + e.Message);
             }
             return Task.CompletedTask;
         }

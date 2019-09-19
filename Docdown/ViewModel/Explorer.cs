@@ -91,7 +91,12 @@ namespace Docdown.ViewModel
             });
         }
 
-        private void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private async void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            await Dispatcher.InvokeAsync(() => CollectionChanged(e));
+        }
+
+        private void CollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
@@ -141,6 +146,7 @@ namespace Docdown.ViewModel
                     }
                     first = false;
                 }
+
                 Children.Add(explorer);
             }
         }

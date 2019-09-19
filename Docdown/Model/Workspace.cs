@@ -27,6 +27,7 @@ namespace Docdown.Model
         private readonly Queue<FileSystemEventArgs> changeQueue = new Queue<FileSystemEventArgs>();
         private readonly Action debouncedChange;
         private IFileSystemWatcher watcher;
+        private readonly List<string> excludedDirs = new List<string>();
 
         public Workspace(WorkspaceSettings settings, IFileSystem fileSystem, IConverterService converterService)
         {
@@ -74,9 +75,14 @@ namespace Docdown.Model
             watcher.Renamed += QueueChange;
         }
 
-        private void QueueChange(object obj, FileSystemEventArgs e)
+        private void QueueChange(object obj, FileSystemEventArgs args)
         {
-            changeQueue.Enqueue(e);
+            if (excludedDirs.Any(e => args.FullPath.StartsWith(e)))
+            {
+                return;
+            }
+
+            changeQueue.Enqueue(args);
             debouncedChange();
         }
 
@@ -88,18 +94,24 @@ namespace Docdown.Model
                 return;
             }
 
-            var eventArgs = new List<WorkspaceChangeEventArgs>();
+            var eventDictionary = new Dictionary<string, WorkspaceChangeEventArgs>();
 
             while (changeQueue.Count > 0)
             {
                 var change = changeQueue.Dequeue();
                 var item = await IdentifyItem(change);
-                var changeValue = (WorkspaceChange)(int)change.ChangeType;
-                var args = new WorkspaceChangeEventArgs(item, changeValue);
-                eventArgs.Add(args);
+                if (item != null)
+                {
+                    var changeValue = (WorkspaceChange)(int)change.ChangeType;
+                    var args = new WorkspaceChangeEventArgs(item, changeValue);
+                    if (!eventDictionary.TryGetValue(args.Item.FullName, out var oldArgs) || oldArgs.Change == WorkspaceChange.Deleted)
+                    {
+                        eventDictionary[args.Item.FullName] = args;
+                    }
+                }
             }
 
-            WorkspaceChanged(this, eventArgs);
+            WorkspaceChanged(this, eventDictionary.Values);
         }
 
         private async Task<IWorkspaceItem> IdentifyItem(FileSystemEventArgs e)
@@ -109,7 +121,7 @@ namespace Docdown.Model
             {
                 path = renamed.OldFullPath;
                 var item = FindItem(path);
-                if (item.FullName != e.FullPath)
+                if (item != null && item.FullName != e.FullPath)
                 {
                     if (item.IsDirectory)
                     {
@@ -169,12 +181,21 @@ namespace Docdown.Model
 
         private void InitItem(IFileSystemInfo fileInfo, IWorkspaceItem parent, WebWorkspaceItemHandler handler)
         {
+            if (fileInfo.Name.StartsWith("."))
+            {
+                if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+                    excludedDirs.Add(fileInfo.FullName + "\\");
+
+                return;
+            }
+                
+
             var item = new WorkspaceItem(fileInfo, this, parent);
 
             if (fileInfo is IDirectoryInfo dirInfo)
             {
                 item.Type = WorkspaceItemType.Directory;
-                foreach (var info in dirInfo.EnumerateFileSystemInfos().Where(e => !e.Name.StartsWith(".")))
+                foreach (var info in dirInfo.EnumerateFileSystemInfos())
                 {
                     InitItem(info, item, handler);
                 }
@@ -234,7 +255,19 @@ namespace Docdown.Model
                 // At that point we know, that although the item is logically
                 // a child of the current item, it was not registered as a
                 // part of the workspace, meaning it was created just now.
-                var info = FileSystem.FileInfo.FromFileName(fullPath);
+                IFileSystemInfo info;
+                if (FileSystem.File.Exists(fullPath))
+                {
+                    info = FileSystem.FileInfo.FromFileName(fullPath);
+                }
+                else if (FileSystem.Directory.Exists(fullPath))
+                {
+                    info = FileSystem.DirectoryInfo.FromDirectoryName(fullPath);
+                }
+                else
+                {
+                    return null;
+                }
                 var item = new WorkspaceItem(info, this, parent);
                 parent.Children.Add(item);
                 return item;

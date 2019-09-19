@@ -204,15 +204,21 @@ namespace Docdown.ViewModel
                     case WorkspaceChange.Created:
                         var parentItem = e.Item.Parent;
                         item = SearchForSelectedItem(Item, parentItem);
-                        item.AddChild(e.Item);
+                        if (item != null)
+                        {
+                            item.AddChild(e.Item);
+                        }
                         break;
                     case WorkspaceChange.Renamed:
                         item = SearchForSelectedItem(Item, e.Item);
                         item?.SendPropertyUpdate(nameof(WorkspaceItemViewModel.Name));
                         break;
                     case WorkspaceChange.Changed:
-                        Data.Bibliography.Parse(e.Item);
-                        item = SearchForSelectedItem(Item, e.Item);
+                        if (e.Item.Type == WorkspaceItemType.Bibliography)
+                        {
+                            Data.Bibliography.Parse(e.Item);
+                        }
+                        //item = SearchForSelectedItem(Item, e.Item);
                         break;
                 }
             }
@@ -268,12 +274,15 @@ namespace Docdown.ViewModel
 
         private WorkspaceItemViewModel SearchForSelectedItem(WorkspaceItemViewModel vm, IWorkspaceItem item)
         {
+            if (item == null)
+                return null;
+
             return SearchForSelectedItem(vm, item.FullName);
         }
 
         private WorkspaceItemViewModel SearchForSelectedItem(WorkspaceItemViewModel vm, string fullPath)
         {
-            if (vm.RelativeName == fullPath)
+            if (vm.FullName == fullPath)
             {
                 return vm;
             }
