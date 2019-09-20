@@ -193,7 +193,7 @@ namespace Docdown.ViewModel
                         // Item may have already been deleted, so nothing will be found
                         if (item != null)
                         {
-                            await item.Remove();
+                            await item.Remove(false);
 
                             if (item == Item)
                             {

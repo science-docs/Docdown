@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
@@ -21,6 +22,11 @@ namespace Docdown.Controls
                 textBlock.Inlines.Clear();
                 if (e.NewValue is Inline inline)
                 {
+                    if (inline.Dispatcher != obj.Dispatcher)
+                    {
+                        Trace.WriteLine("Inline was created on wrong thread");
+                        return;
+                    }
                     textBlock.Inlines.Add(inline);
                 }
             }

@@ -159,9 +159,9 @@ namespace Docdown.Model
                 var filePath = Path.Combine(Settings.Path, path);
 
                 var lastWrite = DateTime.MinValue;
-                if (File.Exists(filePath))
+                if (FileSystem.File.Exists(filePath))
                 {
-                    lastWrite = File.GetLastWriteTimeUtc(filePath);
+                    lastWrite = FileSystem.File.GetLastWriteTimeUtc(filePath);
                 }
 
                 if (date > lastWrite)
@@ -171,7 +171,7 @@ namespace Docdown.Model
 
                     var parent = Path.GetDirectoryName(filePath);
                     Directory.CreateDirectory(parent);
-                    using (var fs = File.Open(filePath, FileMode.Create))
+                    using (var fs = FileSystem.File.Open(filePath, FileMode.Create))
                     {
                         await itemReq.Content.CopyToAsync(fs);
                     }

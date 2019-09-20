@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 
 namespace Docdown.Util
 {
     public static class ErrorUtility
     {
-        public static async Task<Inline> GetErrorMessage(Exception exception)
+        public static async Task<Inline> GetErrorMessage(Exception exception, Dispatcher dispatcher)
         {
-            return await Application.Current.Dispatcher.InvokeAsync(() =>
+            return await dispatcher.InvokeAsync(() =>
             {
                 switch (exception)
                 {

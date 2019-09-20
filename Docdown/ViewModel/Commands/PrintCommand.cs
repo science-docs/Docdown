@@ -44,9 +44,10 @@ namespace Docdown.ViewModel.Commands
                 }
                 catch
                 {
-                    AppViewModel.Instance.Messages.Error((Language.Current.Get("Message.File.Save.Error")));
+                    AppViewModel.Instance.Messages.Error(Language.Current.Get("Message.File.Save.Error"));
                 }
             }
+            dialog.Dispose();
         }
     }
 }

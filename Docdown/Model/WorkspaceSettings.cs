@@ -30,7 +30,7 @@ namespace Docdown.Model
         public static WorkspaceSettings Create(IFileSystem fileSystem, string workspacePath)
         {
             var settings = new WorkspaceSettings(fileSystem, workspacePath);
-            if (!System.IO.File.Exists(settings.FullPath))
+            if (!fileSystem.File.Exists(settings.FullPath))
             {
                 return settings;
             }

@@ -1,4 +1,5 @@
-﻿using Docdown.Properties;
+﻿using Docdown.Editor.Markdown;
+using Docdown.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace Docdown.ViewModel.Commands
         private static void ChangeLanguage(string locale)
         {
             App.ChangeLocale(locale);
+            MarkdownCompletionData.BuildHtmlData(locale);
             Settings.Default.Locale = locale;
             Settings.Default.Save();
         }

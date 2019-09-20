@@ -127,7 +127,35 @@ namespace Docdown.Editor.Markdown
 
         public static Block SpanningBlock(Block ast, int index)
         {
-            return EnumerateBlocks(ast.FirstChild).FirstOrDefault(e => e.SourcePosition + e.SourceLength >= index);
+            return DeepestBlock(EnumerateSpanningBlocks(ast, index, index));
+        }
+
+        private static Block DeepestBlock(IEnumerable<Block> blocks)
+        {
+            int maxDepth = -1;
+            Block deepest = null;
+            foreach (var block in blocks)
+            {
+                var depth = Depth(block);
+                if (depth > maxDepth)
+                {
+                    deepest = block;
+                    maxDepth = depth;
+                }
+            }
+
+            return deepest;
+        }
+
+        private static int Depth(Block block)
+        {
+            int depth = 0;
+            while (block.Parent != null)
+            {
+                depth++;
+                block = block.Parent;
+            }
+            return depth;
         }
 
         public static IEnumerable<Block> EnumerateBlocks(Block block)

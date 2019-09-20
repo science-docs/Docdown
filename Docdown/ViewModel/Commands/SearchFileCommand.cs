@@ -39,11 +39,14 @@ namespace Docdown.ViewModel.Commands
 
             if (dialog.ShowDialog(Application.Current.MainWindow) == CommonFileDialogResult.Ok)
             {
-                callback?.Invoke(dialog.FileName);
-                return dialog.FileName;
+                var fileName = dialog.FileName;
+                dialog.Dispose();
+                callback?.Invoke(fileName);
+                return fileName;
             }
             else
             {
+                dialog.Dispose();
                 callback?.Invoke(null);
                 return null;
             }

@@ -293,7 +293,7 @@ namespace Docdown.Editor.Markdown
         {
             if (cachedHtmlData == null)
             {
-                BuildHtmlData(Settings.Default.DocumentLocale);
+                BuildHtmlData(Settings.Default.Locale);
             }
             return cachedHtmlData;
         }

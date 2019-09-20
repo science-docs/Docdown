@@ -321,7 +321,7 @@ namespace Docdown.ViewModel
             {
                 if (!converterToken.IsCanceled)
                 {
-                    Messages.Error(await ErrorUtility.GetErrorMessage(e));
+                    Messages.Error(await ErrorUtility.GetErrorMessage(e, Dispatcher));
                 }
                 IsCompiled = false;
             }
@@ -335,24 +335,31 @@ namespace Docdown.ViewModel
             var lang = Language.Current;
             if (!IsNameChanging && await ShowMessageAsync(lang.Get("Workspace.Delete.File.Title"), lang.Get("Workspace.Delete.File.Text", Name), MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                await Remove();
+                await Remove(true);
             }
         }
 
-        public async Task Remove()
+        public async Task Remove(bool delete)
         {
             await RemoveFromOpenItemsAsync();
-            await Data.Delete();
+            if (delete)
+            {
+                await Data.Delete();
+            }
+            else
+            {
+                Data.Parent.Children.Remove(Data);
+            }
             if (Parent != null)
             {
                 await Dispatcher.InvokeAsync(() => Parent.Children.Remove(this));
             }
             string hash = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, Data.FullName);
-            if (File.Exists(hash))
+            if (Data.FileInfo.FileSystem.File.Exists(hash))
             {
                 try
                 {
-                    File.Delete(hash);
+                    Data.FileInfo.FileSystem.File.Delete(hash);
                 }
                 catch
                 {
@@ -391,10 +398,10 @@ namespace Docdown.ViewModel
                 await Data.Rename(newName);
                 try
                 {
-                    if (File.Exists(oldHash))
+                    if (Data.FileInfo.FileSystem.File.Exists(oldHash))
                     {
                         var newHash = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, FullName);
-                        File.Move(oldHash, newHash);
+                        Data.FileInfo.FileSystem.File.Move(oldHash, newHash);
                         PdfPath = newHash;
                     }
                 }
@@ -500,7 +507,7 @@ namespace Docdown.ViewModel
                 }
                 catch (Exception e)
                 {
-                    Workspace.Messages.Error(await ErrorUtility.GetErrorMessage(e));
+                    Workspace.Messages.Error(await ErrorUtility.GetErrorMessage(e, Dispatcher));
                 }
             });
             
@@ -511,7 +518,7 @@ namespace Docdown.ViewModel
         {
             var editorAndViewer = new EditorAndViewer();
             var temp = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, Data.FullName);
-            if (File.Exists(temp))
+            if (Data.FileInfo.FileSystem.File.Exists(temp))
             {
                 PdfPath = temp;
                 ShowPreview = true;

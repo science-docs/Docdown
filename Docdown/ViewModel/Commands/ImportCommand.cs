@@ -21,7 +21,7 @@ namespace Docdown.ViewModel.Commands
         [STAThread]
         private async static void Import(WorkspaceViewModel workspace, ConverterType target)
         {
-            var dialog = new CommonOpenFileDialog()
+            var dialog = new CommonOpenFileDialog
             {
                 IsFolderPicker = false,
                 Multiselect = false,
@@ -37,10 +37,11 @@ namespace Docdown.ViewModel.Commands
                 }
                 catch (Exception e)
                 {
-                    var errorText = await ErrorUtility.GetErrorMessage(e);
+                    var errorText = await ErrorUtility.GetErrorMessage(e, workspace.Dispatcher);
                     workspace.Messages.Error(errorText);
                 }
             }
+            dialog.Dispose();
         }
 
         private async static Task ImportFile(WorkspaceViewModel workspace, string fileName, ConverterType target)

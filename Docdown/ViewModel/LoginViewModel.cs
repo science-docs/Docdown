@@ -59,7 +59,7 @@ namespace Docdown.ViewModel
             }
             catch (Exception e)
             {
-                Error = await ErrorUtility.GetErrorMessage(e);
+                Error = await ErrorUtility.GetErrorMessage(e, Dispatcher);
             }
         }
 
@@ -93,7 +93,7 @@ namespace Docdown.ViewModel
             }
             catch (Exception e)
             {
-                Error = await ErrorUtility.GetErrorMessage(e);
+                Error = await ErrorUtility.GetErrorMessage(e, Dispatcher);
             }
 
         }
