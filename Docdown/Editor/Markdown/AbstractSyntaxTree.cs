@@ -191,6 +191,12 @@ namespace Docdown.Editor.Markdown
             return SpanningBlockInline(SpanningBlock(ast, index), index);
         }
 
+        public static Inline SpanningInline(Block ast, int index, out Block block)
+        {
+            block = SpanningBlock(ast, index);
+            return SpanningBlockInline(block, index);
+        }
+
         public static Inline SpanningBlockInline(Block block, int index)
         {
             if (block == null)

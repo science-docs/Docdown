@@ -65,7 +65,7 @@ namespace Docdown.ViewModel
                 }
             }
 
-            var inline = SpanningInline(AbstractSyntaxTree, index);
+            var inline = SpanningInline(AbstractSyntaxTree, index, out var block);
             if (inline != null)
             {
                 switch (inline.Tag)
@@ -74,9 +74,9 @@ namespace Docdown.ViewModel
                         return GetLinkInlineTooltip(AbstractSyntaxTree, inline);
                 }
             }
-            else
+            else if (block != null && block.Tag == BlockTag.Meta)
             {
-                var metaDataDesc = FindMetaEntry(AbstractSyntaxTree, index);
+                var metaDataDesc = FindMetaEntry(block, index);
                 if (metaDataDesc != null)
                 {
                     return metaDataDesc;
@@ -86,21 +86,16 @@ namespace Docdown.ViewModel
             return null;
         }
 
-        private object FindMetaEntry(Block ast, int index)
+        private object FindMetaEntry(Block meta, int index)
         {
-            var block = SpanningBlock(ast, index);
-
-            if (block.Tag == BlockTag.Meta)
+            foreach (var entry in meta.MetaData.Entries)
             {
-                foreach (var entry in block.MetaData.Entries)
+                if (entry.NameStartPosition <= index && entry.ValueStartPosition + entry.ValueLength >= index)
                 {
-                    if (entry.NameStartPosition <= index && entry.ValueStartPosition + entry.ValueLength >= index)
+                    var modelEntry = AppViewModel.Instance.Settings.SelectedTemplate.MetaData.Entries.FirstOrDefault(e => e.Name == entry.Name);
+                    if (modelEntry != null)
                     {
-                        var modelEntry = AppViewModel.Instance.Settings.SelectedTemplate.MetaData.Entries.FirstOrDefault(e => e.Name == entry.Name);
-                        if (modelEntry != null)
-                        {
-                            return new MarkdownMetaCompletionData(modelEntry).Description;
-                        }
+                        return new MarkdownMetaCompletionData(modelEntry).Description;
                     }
                 }
             }
