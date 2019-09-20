@@ -58,8 +58,11 @@ namespace PandocMark.Parser
                         var values = value.Split(',');
                         for (int i = 0; i < values.Length; i++)
                         {
-                            values[i] = values[i].Trim('[', ']', ' ', '"');
-                            entry.Entries.Add(new MetaDataEntry { Value = values[i] });
+                            values[i] = values[i].Trim('[', ']', ' ');
+                            if (values[i].Length > 0)
+                            {
+                                entry.Entries.Add(new MetaDataEntry { Value = values[i].Trim('"') });
+                            }
                         }
                     }
                     else

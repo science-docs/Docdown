@@ -216,9 +216,9 @@ namespace Docdown.Editor.Markdown
                 var entry = set.FirstOrDefault(e => e.Name == docEntry.Name);
                 if (entry != null)
                 {
-                    if (!ValidateEntry(entry, docEntry, item))
+                    if (!ValidateEntry(entry, docEntry, item, out var defaultMessage))
                     {
-                        yield return new Issue(entry.IssueType, docEntry.NameStartPosition, docEntry.NameLength, entry.IssueMessage);
+                        yield return new Issue(entry.IssueType, docEntry.NameStartPosition, docEntry.NameLength, entry.IssueMessage ?? defaultMessage);
                     }
                     set.Remove(entry);
                 }
@@ -237,53 +237,64 @@ namespace Docdown.Editor.Markdown
             }
         }
 
-        private static bool ValidateEntry(MetaDataModel.Entry entry, MetaDataEntry doc, IWorkspaceItem item)
+        private static bool ValidateEntry(MetaDataModel.Entry entry, MetaDataEntry doc, IWorkspaceItem item, out string defaultMessage)
         {
+            const string DONT_SHOW = "DONT SHOW";
             if (entry.IsArray)
             {
                 if (doc.Value == null)
                 {
                     foreach (var value in doc.Entries)
                     {
-                        if (!ValidateSingleMetaEntry(entry, value.Value, item))
+                        if (!ValidateSingleMetaEntry(entry, value.Value, item, out defaultMessage))
                         {
                             return false;
                         }
                     }
+                    defaultMessage = DONT_SHOW;
                     return true;
                 }
                 else
                 {
+                    defaultMessage = DONT_SHOW;
                     return false;
                 }
             }
             else if (doc.Value == null)
             {
+                defaultMessage = "Entry has to contain a value";
                 return false;
             }
             else
             {
-                return ValidateSingleMetaEntry(entry, doc.Value, item);
+                return ValidateSingleMetaEntry(entry, doc.Value, item, out defaultMessage);
             }
         }
 
-        private static bool ValidateSingleMetaEntry(MetaDataModel.Entry entry, string value, IWorkspaceItem item)
+        private static bool ValidateSingleMetaEntry(MetaDataModel.Entry entry, string value, IWorkspaceItem item, out string defaultMessage)
         {
             switch (entry.Type)
             {
                 case MetaDataType.None:
+                    defaultMessage = $"Entry {value} does not match regex {entry.Regex?.ToString()}";
                     return entry.Regex == null || entry.Regex.IsMatch(value);
                 case MetaDataType.Boolean:
+                    defaultMessage = "Entry has to be a boolean (true/false)";
                     return bool.TryParse(value, out _);
                 case MetaDataType.File:
+                    defaultMessage = $"The file '{value}' does not exist in the workspace";
                     return SearchForFile(item.Workspace.Item, value);
                 case MetaDataType.Float:
+                    defaultMessage = $"Could not parse '{value}' as a floating point number";
                     return double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out _);
                 case MetaDataType.Integer:
+                    defaultMessage = $"Could not parse '{value}' as an integer";
                     return int.TryParse(value, out _);
                 case MetaDataType.Locale:
+                    defaultMessage = $"Could not parse '{value}' as a locale (e.g en-US)";
                     return LocaleRegex.IsMatch(value);
             }
+            defaultMessage = "";
             return false;
         }
 
