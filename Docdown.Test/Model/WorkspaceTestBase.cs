@@ -106,7 +106,7 @@ namespace Docdown.Model.Test
 
         public static IEnumerable<Issue> Validate(IWorkspaceItem item)
         {
-            var text = Encoding.UTF8.GetString(item.Read().Result);
+            var text = Encoding.UTF8.GetString(item.Read());
             return MarkdownValidator.Validate(text, item);
         }
     }

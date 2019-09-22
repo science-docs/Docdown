@@ -59,14 +59,13 @@ namespace Docdown.Model
             return Task.CompletedTask;
         }
 
-        public async Task<byte[]> Read(IWorkspaceItem item)
+        public byte[] Read(IWorkspaceItem item)
         {
             if (item.IsDirectory)
             {
                 throw new InvalidOperationException("Cannot read content of directory");
             }
-
-            return await IOUtility.ReadAllBytes(item.FileInfo as IFileInfo);
+            return item.FileInfo.FileSystem.File.ReadAllBytes(item.FullName);
         }
 
         public Task Rename(IWorkspaceItem item, string newName)

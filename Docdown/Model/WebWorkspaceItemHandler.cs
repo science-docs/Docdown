@@ -27,7 +27,7 @@ namespace Docdown.Model
             throw new NotImplementedException();
         }
 
-        public Task<byte[]> Read(IWorkspaceItem item)
+        public byte[] Read(IWorkspaceItem item)
         {
             throw new NotImplementedException();
         }

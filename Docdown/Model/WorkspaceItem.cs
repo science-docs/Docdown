@@ -182,13 +182,13 @@ namespace Docdown.Model
             Parent = null;
         }
 
-        public async Task<byte[]> Read()
+        public byte[] Read()
         {
             byte[] bytes = null;
             var iterator = Workspace.Handlers.GetEnumerator();
             while (bytes == null && iterator.MoveNext())
             {
-                bytes = await iterator.Current.Read(this);
+                bytes = iterator.Current.Read(this);
             }
             return bytes;
         }
@@ -296,7 +296,7 @@ namespace Docdown.Model
                 return;
             }
 
-            var fileExt = info.Extension;
+            var fileExt = info.Extension.ToLower();
             switch (fileExt)
             {
                 case ".md":

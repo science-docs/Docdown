@@ -11,10 +11,10 @@ namespace Docdown.Model.Test
     public class FileWorkspaceItemHandlerTest : WorkspaceTestBase
     {
         [TestMethod]
-        public async Task ReadTest()
+        public void ReadTest()
         {
             var item = FindItem("Main.md");
-            var bytes = await FileHandler.Read(item);
+            var bytes = FileHandler.Read(item);
             CollectionAssert.AreEqual(bytes, FileSystem.File.ReadAllBytes(WorkspacePath + "Main.md"));
         }
     }

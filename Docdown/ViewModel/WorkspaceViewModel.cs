@@ -2,6 +2,7 @@
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
+using ICSharpCode.AvalonEdit.Rendering;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -165,6 +166,63 @@ namespace Docdown.ViewModel
                         break;
                 }
             }
+            if (!args.Cancel)
+            {
+                FillSettings();
+                Data.Settings.Save();
+            }
+        }
+
+        private void FillSettings()
+        {
+            var s = Data.Settings;
+            s.Items.Clear();
+
+            TraverseExplorerSettings(s, Explorer.Items.First());
+        }
+
+        private void TraverseExplorerSettings(WorkspaceSettings settings, Explorer explorer)
+        {
+            WorkspaceItemPersistance item = null;
+            var explorerItem = explorer.WorkspaceItem;
+            if (OpenItems.Contains(explorerItem))
+            {
+                item = new WorkspaceItemPersistance
+                {
+                    IsExpanded = false,
+                    Path = explorerItem.FullName,
+                    IsSelected = explorerItem == SelectedItem
+                };
+                if (explorerItem.Editor != null)
+                {
+                    item.ScrollOffset = CalculateCurrentMidOffset(explorerItem.Editor.TextEditor.TextArea.TextView);
+                }
+            }
+            else if (explorerItem.IsDirectory && explorerItem.IsExpanded)
+            {
+                item = new WorkspaceItemPersistance
+                {
+                    IsExpanded = true,
+                    Path = explorerItem.FullName
+                };
+            }
+            if (item != null)
+            {
+                settings.Items.Add(item);
+            }
+
+            foreach (var child in explorer.Children)
+            {
+                TraverseExplorerSettings(settings, child);
+            }
+        }
+
+        private int CalculateCurrentMidOffset(TextView view)
+        {
+            var lines = view.VisualLines;
+            var middleLine = lines[lines.Count / 2];
+            var index = middleLine.FirstDocumentLine.Offset;
+            return index;
         }
 
         [ChangeListener(nameof(Data))]
@@ -173,8 +231,46 @@ namespace Docdown.ViewModel
             SelectedItem = null;
             OpenItems.Clear();
             RefreshExplorer();
+            RestoreSettings();
 
             Data.WorkspaceChanged += OnWorkspaceChanged;
+        }
+
+        private void RestoreSettings()
+        {
+            RestoreExplorerSettings(Data.Settings, Explorer.Items.First());
+        }
+
+        private void RestoreExplorerSettings(WorkspaceSettings settings, Explorer explorer)
+        {
+            var workspaceItem = explorer.WorkspaceItem;
+            foreach (var item in settings.Items)
+            {
+                if (item.Path == workspaceItem.FullName)
+                {
+                    if (workspaceItem.IsFile)
+                    {
+                        OpenItems.Add(workspaceItem);
+                        if (item.IsSelected)
+                        {
+                            SelectedItem = workspaceItem;
+                        }
+                        if (workspaceItem.Editor != null)
+                        {
+                            workspaceItem.Editor.TextEditor.ScrollTo(item.ScrollOffset);
+                        }
+                    }
+                    else if (workspaceItem.IsDirectory)
+                    {
+                        explorer.IsExpanded = item.IsExpanded;
+                    }
+                }
+            }
+
+            foreach (var child in explorer.Children)
+            {
+                RestoreExplorerSettings(settings, child);
+            }
         }
 
         private async void OnWorkspaceChanged(IWorkspace workspace, IEnumerable<WorkspaceChangeEventArgs> args)

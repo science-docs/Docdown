@@ -44,15 +44,17 @@ namespace Docdown.ViewModel
         }
 
         public WorkspaceItemViewModel Item { get; }
+        public TextEditor TextEditor { get; }
 
-        public ICommand UpdateCommand => new ActionCommand<TextEditor>(Update);
+        public ICommand UpdateCommand => new ActionCommand(Update);
 
         private string text;
         private Block ast;
 
-        public EditorViewModel(WorkspaceItemViewModel item)
+        public EditorViewModel(WorkspaceItemViewModel item, TextEditor editor)
         {
             Item = item ?? throw new ArgumentNullException(nameof(item));
+            TextEditor = editor ?? throw new ArgumentNullException(nameof(editor));
         }
 
         public object FindHoverContent(int index)
@@ -120,7 +122,7 @@ namespace Docdown.ViewModel
             return null;
         }
 
-        public void Update(TextEditor editor)
+        public void Update()
         {
             try
             {
@@ -128,7 +130,7 @@ namespace Docdown.ViewModel
                 var outline = new Outline(headers);
                 var wordCount = CountWords(AbstractSyntaxTree, Text);
                 Item.WordCount = wordCount;
-                Item.Outline = new OutlineViewModel(outline, JumpToLocation(editor));
+                Item.Outline = new OutlineViewModel(outline, JumpToLocation());
 
                 foreach (var issue in MarkdownValidator.Validate(AbstractSyntaxTree, Text, Item.Data))
                 {
@@ -136,7 +138,7 @@ namespace Docdown.ViewModel
                 }
                 if (AbstractSyntaxTree.Document.Issues.Count > 0)
                 {
-                    editor.TextArea.TextView.Redraw();
+                    TextEditor.TextArea.TextView.Redraw();
                 }
                 Item.HasValidationErrors = AbstractSyntaxTree.Document.Issues.Any(e => e.Type == IssueType.Error);
             }
@@ -146,9 +148,9 @@ namespace Docdown.ViewModel
             }
         }
 
-        private Action<int> JumpToLocation(TextEditor editor)
+        private Action<int> JumpToLocation()
         {
-            return (index) => editor.ScrollTo(index);
+            return (index) => TextEditor.ScrollTo(index);
         }
 
         public bool FillCompletionList(CompletionList completionList, int selectionStart)

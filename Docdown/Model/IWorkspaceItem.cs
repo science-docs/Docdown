@@ -22,7 +22,7 @@ namespace Docdown.Model
         bool IsDirectory { get; }
         bool IsFile { get; }
 
-        Task<byte[]> Read();
+        byte[] Read();
         Task Save(string text);
         Task<string> Convert(CancelToken cancelToken);
         Task Delete();

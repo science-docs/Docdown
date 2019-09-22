@@ -163,7 +163,8 @@ namespace Docdown.ViewModel
                     if (view is IEditor editor)
                     {
                         Search = new SearchViewModel(editor);
-                        Editor = new EditorViewModel(this);
+                        Editor = new EditorViewModel(this, editor.Editor);
+                        SetContent(editor);
                     }
                 }
                 return view;
@@ -500,7 +501,7 @@ namespace Docdown.ViewModel
             {
                 try
                 {
-                    var bytes = await Data.Read();
+                    var bytes = Data.Read();
                     var temp = IOUtility.GetTempFile(Data.FileInfo.FileSystem.Directory);
                     await IOUtility.WriteAllBytes(temp, Data.FileInfo.FileSystem.File, bytes);
                     PdfPath = temp;
@@ -523,11 +524,7 @@ namespace Docdown.ViewModel
                 PdfPath = temp;
                 ShowPreview = true;
             }
-            Task.Run(async () =>
-            {
-                string allText = ReadText(await Data.Read());
-                await Dispatcher.InvokeAsync(() => editorAndViewer.Editor.Text = allText);
-            });
+            editorAndViewer.DataContext = this;
             
             return editorAndViewer;
         }
@@ -535,12 +532,14 @@ namespace Docdown.ViewModel
         private IEditor ShowDefaultEditor()
         {
             var editor = new DefaultEditor();
-            Task.Run(async () =>
-            {
-                string allText = ReadText(await Data.Read());
-                await Dispatcher.InvokeAsync(() => editor.Editor.Text = allText);
-            });
+            editor.DataContext = this;
             return editor;
+        }
+
+        private void SetContent(IEditor editor)
+        {
+            string allText = ReadText(Data.Read());
+            editor.Editor.Text = allText;
         }
 
         private string ReadText(byte[] bytes)
@@ -558,7 +557,7 @@ namespace Docdown.ViewModel
                     using (var ms = new MemoryStream())
                     {
 
-                        var bytes = await Data.Read();
+                        var bytes = Data.Read();
                         ms.Write(bytes, 0, bytes.Length);
                         var bitmap = new BitmapImage();
                         bitmap.BeginInit();

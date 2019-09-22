@@ -7,7 +7,7 @@ namespace Docdown.Model
     {
         int Order { get; }
 
-        Task<byte[]> Read(IWorkspaceItem item);
+        byte[] Read(IWorkspaceItem item);
         Task Save(IWorkspaceItem item, byte[] bytes);
         Task<string> Convert(IWorkspaceItem item, CancelToken cancelToken);
         Task Delete(IWorkspaceItem item);

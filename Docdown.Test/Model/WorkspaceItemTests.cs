@@ -20,10 +20,10 @@ namespace Docdown.Model.Test
         }
 
         [TestMethod]
-        public async Task LoadStringTest()
+        public void LoadStringTest()
         {
             var main = FindItem("Main.md");
-            var bytes = await main.Read();
+            var bytes = main.Read();
             Assert.IsNotNull(bytes, "Reading a file should never return NULL");
             Assert.IsTrue(bytes.Length > 0, "This file is specified as having more than zero bytes");
             string text = Encoding.UTF8.GetString(bytes);

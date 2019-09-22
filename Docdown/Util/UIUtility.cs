@@ -17,6 +17,7 @@ namespace Docdown.Util
         {
             var line = editor.Document.GetLineByOffset(index);
             var column = index - line.Offset;
+            editor.UpdateLayout();
             editor.ScrollTo(line.LineNumber, column);
         }
 

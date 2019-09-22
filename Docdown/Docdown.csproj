@@ -204,6 +204,7 @@
     <Compile Include="Model\Workspace.cs" />
     <Compile Include="Model\WorkspaceChangeEventArgs.cs" />
     <Compile Include="Model\WorkspaceItem.cs" />
+    <Compile Include="Model\WorkspaceItemPersistance.cs" />
     <Compile Include="Model\WorkspaceProvider.cs" />
     <Compile Include="Model\WorkspaceSettings.cs" />
     <Compile Include="Util\BibliographyUtility.cs" />
@@ -225,6 +226,7 @@
     <Compile Include="Util\UIUtility.cs" />
     <Compile Include="Util\WebUtility.cs" />
     <Compile Include="Util\XamlUtility.cs" />
+    <Compile Include="Util\XExtension.cs" />
     <Compile Include="ViewModel\AppViewModel.cs" />
     <Compile Include="ViewModel\Commands\ActionCommand.cs" />
     <Compile Include="ViewModel\ChangeListenerAttribute.cs" />

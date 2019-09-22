@@ -302,7 +302,7 @@ namespace Docdown.Util
         public static IEnumerable<MultipartFormParameter> FromWebWorkspace(IWorkspace workspace, User user)
         {
             yield return CreateField("token", user.Token);
-            yield return CreateField("workspace", workspace.Settings.Sync);
+            //yield return CreateField("workspace", workspace.Settings.Sync);
         }
 
         public static IEnumerable<MultipartFormParameter> GetWebWorkspaceItem(IWorkspaceItem item, User user)
@@ -312,7 +312,7 @@ namespace Docdown.Util
                 throw new ArgumentNullException(nameof(item));
             }
             yield return CreateField("token", user.Token);
-            yield return CreateField("workspace", item.Workspace.Settings.Sync);
+            //yield return CreateField("workspace", item.Workspace.Settings.Sync);
             yield return CreateField("name", item.FullName);
         }
 

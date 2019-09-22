@@ -281,7 +281,7 @@ namespace Docdown.Editor
             {
                 if (DataContext is WorkspaceItemViewModel item)
                 {
-                    item.Editor.Update(EditBox);
+                    item.Editor.Update();
                 }
             }));
         }

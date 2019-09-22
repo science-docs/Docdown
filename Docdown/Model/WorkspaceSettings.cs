@@ -1,25 +1,26 @@
 ﻿using Docdown.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Security.AccessControl;
+using System.Xml.Linq;
 
 namespace Docdown.Model
 {
     public class WorkspaceSettings
     {
-        public string Sync
-        {
-            get => GetProp("sync");
-            set => properties["sync"] = value;
-        }
         public string Path { get; set; }
 
         public IFileSystem FileSystem { get; set; }
 
-        public string FullPath => System.IO.Path.Combine(Path, ".dc");
+        public string Directory => System.IO.Path.Combine(Path, ".dc");
 
-        private Dictionary<string, string> properties = new Dictionary<string, string>();
+        public string FullPath => System.IO.Path.Combine(Directory, "settings.xml");
+
+        public List<WorkspaceItemPersistance> Items { get; } = new List<WorkspaceItemPersistance>();
 
         private WorkspaceSettings(IFileSystem fileSystem, string path)
         {
@@ -35,26 +36,38 @@ namespace Docdown.Model
                 return settings;
             }
 
-            IEnumerable<Tuple<string, string>> tuples = IOUtility.ParseProperties(fileSystem.File, settings.FullPath);
-            settings.properties = tuples.ToDictionary(e => e.Item1, e => e.Item2);
+            var fullText = fileSystem.File.ReadAllText(settings.FullPath);
+            var doc = XDocument.Parse(fullText);
+            settings.Parse(doc);
 
             return settings;
         }
 
-        public void Save()
+        private void Parse(XDocument doc)
         {
-            IOUtility.WriteProperties(FileSystem.File, FullPath, properties
-                .Where(e => e.Value != null)
-                .Select(e => new Tuple<string, string>(e.Key, e.Value)));
+            var root = doc.Root;
+            foreach (var node in root.Elements(nameof(WorkspaceItemPersistance)))
+            {
+                Items.Add(WorkspaceItemPersistance.Parse(node));
+            }
         }
 
-        private string GetProp(string name)
+        public void Save()
         {
-            if (properties.TryGetValue(name, out var value))
+            try
             {
-                return value;
+                FileSystem.Directory.CreateDirectory(Directory);
+                FileSystem.File.WriteAllText(FullPath, CreateDocument().ToString());
             }
-            return null;
+            catch (Exception e)
+            {
+                Trace.WriteLine("Could not save workspace settings: " + e.Message);
+            }
+        }
+
+        private XDocument CreateDocument()
+        {
+            return new XDocument(new XElement("Settings", Items.Select(e => e.ToXml())));
         }
     }
 }
