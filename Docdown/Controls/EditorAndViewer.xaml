@@ -36,6 +36,8 @@
                     <local:DocumentViewer.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Close Preview" Command="{Binding HidePreviewCommand}"/>
+                            <MenuItem Header="Save To..." Command="{Binding PrintCommand}"
+                                      IsEnabled="{Binding IsCompiled}"/>
                         </ContextMenu>
                     </local:DocumentViewer.ContextMenu>
                 </local:DocumentViewer>
