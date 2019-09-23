@@ -9,5 +9,8 @@
     <UserControl.Effect>
         <DropShadowEffect ShadowDepth="0" BlurRadius="7"/>
     </UserControl.Effect>
-    <Image x:Name="Img" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Grid>
+        <Image x:Name="Img" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
+        <Canvas x:Name="LinkCanvas"/>
+    </Grid>
 </UserControl>

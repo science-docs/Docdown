@@ -1,4 +1,5 @@
 ﻿using PdfiumViewer.Wpf.Util;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -58,6 +59,22 @@ namespace PdfiumViewer.Wpf
         public PdfViewer()
         {
             Template = ResourceUtility.TryFindResource<ControlTemplate>("PdfViewerTemplate");
+        }
+
+        public void ScrollTo(int page)
+        {
+            var doc = Document;
+            if (doc != null)
+            {
+                page = Math.Max(0, Math.Min(page, doc.PageCount - 1));
+                var scroller = this.GetDescendantByType<ScrollViewer>();
+                var itemsControl = this.GetDescendantByType<ItemsControl>();
+                // TODO: calculate height of page correctly someday
+                var height = itemsControl.ActualHeight;
+                var itemHeight = height / doc.PageCount;
+                var totalHeight = page * itemHeight;
+                scroller.ScrollToVerticalOffset(totalHeight);
+            }
         }
 
         private void DisplayPdf(IPdfDocument document)

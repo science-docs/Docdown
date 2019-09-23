@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -6,6 +7,34 @@ namespace PdfiumViewer.Wpf.Util
 {
     internal static class UIUtility
     {
+        public static Action Debounce(this Action func, int milliseconds = 300)
+        {
+            var action = Debounce<int>(_ => func(), milliseconds);
+            return () => action(0);
+        }
+
+        public static Action<T> Debounce<T>(this Action<T> func, int milliseconds = 300)
+        {
+            var last = long.MinValue;
+            return arg =>
+            {
+                try
+                {
+                    var current = System.Threading.Interlocked.Increment(ref last);
+                    Task.Delay(milliseconds).ContinueWith(task =>
+                    {
+                        // ReSharper disable once AccessToModifiedClosure
+                        if (current == last) func(arg);
+                        task.Dispose();
+                    });
+                }
+                catch (OverflowException)
+                {
+                    System.Threading.Interlocked.Exchange(ref last, long.MinValue);
+                }
+            };
+        }
+
         public static T GetDescendantByType<T>(this Visual element) where T : Visual
         {
             return element.GetDescendantBy((T e) => true);

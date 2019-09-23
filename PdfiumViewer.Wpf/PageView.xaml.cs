@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace PdfiumViewer.Wpf
@@ -13,13 +14,13 @@ namespace PdfiumViewer.Wpf
     {
         private bool alreadySet = false;
         private Size? lastSize;
-        private readonly DispatcherTimer timer;
+        private readonly Action debounced;
 
         public PageView()
         {
             InitializeComponent();
             LayoutUpdated += PageLayoutUpdated;
-            timer = new DispatcherTimer(TimeSpan.FromSeconds(1.0), DispatcherPriority.Normal, TimerCallback, Dispatcher);
+            debounced = UIUtility.Debounce(FullUpdate, 1000);
         }
 
         private void PageLayoutUpdated(object sender, EventArgs e)
@@ -27,17 +28,12 @@ namespace PdfiumViewer.Wpf
             Update();
         }
 
-        private void TimerCallback(object sender, EventArgs e)
-        {
-            timer.Stop();
-            FullUpdate();
-        }
-
         protected override Size MeasureOverride(Size constraint)
         {
             if (HasSizeChanged(constraint))
             {
-                StartTimer();
+                LinkCanvas.Children.Clear();
+                debounced();
             }
 
             if (DataContext is PageViewModel page)
@@ -51,8 +47,11 @@ namespace PdfiumViewer.Wpf
 
         private void FullUpdate()
         {
-            alreadySet = false;
-            Update();
+            Dispatcher.InvokeAsync(() =>
+            {
+                alreadySet = false;
+                Update();
+            });
         }
 
         private void Update()
@@ -82,11 +81,6 @@ namespace PdfiumViewer.Wpf
             return temp != constraint;
         }
 
-        private void StartTimer()
-        {
-            timer.Start();
-        }
-
         private bool PageIsVisible()
         {
             var scrollViewer = this.GetParentByType<ScrollViewer>();
@@ -95,11 +89,12 @@ namespace PdfiumViewer.Wpf
             {
                 return true;
             }
+            var zero = new Point(0, 0);
 
-            GeneralTransform childTransform = TransformToAncestor(scrollViewer);
+            var childTransform = TransformToAncestor(scrollViewer);
             
-            Rect rectangle = childTransform.TransformBounds(new Rect(new Point(0, 0), DesiredSize));
-            Rect result = Rect.Intersect(new Rect(new Point(0, 0), scrollViewer.RenderSize), rectangle);
+            var rectangle = childTransform.TransformBounds(new Rect(zero, DesiredSize));
+            var result = Rect.Intersect(new Rect(zero, scrollViewer.RenderSize), rectangle);
 
             return result != Rect.Empty;
         }
@@ -108,20 +103,80 @@ namespace PdfiumViewer.Wpf
         {
             if (DataContext is PageViewModel page)
             {
-                page.Render().ContinueWith(SetImage);
+                var links = LinkCanvas.Children.Count == 0;
+                Task.Run(() => Render(page, links));
             }
         }
 
-        private void SetImage(Task<BitmapSource> image)
+        private async Task Render(PageViewModel page, bool setLinks)
         {
-            Dispatcher.BeginInvoke((Action)(() =>
+            var image = await page.Render();
+            await SetImage(image);
+            if (setLinks)
             {
-                Img.Source = image.Result;
-            }));
+                await SetLinks(page);
+            }
+        }
+
+        private async Task SetImage(BitmapSource image)
+        {
+            await Dispatcher.InvokeAsync(() => Img.Source = image);
+        }
+
+        private async Task SetLinks(PageViewModel page)
+        {
+            var size = new System.Drawing.Size((int)ActualWidth, (int)ActualHeight);
+            var pageSize = page.Document.PageSizes[page.Page];
+            var links = page.Document.GetPageLinks(page.Page, size);
+            foreach (var link in links.Links)
+            {
+                var translated = page.Document.RectangleFromPdf(page.Page, link.Bounds);
+                System.Drawing.RectangleF rectF = translated;
+                RecalculateRect(pageSize, page.RenderSize, ref rectF);
+                await Dispatcher.InvokeAsync(() => CreateRectangle(rectF, link.TargetPage ?? 0));
+            }
+        }
+
+        private void RecalculateRect(System.Drawing.SizeF pageSize, Size controlSize, ref System.Drawing.RectangleF linkRect)
+        {
+            var factor = (float)(controlSize.Width / pageSize.Width);
+            linkRect.Height *= factor;
+            linkRect.Width *= factor;
+            linkRect.Y *= factor;
+            linkRect.X *= factor;
+        }
+
+        private static readonly Brush green = new SolidColorBrush(new Color { G = 255, A = 128 });
+
+        private void CreateRectangle(System.Drawing.RectangleF rect, object page)
+        {
+            var rectangle = new Rectangle
+            {
+                Width = rect.Width,
+                Height = rect.Height,
+                Fill = Brushes.Transparent,
+                Stroke = green,
+                StrokeThickness = 1,
+                Cursor = System.Windows.Input.Cursors.Hand,
+                Tag = page
+            };
+            rectangle.MouseDown += LinkMouseDown;
+            Canvas.SetLeft(rectangle, rect.X);
+            Canvas.SetTop(rectangle, rect.Y);
+            LinkCanvas.Children.Add(rectangle);
+        }
+
+        private void LinkMouseDown(object sender, EventArgs e)
+        {
+            var rectangle = sender as Rectangle;
+            var page = (int)rectangle.Tag;
+            var viewer = rectangle.GetParentByType<PdfViewer>();
+            viewer.ScrollTo(page);
         }
 
         private void UnsetImage()
         {
+            LinkCanvas.Children.Clear();
             Img.Source = null;
         }
     }
