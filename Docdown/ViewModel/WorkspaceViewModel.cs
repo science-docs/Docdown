@@ -6,8 +6,6 @@ using ICSharpCode.AvalonEdit.Rendering;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -137,12 +135,12 @@ namespace Docdown.ViewModel
             }
         }
 
-        public void OpenItem(string fullPath)
+        public async Task OpenItem(string fullPath)
         {
             var item = SearchForSelectedItem(Item, fullPath);
             if (item != null)
             {
-                OpenItems.Add(item);
+                await AddOpenItemAsync(item);
                 SelectedItem = item;
             }
         }
@@ -250,7 +248,7 @@ namespace Docdown.ViewModel
                 {
                     if (workspaceItem.IsFile)
                     {
-                        OpenItems.Add(workspaceItem);
+                        AddOpenItem(workspaceItem);
                         if (item.IsSelected)
                         {
                             SelectedItem = workspaceItem;
@@ -330,7 +328,7 @@ namespace Docdown.ViewModel
                 }
                 else if (openItems.Any(e => e.RelativeName == child.RelativeName))
                 {
-                    OpenItems.Add(child);
+                    AddOpenItem(child);
                 }
             }
             Children.Restore(openItems);
@@ -378,19 +376,7 @@ namespace Docdown.ViewModel
 
         private WorkspaceItemViewModel SearchForSelectedItem(WorkspaceItemViewModel vm, string fullPath)
         {
-            if (vm.FullName == fullPath)
-            {
-                return vm;
-            }
-            foreach (var child in vm.Children)
-            {
-                var found = SearchForSelectedItem(child, fullPath);
-                if (found != null)
-                {
-                    return found;
-                }
-            }
-            return null;
+            return vm.FirstOrDefault(e => e.Children, e => e.FullName == fullPath);
         }
 
         public void UpdateIcons(IEnumerable<WorkspaceItemViewModel> items)
@@ -399,6 +385,19 @@ namespace Docdown.ViewModel
             {
                 item.SendPropertyUpdate(nameof(WorkspaceItemViewModel.IconName));
                 UpdateIcons(item.Children);
+            }
+        }
+
+        private async Task AddOpenItemAsync(WorkspaceItemViewModel item)
+        {
+            await Dispatcher.InvokeAsync(() => AddOpenItem(item));
+        }
+
+        private void AddOpenItem(WorkspaceItemViewModel item)
+        {
+            if (!OpenItems.Contains(item))
+            {
+                OpenItems.Add(item);
             }
         }
     }

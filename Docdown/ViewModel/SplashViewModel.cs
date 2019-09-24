@@ -42,7 +42,7 @@ namespace Docdown.ViewModel
 
                 if (isFile)
                 {
-                    app.Workspace.OpenItem(Args[0]);
+                    await app.Workspace.OpenItem(Args[0]);
                 }
 
                 Data = app;

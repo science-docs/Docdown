@@ -13,7 +13,7 @@ namespace Docdown.ViewModel
 
     public class Message : ObservableObject
     {
-        public static Message Empty { get; } = new Message(string.Empty, MessageType.Undefined);
+        public static Message Empty { get; } = new Message(null, MessageType.Undefined);
 
         public Inline Content
         {
@@ -25,24 +25,10 @@ namespace Docdown.ViewModel
 
         private Inline content;
 
-        public Message(string shortMessage, MessageType type)
-        {
-            SetContentAsync(shortMessage);
-            Type = type;
-        }
-
         public Message(Inline message, MessageType type)
         {
             Content = message;
             Type = type;
-        }
-
-        private void SetContentAsync(string text)
-        {
-            Dispatcher.InvokeAsync(() =>
-            {
-                Content = new Run(text);
-            });
         }
     }
 }

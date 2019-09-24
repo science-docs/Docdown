@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Windows.Documents;
 
 namespace Docdown.ViewModel
@@ -14,11 +15,20 @@ namespace Docdown.ViewModel
 
         public void Add(string shortMessage, MessageType type)
         {
-            Add(new Message(shortMessage, type));
+            Dispatcher.InvokeAsync(() =>
+            {
+                var inline = new Run(shortMessage);
+                Add(new Message(inline, type));
+            });
         }
 
         public void Add(Inline message, MessageType type)
         {
+            if (message.Dispatcher != Dispatcher)
+            {
+                throw new ArgumentException("Inline was not created on UI Thread");
+            }
+
             Add(new Message(message, type));
         }
 

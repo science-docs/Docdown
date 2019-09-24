@@ -12,6 +12,23 @@ namespace Docdown.Util
 
     public static class Enumerable
     {
+        public static T FirstOrDefault<T>(this T source, Func<T, IEnumerable<T>> recursive, Func<T, bool> selector)
+        {
+            if (selector(source))
+            {
+                return source;
+            }
+            foreach (var child in recursive(source))
+            {
+                var found = FirstOrDefault(child, recursive, selector);
+                if (found != default)
+                {
+                    return found;
+                }
+            }
+            return default;
+        }
+
         public static IEnumerable<T> Concat<T>(this IEnumerable<T> source, T item)
         {
             foreach (var value in source)
