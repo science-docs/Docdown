@@ -34,12 +34,9 @@ namespace Docdown.ViewModel.Commands
                 {
                     if (File.Exists(dialog.FileName))
                     {
-                        File.Replace(pdfPath, dialog.FileName, null);
+                        File.Delete(dialog.FileName);
                     }
-                    else
-                    {
-                        File.Copy(pdfPath, dialog.FileName);
-                    }
+                    File.Copy(pdfPath, dialog.FileName);
                     AppViewModel.Instance.Messages.Success(Language.Current.Get("Message.File.Save.Success"));
                 }
                 catch
