@@ -1,10 +1,7 @@
-using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel;
 using Docdown.Windows;
-using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -13,6 +10,7 @@ namespace Docdown
     public partial class MainWindow
     {
         readonly AppViewModel app;
+        bool closeFlag = true;
 
         public MainWindow()
         {
@@ -34,16 +32,20 @@ namespace Docdown
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
-            e.Cancel = true;
-            var newArgs = new CancelEventArgs();
-            Task.Run(async () =>
+            e.Cancel = closeFlag;
+            if (closeFlag)
             {
-                await app.OnClosing(newArgs);
-                if (!newArgs.Cancel)
+                var newArgs = new CancelEventArgs();
+                Task.Run(async () =>
                 {
-                    Environment.Exit(0);
-                }
-            });
+                    await app.OnClosing(newArgs);
+                    if (!newArgs.Cancel)
+                    {
+                        closeFlag = false;
+                        Dispatcher.Invoke(Close);
+                    }
+                });
+            }
         }
 
         private void MenuItemExitClicked(object sender, RoutedEventArgs e)
@@ -53,12 +55,12 @@ namespace Docdown
 
         private void MarkdownHelpMenuClicked(object sender, RoutedEventArgs e)
         {
-            ProgramUtility.Execute("https://pandoc.org/MANUAL.html#pandocs-markdown");
+            ProgramUtility.ExecuteNonWaiting("https://pandoc.org/MANUAL.html#pandocs-markdown");
         }
 
         private void AboutHelpMenuClicked(object sender, RoutedEventArgs e)
         {
-            ProgramUtility.Execute("https://github.com/Darkgaja/Docdown");
+            ProgramUtility.ExecuteNonWaiting("https://github.com/Darkgaja/Docdown");
         }
     }
 }
