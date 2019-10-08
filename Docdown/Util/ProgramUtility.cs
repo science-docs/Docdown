@@ -25,6 +25,25 @@ namespace Docdown.Util
             return process.ExitCode;
         }
 
+        public static void ExecuteNonWaiting(string program, string args = null)
+        {
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo(program, args)
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }
+            };
+            try
+            {
+                process.Start();
+            }
+            catch
+            {
+
+            }
+        }
+
         public static bool DoesExecute(string program, string args)
         {
             return Execute(program, args) == 0;

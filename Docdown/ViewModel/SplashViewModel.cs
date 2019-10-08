@@ -38,6 +38,12 @@ namespace Docdown.ViewModel
             Task.Run(async () =>
             {
                 await app.Settings.TestConnection();
+
+                if (app.Settings.IsConnected && await UpdateUtility.CheckNewVersion())
+                {
+                    await UpdateUtility.Update();
+                }
+
                 await app.ChangeWorkspace(workspacePath);
 
                 if (isFile)

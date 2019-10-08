@@ -232,6 +232,7 @@
     <Compile Include="Util\ThesaurusUtility.cs" />
     <Compile Include="Util\TypeCache.cs" />
     <Compile Include="Util\UIUtility.cs" />
+    <Compile Include="Util\UpdateUtility.cs" />
     <Compile Include="Util\WebUtility.cs" />
     <Compile Include="Util\XamlUtility.cs" />
     <Compile Include="Util\XExtension.cs" />
