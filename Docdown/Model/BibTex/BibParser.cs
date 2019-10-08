@@ -206,7 +206,12 @@ namespace BibTeXLibrary
             {
                 c = (char)code;
 
-                if (c == '@')
+                if (c == '%' && _colCount == 0)
+                {
+                    var line = _inputText.ReadLine();
+                    index += line.Length + Environment.NewLine.Length;
+                }
+                else if (c == '@')
                 {
                     yield return new Token(TokenType.Start, index);
                 }
