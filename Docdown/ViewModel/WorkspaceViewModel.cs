@@ -166,20 +166,20 @@ namespace Docdown.ViewModel
             }
             if (!args.Cancel)
             {
-                FillSettings();
+                await FillSettings();
                 Data.Settings.Save();
             }
         }
 
-        private void FillSettings()
+        private async Task FillSettings()
         {
             var s = Data.Settings;
             s.Items.Clear();
 
-            TraverseExplorerSettings(s, Explorer.Items.First());
+            await TraverseExplorerSettings(s, Explorer.Items.First());
         }
 
-        private void TraverseExplorerSettings(WorkspaceSettings settings, Explorer explorer)
+        private async Task TraverseExplorerSettings(WorkspaceSettings settings, Explorer explorer)
         {
             WorkspaceItemPersistance item = null;
             var explorerItem = explorer.WorkspaceItem;
@@ -193,7 +193,7 @@ namespace Docdown.ViewModel
                 };
                 if (explorerItem.Editor != null)
                 {
-                    item.ScrollOffset = CalculateCurrentMidOffset(explorerItem.Editor.TextEditor.TextArea.TextView);
+                    item.ScrollOffset = await CalculateCurrentMidOffset(explorerItem.Editor.TextEditor.TextArea.TextView);
                 }
             }
             else if (explorerItem.IsDirectory && explorerItem.IsExpanded)
@@ -211,16 +211,21 @@ namespace Docdown.ViewModel
 
             foreach (var child in explorer.Children)
             {
-                TraverseExplorerSettings(settings, child);
+                await TraverseExplorerSettings(settings, child);
             }
         }
 
-        private int CalculateCurrentMidOffset(TextView view)
+        private async Task<int> CalculateCurrentMidOffset(TextView view)
         {
+            await Dispatcher.InvokeAsync(() => view.EnsureVisualLines());
             var lines = view.VisualLines;
-            var middleLine = lines[lines.Count / 2];
-            var index = middleLine.FirstDocumentLine.Offset;
-            return index;
+            if (lines.Count > 0)
+            {
+                var middleLine = lines[lines.Count / 2];
+                var index = middleLine?.FirstDocumentLine?.Offset ?? 0;
+                return index;
+            }
+            return 0;
         }
 
         [ChangeListener(nameof(Data))]

@@ -188,7 +188,6 @@ namespace Docdown.Model
 
                 return;
             }
-                
 
             var item = new WorkspaceItem(fileInfo, this, parent);
 

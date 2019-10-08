@@ -23,7 +23,6 @@ namespace Docdown.Editor.Markdown
 
         private readonly Dictionary<BlockTag, Brush> _brushes = new Dictionary<BlockTag, Brush>();
         private Block _abstractSyntaxTree;
-        private Theme _theme;
 
         public KnownLayer Layer => KnownLayer.Background;
 
@@ -68,64 +67,12 @@ namespace Docdown.Editor.Markdown
                     }
                 }
             }
-
-            var segments = new TextSegmentCollection<IssueMarker>();
-            foreach (var issue in ast.Document.Issues)
-            {
-                segments.Add(new IssueMarker(_theme, issue));
-            }
-
-            var visualLines = textView.VisualLines;
-            if (visualLines.Count == 0)
-                return;
-            int viewStart = visualLines.First().FirstDocumentLine.Offset;
-            int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
-            foreach (var marker in segments.FindOverlappingSegments(viewStart, viewEnd - viewStart))
-            {
-                var brush = marker.Brush;
-                var usedPen = new Pen(brush, 1);
-                usedPen.Freeze();
-                if (brush == null)
-                {
-                    continue;
-                }
-
-                foreach (var r in BackgroundGeometryBuilder.GetRectsForSegment(textView, marker))
-                {
-                    var startPoint = r.BottomLeft;
-                    var endPoint = r.BottomRight;
-
-                    double offset = 2.5;
-
-                    int count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
-
-                    var geometry = new StreamGeometry();
-
-                    using (StreamGeometryContext ctx = geometry.Open())
-                    {
-                        ctx.BeginFigure(startPoint, false, false);
-                        ctx.PolyLineTo(CreatePoints(startPoint, offset, count).ToArray(), true, false);
-                    }
-
-                    geometry.Freeze();
-
-                    
-                    drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
-                }
-            }
-        }
-
-        IEnumerable<Point> CreatePoints(Point start, double offset, int count)
-        {
-            for (int i = 0; i < count; i++)
-                yield return new Point(start.X + i * offset, start.Y - ((i + 1) % 2 == 0 ? offset : 0));
         }
 
         public void UpdateAbstractSyntaxTree(Block ast) { _abstractSyntaxTree = ast; }
 
         public void OnThemeChanged(Theme theme)
         {
-            _theme = theme;
             _brushes.Clear();
             var codeBrush = ColorBrush(theme.HighlightBlockCode.Background);
             _brushes[BlockTag.FencedCode] = codeBrush;
@@ -156,39 +103,6 @@ namespace Docdown.Editor.Markdown
             catch (NotSupportedException)
             {
                 return null;
-            }
-        }
-
-        private class IssueMarker : TextSegment
-        {
-            public Brush Brush
-            {
-                get
-                {
-                    switch (issue.Type)
-                    {
-                        case IssueType.Info:
-                            return theme.Info ?? Brushes.Blue;
-                        case IssueType.Warning:
-                            return theme.Warning ?? Brushes.Yellow;
-                        case IssueType.Error:
-                            return theme.Error ?? Brushes.Red;
-                        default:
-                            return null;
-                    }
-                }
-            }
-
-            private readonly Issue issue;
-            private readonly Theme theme;
-
-            public IssueMarker(Theme theme, Issue issue)
-            {
-                this.theme = theme;
-                this.issue = issue;
-                StartOffset = issue.Offset;
-                Length = issue.Length;
-                EndOffset = issue.Offset + issue.Length;
             }
         }
     }

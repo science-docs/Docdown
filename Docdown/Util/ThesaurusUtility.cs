@@ -12,8 +12,7 @@ namespace Docdown.Util
         {
             var encodedWord = Uri.EscapeUriString(word);
             var url = "https://www.openthesaurus.de/synonyme/search?q=" + encodedWord + "&format=application/json";
-            var text = await WebUtility.SimpleTextRequest(url);
-            var jsonObj = JObject.Parse(text);
+            var jsonObj = await WebUtility.SimpleJsonRequest(url);
             var synonyms = new LinkedList<string>();
 
             var synsets = jsonObj.SelectToken("synsets");

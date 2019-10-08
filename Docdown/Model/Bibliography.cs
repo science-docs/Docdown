@@ -25,14 +25,14 @@ namespace Docdown.Model
                     var entries = BibParser.Parse(sr);
                     items[item] = entries.ToArray();
                 }
-                catch
+                catch (ParseErrorException e)
                 {
                     items.Remove(item);
                 }
             }
             var refs = AbstractSyntaxTree.CommonMarkSettings.ExternalReferences;
             refs.Clear();
-            refs.AddRange(Entries.Select(e =>
+            refs.AddRange(Entries.AsParallel().Select(e =>
             {
                 return new PandocMark.Syntax.Reference("@" + e.Key, e.Title, null);
             }));

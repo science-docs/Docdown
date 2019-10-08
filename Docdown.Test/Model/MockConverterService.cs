@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Docdown.Util;
+using Newtonsoft.Json.Linq;
 
 namespace Docdown.Model.Test
 {
@@ -32,11 +33,12 @@ namespace Docdown.Model.Test
 
         public async Task<Template[]> LoadTemplates()
         {
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Docdown.Test.Files.Result.txt");
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Docdown.Test.Files.Template.json");
             using (var sr = new StreamReader(stream))
             {
                 var text = await sr.ReadToEndAsync();
-                return Template.FromJson(text);
+                var json = JArray.Parse(text);
+                return Template.FromJson(json);
             }
         }
     }

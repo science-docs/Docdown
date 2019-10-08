@@ -1,4 +1,5 @@
-﻿using ICSharpCode.AvalonEdit;
+﻿using Docdown.ViewModel.Editing;
+using ICSharpCode.AvalonEdit;
 
 namespace Docdown.Editor
 {

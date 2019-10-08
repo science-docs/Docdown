@@ -1,6 +1,7 @@
 using Docdown.Model;
 using Docdown.Properties;
 using Docdown.ViewModel;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -126,6 +127,12 @@ namespace Docdown.Util
             {
                 return await res.Content.ReadAsStringAsync();
             }
+        }
+
+        public static async Task<JToken> SimpleJsonRequest(string url, params MultipartFormParameter[] parameters)
+        {
+            var text = await SimpleTextRequest(url, parameters);
+            return JToken.Parse(text);
         }
 
         public static async Task<HttpResponseMessage> PostRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)

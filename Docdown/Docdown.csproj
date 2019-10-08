@@ -46,9 +46,6 @@
     <ApplicationIcon>Resources\Images\docdown.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BibTeXLibrary, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BERef.BibTeXTools.0.0.1.0\lib\net452\BibTeXLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
@@ -131,6 +128,7 @@
     </Compile>
     <Compile Include="Controls\SplitButton.cs" />
     <Compile Include="Controls\TextBlockBuilder.cs" />
+    <Compile Include="Editor\BibTex\BibFoldingStrategy.cs" />
     <Compile Include="Editor\Commands\AlphabeticalListCommand.cs" />
     <Compile Include="Editor\Commands\BulletListCommand.cs" />
     <Compile Include="Editor\Commands\CommentCommand.cs" />
@@ -141,6 +139,8 @@
     <Compile Include="Editor\DefaultEditor.xaml.cs">
       <DependentUpon>DefaultEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Editor\IFoldingStrategy.cs" />
+    <Compile Include="Editor\IssueBackgroundRenderer.cs" />
     <Compile Include="Editor\Markdown\MarkdownHtmlCompletionData.cs" />
     <Compile Include="Editor\Markdown\MarkdownMetaCompletionData.cs" />
     <Compile Include="Editor\Markdown\MarkdownValidator.cs" />
@@ -187,6 +187,14 @@
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\SvgToBrushConverter.cs" />
     <Compile Include="Model\Bibliography.cs" />
+    <Compile Include="Model\BibTex\BibEntry.cs" />
+    <Compile Include="Model\BibTex\BibParser.cs" />
+    <Compile Include="Model\BibTex\Config.cs" />
+    <Compile Include="Model\BibTex\ParseErrorException.cs" />
+    <Compile Include="Model\BibTex\Token.cs" />
+    <Compile Include="Model\BibTex\UnexpectedEntryTypeExpection.cs" />
+    <Compile Include="Model\BibTex\UnexpectedTokenException.cs" />
+    <Compile Include="Model\BibTex\UnrecognizableCharacterException.cs" />
     <Compile Include="Model\ConnectionStatus.cs" />
     <Compile Include="Model\ConverterService.cs" />
     <Compile Include="Model\ConverterType.cs" />
@@ -243,7 +251,9 @@
     <Compile Include="ViewModel\Commands\PrintCommand.cs" />
     <Compile Include="ViewModel\Commands\SearchFileCommand.cs" />
     <Compile Include="ViewModel\Commands\SearchFolderCommand.cs" />
-    <Compile Include="ViewModel\EditorViewModel.cs" />
+    <Compile Include="ViewModel\Editing\BibEditorViewModel.cs" />
+    <Compile Include="ViewModel\Editing\EditorViewModel.cs" />
+    <Compile Include="ViewModel\Editing\MarkdownEditorViewModel.cs" />
     <Compile Include="ViewModel\Explorer.cs" />
     <Compile Include="ViewModel\InputBoxViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />

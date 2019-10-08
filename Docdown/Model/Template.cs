@@ -18,12 +18,11 @@ namespace Docdown.Model
 
         public static Template Empty { get; } = new Template();
 
-        public static Template[] FromJson(string json)
+        public static Template[] FromJson(JToken json)
         {
             var templates = new List<Template>();
-            var array = JArray.Parse(json);
-
-            foreach (var token in array)
+            
+            foreach (var token in json)
             {
                 var template = new Template
                 {

@@ -16,8 +16,8 @@ namespace Docdown
 
         public MainWindow()
         {
-            if (Debugger.IsAttached)
-                Settings.Default.Reset();
+            //if (Debugger.IsAttached)
+            //    Settings.Default.Reset();
 
             var splash = new SplashWindow();
             if (splash.ShowDialog().Value)

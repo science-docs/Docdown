@@ -2,21 +2,17 @@
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel;
+using Docdown.ViewModel.Editing;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Folding;
-using PandocMark.Syntax;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
-using static Docdown.Editor.Markdown.AbstractSyntaxTree;
 
 namespace Docdown.Editor
 {
@@ -203,7 +199,6 @@ namespace Docdown.Editor
         public Outline Outline { get; set; }
 
 
-
         //public MyEncodingInfo Encoding
         //{
         //    get => (MyEncodingInfo)GetValue(MyEncodingInfoProperty);
@@ -233,9 +228,6 @@ namespace Docdown.Editor
             var colorizer = new MarkdownHighlightingColorizer(Theme);
             var blockBackgroundRenderer = new BlockBackgroundRenderer(Theme);
 
-            foldingManager = FoldingManager.Install(EditBox.TextArea);
-            foldingStrategy = new MarkdownFoldingStrategy();
-
             var debounced = ((Action)UpdateDebounced).Debounce(500);
 
             EditBox.Options.IndentationSize = 4;
@@ -249,11 +241,26 @@ namespace Docdown.Editor
             {
                 if (DataContext is WorkspaceItemViewModel item)
                 {
-                    var editor = item.Editor;
+                    var editor = item.Editor as MarkdownEditorViewModel;
+                    var foldingStrategy = editor.FoldingStrategy;
+                    if (foldingManager == null && foldingStrategy != null)
+                    {
+                        foldingManager = FoldingManager.Install(EditBox.TextArea);
+                        foreach (var lineTransformers in editor.LineTransformers)
+                        {
+                            EditBox.TextArea.TextView.LineTransformers.Add(lineTransformers);
+                        }
+                        foreach (var backgroundRenderer in editor.BackgroundRenderers)
+                        {
+                            EditBox.TextArea.TextView.BackgroundRenderers.Add(backgroundRenderer);
+                        }
+                    }
+
                     editor.Text = EditBox.Text;
-                    foldingStrategy.UpdateFoldings(foldingManager, editor.AbstractSyntaxTree, editor.Text);
-                    colorizer.UpdateAbstractSyntaxTree(editor.AbstractSyntaxTree);
-                    blockBackgroundRenderer.UpdateAbstractSyntaxTree(editor.AbstractSyntaxTree);
+                    if (foldingStrategy != null)
+                    {
+                        foldingManager.UpdateFoldings(foldingStrategy.GenerateFoldings(), -1);
+                    }
                     debounced();
                 }
             };
@@ -267,9 +274,6 @@ namespace Docdown.Editor
             EditBox.TextArea.TextEntered += TextEntered;
             EditBox.TextArea.TextEntering += TextEntering;
             EditBox.TextArea.PreviewKeyDown += ShowCompletionWindowKeyboard;
-
-            EditBox.TextArea.TextView.LineTransformers.Add(colorizer);
-            EditBox.TextArea.TextView.BackgroundRenderers.Add(blockBackgroundRenderer);
 
             EditBox.MouseHover += TextEditorMouseHover;
             EditBox.MouseHoverStopped += TextEditorMouseHoverStopped;
@@ -294,7 +298,8 @@ namespace Docdown.Editor
             if (pos != null && DataContext is WorkspaceItemViewModel item)
             {
                 int index = EditBox.Document.GetOffset(pos.Value.Line, pos.Value.Column);
-                var content = item.Editor.FindHoverContent(index);
+                var editor = item.Editor as MarkdownEditorViewModel;
+                var content = editor.FindHoverContent(index);
                 if (content != null)
                 {
                     toolTip.PlacementTarget = this;
@@ -340,7 +345,8 @@ namespace Docdown.Editor
             if (completionWindow == null && DataContext is WorkspaceItemViewModel item)
             {
                 completionWindow = new CompletionWindow(EditBox.TextArea);
-                if (item.Editor.FillCompletionList(completionWindow.CompletionList, EditBox.SelectionStart))
+                var editor = item.Editor as MarkdownEditorViewModel;
+                if (editor.FillCompletionList(completionWindow.CompletionList, EditBox.SelectionStart))
                 {
                     completionWindow.Show();
                     completionWindow.Closed += delegate

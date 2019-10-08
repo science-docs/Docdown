@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Docdown.Util;
@@ -42,9 +40,8 @@ namespace Docdown.Model
 
         public async Task<string[]> LoadCsls()
         {
-            string text = await WebUtility.SimpleTextRequest(BuildCslUrl());
-
-            return JArray.Parse(text)
+            var json = await WebUtility.SimpleJsonRequest(BuildCslUrl());
+            return json
                     .Select(e => e.Value<string>())
                     .OrderBy(e => e)
                     .ToArray();
@@ -52,8 +49,8 @@ namespace Docdown.Model
 
         public async Task<Template[]> LoadTemplates()
         {
-            string text = await WebUtility.SimpleTextRequest(BuildTemplatesUrl());
-            return Template.FromJson(text);
+            var json = await WebUtility.SimpleJsonRequest(BuildTemplatesUrl());
+            return Template.FromJson(json);
         }
 
         public static string BuildUrl(params string[] values)

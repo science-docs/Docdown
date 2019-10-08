@@ -15,8 +15,8 @@ using System.Windows;
 using Image = System.Windows.Controls.Image;
 using System.Text;
 using Docdown.Editor;
-using Docdown.Editor.Commands;
 using System.Collections.ObjectModel;
+using Docdown.ViewModel.Editing;
 
 namespace Docdown.ViewModel
 {
@@ -159,11 +159,11 @@ namespace Docdown.ViewModel
             {
                 if (view is null)
                 {
-                    view = BuildView();
+                    view = BuildView(out var vm);
                     if (view is IEditor editor)
                     {
                         Search = new SearchViewModel(editor);
-                        Editor = new EditorViewModel(this, editor.Editor);
+                        Editor = vm;
                         SetContent(editor);
                     }
                 }
@@ -474,16 +474,18 @@ namespace Docdown.ViewModel
             CancelNameChange();
         }
 
-        private object BuildView()
+        private object BuildView(out EditorViewModel editorViewModel)
         {
+            editorViewModel = null;
             switch (Data?.Type)
             {
                 case WorkspaceItemType.Pdf:
                     return ShowPdf();
                 case WorkspaceItemType.Latex:
                 case WorkspaceItemType.Markdown:
-                    return ShowMdEditorAndPdf();
+                    return ShowMdEditorAndPdf(out editorViewModel);
                 case WorkspaceItemType.Bibliography:
+                    return ShowBibEditor(out editorViewModel);
                 case WorkspaceItemType.Text:
                     return ShowDefaultEditor();
                 case WorkspaceItemType.Image:
@@ -515,7 +517,7 @@ namespace Docdown.ViewModel
             return docViewer;
         }
 
-        private IEditor ShowMdEditorAndPdf()
+        private IEditor ShowMdEditorAndPdf(out EditorViewModel vm)
         {
             var editorAndViewer = new EditorAndViewer();
             var temp = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, Data.FullName);
@@ -525,14 +527,26 @@ namespace Docdown.ViewModel
                 ShowPreview = true;
             }
             editorAndViewer.DataContext = this;
-            
+            vm = new MarkdownEditorViewModel(this, editorAndViewer.Editor);
             return editorAndViewer;
+        }
+
+        private IEditor ShowBibEditor(out EditorViewModel vm)
+        {
+            var editor = new DefaultEditor
+            {
+                DataContext = this
+            };
+            vm = new BibEditorViewModel(this, editor.Editor);
+            return editor;
         }
 
         private IEditor ShowDefaultEditor()
         {
-            var editor = new DefaultEditor();
-            editor.DataContext = this;
+            var editor = new DefaultEditor
+            {
+                DataContext = this
+            };
             return editor;
         }
 

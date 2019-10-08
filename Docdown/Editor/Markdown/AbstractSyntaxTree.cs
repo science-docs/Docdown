@@ -24,24 +24,27 @@ namespace Docdown.Editor.Markdown
             if (text == null)
                 throw new ArgumentNullException(nameof(text));
 
-            int words = 0;
-            foreach (var block in EnumerateBlocks(ast))
-            {
-                switch (block.Tag)
-                {
-                    case BlockTag.AtxHeading:
-                    case BlockTag.SetextHeading:
-                    case BlockTag.Paragraph:
-                        words += CountSingleWords(block, text);
-                        break;
-                }
-                // The start of an atxheading is counted twice
-                if (block.Tag == BlockTag.AtxHeading)
-                {
-                    words--;
-                }
-            }
+            int words = EnumerateBlocks(ast).AsParallel().Sum(e => CountBlockWords(e, text));
 
+            return words;
+        }
+
+        private static int CountBlockWords(Block block, string text)
+        {
+            int words = 0;
+            switch (block.Tag)
+            {
+                case BlockTag.AtxHeading:
+                case BlockTag.SetextHeading:
+                case BlockTag.Paragraph:
+                    words = CountSingleWords(block, text);
+                    break;
+            }
+            // The start of an atxheading is counted twice
+            if (block.Tag == BlockTag.AtxHeading && words > 0)
+            {
+                words--;
+            }
             return words;
         }
 

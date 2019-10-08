@@ -47,18 +47,26 @@ namespace Docdown.Editor.Markdown
         }
     }
 
-    public class MarkdownFoldingStrategy
+    public class MarkdownFoldingStrategy : IFoldingStrategy
     {
         private static readonly int NewLineLength = Environment.NewLine.Length;
+
+        public string Text { get; set; }
+        public Block AbstractSyntaxTree { get; set; }
 
         public void UpdateFoldings(FoldingManager manager, Block abstractSyntaxTree, string text)
         {
             manager.UpdateFoldings(GenerateFoldings(abstractSyntaxTree, text), -1);
         }
 
+        public IEnumerable<NewFolding> GenerateFoldings()
+        {
+            return GenerateFoldings(AbstractSyntaxTree, Text);
+        }
+
         public IEnumerable<NewFolding> GenerateFoldings(Block abstractSyntaxTree, string text)
         {
-            var blocks = AbstractSyntaxTree.EnumerateBlocks(abstractSyntaxTree).ToArray();
+            var blocks = Markdown.AbstractSyntaxTree.EnumerateBlocks(abstractSyntaxTree).ToArray();
 
             for (int i = 0; i < blocks.Length; i++)
             {

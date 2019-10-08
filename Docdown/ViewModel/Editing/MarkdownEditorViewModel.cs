@@ -1,63 +1,41 @@
-﻿using Docdown.Editor.Markdown;
+﻿using Docdown.Editor;
+using Docdown.Editor.Markdown;
 using Docdown.Model;
-using Docdown.Util;
-using Docdown.ViewModel.Commands;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using PandocMark.Syntax;
-using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Input;
 
 using static Docdown.Editor.Markdown.AbstractSyntaxTree;
 
-namespace Docdown.ViewModel
+namespace Docdown.ViewModel.Editing
 {
-    public class EditorViewModel : ObservableObject
+    public class MarkdownEditorViewModel : EditorViewModel
     {
-        public string Text
-        {
-            get => text;
-            set
-            {
-                ast = null;
-                if (text != null)
-                {
-                    Item.HasChanged = true;
-                }
-                Set(ref text, value);
-            }
-        }
-
         [ChangeListener(nameof(Text))]
-        public Block AbstractSyntaxTree
+        public Block AbstractSyntaxTree { get; private set; }
+
+        public override IFoldingStrategy FoldingStrategy => folding;
+
+        private readonly MarkdownFoldingStrategy folding;
+        private readonly MarkdownHighlightingColorizer colorizer;
+        private readonly BlockBackgroundRenderer blockRenderer;
+        private readonly IssueBackgroundRenderer issueRenderer;
+
+        public MarkdownEditorViewModel(WorkspaceItemViewModel item, TextEditor editor) : base(item, editor)
         {
-            get
-            {
-                if (ast == null && text != null)
-                {
-                    ast = GenerateAbstractSyntaxTree(text);
-                }
-                return ast;
-            }
+            var theme = new Theme();
+            folding = new MarkdownFoldingStrategy();
+            colorizer = new MarkdownHighlightingColorizer(theme);
+            LineTransformers.Add(colorizer);
+            blockRenderer = new BlockBackgroundRenderer(theme);
+            BackgroundRenderers.Add(blockRenderer);
+            issueRenderer = new IssueBackgroundRenderer(theme);
+            BackgroundRenderers.Add(issueRenderer);
         }
 
-        public WorkspaceItemViewModel Item { get; }
-        public TextEditor TextEditor { get; }
-
-        public ICommand UpdateCommand => new ActionCommand(Update);
-
-        private string text;
-        private Block ast;
-
-        public EditorViewModel(WorkspaceItemViewModel item, TextEditor editor)
-        {
-            Item = item ?? throw new ArgumentNullException(nameof(item));
-            TextEditor = editor ?? throw new ArgumentNullException(nameof(editor));
-        }
-
-        public object FindHoverContent(int index)
+        public override object FindHoverContent(int index)
         {
             foreach (var issue in AbstractSyntaxTree.Document.Issues)
             {
@@ -122,7 +100,7 @@ namespace Docdown.ViewModel
             return null;
         }
 
-        public void Update()
+        public override void Update()
         {
             try
             {
@@ -148,14 +126,27 @@ namespace Docdown.ViewModel
             }
         }
 
-        private Action<int> JumpToLocation()
-        {
-            return (index) => TextEditor.ScrollTo(index);
-        }
-
         public bool FillCompletionList(CompletionList completionList, int selectionStart)
         {
             return MarkdownCompletionData.FromAST(Text, selectionStart, AbstractSyntaxTree, completionList);
+        }
+
+        [ChangeListener(nameof(Text))]
+        private void TextChanged()
+        {
+            if (Text != null)
+            {
+                AbstractSyntaxTree = GenerateAbstractSyntaxTree(Text);
+                folding.AbstractSyntaxTree = AbstractSyntaxTree;
+                folding.Text = Text;
+                colorizer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
+                blockRenderer.UpdateAbstractSyntaxTree(AbstractSyntaxTree);
+                issueRenderer.Issues = AbstractSyntaxTree.Document.Issues;
+            }
+            else
+            {
+                AbstractSyntaxTree = null;
+            }
         }
     }
 }
