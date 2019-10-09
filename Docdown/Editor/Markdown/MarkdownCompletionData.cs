@@ -160,7 +160,7 @@ namespace Docdown.Editor.Markdown
             var spanningBlock = AbstractSyntaxTree.SpanningBlock(ast, index);
             string pre = string.Empty;
             var data = new List<ICompletionData>();
-            if (spanningBlock.Tag == BlockTag.Meta)
+            if (spanningBlock?.Tag == BlockTag.Meta)
             {
                 pre = FindMetaPretext(text, index);
                 data.AddRange(FromMetaModel(AppViewModel.Instance.Settings.SelectedTemplate.MetaData));
