@@ -6,6 +6,7 @@ using Docdown.Windows;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Docdown.ViewModel
 {
@@ -39,7 +40,9 @@ namespace Docdown.ViewModel
             {
                 await app.Settings.TestConnection();
 
-                if (app.Settings.IsConnected && await UpdateUtility.CheckNewVersion())
+                var newVersion = await UpdateUtility.CheckNewVersion();
+                if (newVersion != null && await ShowMessageAsync("New Version", 
+                    $"Do you want to download Version {newVersion} now?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     await UpdateUtility.Update();
                 }

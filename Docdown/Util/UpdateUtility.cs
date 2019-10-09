@@ -10,11 +10,11 @@ namespace Docdown.Util
 {
     public class UpdateUtility
     {
-        public static async Task<bool> CheckNewVersion()
+        public static async Task<Version> CheckNewVersion()
         {
             var version = await GetNewestVersion();
             var cur = typeof(UpdateUtility).Assembly.GetName().Version;
-            return version > cur;
+            return version > cur ? version : null;
         }
 
         public static async Task Update()

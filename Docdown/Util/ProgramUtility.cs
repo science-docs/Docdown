@@ -6,41 +6,44 @@ namespace Docdown.Util
     {
         public static int Execute(string program, string args = null)
         {
-            var process = new Process
+            using (var process = new Process()
             {
                 StartInfo = new ProcessStartInfo(program, args)
                 {
                     WindowStyle = ProcessWindowStyle.Hidden
                 }
-            };
-            try
+            })
             {
-                process.Start();
+                try
+                {
+                    process.Start();
+                }
+                catch
+                {
+                    return 1;
+                }
+                process.WaitForExit();
+                return process.ExitCode;
             }
-            catch
-            {
-                return 1;
-            }
-            process.WaitForExit();
-            return process.ExitCode;
         }
 
         public static void ExecuteNonWaiting(string program, string args = null)
         {
-            var process = new Process
+            using (var process = new Process()
             {
                 StartInfo = new ProcessStartInfo(program, args)
                 {
                     WindowStyle = ProcessWindowStyle.Hidden
                 }
-            };
-            try
+            })
             {
-                process.Start();
-            }
-            catch
-            {
-
+                try
+                {
+                    process.Start();
+                }
+                catch
+                {
+                }
             }
         }
 

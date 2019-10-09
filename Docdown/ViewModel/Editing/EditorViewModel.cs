@@ -2,6 +2,7 @@
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Rendering;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,8 @@ namespace Docdown.ViewModel.Editing
         public WorkspaceItemViewModel Item { get; }
         public TextEditor TextEditor { get; }
 
+        public virtual char[] CompletionMarkers { get; }
+
         public IList<IVisualLineTransformer> LineTransformers { get; }
         public IList<IBackgroundRenderer> BackgroundRenderers { get; }
 
@@ -47,6 +50,8 @@ namespace Docdown.ViewModel.Editing
         public abstract void Update();
 
         public abstract object FindHoverContent(int index);
+
+        public abstract bool FillCompletionList(CompletionList completionList, int selectionStart);
 
         protected Action<int> JumpToLocation()
         {

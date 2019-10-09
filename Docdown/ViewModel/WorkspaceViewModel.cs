@@ -147,6 +147,9 @@ namespace Docdown.ViewModel
 
         public async Task OnClosing(CancelEventArgs args)
         {
+            if (Data == null)
+                return;
+
             if (OpenItems.Any(e => e.HasChanged))
             {
                 var lang = Language.Current;

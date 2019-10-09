@@ -4,6 +4,7 @@ using Docdown.Model;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using PandocMark.Syntax;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 
@@ -18,10 +19,14 @@ namespace Docdown.ViewModel.Editing
 
         public override IFoldingStrategy FoldingStrategy => folding;
 
+        public override char[] CompletionMarkers => new char[] { '^', '@', '\\', '<' };
+
         private readonly MarkdownFoldingStrategy folding;
         private readonly MarkdownHighlightingColorizer colorizer;
         private readonly BlockBackgroundRenderer blockRenderer;
         private readonly IssueBackgroundRenderer issueRenderer;
+
+        private int _previousLineCount = -1;
 
         public MarkdownEditorViewModel(WorkspaceItemViewModel item, TextEditor editor) : base(item, editor)
         {
@@ -33,6 +38,8 @@ namespace Docdown.ViewModel.Editing
             BackgroundRenderers.Add(blockRenderer);
             issueRenderer = new IssueBackgroundRenderer(theme);
             BackgroundRenderers.Add(issueRenderer);
+
+            editor.Document.PropertyChanged += OnEditBoxPropertyChanged;
         }
 
         public override object FindHoverContent(int index)
@@ -82,6 +89,20 @@ namespace Docdown.ViewModel.Editing
             return null;
         }
 
+        private void OnEditBoxPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (propertyChangedEventArgs.PropertyName == "LineCount")
+            {
+                var currentLineCount = TextEditor.LineCount;
+                // -1 means the editor has never had text in it.
+                if (_previousLineCount != -1)
+                {
+                    ListInputHandler.AdjustList(TextEditor, currentLineCount > _previousLineCount);
+                }
+                _previousLineCount = currentLineCount;
+            }
+        }
+
         private object GetLinkInlineTooltip(Block ast, Inline link)
         {
             string text = link.FirstChild.LiteralContent;
@@ -126,7 +147,7 @@ namespace Docdown.ViewModel.Editing
             }
         }
 
-        public bool FillCompletionList(CompletionList completionList, int selectionStart)
+        public override bool FillCompletionList(CompletionList completionList, int selectionStart)
         {
             return MarkdownCompletionData.FromAST(Text, selectionStart, AbstractSyntaxTree, completionList);
         }

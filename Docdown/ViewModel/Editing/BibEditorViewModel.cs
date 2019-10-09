@@ -2,6 +2,7 @@
 using Docdown.Editor;
 using Docdown.Editor.BibTex;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 
 namespace Docdown.ViewModel.Editing
 {
@@ -24,6 +25,11 @@ namespace Docdown.ViewModel.Editing
         public override object FindHoverContent(int index)
         {
             return null;
+        }
+
+        public override bool FillCompletionList(CompletionList completionList, int selectionStart)
+        {
+            return false;
         }
 
         [ChangeListener(nameof(Text))]

@@ -23,7 +23,7 @@
                 </ColumnDefinition.Style>
             </ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Editor:MarkdownEditor Grid.Column="0" x:Name="MdEditor"/>
+        <Editor:DefaultEditor Grid.Column="0" x:Name="MdEditor"/>
         <Border Grid.Column="1"
                 BorderThickness="1 0 0 0"
                 BorderBrush="{DynamicResource GrayBrush9}"
