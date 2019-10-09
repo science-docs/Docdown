@@ -28,7 +28,8 @@ namespace Docdown.Util
             sb.AppendLine("@echo off");
             sb.AppendLine("timeout 4");
             sb.Append("copy /b/y \"").Append(tempFile).Append("\" \"").Append(curFile).AppendLine("\"");
-            sb.Append("start \"").Append(curFile).AppendLine("\"");
+            sb.Append("start \"\" \"").Append(curFile).AppendLine("\"");
+            sb.AppendLine("exit");
             
             var tempBat = Path.GetTempFileName() + ".bat";
             File.WriteAllText(tempBat, sb.ToString());

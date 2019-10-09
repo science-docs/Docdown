@@ -14,9 +14,12 @@ namespace Docdown.Util
             var viewModel = new MessageBoxViewModel(title, message, messageBoxButton);
             MessageWindow messageWindow = new MessageWindow
             {
-                DataContext = viewModel,
-                Owner = Application.Current.MainWindow
+                DataContext = viewModel
             };
+            if (Application.Current.MainWindow.IsVisible)
+            {
+                messageWindow.Owner = Application.Current.MainWindow;
+            }
             if (messageWindow.ShowDialog().HasValue)
             {
                 return viewModel.Result;

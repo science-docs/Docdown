@@ -29,21 +29,22 @@ namespace Docdown.Util
 
         public static void ExecuteNonWaiting(string program, string args = null)
         {
-            using (var process = new Process()
+#pragma warning disable IDE0067 // Objekte verwerfen, bevor Bereich verloren geht
+            var process = new Process()
             {
                 StartInfo = new ProcessStartInfo(program, args)
                 {
                     WindowStyle = ProcessWindowStyle.Hidden
                 }
-            })
+            };
+#pragma warning restore IDE0067 // Objekte verwerfen, bevor Bereich verloren geht
+            process.Exited += delegate { process.Dispose(); };
+            try
             {
-                try
-                {
-                    process.Start();
-                }
-                catch
-                {
-                }
+                process.Start();
+            }
+            catch
+            {
             }
         }
 
