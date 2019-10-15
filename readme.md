@@ -2,6 +2,10 @@
 
 # Docdown
 
+## Download
+
+You can find the newest release [here](https://github.com/Darkgaja/Docdown/releases/latest). Docdown will automatically update itself.
+
 ## Usage
 
 Here should be something...

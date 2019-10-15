@@ -14,39 +14,12 @@ namespace Docdown.Editor
     {
         public TextEditor Editor => EditBox;
 
-        private bool firstChange = false;
-
-        private FoldingManager foldingManager;
         private CompletionWindow completionWindow;
         private readonly ToolTip toolTip = new ToolTip();
 
         public DefaultEditor()
         {
             InitializeComponent();
-            var debounced = ((Action)UpdateDebounced).Debounce(500);
-
-            Editor.TextChanged += delegate
-            {
-                if (DataContext is WorkspaceItemViewModel item)
-                {
-                    item.Editor.Text = Editor.Text;
-                    if (firstChange)
-                    {
-                        item.HasChanged = true;
-                    }
-                    else
-                    {
-                        SetFirst(item);
-                    }
-                    var foldingStrategy = item.Editor.FoldingStrategy;
-                    if (foldingStrategy != null)
-                    {
-                        foldingManager.UpdateFoldings(foldingStrategy.GenerateFoldings(), -1);
-                    }
-                    debounced();
-                }
-                firstChange = true;
-            };
 
             Editor.TextArea.TextEntered += TextEntered;
             Editor.TextArea.TextEntering += TextEntering;
@@ -54,17 +27,6 @@ namespace Docdown.Editor
 
             Editor.MouseHover += TextEditorMouseHover;
             Editor.MouseHoverStopped += TextEditorMouseHoverStopped;
-        }
-
-        private void UpdateDebounced()
-        {
-            Dispatcher.BeginInvoke((Action)(() =>
-            {
-                if (DataContext is WorkspaceItemViewModel item)
-                {
-                    item.Editor.Update();
-                }
-            }));
         }
 
         void TextEditorMouseHover(object sender, MouseEventArgs e)
@@ -140,21 +102,5 @@ namespace Docdown.Editor
             }
         }
 
-        private void SetFirst(WorkspaceItemViewModel item)
-        {
-            foreach (var lineTransformer in item.Editor.LineTransformers)
-            {
-                Editor.TextArea.TextView.LineTransformers.Add(lineTransformer);
-            }
-            foreach (var backgroundRenderer in item.Editor.BackgroundRenderers)
-            {
-                Editor.TextArea.TextView.BackgroundRenderers.Add(backgroundRenderer);
-            }
-
-            if (foldingManager == null && item.Editor.FoldingStrategy != null)
-            {
-                foldingManager = FoldingManager.Install(Editor.TextArea);
-            }
-        }
     }
 }

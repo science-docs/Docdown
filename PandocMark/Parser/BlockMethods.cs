@@ -36,12 +36,13 @@ namespace PandocMark.Parser
         private static void AddMetaDataEntry(Block block, LineInfo lineInfo, string ln, int offset, int remainingSpaces, int length = -1, bool isAddOffsetRequired = true)
         {
             int pos = lineInfo.LineOffset;
+            int line = lineInfo.LineNumber;
             int index = ln.IndexOf(':');
             if (index > -1)
             {
                 string name = ln.Substring(0, index);
 
-                var entry = new MetaDataEntry { Name = name, NameStartPosition = pos };
+                var entry = new MetaDataEntry { Name = name, NameStartPosition = pos, LineNumber = line };
                 for (int i = index + 1; i < ln.Length; i++)
                 {
                     if (ln[i] == '[' || ln[i] == '"' || char.IsLetterOrDigit(ln[i]))

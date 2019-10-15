@@ -30,7 +30,7 @@ namespace Docdown.ViewModel.Editing
 
         public MarkdownEditorViewModel(WorkspaceItemViewModel item, TextEditor editor) : base(item, editor)
         {
-            var theme = new Theme();
+            var theme = Theme.Get("Markdown");
             folding = new MarkdownFoldingStrategy();
             colorizer = new MarkdownHighlightingColorizer(theme);
             LineTransformers.Add(colorizer);

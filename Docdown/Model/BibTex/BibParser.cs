@@ -74,11 +74,11 @@ namespace BibTeXLibrary
 
         #region Public Static Method
 
-        public static List<BibEntry> Parse(string text)
+        public static List<BibEntry> Parse(string text, out IEnumerable<BibParseError> errors)
         {
             using (var sr = new StringReader(text))
             {
-                return Parse(sr);
+                return Parse(sr, out errors);
             }
         }
 
@@ -87,11 +87,11 @@ namespace BibTeXLibrary
         /// </summary>
         /// <param name="inputText"></param>
         /// <returns></returns>
-        public static List<BibEntry> Parse(TextReader inputText)
+        public static List<BibEntry> Parse(TextReader inputText, out IEnumerable<BibParseError> errors)
         {
             using (var parser = new BibParser(inputText))
             { 
-                return parser.GetAllResult();
+                return parser.GetAllResult(out errors);
             }
         } 
         #endregion
@@ -101,28 +101,32 @@ namespace BibTeXLibrary
         /// Get all result from Parser.
         /// </summary>
         /// <returns></returns>
-        public List<BibEntry> GetAllResult()
+        public List<BibEntry> GetAllResult(out IEnumerable<BibParseError> errors)
         {
-            return Parser().ToList();
+            var list = new List<BibParseError>();
+            errors = list;
+            return Parser(list).ToList();
         }
 
         #endregion
 
         #region Private Method
-        private IEnumerable<BibEntry> Parser()
+        private IEnumerable<BibEntry> Parser(List<BibParseError> errors)
         {
             var curState  = ParserState.Begin;
             var nextState = ParserState.Begin;
-            int tokenStart = 0;
+            int lastTokenIndex = 0;
+            int len = 0;
+            var entryItems = new List<BibEntryItem>();
 
             BibEntry bib = null;
             var tagValueBuilder = new StringBuilder();
             var tagName = "";
 
             // Fetch token from Tokenizer and build BibEntry
-            foreach (var token in Tokenizer())
+            foreach (var token in Tokenizer(errors))
             {
-                tokenStart = token.Index;
+                len = token.Index - lastTokenIndex;
                 // Transfer state
                 if(StateMap[curState].ContainsKey(token.Type))
                 {
@@ -132,30 +136,38 @@ namespace BibTeXLibrary
                 {
                     var expected = from pair in StateMap[curState]
                                    select pair.Key;
-                    throw new UnexpectedTokenException(_lineCount, _colCount, token.Type, expected.ToArray());
+                    //throw new UnexpectedTokenException(_lineCount, _colCount, token.Type, expected.ToArray());
+                    errors.Add(new BibParseError(lastTokenIndex, len, _lineCount, _colCount, "Bib.UnexpectedToken"));
+                    yield break;
                 }
+                var builderState = StateMap[curState][token.Type].Item2;
                 // Build BibEntry
-                switch (StateMap[curState][token.Type].Item2)
+                switch (builderState)
                 {
                     case BibBuilderState.Create:
-                        bib = new BibEntry(tokenStart);
+                        bib = new BibEntry(token.Index);
                         break;
+
                     case BibBuilderState.SetType:
                         Debug.Assert(bib != null, "bib != null");
                         if (!Enum.TryParse<EntryType>(token.Value, true, out var result))
                         {
-                            throw new UnexpectedEntryTypeExpection(_lineCount, _colCount, token.Value);
+                            //throw new UnexpectedEntryTypeExpection(_lineCount, _colCount, token.Value);
+                            errors.Add(new BibParseError(lastTokenIndex, len, _lineCount, _colCount, "Bib.EntryType", token.Value));
                         }
                         bib.Type = token.Value;
+                        AddItem(entryItems, lastTokenIndex, token.Index, EntryItemType.Type);
                         break;
 
                     case BibBuilderState.SetKey:
                         Debug.Assert(bib != null, "bib != null");
                         bib.Key = token.Value;
+                        AddItem(entryItems, lastTokenIndex + 1, token.Index, EntryItemType.Key);
                         break;
 
                     case BibBuilderState.SetTagName:
                         tagName = token.Value;
+                        AddItem(entryItems, lastTokenIndex + 1, token.Index, EntryItemType.Name);
                         break;
 
                     case BibBuilderState.SetTagValue:
@@ -167,6 +179,7 @@ namespace BibTeXLibrary
                         bib[tagName] = tagValueBuilder.ToString();
                         tagValueBuilder.Clear();
                         tagName = string.Empty;
+                        AddItem(entryItems, lastTokenIndex, token.Index, EntryItemType.Value);
                         break;
 
                     case BibBuilderState.Build:
@@ -177,9 +190,15 @@ namespace BibTeXLibrary
                             tagValueBuilder.Clear();
                             tagName = string.Empty;
                         }
-                        bib.SourceLength = tokenStart - bib.SourcePosition + 1;
+                        bib.SourceLength = token.Index - bib.SourcePosition + 1;
+                        bib.Items.AddRange(entryItems);
+                        entryItems.Clear();
                         yield return bib;
                         break;
+                }
+                if (builderState != BibBuilderState.SetTagValue)
+                {
+                    lastTokenIndex = token.Index;
                 }
                 curState = nextState;
             }
@@ -187,15 +206,21 @@ namespace BibTeXLibrary
             {
                 var expected = from pair in StateMap[curState]
                                select pair.Key;
-                throw new UnexpectedTokenException(_lineCount, _colCount, TokenType.EOF, expected.ToArray());
+                //throw new UnexpectedTokenException(_lineCount, _colCount, TokenType.EOF, expected.ToArray());
+                yield break;
             }
+        }
+
+        private void AddItem(List<BibEntryItem> items, int start, int end, EntryItemType type)
+        {
+            items.Add(new BibEntryItem(start, end - start, type));
         }
 
         /// <summary>
         /// Tokenizer for BibTeX entry.
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<Token> Tokenizer()
+        private IEnumerable<Token> Tokenizer(List<BibParseError> errors)
         {
             int code;
             int index = 0;
@@ -312,7 +337,8 @@ namespace BibTeXLibrary
                 }
                 else if (!char.IsWhiteSpace(c))
                 {
-                    throw new UnrecognizableCharacterException(_lineCount, _colCount, c);
+                    errors.Add(new BibParseError(index, 1, _lineCount, _colCount, "Bib.UnrecognizableCharacter", c));
+                    //throw new UnrecognizableCharacterException(_lineCount, _colCount, c);
                 }
 
                 // Move to next char if possible

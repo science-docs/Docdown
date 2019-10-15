@@ -78,31 +78,33 @@ namespace Docdown.Editor.Markdown
 
         private static IEnumerable<Issue> ValidateText(Block block, string text)
         {
+            int line = TextUtility.GetLineNumber(text, block.SourcePosition) + 1;
             var sub = text.Substring(block.SourcePosition, block.SourceLength);
             var referenceMatches = ReferenceRegex.Matches(sub);
-            foreach (var referenceIssue in ValidateRegex(ReferenceRegex, block, sub, ReferenceIssueFactory(block)))
+            foreach (var referenceIssue in ValidateRegex(ReferenceRegex, block, sub, line, ReferenceIssueFactory(block)))
             {
                 yield return referenceIssue;
             }
-            foreach (var discouragedIssue in ValidateRegex(DiscouragedWords, block, sub, 
+            foreach (var discouragedIssue in ValidateRegex(DiscouragedWords, block, sub, line,
                 DefaultIssueFactory(block, IssueType.Info, Language.Current.Get("Editor.Discouraged.Word"))))
             {
                 yield return discouragedIssue;
             }
-            foreach (var acronymIssue in ValidateRegex(AcronymRegex, block, sub, AcronymIssueFactory(block)))
+            foreach (var acronymIssue in ValidateRegex(AcronymRegex, block, sub, line, AcronymIssueFactory(block)))
             {
                 yield return acronymIssue;
             }
         }
 
-        private static Func<Group, string, Issue> AcronymIssueFactory(Block block)
+        private static Func<Group, string, int, Issue> AcronymIssueFactory(Block block)
         {
-            return (group, text) =>
+            return (group, text, line) =>
             {
                 var index = block.SourcePosition + group.Index;
-                var issue = new Issue(IssueType.Info, index, group.Length, "This string is probably an acronym.\nPlease use the appropriate LaTeX Package");
                 if (!IsPreceededBy(text, group.Index, "\\ac{", "\\acro{", "^", "@"))
                 {
+                    var lineNumber = line + TextUtility.GetLineNumber(text, group.Index);
+                    var issue = new Issue(IssueType.Info, index, group.Length, lineNumber, "This string is probably an acronym.\nPlease use the appropriate LaTeX Package");
                     return issue;
                 }
                 return null;
@@ -125,30 +127,27 @@ namespace Docdown.Editor.Markdown
             return false;
         }
 
-        private static Func<Group, string, Issue> DefaultIssueFactory(Block block, IssueType type, string text)
+        private static Func<Group, string, int, Issue> DefaultIssueFactory(Block block, IssueType type, string errorText)
         {
-            return (group, _) =>
+            return (group, text, line) =>
             {
                 var index = block.SourcePosition + group.Index;
-                var issue = new Issue(type, index, group.Length)
-                {
-                    Tooltip = text
-                };
+                int lineNumber = line + TextUtility.GetLineNumber(text, group.Index);
+                var issue = new Issue(type, index, group.Length, lineNumber, errorText);
                 return issue;
             };
         }
 
-        private static Func<Group, string, Issue> ReferenceIssueFactory(Block block)
+        private static Func<Group, string, int, Issue> ReferenceIssueFactory(Block block)
         {
-            return (group, _) =>
+            return (group, text, line) =>
             {
-                var index = block.SourcePosition + group.Index - 1;
                 if (!block.Top.Document.ReferenceMap.ContainsKey(group.Value))
                 {
-                    var issue = new Issue(IssueType.Warning, index, group.Length + 2)
-                    {
-                        Tooltip = Language.Current.Get("Editor.Reference.Missing")
-                    };
+                    var index = block.SourcePosition + group.Index - 1;
+                    int lineNumber = line + TextUtility.GetLineNumber(text, group.Index);
+                    var issue = new Issue(IssueType.Warning, index, group.Length + 2, lineNumber, 
+                        Language.Current.Get("Editor.Reference.Missing"));
                     return issue;
                 }
                 else
@@ -156,7 +155,7 @@ namespace Docdown.Editor.Markdown
             };
         }
 
-        private static IEnumerable<Issue> ValidateRegex(Regex regex, Block block, string text, Func<Group, string, Issue> issueFactory)
+        private static IEnumerable<Issue> ValidateRegex(Regex regex, Block block, string text, int line, Func<Group, string, int, Issue> issueFactory)
         {
             var matches = regex.Matches(text);
             for (int i = 0; i < matches.Count; i++)
@@ -167,7 +166,7 @@ namespace Docdown.Editor.Markdown
                 {
                     continue;
                 }
-                var issue = issueFactory(group, text);
+                var issue = issueFactory(group, text, line);
                 if (issue != null)
                 {
                     yield return issue;
@@ -210,7 +209,7 @@ namespace Docdown.Editor.Markdown
             {
                 if (!existing.Add(docEntry.Name))
                 {
-                    yield return new Issue(IssueType.Warning, docEntry.NameStartPosition, docEntry.NameLength, "An meta data entry with this name already exists");
+                    yield return new Issue(IssueType.Warning, docEntry.NameStartPosition, docEntry.NameLength, docEntry.LineNumber, "An meta data entry with this name already exists");
                     continue;
                 }
                 var entry = set.FirstOrDefault(e => e.Name == docEntry.Name);
@@ -218,13 +217,13 @@ namespace Docdown.Editor.Markdown
                 {
                     if (!ValidateEntry(entry, docEntry, item, out var defaultMessage))
                     {
-                        yield return new Issue(entry.IssueType, docEntry.NameStartPosition, docEntry.NameLength, entry.IssueMessage ?? defaultMessage);
+                        yield return new Issue(entry.IssueType, docEntry.NameStartPosition, docEntry.NameLength, docEntry.LineNumber, entry.IssueMessage ?? defaultMessage);
                     }
                     set.Remove(entry);
                 }
                 else
                 {
-                    yield return new Issue(IssueType.Info, docEntry.NameStartPosition, docEntry.NameLength, "This meta data entry is not used by the selected template");
+                    yield return new Issue(IssueType.Info, docEntry.NameStartPosition, docEntry.NameLength, docEntry.LineNumber, "This meta data entry is not used by the selected template");
                 }
             }
 
@@ -232,7 +231,7 @@ namespace Docdown.Editor.Markdown
             {
                 if (!entry.IsOptional)
                 {
-                    yield return new Issue(IssueType.Error, block.SourcePosition, 3, $"Missing necessary entry '{entry.Name}'");
+                    yield return new Issue(IssueType.Error, block.SourcePosition, 3, 0, $"Missing necessary entry '{entry.Name}'");
                 }
             }
         }

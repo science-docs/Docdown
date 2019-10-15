@@ -23,12 +23,16 @@ namespace Docdown.Model
         public string Get(string key, params object[] formatArgs)
         {
             key = key.Replace('.', '_');
-            string text = Dictionary[key] as string;
-            if (text != null && formatArgs != null && formatArgs.Length > 0)
+            if (Dictionary.Contains(key))
             {
-                text = string.Format(text, formatArgs);
+                string text = Dictionary[key] as string;
+                if (text != null && formatArgs != null && formatArgs.Length > 0)
+                {
+                    text = string.Format(text, formatArgs);
+                }
+                return text;
             }
-            return text;
+            return key;
         }
 
         public static Language Load(string name)

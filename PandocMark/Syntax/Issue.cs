@@ -17,7 +17,7 @@ namespace PandocMark.Syntax
         public IssueType Type { get; set; }
         public int Offset { get; set; }
         public int Length { get; set; }
-
+        public int Line { get; set; }
         public object Tooltip { get; set; }
 
         public Issue()
@@ -25,13 +25,14 @@ namespace PandocMark.Syntax
 
         }
 
-        public Issue(IssueType type, int offset, int length) : this(type, offset, length, null)
+        public Issue(IssueType type, int offset, int length, int line) : this(type, offset, length, line, null)
         {
         }
 
-        public Issue(IssueType type, int offset, int length, object tooltip)
+        public Issue(IssueType type, int offset, int length, int line, object tooltip)
         {
             Type = type;
+            Line = line;
             Offset = offset;
             Length = length;
             Tooltip = tooltip;

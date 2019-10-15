@@ -11,6 +11,7 @@ namespace PandocMark.Syntax
         public int NameLength => Name.Length;
         public int ValueStartPosition { get; set; }
         public int ValueLength { get; set; }
+        public int LineNumber { get; set; }
     }
 
     public sealed class MetaData

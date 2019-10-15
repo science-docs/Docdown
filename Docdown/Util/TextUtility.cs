@@ -7,16 +7,25 @@ namespace Docdown.Util
     {
         public static string Increase(char c)
         {
-            if (c >= 'z')
-            {
-                return null;
-            }
-            if (c < 'a')
+            if ((c >= 'z' && c < 'A') || c < 'a' || c >= 'Z')
             {
                 return null;
             }
             var next = (char)(c + 1);
             return next.ToString();
+        }
+
+        public static int GetLineNumber(string text, int index)
+        {
+            int lines = 0;
+            for (int i = 0; i < index; i++)
+            {
+                if (text[i] == '\n')
+                {
+                    lines++;
+                }
+            }
+            return lines;
         }
 
         public static string InsertOnUpper(string value, string insert = " ")

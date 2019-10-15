@@ -1,6 +1,7 @@
 ﻿using Docdown.Util;
 using Docdown.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 
 namespace Docdown.Editor.Markdown
@@ -28,6 +29,17 @@ namespace Docdown.Editor.Markdown
         private Highlight _highlightComment = new Highlight { Name = "Comment", Foreground = "#5F5A60" };
         private Highlight _highlightTex = new Highlight { Name = "Tex", Foreground = "#3786D4" };
         private Highlight _highlightTodo = new Highlight { Name = "Todo", Foreground = "#B8D7A3" };
+
+        private static readonly Dictionary<string, Theme> themes = new Dictionary<string, Theme>();
+
+        public static Theme Get(string name)
+        {
+            if (themes.TryGetValue(name, out var theme))
+            {
+                return theme;
+            }
+            return themes[name] = new Theme { Name = name };
+        }
 
         public static Brush BlueBrush { get; } = UIUtility.ConvertToBrush("#3786D4");
         public string Name

@@ -96,4 +96,9 @@
     <System:String x:Key="Editor_Reference_Missing">Reference to a link, citation or footnote expected</System:String>
     <System:String x:Key="Editor_Discouraged_Word">This is a discouraged word for scientific work</System:String>
     
+    <!-- Error Messages Parsing -->
+    <System:String x:Key="Bib_UnexpectedToken">Found an unexpected token.</System:String>
+    <System:String x:Key="Bib_UnrecognizableCharacter">Found an unrecognizable character '{0}'.</System:String>
+    <System:String x:Key="Bib_EntryType">'{0}' is not a valid bib entry type.</System:String>
+    
 </ResourceDictionary>

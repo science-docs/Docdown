@@ -22,7 +22,7 @@ namespace Docdown.Model
             {
                 try
                 {
-                    var entries = BibParser.Parse(sr);
+                    var entries = BibParser.Parse(sr, out var errors);
                     items[item] = entries.ToArray();
                 }
                 catch (ParseErrorException e)

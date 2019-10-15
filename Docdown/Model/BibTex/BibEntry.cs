@@ -20,6 +20,8 @@ namespace BibTeXLibrary
 
         #region Public Property
 
+        public List<BibEntryItem> Items { get; } = new List<BibEntryItem>();
+
         public int SourcePosition { get; set; }
 
         public int SourceLength { get; set; }
@@ -240,6 +242,29 @@ namespace BibTeXLibrary
         {
             SourcePosition = sourcePosition;
         }
+    }
+
+    public class BibEntryItem
+    {
+        public int SourcePosition { get; set; }
+        public int SourceLength { get; set; }
+        public EntryItemType Type { get; set; }
+
+        public BibEntryItem(int position, int length, EntryItemType type)
+        {
+            Type = type;
+            SourcePosition = position;
+            SourceLength = length;
+        }
+    }
+
+    public enum EntryItemType
+    {
+        None,
+        Type,
+        Key,
+        Name,
+        Value
     }
 
     public enum EntryType
