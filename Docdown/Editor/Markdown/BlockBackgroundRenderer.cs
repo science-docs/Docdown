@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Document;
+using Docdown.Util;
 
 namespace Docdown.Editor.Markdown
 {
@@ -74,36 +75,16 @@ namespace Docdown.Editor.Markdown
         public void OnThemeChanged(Theme theme)
         {
             _brushes.Clear();
-            var codeBrush = ColorBrush(theme.HighlightBlockCode.Background);
+            var codeBrush = UIUtility.GetColorBrush(theme.HighlightBlockCode.Background);
             _brushes[BlockTag.FencedCode] = codeBrush;
             _brushes[BlockTag.IndentedCode] = codeBrush;
             _brushes[BlockTag.HtmlBlock] = codeBrush;
 
-            var headingBrush = ColorBrush(theme.HighlightHeading.Background);
+            var headingBrush = UIUtility.GetColorBrush(theme.HighlightHeading.Background);
             _brushes[BlockTag.AtxHeading] = headingBrush;
             _brushes[BlockTag.SetextHeading] = headingBrush;
 
-            _brushes[BlockTag.BlockQuote] = ColorBrush(theme.HighlightBlockQuote.Background);
-        }
-
-        private static Brush ColorBrush(string color)
-        {
-            if (string.IsNullOrWhiteSpace(color)) return null;
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
-                brush.Freeze();
-                return brush;
-            }
-            catch (FormatException)
-            {
-                return null;
-            }
-            catch (NotSupportedException)
-            {
-                return null;
-            }
+            _brushes[BlockTag.BlockQuote] = UIUtility.GetColorBrush(theme.HighlightBlockQuote.Background);
         }
     }
 }

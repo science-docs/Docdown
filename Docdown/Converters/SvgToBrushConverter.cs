@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Docdown.Util;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -79,13 +80,7 @@ namespace Docdown.Converters
         private SolidColorBrush GetColorBrush(XElement path, string attribute)
         {
             var value = path.Attribute(attribute)?.Value;
-            if (value != null)
-            {
-                var color = (Color)ColorConverter.ConvertFromString(value);
-                var brush = new SolidColorBrush(color);
-                return brush;
-            }
-            return null;
+            return UIUtility.GetColorBrush(value);
         }
     }
 }

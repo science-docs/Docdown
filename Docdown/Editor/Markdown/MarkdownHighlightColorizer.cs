@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 
 using static Docdown.Editor.Markdown.AbstractSyntaxTree;
+using Docdown.Util;
 
 namespace Docdown.Editor.Markdown
 {
@@ -93,14 +94,14 @@ namespace Docdown.Editor.Markdown
         {
             var trp = element.TextRunProperties;
 
-            var foregroundBrush = ColorBrush(highlight.Foreground);
+            var foregroundBrush = UIUtility.GetColorBrush(highlight.Foreground);
             if (foregroundBrush != null) trp.SetForegroundBrush(foregroundBrush);
 
             // Block background highlighting handled by BlockBackgroundRenderer
             // Otherwise selection highlight does not work as expected
             if (!highlight.Name.Contains("Block"))
             {
-                var backgroundBrush = ColorBrush(highlight.Background);
+                var backgroundBrush = UIUtility.GetColorBrush(highlight.Background);
                 if (backgroundBrush != null) trp.SetBackgroundBrush(backgroundBrush);
             }
 
@@ -115,26 +116,6 @@ namespace Docdown.Editor.Markdown
 
             if (highlight.Underline) trp.SetTextDecorations(TextDecorations.Underline);
             if (double.IsNaN(magnify) == false) trp.SetFontRenderingEmSize(trp.FontRenderingEmSize * magnify);
-        }
-
-        private static Brush ColorBrush(string color)
-        {
-            if (string.IsNullOrWhiteSpace(color)) return null;
-            try
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
-                brush.Freeze();
-                return brush;
-            }
-            catch (FormatException)
-            {
-                return null;
-            }
-            catch (NotSupportedException)
-            {
-                return null;
-            }
         }
 
         private static FontWeight? ConvertFontWeight(string fontWeight)

@@ -1,6 +1,7 @@
 ﻿using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,6 +14,24 @@ namespace Docdown.Util
 {
     public static class UIUtility
     {
+        private static readonly Dictionary<string, SolidColorBrush> brushes = new Dictionary<string, SolidColorBrush>();
+
+        public static SolidColorBrush GetColorBrush(string colorCode)
+        {
+            if (colorCode == null)
+                return null;
+
+            if (brushes.TryGetValue(colorCode, out var brush))
+            {
+                return brush;
+            }
+            var color = (Color)ColorConverter.ConvertFromString(colorCode);
+            brush = new SolidColorBrush(color);
+            brush.Freeze();
+            brushes.Add(colorCode, brush);
+            return brush;
+        }
+
         public static void ScrollTo(this TextEditor editor, int index)
         {
             var line = editor.Document.GetLineByOffset(index);
@@ -92,16 +111,6 @@ namespace Docdown.Util
             {
                 return default;
             }
-        }
-
-        public static Brush ConvertToBrush(string color)
-        {
-            return Convert(color, (e) =>
-            {
-                var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(e));
-                brush.Freeze();
-                return brush;
-            });
         }
 
         public static string AssemblyFolder()
