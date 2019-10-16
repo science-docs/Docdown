@@ -21,6 +21,13 @@ namespace Docdown.Editor
         {
             InitializeComponent();
 
+            Editor.Options.IndentationSize = 4;
+            Editor.Options.ConvertTabsToSpaces = true;
+            Editor.Options.AllowScrollBelowDocument = true;
+            Editor.Options.EnableHyperlinks = false;
+            Editor.Options.EnableEmailHyperlinks = false;
+            Editor.Options.EnableRectangularSelection = false;
+
             Editor.TextArea.TextEntered += TextEntered;
             Editor.TextArea.TextEntering += TextEntering;
             Editor.TextArea.PreviewKeyDown += ShowCompletionWindowKeyboard;

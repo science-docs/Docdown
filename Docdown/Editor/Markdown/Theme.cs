@@ -41,7 +41,7 @@ namespace Docdown.Editor.Markdown
             return themes[name] = new Theme { Name = name };
         }
 
-        public static Brush BlueBrush { get; } = UIUtility.ConvertToBrush("#3786D4");
+        public static Brush BlueBrush { get; } = UIUtility.GetColorBrush("#3786D4");
         public string Name
         {
             get => _name;
