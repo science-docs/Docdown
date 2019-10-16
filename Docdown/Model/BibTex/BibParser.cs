@@ -335,7 +335,7 @@ namespace BibTeXLibrary
                     _colCount = 0;
                     _lineCount++;
                 }
-                else if (!char.IsWhiteSpace(c))
+                else if (!IsWhiteSpace(c))
                 {
                     errors.Add(new BibParseError(index, 1, _lineCount, _colCount, "Bib.UnrecognizableCharacter", c));
                     //throw new UnrecognizableCharacterException(_lineCount, _colCount, c);
@@ -351,6 +351,13 @@ namespace BibTeXLibrary
                 ContinueExcute:
                 ;
             }
+        }
+
+        private bool IsWhiteSpace(char c)
+        {
+            const char InvalidCitaviChar = (char)65279;
+
+            return char.IsWhiteSpace(c) || c == InvalidCitaviChar;
         }
 
         /// <summary>
