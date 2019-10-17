@@ -1,5 +1,7 @@
 ﻿using Docdown.Model;
+using Docdown.Windows;
 using System;
+using System.Windows;
 
 namespace Docdown.ViewModel.Commands
 {
@@ -10,6 +12,7 @@ namespace Docdown.ViewModel.Commands
         {
         }
 
+        [STAThread]
         [Delegate]
         private async static void OpenCreateNewFileWindow(WorkspaceItemViewModel workspaceItem, bool isDirectory = false)
         {
@@ -26,7 +29,21 @@ namespace Docdown.ViewModel.Commands
             }
             else
             {
-                newItem = await workspaceItem.Data.CreateNewFile(Language.Current.Get("File.New.File"), ".md");
+                var window = new NewFileWindow();
+                var viewModel = new NewFileViewModel();
+                await viewModel.LoadAsync();
+                window.DataContext = viewModel;
+                window.Owner = Application.Current.MainWindow;
+
+                if (window.ShowDialog().Value)
+                {
+                    var sel = viewModel.Selected;
+                    newItem = await workspaceItem.Data.CreateNewFile(viewModel.Name, "." + sel.Extension, sel.Content);
+                }
+                else
+                {
+                    return;
+                }
             }
             var vm = new WorkspaceItemViewModel(workspace, workspaceItem, newItem);
             if (isDirectory)
@@ -34,6 +51,10 @@ namespace Docdown.ViewModel.Commands
                 vm.IsNameChanging = true;
             }
             workspaceItem.AddChild(vm);
+            if (!isDirectory)
+            {
+                workspaceItem.Workspace.SelectedItem = vm;
+            }
         }
     }
 }

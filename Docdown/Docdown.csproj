@@ -206,6 +206,7 @@
     <Compile Include="Model\IWorkspaceItem.cs" />
     <Compile Include="Model\IWorkspaceItemHandler.cs" />
     <Compile Include="Model\Language.cs" />
+    <Compile Include="Model\NewFile.cs" />
     <Compile Include="Model\Outline.cs" />
     <Compile Include="Model\OutlineItem.cs" />
     <Compile Include="Model\Template.cs" />
@@ -263,6 +264,7 @@
     <Compile Include="ViewModel\MessageBoxViewModel.cs" />
     <Compile Include="ViewModel\MessageQueue.cs" />
     <Compile Include="ViewModel\Message.cs" />
+    <Compile Include="ViewModel\NewFileViewModel.cs" />
     <Compile Include="ViewModel\ObservableList.cs" />
     <Compile Include="ViewModel\ObservableObject.cs" />
     <Compile Include="ViewModel\OutlineItemViewModel.cs" />
@@ -283,6 +285,9 @@
     </Compile>
     <Compile Include="Windows\MessageWindow.xaml.cs">
       <DependentUpon>MessageWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\NewFileWindow.xaml.cs">
+      <DependentUpon>NewFileWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
@@ -400,6 +405,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Windows\NewFileWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -446,6 +455,8 @@
     <EmbeddedResource Include="Resources\Validation\Discouraged\German.properties" />
     <EmbeddedResource Include="Resources\Validation\Discouraged\English.properties" />
     <EmbeddedResource Include="Resources\Completion\Html\German.properties" />
+    <EmbeddedResource Include="Resources\Templates\Default.bib" />
+    <EmbeddedResource Include="Resources\Templates\Markdown.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
