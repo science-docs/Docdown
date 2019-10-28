@@ -7,7 +7,7 @@ namespace Docdown.Util
     {
         public static string Increase(char c)
         {
-            if ((c >= 'z' && c < 'A') || c < 'a' || c >= 'Z')
+            if ((c >= 'Z' && c < 'a') || c < 'A' || c >= 'z')
             {
                 return null;
             }

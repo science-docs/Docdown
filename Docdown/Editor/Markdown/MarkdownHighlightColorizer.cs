@@ -62,19 +62,19 @@ namespace Docdown.Editor.Markdown
                     var position = inline.SourcePosition;
                     var length = inline.SourceLength;
 
-                    if ((inline.Tag == InlineTag.Link || inline.Tag == InlineTag.Image)
-                        && inline.FirstChild?.LiteralContent != null
-                        && inline.FirstChild.LiteralContent != inline.TargetUrl)
-                    {
-                        var literal = inline.FirstChild.LastSibling;
-                        var urlPosition = literal.SourcePosition + literal.SourceLength + 1;
-                        var urlLength = inline.SourcePosition + inline.SourceLength - urlPosition;
-                        if (urlLength > 0) // check for <name@domain.ext> style links
-                        {
-                            position = urlPosition;
-                            length = urlLength;
-                        }
-                    }
+                    //if ((inline.Tag == InlineTag.Link || inline.Tag == InlineTag.Image)
+                    //    && inline.FirstChild?.LiteralContent != null
+                    //    && inline.FirstChild.LiteralContent != inline.TargetUrl)
+                    //{
+                    //    var literal = inline.FirstChild.LastSibling;
+                    //    var urlPosition = literal.SourcePosition + literal.SourceLength + 1;
+                    //    var urlLength = inline.SourcePosition + inline.SourceLength - urlPosition;
+                    //    if (urlLength > 0) // check for <name@domain.ext> style links
+                    //    {
+                    //        position = urlPosition;
+                    //        length = urlLength;
+                    //    }
+                    //}
 
                     // inlines don't magnify
                     ApplyLinePart(highlighter(theme), position, length, start, end, leadingSpaces, double.NaN);
