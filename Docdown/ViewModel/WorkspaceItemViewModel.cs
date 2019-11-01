@@ -468,6 +468,27 @@ namespace Docdown.ViewModel
             IsNameChanging = false;
         }
 
+        [ChangeListener(nameof(IsNameChanging))]
+        private void IsNameChangingChanged()
+        {
+            if (IsNameChanging)
+            {
+                CancelChangeForItem(Workspace.Item, this);
+            }
+
+            void CancelChangeForItem(WorkspaceItemViewModel item, WorkspaceItemViewModel baseItem)
+            {
+                if (item == baseItem)
+                    return;
+
+                item.IsNameChanging = false;
+                foreach (var child in item.Children)
+                {
+                    CancelChangeForItem(child, baseItem);
+                }
+            }
+        }
+
         private async Task NameChangeEnd()
         {
             await Rename(tempName);
