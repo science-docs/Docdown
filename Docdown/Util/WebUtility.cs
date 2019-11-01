@@ -21,6 +21,9 @@ namespace Docdown.Util
     {
         public static ProductInfoHeaderValue UserAgent { get; } = new ProductInfoHeaderValue("Docdown", typeof(WebUtility).Assembly.GetName().Version.ToString());
 
+        private static readonly WinHttpHandler handler = new WinHttpHandler();
+        private static readonly HttpClient client = new HttpClient(handler);
+
         public static string BuildConvertUrl()
         {
             return BuildUrl(Settings.Default.API, "convert");
@@ -78,9 +81,6 @@ namespace Docdown.Util
 
         public static async Task<HttpResponseMessage> SimpleRequest(string url, HttpMethod method, CancellationToken cancellationToken, IEnumerable<MultipartFormParameter> postParameters)
         {
-            var handler = new WinHttpHandler();
-            var client = new HttpClient(handler);
-
             var request = new HttpRequestMessage
             {
                 Method = method,
@@ -112,7 +112,6 @@ namespace Docdown.Util
                 var exception = await ServerException.Create(response);
                 throw exception;
             }
-            client.Dispose();
             return response;
         }
 
