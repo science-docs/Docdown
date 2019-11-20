@@ -2,6 +2,7 @@
 using Docdown.Properties;
 using Docdown.ViewModel;
 using MahApps.Metro;
+using Docdown.Net;
 using System;
 using System.IO;
 using System.Text;
@@ -14,7 +15,14 @@ namespace Docdown
         protected override void OnStartup(StartupEventArgs e)
         {
             AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionCrash;
-
+            try
+            {
+                ProxyRoutines.SetProxy(false);
+            }
+            catch (Exception ex)
+            {
+                UnhandledExceptionCrash(this, new UnhandledExceptionEventArgs(ex, false));
+            }
             ThemeManager.AddAccent("BlueDoc", GetResourceUri("Resources/Accents/Blue.xaml"));
             ThemeManager.AddAppTheme("DarkDoc", GetResourceUri("Resources/Themes/Dark.xaml"));
             ThemeManager.AddAppTheme("LightDoc", GetResourceUri("Resources/Themes/Light.xaml"));

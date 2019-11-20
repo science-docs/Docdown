@@ -218,6 +218,7 @@
     <Compile Include="Model\WorkspaceItemPersistance.cs" />
     <Compile Include="Model\WorkspaceProvider.cs" />
     <Compile Include="Model\WorkspaceSettings.cs" />
+    <Compile Include="Net\ProxyRoutines.cs" />
     <Compile Include="Util\BibliographyUtility.cs" />
     <Compile Include="Util\CancelToken.cs" />
     <Compile Include="Util\DependencyPropertyUtility.cs" />
