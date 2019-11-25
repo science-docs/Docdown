@@ -16,6 +16,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Rectangle Width="200" Height="308" Fill="{StaticResource DocdownIcon}"/>
 
@@ -37,5 +38,6 @@
                    Foreground="{DynamicResource AccentColorBrush}"
                    FontSize="12"
                    Margin="8 4"/>
+        <ProgressBar Grid.Row="3" Value="{Binding DownloadProgress}" Maximum="1" Background="Transparent" BorderBrush="Transparent"/>
     </Grid>
 </Metro:MetroWindow>

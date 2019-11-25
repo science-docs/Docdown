@@ -79,6 +79,49 @@ namespace Docdown.Util
             return await GetRequest(url, postParameters.ToArray());
         }
 
+        public static async Task<byte[]> DownloadAsync(string url)
+        {
+            return await DownloadAsync(url, new Progress<WebDownloadProgress>());
+        }
+
+        public static async Task<byte[]> DownloadAsync(string url, IProgress<WebDownloadProgress> progress)
+        {
+            return await DownloadAsync(url, progress, CancellationToken.None);
+        }
+
+        public static async Task<byte[]> DownloadAsync(string url, IProgress<WebDownloadProgress> progress, CancellationToken cancellationToken)
+        {
+            HttpResponseMessage response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            
+            using (var ms = new MemoryStream())
+            {
+                using (var stream = await response.Content.ReadAsStreamAsync())
+                {
+                    var clength = response.Content.Headers.ContentLength;
+                    if (!clength.HasValue)
+                    {
+                        return new byte[0];
+                    }
+                    var totalLength = (int)clength.Value;
+                    progress.Report(new WebDownloadProgress(totalLength, 0));
+                    while (true)
+                    {
+                        var buffer = new byte[ushort.MaxValue]; // ushort.MaxValue is approximately 1% of docdowns size
+                        var length = await stream.ReadAsync(buffer, 0, buffer.Length);
+
+                        if (length == 0)
+                        {
+                            break;
+                        }
+
+                        await ms.WriteAsync(buffer, 0, length);
+                        progress.Report(new WebDownloadProgress(totalLength, (int)ms.Length));
+                    }
+                }
+                return ms.ToArray();
+            }
+        }
+
         public static async Task<HttpResponseMessage> SimpleRequest(string url, HttpMethod method, CancellationToken cancellationToken, IEnumerable<MultipartFormParameter> postParameters)
         {
             var request = new HttpRequestMessage
@@ -374,6 +417,19 @@ namespace Docdown.Util
         private static string UnixCombine(params string[] values)
         {
             return Path.Combine(values).Replace('\\', '/');
+        }
+    }
+
+    public class WebDownloadProgress
+    {
+        public int Length { get; set; }
+        public int Current { get; set; }
+        public double Progress => Current / (double)Length;
+
+        public WebDownloadProgress(int length, int current)
+        {
+            Length = length;
+            Current = current;
         }
     }
 }

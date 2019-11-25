@@ -17,9 +17,9 @@ namespace Docdown.Util
             return version > cur ? version : null;
         }
 
-        public static async Task Update()
+        public static async Task Update(IProgress<WebDownloadProgress> progress)
         {
-            var bytes = await DownloadNewestVersion();
+            var bytes = await DownloadNewestVersion(progress);
             var tempFile = Path.GetTempFileName() + ".exe";
             var curFile = Assembly.GetExecutingAssembly().Location;
             File.WriteAllBytes(tempFile, bytes);
@@ -54,14 +54,14 @@ namespace Docdown.Util
             }
         }
 
-        public static async Task<byte[]> DownloadNewestVersion()
+        public static async Task<byte[]> DownloadNewestVersion(IProgress<WebDownloadProgress> progress)
         {
             const string Repo = "https://api.github.com/repos/Darkgaja/Docdown/releases/latest";
 
             var json = await WebUtility.SimpleJsonRequest(Repo);
             var url = json.SelectToken("assets").First().SelectToken("browser_download_url").Value<string>();
-            var content = await WebUtility.GetRequest(url);
-            return await content.Content.ReadAsByteArrayAsync();
+            var content = await WebUtility.DownloadAsync(url, progress);
+            return content;
         }
     }
 }

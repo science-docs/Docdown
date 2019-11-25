@@ -1,8 +1,5 @@
-﻿using Docdown.Model;
-using Docdown.Properties;
+﻿using Docdown.Properties;
 using Docdown.Util;
-using Docdown.ViewModel.Commands;
-using Docdown.Windows;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -15,6 +12,14 @@ namespace Docdown.ViewModel
         public static string[] Args { get; internal set; }
 
         private readonly Action<bool?> setDialogResult;
+
+        public double DownloadProgress
+        {
+            get => downloadProgress;
+            set => Set(ref downloadProgress, value);
+        }
+
+        private double downloadProgress;
 
         public SplashViewModel(Action<bool?> setDialogResult) : base(null)
         {
@@ -38,26 +43,40 @@ namespace Docdown.ViewModel
 
             Task.Run(async () =>
             {
-                await app.Settings.TestConnection();
-
-                var newVersion = await UpdateUtility.CheckNewVersion();
-                if (newVersion != null && await ShowMessageAsync("New Version", 
-                    $"Do you want to download Version {newVersion} now?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                try
                 {
-                    await UpdateUtility.Update();
+                    await app.Settings.TestConnection();
+
+                    var newVersion = await UpdateUtility.CheckNewVersion();
+                    if (newVersion != null && await ShowMessageAsync("New Version",
+                        $"Do you want to download Version {newVersion} now?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        IProgress<WebDownloadProgress> progress = new Progress<WebDownloadProgress>(DownloadCallback);
+                        await UpdateUtility.Update(progress);
+                    }
+
+                    await app.ChangeWorkspace(workspacePath);
+
+                    if (isFile)
+                    {
+                        await app.Workspace.OpenItem(Args[0]);
+                    }
+
+                    Data = app;
+
+                    setDialogResult?.Invoke(true);
                 }
-
-                await app.ChangeWorkspace(workspacePath);
-
-                if (isFile)
+                catch
                 {
-                    await app.Workspace.OpenItem(Args[0]);
+                    await ShowMessageAsync("Critical error", "An error occurred during startup. Application needs to close", MessageBoxButton.OK);
+                    Environment.Exit(1);
                 }
-
-                Data = app;
-
-                setDialogResult?.Invoke(true);
             });
+        }
+
+        private void DownloadCallback(WebDownloadProgress progress)
+        {
+            DownloadProgress = progress.Progress;
         }
     }
 }
