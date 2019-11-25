@@ -240,7 +240,7 @@ namespace BibTeXLibrary
                 {
                     yield return new Token(TokenType.Start, index);
                 }
-                else if (char.IsLetter(c))
+                else if (char.IsLetter(c) || c == '.')
                 {
                     var value = new StringBuilder();
 
