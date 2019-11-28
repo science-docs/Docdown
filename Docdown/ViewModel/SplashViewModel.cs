@@ -29,6 +29,12 @@ namespace Docdown.ViewModel
         public void Initialize()
         {
             var settings = Settings.Default;
+            if (settings.UpdateRequired)
+            {
+                settings.Upgrade();
+                settings.UpdateRequired = false;
+                settings.Save();
+            }
             var workspacePath = settings.WorkspacePath;
             var app = AppViewModel.Instance;
             bool isFile = false;
@@ -46,7 +52,6 @@ namespace Docdown.ViewModel
                 try
                 {
                     await app.Settings.TestConnection();
-
                     var newVersion = await UpdateUtility.CheckNewVersion();
                     if (newVersion != null && await ShowMessageAsync("New Version",
                         $"Do you want to download Version {newVersion} now?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
