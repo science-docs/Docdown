@@ -35,7 +35,7 @@ namespace Docdown.Model
             get
             {
                 string name = Name;
-                if (Parent != null)
+                if (Parent != null && Parent.Parent != null)
                 {
                     name = Parent.RelativeName + "/" + name;
                 }

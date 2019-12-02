@@ -1,5 +1,7 @@
 using Docdown.Model;
 using Docdown.Properties;
+using Docdown.Text;
+using Docdown.Text.Markdown;
 using Docdown.ViewModel;
 using Newtonsoft.Json.Linq;
 using System;
@@ -219,6 +221,12 @@ namespace Docdown.Util
         private const string BinaryType = "application/octet-stream";
         private const string MainFile = "content";
 
+        private static readonly Dictionary<string, IPreprocessor> preprocessors = new Dictionary<string, IPreprocessor>();
+
+        static MultipartFormParameter()
+        {
+            preprocessors[".md"] = new MarkdownPreprocessor();
+        }
         private MultipartFormParameter() { }
 
         public HttpContent ToHttpContent()
@@ -286,6 +294,16 @@ namespace Docdown.Util
             return CreateFile(name, fileName, BinaryType);
         }
 
+        public static MultipartFormParameter CreateFile(IWorkspaceItem item)
+        {
+            var bytes = item.Read();
+            if (preprocessors.TryGetValue(item.FileInfo.Extension, out var preprocessor))
+            {
+                bytes = preprocessor.Preprocess(item, bytes);
+            }
+            return CreateFile(item.RelativeName, item.FullName, bytes);
+        }
+
         public static MultipartFormParameter CreateFile(string name, string fileName, string contentType)
         {
             try
@@ -345,7 +363,7 @@ namespace Docdown.Util
         public static IEnumerable<MultipartFormParameter> FromFolder(IDirectoryInfo directoryInfo)
         {
             var item = new WorkspaceItem(directoryInfo, null, null);
-            return CreateFormData(item, item, null, false).Where(e => e != null);
+            return CreateFormData(item, item, false).Where(e => e != null);
         }
 
         public static IEnumerable<MultipartFormParameter> FromWebWorkspace(IWorkspace workspace, User user)
@@ -375,10 +393,10 @@ namespace Docdown.Util
 
         public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(IWorkspaceItem workspaceItem, bool onlySelected)
         {
-            return CreateFormData(workspaceItem.Parent, workspaceItem, null, onlySelected).Where(e => e != null).Distinct();
+            return CreateFormData(workspaceItem.Parent, workspaceItem, onlySelected).Where(e => e != null).Distinct();
         }
 
-        private static IEnumerable<MultipartFormParameter> CreateFormData(IWorkspaceItem item, IWorkspaceItem root, string current, bool onlySelected)
+        private static IEnumerable<MultipartFormParameter> CreateFormData(IWorkspaceItem item, IWorkspaceItem root, bool onlySelected)
         {
             if (item is null)
             {
@@ -386,31 +404,21 @@ namespace Docdown.Util
             }
             else if (item.IsDirectory)
             {
-                string folder = item.Name;
-                if (!string.IsNullOrWhiteSpace(current))
-                    folder = UnixCombine(current, folder);
-                if (item.Equals(root) || item.Equals(root.Parent))
-                    folder = null;
-
                 foreach (var child in item.Children)
                 {
-                    foreach (var data in CreateFormData(child, root, folder, onlySelected))
+                    foreach (var data in CreateFormData(child, root, onlySelected))
                     {
                         yield return data;
                     }
                 }
             }
-            else if (onlySelected && item.Equals(root))
-            {
-                yield return CreateFile(MainFile, root.FullName);
-            }
+            //else if (onlySelected && item.Equals(root))
+            //{
+            //    yield return CreateFile(MainFile, root.FullName);
+            //}
             else
             {
-                string name = item.Name;
-                if (!string.IsNullOrWhiteSpace(current))
-                    name = UnixCombine(current, name);
-
-                yield return CreateFile(name, item.FullName);
+                yield return CreateFile(item);
             }
         }
 

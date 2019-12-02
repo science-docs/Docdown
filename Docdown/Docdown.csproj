@@ -219,6 +219,9 @@
     <Compile Include="Model\WorkspaceProvider.cs" />
     <Compile Include="Model\WorkspaceSettings.cs" />
     <Compile Include="Net\ProxyRoutines.cs" />
+    <Compile Include="Text\IPreprocessor.cs" />
+    <Compile Include="Text\Markdown\MarkdownPreprocessor.cs" />
+    <Compile Include="Text\Preprocessor.cs" />
     <Compile Include="Util\BibliographyUtility.cs" />
     <Compile Include="Util\CancelToken.cs" />
     <Compile Include="Util\DependencyPropertyUtility.cs" />

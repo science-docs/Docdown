@@ -5,6 +5,11 @@ namespace Docdown.Util
 {
     public static class TextUtility
     {
+        public static string Replace(this string value, int start, int length, string replaced)
+        {
+            return value.Substring(0, start) + replaced + value.Substring(start + length);
+        }
+
         public static string Increase(char c)
         {
             if ((c >= 'Z' && c < 'a') || c < 'A' || c >= 'z')
