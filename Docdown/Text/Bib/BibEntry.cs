@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BibTeXLibrary
+namespace Docdown.Text.Bib
 {
     public class BibEntry
     {

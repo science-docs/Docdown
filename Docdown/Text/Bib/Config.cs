@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BibTeXLibrary
+namespace Docdown.Text.Bib
 {
     public static class Config
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace BibTeXLibrary
+namespace Docdown.Text.Bib
 {
     [Serializable]
     public sealed class UnexpectedTokenException : ParseErrorException

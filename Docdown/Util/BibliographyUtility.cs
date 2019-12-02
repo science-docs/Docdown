@@ -1,5 +1,4 @@
-﻿using BibTeXLibrary;
-using Docdown.Model;
+﻿using Docdown.Text.Bib;
 using HtmlAgilityPack;
 using System.Threading.Tasks;
 

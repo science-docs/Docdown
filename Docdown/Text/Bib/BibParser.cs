@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace BibTeXLibrary
+namespace Docdown.Text.Bib
 {
     using Next = Tuple<ParserState, BibBuilderState>;
     using Action = Dictionary<TokenType, Tuple<ParserState, BibBuilderState>>;

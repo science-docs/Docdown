@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BibTeXLibrary
+namespace Docdown.Text.Bib
 {
     public class UnexpectedEntryTypeExpection : ParseErrorException
     {

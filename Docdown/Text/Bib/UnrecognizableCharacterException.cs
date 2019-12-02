@@ -1,4 +1,4 @@
-﻿namespace BibTeXLibrary
+﻿namespace Docdown.Text.Bib
 {
     public class UnrecognizableCharacterException : ParseErrorException
     {

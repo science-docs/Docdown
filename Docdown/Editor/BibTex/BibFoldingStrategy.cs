@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BibTeXLibrary;
+﻿using System.Collections.Generic;
+using Docdown.Text.Bib;
 using ICSharpCode.AvalonEdit.Folding;
 
 namespace Docdown.Editor.BibTex

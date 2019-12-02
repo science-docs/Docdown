@@ -1,7 +1,7 @@
-﻿using BibTeXLibrary;
-using Docdown.Editor;
+﻿using Docdown.Editor;
 using Docdown.Editor.BibTex;
 using Docdown.Editor.Markdown;
+using Docdown.Text.Bib;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using PandocMark.Syntax;

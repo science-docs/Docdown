@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace BibTeXLibrary
+﻿namespace Docdown.Text.Bib
 {
     internal struct Token
     {

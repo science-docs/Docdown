@@ -1,5 +1,5 @@
-﻿using BibTeXLibrary;
-using Docdown.Editor.Markdown;
+﻿using Docdown.Editor.Markdown;
+using Docdown.Text.Bib;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,7 +25,7 @@ namespace Docdown.Model
                     var entries = BibParser.Parse(sr, out var errors);
                     items[item] = entries.ToArray();
                 }
-                catch (ParseErrorException e)
+                catch
                 {
                     items.Remove(item);
                 }
