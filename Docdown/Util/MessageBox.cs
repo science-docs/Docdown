@@ -1,8 +1,6 @@
 ﻿using Docdown.ViewModel;
 using Docdown.Windows;
-using System;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace Docdown.Util
 {
@@ -19,6 +17,10 @@ namespace Docdown.Util
             if (Application.Current.MainWindow.IsVisible)
             {
                 messageWindow.Owner = Application.Current.MainWindow;
+            }
+            else
+            {
+                messageWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
             if (messageWindow.ShowDialog().HasValue)
             {

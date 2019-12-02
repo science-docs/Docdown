@@ -9,6 +9,7 @@
         Style="{StaticResource SlimWindowStyle}"
         TitleTemplate="{StaticResource DefaultTitleTemplate}"
         IconTemplate="{x:Null}"
+        WindowStartupLocation="CenterOwner"
         Title="Create New File" Height="450" Width="400" Background="{DynamicResource WhiteBrush}">
     <Grid>
         <Grid.RowDefinitions>
