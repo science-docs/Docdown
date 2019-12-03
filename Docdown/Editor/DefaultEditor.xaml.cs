@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Docdown.Util;
@@ -108,5 +109,13 @@ namespace Docdown.Editor
             }
         }
 
+        private void SearchControl_IsVisibleChanged(object _1, System.Windows.DependencyPropertyChangedEventArgs _2)
+        {
+            if (Search.IsVisible)
+            {
+                FocusManager.SetFocusedElement(this, Search.SearchBox);
+                Task.Run(() => Dispatcher.Invoke(() => Search.SearchBox.SelectAll()));
+            }
+        }
     }
 }

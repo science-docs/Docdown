@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Docdown.Controls"
              xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
-             d:DesignHeight="60" d:DesignWidth="190">
+             d:DesignHeight="60" d:DesignWidth="220">
     <UserControl.InputBindings>
         <KeyBinding Key="Return" Command="{Binding Search.SearchCommand}"/>
         <KeyBinding Key="Esc" Command="{Binding Search.HideCommand}"/>
@@ -15,15 +15,6 @@
     </UserControl.InputBindings>
     <Grid Background="{DynamicResource WhiteBrush}"
           DataContext="{Binding Search}">
-        <Grid.Style>
-            <Style TargetType="Grid">
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding ElementName=SearchBox, Path=IsVisible}" Value="True">
-                        <Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=SearchBox}"/>
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-        </Grid.Style>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -82,8 +73,7 @@
                  Width="120" 
                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                  Background="{DynamicResource GrayBrush9}" 
-                 Margin="2" 
-                 FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"/>
+                 Margin="2"/>
         <TextBox Grid.Row="1" 
                  Grid.Column="1" 
                  x:Name="ReplaceBox"
