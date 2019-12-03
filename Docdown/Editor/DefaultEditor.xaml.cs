@@ -6,7 +6,6 @@ using Docdown.Util;
 using Docdown.ViewModel;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
-using ICSharpCode.AvalonEdit.Folding;
 
 namespace Docdown.Editor
 {
@@ -39,7 +38,7 @@ namespace Docdown.Editor
         void TextEditorMouseHover(object sender, MouseEventArgs e)
         {
             var pos = Editor.GetPositionFromPoint(e.GetPosition(Editor));
-            if (pos != null && DataContext is WorkspaceItemViewModel item)
+            if (pos != null && DataContext is WorkspaceItemViewModel item && item.Editor != null)
             {
                 int index = Editor.Document.GetOffset(pos.Value.Line, pos.Value.Column);
                 var editor = item.Editor;
@@ -70,7 +69,7 @@ namespace Docdown.Editor
 
         private void TextEntered(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text.Length == 1 && DataContext is WorkspaceItemViewModel item)
+            if (e.Text.Length == 1 && DataContext is WorkspaceItemViewModel item && item.Editor != null)
             {
                 var c = e.Text[0];
                 if (item.Editor.CompletionMarkers != null && item.Editor.CompletionMarkers.Contains(c))
@@ -90,7 +89,7 @@ namespace Docdown.Editor
 
         private void ShowCompletionWindow()
         {
-            if (completionWindow == null && DataContext is WorkspaceItemViewModel item)
+            if (completionWindow == null && DataContext is WorkspaceItemViewModel item && item.Editor != null)
             {
                 completionWindow = new CompletionWindow(Editor.TextArea);
                 var editor = item.Editor;

@@ -508,7 +508,7 @@ namespace Docdown.ViewModel
                 case WorkspaceItemType.Bibliography:
                     return ShowBibEditor(out editorViewModel);
                 case WorkspaceItemType.Text:
-                    return ShowDefaultEditor();
+                    return ShowDefaultEditor(out editorViewModel);
                 case WorkspaceItemType.Image:
                     return ShowImage();
                 default:
@@ -562,12 +562,13 @@ namespace Docdown.ViewModel
             return editor;
         }
 
-        private IEditor ShowDefaultEditor()
+        private IEditor ShowDefaultEditor(out EditorViewModel vm)
         {
             var editor = new DefaultEditor
             {
                 DataContext = this
             };
+            vm = new DefaultEditorViewModel(this, editor.Editor);
             return editor;
         }
 
