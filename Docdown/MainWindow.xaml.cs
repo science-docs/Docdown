@@ -1,3 +1,4 @@
+using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel;
 using Docdown.Windows;
@@ -21,6 +22,15 @@ namespace Docdown
             if (splash.ShowDialog().Value)
             {
                 InitializeComponent();
+                if (Settings.Default.WasMaximized)
+                {
+                    WindowState = WindowState.Maximized;
+                }
+                else
+                {
+                    Width = Settings.Default.AppWidth;
+                    Height = Settings.Default.AppHeight;
+                }
                 DataContext = app = splash.ViewModel.Data;
                 Closing += OnClosing;
             }
@@ -45,6 +55,13 @@ namespace Docdown
                         Dispatcher.Invoke(Close);
                     }
                 });
+            }
+            else
+            {
+                Settings.Default.AppWidth = (int)ActualWidth;
+                Settings.Default.AppHeight = (int)ActualHeight;
+                Settings.Default.WasMaximized = WindowState == WindowState.Maximized;
+                Settings.Default.Save();
             }
         }
 
