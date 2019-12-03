@@ -225,8 +225,7 @@ namespace Docdown.Model
         {
             if (Parent != null)
             {
-                var topName = Path.GetDirectoryName(TopParent.FullName);
-                var fullPath = Path.Combine(topName, RelativeName);
+                var fullPath = Path.Combine(TopParent.FullName, RelativeName);
                 if (IsDirectory)
                 {
                     FileInfo = FS.DirectoryInfo.FromDirectoryName(fullPath);
