@@ -114,7 +114,11 @@ namespace Docdown.Editor
             if (Search.IsVisible)
             {
                 FocusManager.SetFocusedElement(this, Search.SearchBox);
-                Task.Run(() => Dispatcher.Invoke(() => Search.SearchBox.SelectAll()));
+                UIUtility.Delay(this, 16, () =>
+                {
+                    Search.SearchBox.SelectAll();
+                    Keyboard.Focus(Search.SearchBox);
+                });
             }
         }
     }
