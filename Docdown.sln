@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PandocMark", "PandocMark\Pa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docdown.Test", "Docdown.Test\Docdown.Test.csproj", "{B137E83B-773C-4E56-95CE-356F18DCCDF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docdown.Installer", "Docdown.Installer\Docdown.Installer.csproj", "{20F8987D-BBFA-4E0A-99E5-526D23F0DD26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,14 @@ Global
 		{B137E83B-773C-4E56-95CE-356F18DCCDF1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B137E83B-773C-4E56-95CE-356F18DCCDF1}.Release|x64.ActiveCfg = Release|Any CPU
 		{B137E83B-773C-4E56-95CE-356F18DCCDF1}.Release|x64.Build.0 = Release|Any CPU
+		{20F8987D-BBFA-4E0A-99E5-526D23F0DD26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20F8987D-BBFA-4E0A-99E5-526D23F0DD26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20F8987D-BBFA-4E0A-99E5-526D23F0DD26}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{20F8987D-BBFA-4E0A-99E5-526D23F0DD26}.Debug|x64.Build.0 = Debug|Any CPU
+		{20F8987D-BBFA-4E0A-99E5-526D23F0DD26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20F8987D-BBFA-4E0A-99E5-526D23F0DD26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20F8987D-BBFA-4E0A-99E5-526D23F0DD26}.Release|x64.ActiveCfg = Release|Any CPU
+		{20F8987D-BBFA-4E0A-99E5-526D23F0DD26}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
