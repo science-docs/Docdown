@@ -1,13 +1,29 @@
-﻿<Window x:Class="Docdown.Installer.MainWindow"
+﻿<Metro:MetroWindow x:Class="Docdown.Installer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Docdown Installer" Height="450" Width="300" Background="{DynamicResource WhiteBrush}">
     <Grid>
-        <Button x:Name="Extractor"
-                Content="Extract"
+        <StackPanel Orientation="Vertical">
+            <GroupBox Header="Shortcuts">
+                <StackPanel Orientation="Vertical">
+                    <CheckBox x:Name="StartMenuShortcut" Content="Create Start Menu Shortcut" IsChecked="True"/>
+                    <CheckBox x:Name="DesktopShortcut" Content="Create Desktop Shortcut" IsChecked="True"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="File Associations">
+                <StackPanel Orientation="Vertical">
+                    <CheckBox x:Name="MdFA" Content="Markdown (.md)" IsChecked="True"/>
+                    <CheckBox x:Name="BibFA" Content="Bibtex (.bib)"/>
+                </StackPanel>
+            </GroupBox>
+            <Button x:Name="Extractor"
+                Content="Install"
                 Click="Extractor_Click"/>
+        </StackPanel>
+        
     </Grid>
-</Window>
+</Metro:MetroWindow>

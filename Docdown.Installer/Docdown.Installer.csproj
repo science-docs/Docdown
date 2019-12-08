@@ -76,6 +76,16 @@
     <Compile Include="FileAssociations.cs" />
     <Compile Include="Shortcuts.cs" />
     <Compile Include="Util.cs" />
+    <Page Include="..\Docdown\Resources\Accents\Blue.xaml">
+      <Link>Resources\Blue.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Docdown\Resources\Themes\Dark.xaml">
+      <Link>Resources\Dark.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
