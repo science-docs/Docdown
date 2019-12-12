@@ -4,25 +4,36 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:local="clr-namespace:Docdown.Installer"
         mc:Ignorable="d"
-        Title="Docdown Installer" Height="450" Width="300" Background="{DynamicResource WhiteBrush}">
+        Title="Docdown Installer" Height="300" Width="400" Background="{DynamicResource WhiteBrush}">
+    <Metro:MetroWindow.DataContext>
+        <local:Model/>
+    </Metro:MetroWindow.DataContext>
     <Grid>
-        <StackPanel Orientation="Vertical">
-            <GroupBox Header="Shortcuts">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Rectangle Width="130" Height="200" Grid.Column="0" Fill="{StaticResource DocdownIcon}" Margin="20 0"/>
+        <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Center" Margin="8 0">
+            <GroupBox Header="Shortcuts" Margin="0 2">
                 <StackPanel Orientation="Vertical">
-                    <CheckBox x:Name="StartMenuShortcut" Content="Create Start Menu Shortcut" IsChecked="True"/>
-                    <CheckBox x:Name="DesktopShortcut" Content="Create Desktop Shortcut" IsChecked="True"/>
+                    <CheckBox x:Name="StartMenuShortcut" Content="Create Start Menu Shortcut" IsChecked="{Binding StartupShortcut}" Margin="2"/>
+                    <CheckBox x:Name="DesktopShortcut" Content="Create Desktop Shortcut" IsChecked="{Binding DesktopShortcut}" Margin="2"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="File Associations">
+            <GroupBox Header="File Associations" Margin="0 2">
                 <StackPanel Orientation="Vertical">
-                    <CheckBox x:Name="MdFA" Content="Markdown (.md)" IsChecked="True"/>
-                    <CheckBox x:Name="BibFA" Content="Bibtex (.bib)"/>
+                    <CheckBox x:Name="MdFA" Content="Markdown (.md)" IsChecked="{Binding MdFileAssociation}" Margin="2"/>
+                    <CheckBox x:Name="BibFA" Content="Bibtex (.bib)" IsChecked="{Binding BibFileAssociation}" Margin="2"/>
                 </StackPanel>
             </GroupBox>
             <Button x:Name="Extractor"
-                Content="Install"
-                Click="Extractor_Click"/>
+                    Content="Install"
+                    Style="{StaticResource MetroFlatButton}"
+                    Command="{Binding InstallCommand}"
+                    Margin="0 2"/>
         </StackPanel>
         
     </Grid>
