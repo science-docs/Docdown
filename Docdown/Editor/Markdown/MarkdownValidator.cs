@@ -15,7 +15,7 @@ namespace Docdown.Editor.Markdown
 {
     public static class MarkdownValidator
     {
-        private static readonly Regex ReferenceRegex = new Regex(@"[^}!]\[([^\]]+)\]", RegexOptions.Compiled);
+        private static readonly Regex ReferenceRegex = new Regex(@"[^}!]\[([^\]]+)\][^(]", RegexOptions.Compiled);
         private static readonly Regex LocaleRegex = new Regex(@"^[a-z]{2}-[A-Z]{2}$", RegexOptions.Compiled);
         private static readonly Regex AcronymRegex = new Regex(@"\b([A-Z]{2,5})\b", RegexOptions.Compiled);
         private static Regex DiscouragedWords;
