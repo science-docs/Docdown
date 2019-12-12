@@ -14,5 +14,28 @@ namespace PandocMark.Syntax
         public Dictionary<string, Reference> ReferenceMap { get; set; }
 
         public List<Issue> Issues { get; set; }
+
+        public DocumentData()
+        {
+            Issues = new List<Issue>();
+            ReferenceMap = new Dictionary<string, Reference>();
+        }
+
+        public DocumentData(IEnumerable<Reference> references) : this()
+        {
+            if (references is null)
+            {
+                throw new System.ArgumentNullException(nameof(references));
+            }
+
+            foreach (var reference in references)
+            {
+                if (!ReferenceMap.ContainsKey(reference.Label))
+                {
+                    ReferenceMap.Add(reference.Label, reference);
+                }
+            }
+        }
+
     }
 }

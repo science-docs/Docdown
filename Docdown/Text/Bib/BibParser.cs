@@ -122,6 +122,7 @@ namespace Docdown.Text.Bib
             BibEntry bib = null;
             var tagValueBuilder = new StringBuilder();
             var tagName = "";
+            var keySet = new HashSet<string>();
 
             // Fetch token from Tokenizer and build BibEntry
             foreach (var token in Tokenizer(errors))
@@ -162,6 +163,10 @@ namespace Docdown.Text.Bib
                     case BibBuilderState.SetKey:
                         Debug.Assert(bib != null, "bib != null");
                         bib.Key = token.Value;
+                        if (!keySet.Add(bib.Key))
+                        {
+                            errors.Add(new BibParseError(lastTokenIndex, len, _lineCount, _colCount, "Bib.DuplicateKey", token.Value));
+                        }
                         AddItem(entryItems, lastTokenIndex + 1, token.Index, EntryItemType.Key);
                         break;
 

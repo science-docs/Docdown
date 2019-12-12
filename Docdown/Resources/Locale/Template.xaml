@@ -100,5 +100,6 @@
     <System:String x:Key="Bib_UnexpectedToken">Found an unexpected token.</System:String>
     <System:String x:Key="Bib_UnrecognizableCharacter">Found an unrecognizable character '{0}'.</System:String>
     <System:String x:Key="Bib_EntryType">'{0}' is not a valid bib entry type.</System:String>
+    <System:String x:Key="Bib_DuplicateKey">Entry with key '{0}' already exists.</System:String>
     
 </ResourceDictionary>

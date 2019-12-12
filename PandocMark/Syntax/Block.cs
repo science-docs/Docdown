@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace PandocMark.Syntax
 {
@@ -37,11 +36,7 @@ namespace PandocMark.Syntax
         {
             Block e = new Block(BlockTag.Document, 0)
             {
-                Document = new DocumentData
-                {
-                    ReferenceMap = settings.ExternalReferences.ToDictionary(i => i.Label),
-                    Issues = new List<Issue>()
-                }
+                Document = new DocumentData(settings.ExternalReferences)
             };
             e.Top = e;
             return e;
