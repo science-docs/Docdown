@@ -127,7 +127,7 @@ namespace Docdown.ViewModel
             await SelectedItem?.Save();
         }
 
-        private async Task SaveAllItems()
+        public async Task SaveAllItems()
         {
             foreach (var item in OpenItems)
             {

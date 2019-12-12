@@ -307,7 +307,7 @@ namespace Docdown.ViewModel
             converterToken = new CancelToken();
             AppViewModel.Instance.Messages.Working(Language.Current.Get("Workspace.Compilation.Running"));
             IsConverting = true;
-            await Save();
+            await Workspace.SaveAllItems();
             var watch = Stopwatch.StartNew();
             try
             {
