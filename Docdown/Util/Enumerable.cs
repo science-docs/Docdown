@@ -21,7 +21,7 @@ namespace Docdown.Util
             foreach (var child in recursive(source))
             {
                 var found = FirstOrDefault(child, recursive, selector);
-                if (!found.Equals(default))
+                if (found != null && !found.Equals(default))
                 {
                     return found;
                 }
