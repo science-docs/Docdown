@@ -184,35 +184,28 @@ namespace Docdown.ViewModel
 
         private async Task TraverseExplorerSettings(WorkspaceSettings settings, Explorer explorer)
         {
-            WorkspaceItemPersistance item = null;
             var explorerItem = explorer.WorkspaceItem;
+            WorkspaceItemPersistance item = new WorkspaceItemPersistance
+            {
+                Path = explorerItem.FullName,
+                IsExcluded = explorerItem.IsExcluded,
+                IsExpanded = explorerItem.IsExpanded
+            };
             if (OpenItems.Contains(explorerItem))
             {
-                item = new WorkspaceItemPersistance
-                {
-                    IsExpanded = false,
-                    Path = explorerItem.FullName,
-                    IsSelected = explorerItem == SelectedItem
-                };
+                item.IsSelected = explorerItem == SelectedItem;
                 if (explorerItem.Editor != null)
                 {
                     item.ScrollOffset = await CalculateCurrentMidOffset(explorerItem.Editor.TextEditor.TextArea.TextView);
                 }
             }
-            else if (explorerItem.IsDirectory && explorerItem.IsExpanded)
-            {
-                item = new WorkspaceItemPersistance
-                {
-                    IsExpanded = true,
-                    Path = explorerItem.FullName
-                };
-            }
-            if (item != null)
+
+            if (item.IsNecessary())
             {
                 settings.Items.Add(item);
             }
 
-            foreach (var child in explorer.Children)
+            foreach (var child in explorer.Items)
             {
                 await TraverseExplorerSettings(settings, child);
             }
@@ -254,6 +247,8 @@ namespace Docdown.ViewModel
             {
                 if (item.Path == workspaceItem.FullName)
                 {
+                    workspaceItem.IsExcluded = item.IsExcluded;
+
                     if (workspaceItem.IsFile)
                     {
                         AddOpenItem(workspaceItem);

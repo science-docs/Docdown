@@ -54,32 +54,17 @@
                         <ContentControl x:Name="PART_Content">
                             <TextBlock Text="{Binding WorkspaceItem.Name}"
                                        Focusable="False"
-                                       FontSize="{StaticResource DefaultFontSize}">
-                                <!--<TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Foreground" Value="{DynamicResource BlackBrush}"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding WorkspaceItem.FileStatus}" Value="{StaticResource FileModified}">
-                                                <Setter Property="Foreground" Value="#66C9FF"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding WorkspaceItem.FileStatus}" Value="{StaticResource FileNew}">
-                                                <Setter Property="Foreground" Value="#7FFF66"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding WorkspaceItem.FileStatus}" Value="{StaticResource FileUnstaged}">
-                                                <Setter Property="Foreground" Value="#FF6666"/>
-                                            </DataTrigger>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding WorkspaceItem.FileStatus}" Value="{StaticResource FileIgnore}"/>
-                                                    <Condition Binding="{Binding WorkspaceItem.Data.IsHidden}" Value="False"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="Opacity" Value="0.6"/>
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>-->
-                            </TextBlock>
+                                       FontSize="{StaticResource DefaultFontSize}"/>
                         </ContentControl>
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding WorkspaceItem.IsExcludedEffectively}" Value="True">
+                                        <Setter Property="Opacity" Value="0.6"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
                         <StackPanel.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Open" 
@@ -118,6 +103,15 @@
                                           Command="{Binding WorkspaceItem.RenameCommand}"/>
                                 <MenuItem Header="Delete" 
                                           Command="{Binding WorkspaceItem.DeleteCommand}"/>
+                                <Separator/>
+                                <MenuItem Header="Exclude" 
+                                          Visibility="{Binding WorkspaceItem.IsIncluded, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                          ToolTip="An excluded item will no longer be used for compilation by the server."
+                                          Command="{Binding WorkspaceItem.ExcludeCommand}"/>
+                                <MenuItem Header="Include" 
+                                          Visibility="{Binding WorkspaceItem.IsExcluded, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                          ToolTip="An included item always be sent to the server for compilation."
+                                          Command="{Binding WorkspaceItem.IncludeCommand}"/>
                             </ContextMenu>
                         </StackPanel.ContextMenu>
                     </StackPanel>

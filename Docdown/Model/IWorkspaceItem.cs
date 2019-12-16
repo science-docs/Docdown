@@ -21,7 +21,9 @@ namespace Docdown.Model
         //bool IsHidden { get; set; }
         bool IsDirectory { get; }
         bool IsFile { get; }
-
+        // A flag for whether this file/folder is excluded from compilation
+        bool IsExcluded { get; set; }
+        bool IsExcludedEffectively { get; }
         byte[] Read();
         Task Save(string text);
         Task<string> Convert(CancelToken cancelToken);

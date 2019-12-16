@@ -68,6 +68,26 @@ namespace Docdown.ViewModel
             set => Set(ref isCompiled, value);
         }
 
+        public bool IsExcluded
+        {
+            get => Data.IsExcluded;
+            set
+            {
+                Data.IsExcluded = value;
+                SendPropertyUpdate();
+                foreach (var child in Children)
+                {
+                    child.SendPropertyUpdate();
+                }
+            }
+        }
+
+        [ChangeListener(nameof(IsExcluded))]
+        public bool IsIncluded => !IsExcluded;
+
+        [ChangeListener(nameof(IsExcluded))]
+        public bool IsExcludedEffectively => Data.IsExcludedEffectively;
+
         public bool IsExpanded
         {
             get => isExpanded;
@@ -139,6 +159,8 @@ namespace Docdown.ViewModel
         public ICommand StopConvertCommand => new ActionCommand(StopConvert);
         public ICommand HidePreviewCommand => new ActionCommand(() => ShowPreview = false);
         public ICommand ShowPreviewCommand => new ActionCommand(() => ShowPreview = true);
+        public ICommand ExcludeCommand => new ActionCommand(() => IsExcluded = true);
+        public ICommand IncludeCommand => new ActionCommand(() => IsExcluded = false);
         [ChangeListener(nameof(PdfPath))]
         public ICommand PrintCommand => string.IsNullOrEmpty(PdfPath) ? null : new PrintCommand(Name, PdfPath);
         public ICommand RenameCommand => new ActionCommand(() => IsNameChanging = true);

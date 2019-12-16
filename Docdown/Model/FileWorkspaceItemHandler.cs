@@ -31,7 +31,7 @@ namespace Docdown.Model
             else
             {
                 var bytes = await item.Workspace.ConverterService.Convert(MultipartFormParameter
-                    .ApiParameter(item.FromType, item.ToType, settings.Template, settings.Csl, onlySelected)
+                    .ApiParameter(item.FromType, item.ToType, settings.Template, settings.Csl)
                     .Concat(MultipartFormParameter
                     .FromWorkspaceItem(item, onlySelected)), cancelToken);
                 await IOUtility.WriteAllBytes(temp, item.FileInfo.FileSystem.File, bytes);

@@ -342,15 +342,12 @@ namespace Docdown.Util
             };
         }
 
-        public static IEnumerable<MultipartFormParameter> ApiParameter(ConverterType from, ConverterType to, string template, string csl, bool onlySelected)
+        public static IEnumerable<MultipartFormParameter> ApiParameter(ConverterType from, ConverterType to, string template, string csl)
         {
             if (from != ConverterType.Undefined)
             {
                 yield return CreateField("from", from.ToString().ToLower());
-                if (!onlySelected)
-                {
-                    yield return CreateField("ext", from.GetExtension());
-                }
+                yield return CreateField("ext", from.GetExtension());
             }
             if (to != ConverterType.Undefined)
                 yield return CreateField("to", to.ToString().ToLower());
@@ -398,7 +395,7 @@ namespace Docdown.Util
 
         private static IEnumerable<MultipartFormParameter> CreateFormData(IWorkspaceItem item, IWorkspaceItem root, bool onlySelected)
         {
-            if (item is null)
+            if (item is null || item.IsExcluded)
             {
                 yield break;
             }
@@ -412,11 +409,7 @@ namespace Docdown.Util
                     }
                 }
             }
-            //else if (onlySelected && item.Equals(root))
-            //{
-            //    yield return CreateFile(MainFile, root.FullName);
-            //}
-            else
+            else if (!onlySelected || item.Equals(root))
             {
                 yield return CreateFile(item);
             }

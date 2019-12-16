@@ -61,6 +61,8 @@ namespace Docdown.Model
         public ConverterType ToType { get; set; } = ConverterType.Pdf;
 
         public IWorkspace Workspace { get; set; }
+        public bool IsExcluded { get; set; }
+        public bool IsExcludedEffectively => IsExcluded || (Parent != null && Parent.IsExcludedEffectively);
 
         public bool IsDirectory => Type == WorkspaceItemType.Directory || Type == WorkspaceItemType.Web;
 

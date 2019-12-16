@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Docdown.Util;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
+using Docdown.ViewModel;
 
 namespace Docdown.Model
 {
@@ -14,7 +12,13 @@ namespace Docdown.Model
         public int ScrollOffset { get; set; }
         public List<int> ClosedFoldings { get; } = new List<int>();
         public bool IsExpanded { get; set; }
+        public bool IsExcluded { get; set; }
         public bool IsSelected { get; set; }
+
+        public bool IsNecessary()
+        {
+            return ScrollOffset > 0 || ClosedFoldings.Count > 0 || IsExpanded || IsExcluded || IsSelected;
+        }
 
         public XElement ToXml()
         {
@@ -23,6 +27,7 @@ namespace Docdown.Model
                 new XAttribute(nameof(ScrollOffset), ScrollOffset), 
                 new XAttribute(nameof(IsExpanded), IsExpanded),
                 new XAttribute(nameof(IsSelected), IsSelected),
+                new XAttribute(nameof(IsExcluded), IsExcluded),
                 ClosedFoldings.Select(e => new XElement(nameof(ClosedFoldings), new XAttribute("Index", e))));
         }
 
@@ -33,7 +38,8 @@ namespace Docdown.Model
                 Path = node.Attribute<string>(nameof(Path)),
                 ScrollOffset = node.Attribute<int>(nameof(ScrollOffset)),
                 IsExpanded = node.Attribute<bool>(nameof(IsExpanded)),
-                IsSelected = node.Attribute<bool>(nameof(IsSelected))
+                IsSelected = node.Attribute<bool>(nameof(IsSelected)),
+                IsExcluded = node.Attribute<bool>(nameof(IsExcluded))
             };
 
             return item;
