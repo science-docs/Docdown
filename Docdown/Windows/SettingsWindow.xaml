@@ -78,21 +78,28 @@
                         <Style BasedOn="{StaticResource DefaultButtonTextBoxStyle}" TargetType="TextBox">
                             <Setter Property="Metro:TextBoxHelper.ButtonContent">
                                 <Setter.Value>
-                                    <Rectangle Height="18" Width="18" Fill="{StaticResource ConnectIcon}"/>
+                                    <Rectangle Height="18" Width="18" Fill="{StaticResource ConnectIcon}" ToolTip="Click here to connect"/>
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ConnectionStatus}" Value="Connected">
                                     <Setter Property="Metro:TextBoxHelper.ButtonContent">
                                         <Setter.Value>
-                                            <Rectangle Height="18" Width="18" Fill="{StaticResource PassIcon}"/>
+                                            <Rectangle Height="18" 
+                                                       Width="18" 
+                                                       Fill="{StaticResource PassIcon}">
+                                                <Rectangle.ToolTip>
+                                                    <ToolTip Content="{Binding Ping}"
+                                                             ContentStringFormat="Latency {0} ms"/>
+                                                </Rectangle.ToolTip>
+                                            </Rectangle>
                                         </Setter.Value>
                                     </Setter>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding ConnectionStatus}" Value="Disconnected">
                                     <Setter Property="Metro:TextBoxHelper.ButtonContent">
                                         <Setter.Value>
-                                            <Rectangle Height="18" Width="18" Fill="{StaticResource FailIcon}"/>
+                                            <Rectangle Height="18" Width="18" Fill="{StaticResource FailIcon}" ToolTip="Connection could not be established"/>
                                         </Setter.Value>
                                     </Setter>
                                 </DataTrigger>
@@ -100,7 +107,7 @@
                                     <Setter Property="Metro:TextBoxHelper.ButtonContent">
                                         <Setter.Value>
                                             <Viewbox Height="18" Width="18" Stretch="UniformToFill" StretchDirection="Both">
-                                                <Control Style="{StaticResource BusyAnimationStyle}"/>
+                                                <Control Style="{StaticResource BusyAnimationStyle}" ToolTip="Connecting..."/>
                                             </Viewbox>
                                         </Setter.Value>
                                     </Setter>

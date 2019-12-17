@@ -1,13 +1,11 @@
-﻿using Docdown.Editor.Markdown;
-using Docdown.Model;
+﻿using Docdown.Model;
 using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -131,6 +129,12 @@ namespace Docdown.ViewModel
             set => Set(ref connectionStatus, value);
         }
 
+        public int Ping
+        {
+            get => ping;
+            set => Set(ref ping, value);
+        }
+
         public bool CanCompileOffline { get; }
 
         [ChangeListener(nameof(ConnectionStatus))]
@@ -147,6 +151,7 @@ namespace Docdown.ViewModel
         private string[] csls;
         private string selectedTemplateName;
         private ConnectionStatus connectionStatus;
+        private int ping;
 
         public SettingsViewModel(AppViewModel app)
         {
@@ -184,7 +189,10 @@ namespace Docdown.ViewModel
             if (ConnectionStatus != ConnectionStatus.Connecting)
             {
                 ConnectionStatus = ConnectionStatus.Connecting;
+                Stopwatch sw = Stopwatch.StartNew();
                 ConnectionStatus = await app.ConverterService.Connect();
+                sw.Stop();
+                Ping = (int)sw.ElapsedMilliseconds;
                 if (IsConnected)
                 {
                     await LoadTemplates();
