@@ -59,6 +59,7 @@ namespace Docdown.ViewModel
         public ICommand SearchWorkspaceCommand => new SearchFolderCommand(Settings.WorkspacePath, "Select workspace", ChangeWorkspace);
         public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(Settings);
         public ICommand SwitchThemeCommand => new ActionCommand(SwitchTheme);
+        public ICommand UpdateCommand => new UpdateCommand(null);
         public ICommand ChangeDocumentLanguageCommand => new ChangeDocumentLanguageCommand();
         public ICommand ChangeLanguageCommand => new ChangeLanguageCommand();
         public ICommand BoldCommand => new EditCommand(this, EditorCommands.Bold);

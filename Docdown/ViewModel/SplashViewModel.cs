@@ -1,5 +1,6 @@
 ﻿using Docdown.Properties;
 using Docdown.Util;
+using Docdown.ViewModel.Commands;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -52,14 +53,8 @@ namespace Docdown.ViewModel
                 try
                 {
                     await app.Settings.TestConnection();
-                    var newVersion = await UpdateUtility.CheckNewVersion();
-                    if (newVersion != null && await ShowMessageAsync("New Version",
-                        $"Do you want to download Version {newVersion} now?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                    {
-                        IProgress<WebDownloadProgress> progress = new Progress<WebDownloadProgress>(DownloadCallback);
-                        await UpdateUtility.Update(progress);
-                    }
-
+                    var progress = new Progress<WebDownloadProgress>(DownloadCallback);
+                    await new UpdateCommand(progress).Update(progress);
                     await app.ChangeWorkspace(workspacePath);
 
                     if (isFile)

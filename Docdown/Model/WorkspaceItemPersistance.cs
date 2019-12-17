@@ -2,7 +2,6 @@
 using System.Linq;
 using Docdown.Util;
 using System.Xml.Linq;
-using Docdown.ViewModel;
 
 namespace Docdown.Model
 {

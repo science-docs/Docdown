@@ -262,6 +262,7 @@
     <Compile Include="ViewModel\Commands\PrintCommand.cs" />
     <Compile Include="ViewModel\Commands\SearchFileCommand.cs" />
     <Compile Include="ViewModel\Commands\SearchFolderCommand.cs" />
+    <Compile Include="ViewModel\Commands\UpdateCommand.cs" />
     <Compile Include="ViewModel\Editing\BibEditorViewModel.cs" />
     <Compile Include="ViewModel\Editing\DefaultEditorViewModel.cs" />
     <Compile Include="ViewModel\Editing\EditorViewModel.cs" />

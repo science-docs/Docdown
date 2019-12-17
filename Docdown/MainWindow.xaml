@@ -169,6 +169,9 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="{DynamicResource Main_Menu_Help}">
+                <MenuItem Header="Check for update"
+                          Command="{Binding UpdateCommand}"/>
+                <Separator/>
                 <MenuItem Header="{DynamicResource Main_Menu_Help_Markdown}" 
                           Click="MarkdownHelpMenuClicked">
                     <MenuItem.Icon>
