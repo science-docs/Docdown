@@ -20,7 +20,6 @@ Markdown files can be compiled to a PDF file via the `Start` button at the top o
 
 If the compilation of your workspace fails for some reason, it will display a message at the bottom of the application. An additional link will show you the output of the compiler to figure out the problem.
 
-
 ### Workspace
 
 The workspace contains all files included in the compilation process. You additionally have the option to exclude certain files and folders from compilation. Doing so will also exclude all their children. 
@@ -37,6 +36,8 @@ Docdown contains special editors for [markdown](#Markdown) (`.md`) and bibliogra
 * `Comment` excludes the selected paragraphs from compilation.
 * `Verbatim` makes the selected text appear code-like.
 * `List` contains multiple types of lists. Each paragraph appears as one item of that list.
+
+For a list of available shortcuts refer [here](#Shortcuts).
 
 ### Settings
 
@@ -61,6 +62,7 @@ Furthermore the pandoc markdown standard has been enhanced by an inline CSV tabl
 * `F5` starts the compilation.
 * `Ctrl+S` saves the current file.
 * `Ctrl+F` shows the search bar and fills it with the selected text of the editor.
+* `Ctrl+Space` shows the auto completion window. (if available)
 
 ## Contributing
 
