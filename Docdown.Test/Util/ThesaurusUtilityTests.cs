@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
-namespace Docdown.Util.Tests
+namespace Docdown.Util.Test
 {
     [TestClass]
     public class ThesaurusUtilityTests

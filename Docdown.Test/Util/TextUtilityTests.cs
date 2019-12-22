@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Docdown.Util.Tests
+namespace Docdown.Util.Test
 {
     [TestClass]
     public class TextUtilityTests
