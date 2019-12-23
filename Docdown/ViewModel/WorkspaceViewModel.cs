@@ -238,6 +238,10 @@ namespace Docdown.ViewModel
         private void RestoreSettings()
         {
             RestoreExplorerSettings(Data.Settings, Explorer.Items.First());
+            if (SelectedItem == null && OpenItems.Count > 0)
+            {
+                SelectedItem = OpenItems.First();
+            }
         }
 
         private void RestoreExplorerSettings(WorkspaceSettings settings, Explorer explorer)
