@@ -7,6 +7,7 @@ using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace Docdown.ViewModel.Editing
@@ -33,6 +34,7 @@ namespace Docdown.ViewModel.Editing
 
         public IList<IVisualLineTransformer> LineTransformers { get; }
         public IList<IBackgroundRenderer> BackgroundRenderers { get; }
+        public ObservableCollection<MenuItemAction> ContextMenuActions { get; }
 
         public abstract IFoldingStrategy FoldingStrategy { get; }
 
@@ -51,6 +53,12 @@ namespace Docdown.ViewModel.Editing
             TextEditor = editor ?? throw new ArgumentNullException(nameof(editor));
             LineTransformers = new List<IVisualLineTransformer>();
             BackgroundRenderers = new List<IBackgroundRenderer>();
+            ContextMenuActions = new ObservableCollection<MenuItemAction>
+            {
+                new MenuItemAction("Cut", "ImageIcon", ApplicationCommands.Cut),
+                new MenuItemAction("Copy", null, ApplicationCommands.Copy),
+                new MenuItemAction("Paste", null, ApplicationCommands.Paste)
+            };
 
             editor.TextChanged += EditorTextChanged;
             debounced = UIUtility.Debounce(UpdateInternal, 500);

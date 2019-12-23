@@ -19,6 +19,7 @@
             Padding="3 1 1 1" 
             ShowLineNumbers="True"
             WordWrap="True" 
+            ContextMenuOpening="EditBox_ContextMenuOpening"
             Foreground="{DynamicResource BlackBrush}" 
             Background="{DynamicResource EditorBackground}" 
             LineNumbersForeground="{StaticResource AccentBaseColorBrush}"
@@ -41,10 +42,15 @@
                 </Style>
             </AvalonEdit:TextEditor.Resources>
             <AvalonEdit:TextEditor.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Cut" Command="ApplicationCommands.Cut"/>
-                    <MenuItem Header="Copy" Command="ApplicationCommands.Copy"/>
-                    <MenuItem Header="Paste" Command="ApplicationCommands.Paste"/>
+                <ContextMenu ItemsSource="{Binding Editor.ContextMenuActions}">
+                    <ContextMenu.ItemContainerStyle>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                            <Setter Property="Header" Value="{Binding Message, Converter={StaticResource LocalizationConverter}}"/>
+                            <Setter Property="Command" Value="{Binding Command}"/>
+                            <Setter Property="Icon" Value="{Binding Icon, Converter={StaticResource IconConverter}}">
+                            </Setter>
+                        </Style>
+                    </ContextMenu.ItemContainerStyle>
                 </ContextMenu>
             </AvalonEdit:TextEditor.ContextMenu>
         </AvalonEdit:TextEditor>

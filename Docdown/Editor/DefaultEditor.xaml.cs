@@ -121,5 +121,17 @@ namespace Docdown.Editor
                 });
             }
         }
+
+        private void EditBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            if (Editor.SelectionLength == 0)
+            {
+                var index = Editor.MouseIndex();
+                if (index >= 0)
+                {
+                    Editor.SelectionStart = index;
+                }
+            }
+        }
     }
 }

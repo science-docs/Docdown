@@ -131,6 +131,8 @@
     </Compile>
     <Compile Include="Controls\SplitButton.cs" />
     <Compile Include="Controls\TextBlockBuilder.cs" />
+    <Compile Include="Converters\IconConverter.cs" />
+    <Compile Include="Converters\LocalizationConverter.cs" />
     <Compile Include="Editor\BibTex\BibFoldingStrategy.cs" />
     <Compile Include="Editor\BibTex\BibHighlightColorizer.cs" />
     <Compile Include="Editor\Commands\AlphabeticalListCommand.cs" />
@@ -270,6 +272,7 @@
     <Compile Include="ViewModel\Explorer.cs" />
     <Compile Include="ViewModel\InputBoxViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
+    <Compile Include="ViewModel\MenuItemAction.cs" />
     <Compile Include="ViewModel\MessageBoxViewModel.cs" />
     <Compile Include="ViewModel\MessageQueue.cs" />
     <Compile Include="ViewModel\Message.cs" />

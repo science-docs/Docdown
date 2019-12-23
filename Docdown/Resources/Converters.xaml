@@ -2,6 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:Converters="clr-namespace:Docdown.Converters">
 
+    <Converters:LocalizationConverter x:Key="LocalizationConverter"/>
+    <Converters:IconConverter x:Key="IconConverter"/>
     <Converters:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
     <Converters:StringToResourceConverter x:Key="StringToResourceConverter"/>
     <Converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>

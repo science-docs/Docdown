@@ -1,25 +1,31 @@
-﻿using System;
+﻿using Docdown.Model;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Windows;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace Docdown.Converters
 {
-    public class StringToResourceConverter : IValueConverter
+    public class LocalizationConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
             {
-                return null;
+                return string.Empty;
             }
 
-            return Application.Current.TryFindResource(value);
+            string text = value.ToString();
+
+            return Language.Current.Get(text);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotSupportedException();
+            throw new NotImplementedException();
         }
     }
 }
