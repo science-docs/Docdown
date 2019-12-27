@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -30,6 +31,17 @@ namespace Docdown.Util
             brush.Freeze();
             brushes.Add(colorCode, brush);
             return brush;
+        }
+
+        public static int MouseIndex(this TextEditor editor)
+        {
+            var pos = editor.GetPositionFromPoint(Mouse.GetPosition(editor));
+            if (pos != null)
+            {
+                int index = editor.Document.GetOffset(pos.Value.Line, pos.Value.Column);
+                return index;
+            }
+            return -1;
         }
 
         public static void ScrollTo(this TextEditor editor, int index)
