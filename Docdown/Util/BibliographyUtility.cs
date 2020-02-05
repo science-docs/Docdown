@@ -17,17 +17,14 @@ namespace Docdown.Util
 
         public static async Task<string> FindSciHub()
         {
-			lock (CurrentSciHubAddress) 
+            if (CurrentSciHubAddress == null)
             {
-                if (CurrentSciHubAddress == null)
-                {
-                    string html = await WebUtility.SimpleTextRequest(WhereIsSciHubNow);
-                    var doc = new HtmlDocument();
-                    doc.LoadHtml(html);
-                    CurrentSciHubAddress = doc.DocumentNode.SelectSingleNode(".//a").GetAttributeValue("href", string.Empty);
-                }
-                return CurrentSciHubAddress;
+                string html = await WebUtility.SimpleTextRequest(WhereIsSciHubNow);
+                var doc = new HtmlDocument();
+                doc.LoadHtml(html);
+                CurrentSciHubAddress = doc.DocumentNode.SelectSingleNode(".//a").GetAttributeValue("href", string.Empty);
             }
+            return CurrentSciHubAddress;
         }
 
         public static async Task<string> FindSciHubArticle(string doi)
