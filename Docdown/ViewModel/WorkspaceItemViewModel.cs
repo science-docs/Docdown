@@ -245,6 +245,10 @@ namespace Docdown.ViewModel
         private CancelToken converterToken;
         private ConverterType converterType;
 
+        // This is needed for the tab control to work correctly.
+        // See issue #29 for an explanation.
+        private int? originalHashcode;
+
         public WorkspaceItemViewModel(WorkspaceViewModel workspaceViewModel, WorkspaceItemViewModel parent, IWorkspaceItem workspaceItem) 
             : base(workspaceItem ?? throw new ArgumentNullException(nameof(workspaceItem)))
         {
@@ -660,6 +664,15 @@ namespace Docdown.ViewModel
         public int CompareTo(WorkspaceItemViewModel other)
         {
             return RelativeName.CompareTo(other?.RelativeName);
+        }
+
+        public override int GetHashCode()
+        {
+            if (originalHashcode == null)
+            {
+                originalHashcode = base.GetHashCode();
+            }
+            return originalHashcode.Value;
         }
     }
 }
