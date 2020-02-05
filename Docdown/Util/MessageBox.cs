@@ -1,5 +1,7 @@
-﻿using Docdown.ViewModel;
+﻿using Docdown.Properties;
+using Docdown.ViewModel;
 using Docdown.Windows;
+using System;
 using System.Windows;
 
 namespace Docdown.Util
@@ -8,12 +10,32 @@ namespace Docdown.Util
     {
         public static MessageBoxResult Show(string title, string message, MessageBoxButton messageBoxButton)
         {
+            return Show(title, message, messageBoxButton, null);
+        }
+
+        public static MessageBoxResult Show(string title, string message, MessageBoxButton messageBoxButton, string savedKey)
+        {
             ReflectionUtility.EnsureMainThread();
-            var viewModel = new MessageBoxViewModel(title, message, messageBoxButton);
-            MessageWindow messageWindow = new MessageWindow
+
+            MessageBoxResult? savedResult = null;
+
+            if (savedKey != null)
             {
-                DataContext = viewModel
-            };
+                var savedValue = Settings.Default[savedKey];
+                if (savedValue != null)
+                {
+                    Enum.TryParse(savedValue.ToString(), out MessageBoxResult result);
+                    savedResult = result;
+                }
+            }
+
+            if (savedResult != null)
+            {
+                return savedResult.Value;
+            }
+
+            var viewModel = new MessageBoxViewModel(title, message, messageBoxButton, savedKey != null);
+            MessageWindow messageWindow = new MessageWindow(viewModel);
             if (Application.Current.MainWindow.IsVisible)
             {
                 messageWindow.Owner = Application.Current.MainWindow;
@@ -24,6 +46,11 @@ namespace Docdown.Util
             }
             if (messageWindow.ShowDialog().HasValue)
             {
+                if (savedKey != null)
+                {
+                    Settings.Default[savedKey] = viewModel.Result.ToString();
+                    Settings.Default.Save();
+                }
                 return viewModel.Result;
             }
             else if (messageBoxButton == MessageBoxButton.YesNo)

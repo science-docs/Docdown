@@ -11,17 +11,22 @@
         IconTemplate="{x:Null}"
         Title="{Binding Title}"
         WindowStartupLocation="CenterOwner" Background="{DynamicResource WhiteBrush}"
-        Width="300" Height="130">
+        Width="300" Height="{Binding Height}" d:DesignHeight="150">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" 
                    Text="{Binding Message}"
                    Margin="10 6"
                    TextWrapping="Wrap"/>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+        <CheckBox Grid.Row="1" 
+                  Content="Save my answer"
+                  Visibility="{Binding Save, Converter={StaticResource BooleanToVisibilityConverter}}"
+                  Margin="10 6"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <StackPanel.Resources>
                 <Style TargetType="Button" BasedOn="{StaticResource MetroFlatButton}">
                     <Setter Property="Width" Value="61"/>

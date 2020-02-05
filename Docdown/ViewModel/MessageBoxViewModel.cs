@@ -15,6 +15,8 @@ namespace Docdown.ViewModel
 
         public bool SavedValue { get; set; }
 
+        public double Height { get; set; }
+
         [ChangeListener(nameof(Button))]
         public bool HasOkButton => Index < 2;
         [ChangeListener(nameof(Button))]
@@ -52,6 +54,7 @@ namespace Docdown.ViewModel
             Message = message;
             this.button = button;
             Save = save;
+            Height = save ? 150 : 130;
         }
 
         public Action Set(MessageBoxResult result)

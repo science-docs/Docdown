@@ -1,11 +1,13 @@
-﻿using System.Windows;
+﻿using Docdown.ViewModel;
+using System.Windows;
 
 namespace Docdown.Windows
 {
     public partial class MessageWindow
     {
-        public MessageWindow()
+        public MessageWindow(MessageBoxViewModel viewModel)
         {
+            DataContext = viewModel;
             InitializeComponent();
         }
 
