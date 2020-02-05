@@ -11,6 +11,10 @@ namespace Docdown.ViewModel
 
         public string Message { get; set; }
 
+        public bool Save { get; set; }
+
+        public bool SavedValue { get; set; }
+
         [ChangeListener(nameof(Button))]
         public bool HasOkButton => Index < 2;
         [ChangeListener(nameof(Button))]
@@ -42,11 +46,12 @@ namespace Docdown.ViewModel
 
         }
 
-        public MessageBoxViewModel(string title, string message, MessageBoxButton button)
+        public MessageBoxViewModel(string title, string message, MessageBoxButton button, bool save)
         {
             Title = title;
             Message = message;
             this.button = button;
+            Save = save;
         }
 
         public Action Set(MessageBoxResult result)

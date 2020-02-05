@@ -193,6 +193,7 @@
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\SvgToBrushConverter.cs" />
     <Compile Include="Model\Bibliography.cs" />
+    <Compile Include="Model\PreviewWorkspaceItem.cs" />
     <Compile Include="Text\Bib\BibEntry.cs" />
     <Compile Include="Text\Bib\BibParseError.cs" />
     <Compile Include="Text\Bib\BibParser.cs" />
