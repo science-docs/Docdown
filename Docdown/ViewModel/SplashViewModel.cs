@@ -1,4 +1,5 @@
-﻿using Docdown.Properties;
+﻿using Docdown.Model;
+using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using System;
@@ -68,7 +69,8 @@ namespace Docdown.ViewModel
                 }
                 catch
                 {
-                    await ShowMessageAsync("Critical error", "An error occurred during startup. Application needs to close", MessageBoxButton.OK);
+                    var lang = Language.Current;
+                    await ShowMessageAsync(lang.Get("Main.Critical.Error.Title"), lang.Get("Main.Critical.Error.Message"), MessageBoxButton.OK);
                     Environment.Exit(1);
                 }
             });

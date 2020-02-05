@@ -31,6 +31,9 @@
     <System:String x:Key="Main_Menu_Print_Tooltip">Print File</System:String>
 
     <System:String x:Key="Main_WordCount">Words:</System:String>
+
+    <System:String x:Key="Main_Critical_Error_Title">Critical error</System:String>
+    <System:String x:Key="Main_Critical_Error_Message">An error occurred during startup. Application needs to close.</System:String>
     
     <!-- Workspace explorer -->
     <System:String x:Key="Workspace_Explorer_Title">Workspace Explorer</System:String>
@@ -66,6 +69,11 @@
     <System:String x:Key="Settings_Window_Close">Close</System:String>
     <System:String x:Key="Settings_Window_Default">Default</System:String>
 
+    <System:String x:Key="Settings_Search_Template">Select template</System:String>
+    
+    <System:String x:Key="Settings_Message_Connect">Connected to server</System:String>
+    <System:String x:Key="Settings_Message_Disconnect">Could not connect to server</System:String>
+    
     <!-- Dialogs -->
     <System:String x:Key="Dialog_Existing_Title">Add existing files</System:String>
     <System:String x:Key="Dialog_Import_Title">Select a file to import</System:String>
@@ -91,7 +99,21 @@
     <System:String x:Key="Workspace_Compilation_Running">Compiling...</System:String>
     <System:String x:Key="Workspace_Compilation_Success">Succesfully compiled in {0}.{1} seconds</System:String>
     <System:String x:Key="Workspace_Image_Failed">Could not open image</System:String>
-    
+    <System:String x:Key="Workspace_Open_Failed">Could not open workspace</System:String>
+
+    <System:String x:Key="Workspace_Explorer_Open">Open</System:String>
+    <System:String x:Key="Workspace_Explorer_Add">Add</System:String>
+    <System:String x:Key="Workspace_Explorer_Add_Existing">Existing File</System:String>
+    <System:String x:Key="Workspace_Explorer_Add_New">New File</System:String>
+    <System:String x:Key="Workspace_Explorer_Add_Folder">New Folder</System:String>
+    <System:String x:Key="Workspace_Explorer_Open_Windows">Open in explorer</System:String>
+    <System:String x:Key="Workspace_Explorer_Rename">Rename</System:String>
+    <System:String x:Key="Workspace_Explorer_Delete">Delete</System:String>
+    <System:String x:Key="Workspace_Explorer_Exclude">Exclude</System:String>
+    <System:String x:Key="Workspace_Explorer_Exclude_Tooltip">An excluded item will no longer be used for compilation by the server.</System:String>
+    <System:String x:Key="Workspace_Explorer_Include">Include</System:String>
+    <System:String x:Key="Workspace_Explorer_Include_Tooltip">An included item always be sent to the server for compilation.</System:String>
+
     <!-- Editor Messages -->
     <System:String x:Key="Editor_Reference_Missing">Reference to a link, citation or footnote expected</System:String>
     <System:String x:Key="Editor_Discouraged_Word">This is a discouraged word for scientific work</System:String>

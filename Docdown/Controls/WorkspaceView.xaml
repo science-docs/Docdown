@@ -67,26 +67,26 @@
                         </StackPanel.Style>
                         <StackPanel.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Open" 
+                                <MenuItem Header="{DynamicResource Workspace_Explorer_Open}" 
                                           Visibility="{Binding WorkspaceItem.IsFile, Converter={StaticResource BooleanToVisibilityConverter}}" 
                                           Command="{Binding WorkspaceItem.SelectItemCommand}"/>
-                                <MenuItem Header="Add" 
+                                <MenuItem Header="{DynamicResource Workspace_Explorer_Add}" 
                                           Visibility="{Binding WorkspaceItem.IsDirectory, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <MenuItem Header="Existing File" 
+                                    <MenuItem Header="{DynamicResource Workspace_Explorer_Add_Existing}" 
                                               Command="{Binding WorkspaceItem.ExistingFileCommand}" 
                                               CommandParameter="{StaticResource False}">
                                         <MenuItem.Icon>
                                             <Rectangle Fill="{DynamicResource AddFileIcon}" Height="16" Width="16"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="New File" 
+                                    <MenuItem Header="{DynamicResource Workspace_Explorer_Add_New}" 
                                               Command="{Binding WorkspaceItem.NewFileCommand}" 
                                               CommandParameter="{StaticResource False}">
                                         <MenuItem.Icon>
                                             <Rectangle Fill="{DynamicResource NewFileIcon}" Height="16" Width="16"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="New Folder" 
+                                    <MenuItem Header="{DynamicResource Workspace_Explorer_Add_Folder}" 
                                               Command="{Binding WorkspaceItem.NewFileCommand}" 
                                               CommandParameter="{StaticResource True}">
                                         <MenuItem.Icon>
@@ -95,22 +95,22 @@
                                     </MenuItem>
                                 </MenuItem>
                                 <Separator Visibility="{Binding WorkspaceItem.IsDirectory, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                                <MenuItem Header="Open in explorer"
+                                <MenuItem Header="{DynamicResource Workspace_Explorer_Open_Windows}"
                                           Command="{Binding WorkspaceItem.OpenInExplorerCommand}"
                                           Visibility="{Binding WorkspaceItem.IsDirectory, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                 <Separator/>
-                                <MenuItem Header="Rename" 
+                                <MenuItem Header="{DynamicResource Workspace_Explorer_Rename}" 
                                           Command="{Binding WorkspaceItem.RenameCommand}"/>
-                                <MenuItem Header="Delete" 
+                                <MenuItem Header="{DynamicResource Workspace_Explorer_Delete}" 
                                           Command="{Binding WorkspaceItem.DeleteCommand}"/>
                                 <Separator/>
-                                <MenuItem Header="Exclude" 
+                                <MenuItem Header="{DynamicResource Workspace_Explorer_Exclude}" 
                                           Visibility="{Binding WorkspaceItem.IsIncluded, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                          ToolTip="An excluded item will no longer be used for compilation by the server."
+                                          ToolTip="{DynamicResource Workspace_Explorer_Exclude_Tooltip}"
                                           Command="{Binding WorkspaceItem.ExcludeCommand}"/>
-                                <MenuItem Header="Include" 
+                                <MenuItem Header="{DynamicResource Workspace_Explorer_Include}" 
                                           Visibility="{Binding WorkspaceItem.IsExcluded, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                          ToolTip="An included item always be sent to the server for compilation."
+                                          ToolTip="{DynamicResource Workspace_Explorer_Include_Tooltip}"
                                           Command="{Binding WorkspaceItem.IncludeCommand}"/>
                             </ContextMenu>
                         </StackPanel.ContextMenu>

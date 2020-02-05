@@ -193,17 +193,18 @@ namespace Docdown.ViewModel
                 ConnectionStatus = await app.ConverterService.Connect();
                 sw.Stop();
                 Ping = (int)sw.ElapsedMilliseconds;
+                var lang = Language.Current;
                 if (IsConnected)
                 {
                     await LoadTemplates();
                     await LoadCsls();
-                    app.Messages.Success("Connected to server");
+                    app.Messages.Success(lang.Get("Settings.Message.Connect"));
                 }
                 else
                 {
                     Templates = new[] { Template.Empty };
                     Csls = new[] { string.Empty };
-                    app.Messages.Error("Could not connect to server");
+                    app.Messages.Error(lang.Get("Settings.Message.No.Disconnect"));
                 }
             }
         }
@@ -262,7 +263,7 @@ namespace Docdown.ViewModel
             if (!IsConnected)
                 return;
 
-            string templateFolder = new SearchFolderCommand(null, "Select template").ExecuteWithResult();
+            string templateFolder = new SearchFolderCommand(null, Language.Current.Get("Settings.Search.Template")).ExecuteWithResult();
             if (!string.IsNullOrEmpty(templateFolder))
             {
                 await UploadTemplate(templateFolder);

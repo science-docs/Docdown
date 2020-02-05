@@ -106,7 +106,7 @@ namespace Docdown.ViewModel
             }
             catch
             {
-                Messages.Error("Could not open workspace");
+                Messages.Error(Language.Current.Get("Workspace.Open.Failed"));
             }
             SendPropertyUpdate(nameof(SearchWorkspaceCommand));
         }
