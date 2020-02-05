@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace PandocMark.Syntax
 {
@@ -119,6 +120,21 @@ namespace PandocMark.Syntax
         /// Note that once the inlines are parsed, <see cref="StringContent"/> will be set to <see langword="null"/>.
         /// </summary>
         public Inline InlineContent { get; set; }
+
+        public string LiteralContent
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                Inline inline = InlineContent;
+                while (inline != null)
+                {
+                    sb.Append(inline.LiteralContent);
+                    inline = inline.NextSibling;
+                }
+                return sb.ToString();
+            }
+        }
 
         /// <summary>
         /// Gets or sets the additional properties that apply to list elements.

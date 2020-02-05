@@ -97,6 +97,13 @@ namespace Docdown.ViewModel
             if (string.IsNullOrEmpty(newWorkspace))
                 return;
 
+            var cancelArgs = new CancelEventArgs(false);
+            await Workspace.OnClosing(cancelArgs);
+
+            // Cancel change
+            if (cancelArgs.Cancel)
+                return;
+
             Settings.WorkspacePath = newWorkspace;
             Settings.Save();
             try

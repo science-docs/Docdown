@@ -224,7 +224,7 @@ namespace Docdown.Text.Bib
             get
             {
                 index = index.ToLower();
-                return _tags.ContainsKey(index) ? _tags[index] : string.Empty;
+                return _tags.ContainsKey(index) ? _tags[index] : null;
             }
             set
             {

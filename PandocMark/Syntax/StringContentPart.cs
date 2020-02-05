@@ -32,7 +32,18 @@
             if (Source is null)
                 return null;
 
-            return Source.Substring(StartIndex, Length);
+            if (StartIndex > Source.Length)
+            {
+                return string.Empty;
+            }
+            else if (StartIndex + Length > Source.Length)
+            {
+                return Source.Substring(StartIndex);
+            }
+            else
+            {
+                return Source.Substring(StartIndex, Length);
+            }
         }
     }
 }

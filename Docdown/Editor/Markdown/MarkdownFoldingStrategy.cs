@@ -21,7 +21,7 @@ namespace Docdown.Editor.Markdown
             {
                 case BlockTag.SetextHeading:
                 case BlockTag.AtxHeading:
-                    string content = block.InlineContent?.LiteralContent ?? string.Empty;
+                    string content = block.LiteralContent;
                     Name = new string('#', block.Heading.Level) + " ";
                     if (content.Length > MaxHeaderLength + 3)
                     {

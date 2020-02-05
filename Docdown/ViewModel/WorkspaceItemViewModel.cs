@@ -17,6 +17,7 @@ using System.Text;
 using Docdown.Editor;
 using System.Collections.ObjectModel;
 using Docdown.ViewModel.Editing;
+using HtmlAgilityPack;
 
 namespace Docdown.ViewModel
 {
@@ -172,7 +173,6 @@ namespace Docdown.ViewModel
         public ICommand OpenInExplorerCommand => new OpenExplorerCommand(FullName);
         public ICommand NewFileCommand => new CreateNewFileCommand(this);
         public ICommand ExistingFileCommand => new AddExistingFileCommand(this);
-
         
 
         public object View
@@ -533,6 +533,8 @@ namespace Docdown.ViewModel
                     return ShowDefaultEditor(out editorViewModel);
                 case WorkspaceItemType.Image:
                     return ShowImage();
+                case WorkspaceItemType.Web:
+                    return ShowBrowser();
                 default:
                     return null;
             }
@@ -637,6 +639,17 @@ namespace Docdown.ViewModel
             }
             
             return image;
+        }
+
+        private WebViewer ShowBrowser()
+        {
+            if (Data is PreviewWorkspaceItem preview)
+            {
+                WebViewer viewer = new WebViewer();
+                viewer.Navigate(preview.Url);
+                return viewer;
+            }
+            return null;
         }
 
         private void SelectItem()

@@ -129,7 +129,7 @@ namespace Docdown.ViewModel
 
         public async Task SaveAllItems()
         {
-            foreach (var item in OpenItems)
+            foreach (var item in OpenItems.Where(e => e.HasChanged))
             {
                 await item.Save();
             }

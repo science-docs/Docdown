@@ -316,6 +316,7 @@ namespace Docdown.Model
                     break;
                 case ".txt":
                 case ".ini":
+                case ".csv":
                 case ".bat":
                 case ".sh":
                 case ".json":
