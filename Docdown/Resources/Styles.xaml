@@ -7,6 +7,22 @@
                     xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
                     xmlns:Util="clr-namespace:Docdown.Util">
 
+    <Style x:Key="{x:Type Docdown:TreeGridSplitter}"
+           TargetType="{x:Type Docdown:TreeGridSplitter}">
+        <Setter Property="Background"
+                Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Docdown:TreeGridSplitter}">
+                    <Rectangle Fill="{TemplateBinding Background}"/>
+                    <!--<Border BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"/>-->
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <Style x:Key="DocWindowButtonStyle"
                BasedOn="{StaticResource MetroWindowButtonStyle}"
                TargetType="{x:Type Button}">

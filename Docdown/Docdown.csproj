@@ -131,6 +131,8 @@
     </Compile>
     <Compile Include="Controls\SplitButton.cs" />
     <Compile Include="Controls\TextBlockBuilder.cs" />
+    <Compile Include="Controls\TreeGrid.cs" />
+    <Compile Include="Controls\TreeGridSplitter.cs" />
     <Compile Include="Converters\IconConverter.cs" />
     <Compile Include="Converters\LocalizationConverter.cs" />
     <Compile Include="Editor\BibTex\BibFoldingStrategy.cs" />

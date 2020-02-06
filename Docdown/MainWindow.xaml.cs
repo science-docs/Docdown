@@ -1,3 +1,4 @@
+using Docdown.Controls;
 using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel;
@@ -5,6 +6,8 @@ using Docdown.Windows;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace Docdown
 {
@@ -33,11 +36,54 @@ namespace Docdown
                 }
                 DataContext = app = splash.ViewModel.Data;
                 Closing += OnClosing;
+
+                TreeNode c = new TreeNode
+                {
+                    Element = Explorer
+                };
+
+                TreeNode d = new TreeNode
+                {
+                    Element = Outline
+                };
+
+                
+
+                TreeNode a = new TreeNode
+                {
+                    Element = Tab
+                };
+
+                TreeNode b = new TreeNode
+                {
+                    A = c,
+                    B = d,
+                    Distribution = 0.6,
+                    Orientation = System.Windows.Controls.Orientation.Vertical
+                };
+
+                TreeNode node = new TreeNode
+                {
+                    A = b,
+                    B = a,
+                    Distribution = 0.2,
+                    Orientation = System.Windows.Controls.Orientation.Horizontal
+                };
+
+                GridTree.Tree = node;
             }
             else
             {
                 Close();
             }
+        }
+
+        private Rectangle CreateRect(Brush brush)
+        {
+            return new Rectangle
+            {
+                Fill = brush
+            };
         }
 
         private void OnClosing(object sender, CancelEventArgs e)
