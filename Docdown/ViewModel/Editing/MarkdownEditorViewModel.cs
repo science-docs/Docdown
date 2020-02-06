@@ -28,17 +28,23 @@ namespace Docdown.ViewModel.Editing
 
         private int _previousLineCount = -1;
 
-        public MarkdownEditorViewModel(WorkspaceItemViewModel item, TextEditor editor) : base(item, editor)
+
+        public MarkdownEditorViewModel(WorkspaceItemViewModel item) : base(item)
         {
             var theme = Theme.Get("Markdown");
             folding = new MarkdownFoldingStrategy();
             colorizer = new MarkdownHighlightingColorizer(theme);
-            LineTransformers.Add(colorizer);
             blockRenderer = new BlockBackgroundRenderer(theme);
-            BackgroundRenderers.Add(blockRenderer);
             issueRenderer = new IssueBackgroundRenderer(theme);
-            BackgroundRenderers.Add(issueRenderer);
+        }
 
+        public override void Configure(TextEditor editor)
+        {
+            base.Configure(editor);
+
+            editor.TextArea.TextView.BackgroundRenderers.Add(blockRenderer);
+            editor.TextArea.TextView.BackgroundRenderers.Add(issueRenderer);
+            editor.TextArea.TextView.LineTransformers.Add(colorizer);
             editor.Document.PropertyChanged += OnEditBoxPropertyChanged;
         }
 
@@ -91,13 +97,13 @@ namespace Docdown.ViewModel.Editing
 
         private void OnEditBoxPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
         {
-            if (propertyChangedEventArgs.PropertyName == "LineCount")
+            if (propertyChangedEventArgs.PropertyName == "LineCount" && sender is TextEditor editor)
             {
-                var currentLineCount = TextEditor.LineCount;
+                var currentLineCount = editor.LineCount;
                 // -1 means the editor has never had text in it.
                 if (_previousLineCount != -1)
                 {
-                    ListInputHandler.AdjustList(TextEditor, currentLineCount > _previousLineCount);
+                    ListInputHandler.AdjustList(editor, currentLineCount > _previousLineCount);
                 }
                 _previousLineCount = currentLineCount;
             }
@@ -129,15 +135,11 @@ namespace Docdown.ViewModel.Editing
                 var outline = new Outline(headers);
                 var wordCount = CountWords(AbstractSyntaxTree, Text);
                 Item.WordCount = wordCount;
-                Item.Outline = new OutlineViewModel(outline, JumpToLocation());
+                Item.Outline = new OutlineViewModel(outline, JumpTo);
 
                 foreach (var issue in MarkdownValidator.Validate(AbstractSyntaxTree, Text, Item.Data))
                 {
                     AbstractSyntaxTree.Document.Issues.Add(issue);
-                }
-                if (AbstractSyntaxTree.Document.Issues.Count > 0)
-                {
-                    TextEditor.TextArea.TextView.Redraw();
                 }
                 Item.HasValidationErrors = AbstractSyntaxTree.Document.Issues.Any(e => e.Type == IssueType.Error);
             }

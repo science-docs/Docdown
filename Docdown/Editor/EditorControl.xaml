@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Docdown.Editor.DefaultEditor"
+﻿<UserControl x:Class="Docdown.Editor.EditorControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -33,6 +33,14 @@
                     <Setter Property="SelectionBrush"        Value="{StaticResource AccentColorBrush}"/>
                     <Setter Property="SelectionBorder"       Value="{x:Null}"/>
                 </Style>
+                <Style TargetType="{x:Type AvalonEdit:TextView}">
+                    <Setter Property="CurrentLineBorder">
+                        <Setter.Value>
+                            <Pen Thickness="2" Brush="#80808080"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="CurrentLineBackground" Value="Transparent"/>
+                </Style>
                 <Style TargetType="{x:Type AvalonFolding:FoldingMargin}">
                     <Setter Property="Cursor"                               Value="Hand"/>
                     <Setter Property="FoldingMarkerBrush"                   Value="{DynamicResource BlackBrush}"/>
@@ -47,8 +55,8 @@
                         <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
                             <Setter Property="Header" Value="{Binding Message, Converter={StaticResource LocalizationConverter}}"/>
                             <Setter Property="Command" Value="{Binding Command}"/>
-                            <Setter Property="Icon" Value="{Binding Icon, Converter={StaticResource IconConverter}}">
-                            </Setter>
+                            <Setter Property="Icon" Value="{Binding Icon, Converter={StaticResource IconConverter}}"/>
+                            <Setter Property="ItemsSource" Value="{Binding Children}"/>
                         </Style>
                     </ContextMenu.ItemContainerStyle>
                 </ContextMenu>

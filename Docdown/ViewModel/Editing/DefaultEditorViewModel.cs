@@ -8,7 +8,7 @@ namespace Docdown.ViewModel.Editing
     {
         public override IFoldingStrategy FoldingStrategy => null;
 
-        public DefaultEditorViewModel(WorkspaceItemViewModel item, TextEditor editor) : base(item, editor)
+        public DefaultEditorViewModel(WorkspaceItemViewModel item) : base(item)
         {
         }
 

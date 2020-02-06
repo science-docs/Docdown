@@ -27,6 +27,9 @@ namespace Docdown.Editor
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
+            if (Issues == null)
+                return;
+
             var segments = new TextSegmentCollection<IssueMarker>();
             foreach (var issue in Issues)
             {

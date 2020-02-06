@@ -25,26 +25,23 @@ namespace Docdown.ViewModel.Editing
         private readonly List<Issue> issues;
         private readonly List<BibEntry> entries;
 
-        private readonly MenuItemAction showArticleAction;
+        private MenuItemAction showArticleAction;
 
-        public BibEditorViewModel(WorkspaceItemViewModel item, TextEditor editor) : base(item, editor)
+        public BibEditorViewModel(WorkspaceItemViewModel item) : base(item)
         {
             folding = new BibFoldingStrategy();
             entries = new List<BibEntry>();
             var bibTheme = Theme.Get("Bib");
             colorizer = new BibHighlightColorizer(bibTheme);
-            issueRenderer = new IssueBackgroundRenderer(bibTheme);
-            LineTransformers.Add(colorizer);
-            BackgroundRenderers.Add(issueRenderer);
-            issueRenderer.Issues = issues = new List<Issue>();
-            showArticleAction = new MenuItemAction("Show Article", null, new ActionCommand(OpenPreview));
-
-            editor.ContextMenuOpening += ContextMenuOpening;
+            issueRenderer = new IssueBackgroundRenderer(bibTheme)
+            {
+                Issues = issues = new List<Issue>()
+            };
         }
 
         private void ContextMenuOpening(object sender, System.EventArgs e)
         {
-            if (CanShowArticleAtIndex())
+            if (sender is TextEditor editor && CanShowArticleAtIndex(editor))
             {
                 if (!ContextMenuActions.Contains(showArticleAction))
                 {
@@ -57,14 +54,26 @@ namespace Docdown.ViewModel.Editing
             }
         }
 
+        public override void Configure(TextEditor editor)
+        {
+            base.Configure(editor);
+
+            showArticleAction = new MenuItemAction("Show Article", null, new ActionCommand(() => OpenPreview(editor)));
+
+            editor.TextArea.TextView.BackgroundRenderers.Add(issueRenderer);
+            editor.TextArea.TextView.LineTransformers.Add(colorizer);
+            
+            editor.ContextMenuOpening += ContextMenuOpening;
+        }
+
         public override void Update()
         {
 
         }
 
-        public bool CanShowArticleAtIndex()
+        public bool CanShowArticleAtIndex(TextEditor editor)
         {
-            var index = TextEditor.MouseIndex();
+            var index = editor.MouseIndex();
             if (index >= 0)
             {
                 var selected = entries.FirstOrDefault(e => index >= e.SourcePosition && e.SourcePosition + e.SourceLength > index);
@@ -112,13 +121,12 @@ namespace Docdown.ViewModel.Editing
                 }
                 colorizer.Items.AddRange(entries);
                 folding.Entries.AddRange(entries);
-                TextEditor.TextArea.TextView.Redraw();
             }
         }
 
-        private void OpenPreview()
+        private void OpenPreview(TextEditor editor)
         {
-            int index = TextEditor.SelectionStart;
+            int index = editor.SelectionStart;
             var selected = entries.FirstOrDefault(e => e.SourcePosition + e.SourceLength > index);
             if (selected == null && entries.Count > 0)
             {

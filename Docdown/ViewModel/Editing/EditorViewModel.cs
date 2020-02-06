@@ -3,11 +3,13 @@ using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Folding;
-using ICSharpCode.AvalonEdit.Rendering;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Docdown.ViewModel.Editing
@@ -28,12 +30,9 @@ namespace Docdown.ViewModel.Editing
         }
 
         public WorkspaceItemViewModel Item { get; }
-        public TextEditor TextEditor { get; }
 
         public virtual char[] CompletionMarkers { get; }
 
-        public IList<IVisualLineTransformer> LineTransformers { get; }
-        public IList<IBackgroundRenderer> BackgroundRenderers { get; }
         public ObservableCollection<MenuItemAction> ContextMenuActions { get; }
 
         public abstract IFoldingStrategy FoldingStrategy { get; }
@@ -42,50 +41,150 @@ namespace Docdown.ViewModel.Editing
 
         public ICommand UpdateCommand => new ActionCommand(Update);
 
+        public Action<int> JumpTo { get; private set; }
+
         private string text;
         private FoldingManager foldingManager;
-        private bool firstChange = false;
-        private readonly Action debounced;
+        private Action<TextEditor> debounced;
 
-        public EditorViewModel(WorkspaceItemViewModel item, TextEditor editor)
+        private readonly ToolTip toolTip = new ToolTip();
+        private CompletionWindow completionWindow;
+
+        protected EditorViewModel(WorkspaceItemViewModel item)
         {
             Item = item ?? throw new ArgumentNullException(nameof(item));
-            TextEditor = editor ?? throw new ArgumentNullException(nameof(editor));
-            LineTransformers = new List<IVisualLineTransformer>();
-            BackgroundRenderers = new List<IBackgroundRenderer>();
             ContextMenuActions = new ObservableCollection<MenuItemAction>
             {
-                new MenuItemAction("Cut", "ImageIcon", ApplicationCommands.Cut),
+                new MenuItemAction("Cut", null, ApplicationCommands.Cut),
                 new MenuItemAction("Copy", null, ApplicationCommands.Copy),
                 new MenuItemAction("Paste", null, ApplicationCommands.Paste)
             };
-
-            editor.TextChanged += EditorTextChanged;
-            debounced = UIUtility.Debounce(UpdateInternal, 500);
+            
         }
 
-        private void EditorTextChanged(object sender, EventArgs e)
+        public virtual void Configure(TextEditor editor)
         {
-            Text = TextEditor.Text;
-            if (firstChange)
-            {
-                Item.HasChanged = true;
-            }
-            else
-            {
-                InitializeInternal();
-            }
+            debounced = UIUtility.Debounce<TextEditor>(UpdateInternal, 500);
+
+            JumpTo = JumpToLocation(editor);
+
+            Text = editor.Text = Encoding.UTF8.GetString(Item.Data.Read());
+
+            foldingManager = FoldingManager.Install(editor.TextArea);
+
             if (FoldingStrategy != null)
             {
                 foldingManager.UpdateFoldings(FoldingStrategy.GenerateFoldings(), ErrorIndex);
             }
-            debounced();
-            firstChange = true;
+
+            editor.TextArea.TextEntered += TextEntered;
+            editor.TextArea.TextEntering += TextEntering;
+            editor.TextArea.PreviewKeyDown += ShowCompletionWindowKeyboard;
+
+            editor.MouseHover += MouseHover;
+            editor.MouseHoverStopped += MouseHoverStopped;
+            editor.TextChanged += EditorTextChanged;
         }
 
-        private void UpdateInternal()
+        private void MouseHover(object sender, MouseEventArgs e)
         {
-            Dispatcher.Invoke(Update);
+            var editor = (TextEditor)sender;
+            var pos = editor.GetPositionFromPoint(e.GetPosition(editor));
+            if (pos != null)
+            {
+                int index = editor.Document.GetOffset(pos.Value.Line, pos.Value.Column);
+                var content = FindHoverContent(index);
+                if (content != null)
+                {
+                    toolTip.PlacementTarget = editor;
+                    toolTip.Content = content;
+                    toolTip.IsOpen = true;
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private void MouseHoverStopped(object sender, MouseEventArgs e)
+        {
+            toolTip.IsOpen = false;
+        }
+
+        private void EditorTextChanged(object sender, EventArgs e)
+        {
+            var editor = (TextEditor)sender;
+
+            Text = editor.Text;
+            Item.HasChanged = true;
+            if (FoldingStrategy != null)
+            {
+                foldingManager.UpdateFoldings(FoldingStrategy.GenerateFoldings(), ErrorIndex);
+            }
+            debounced(editor);
+        }
+
+        private void ShowCompletionWindow(TextArea area)
+        {
+            if (completionWindow == null)
+            {
+                completionWindow = new CompletionWindow(area);
+
+                int startPosition = 0;
+                if (area.Selection.IsEmpty)
+                    startPosition = area.Caret.Offset;
+                else
+                    startPosition = area.Selection.SurroundingSegment.Offset;
+
+                if (FillCompletionList(completionWindow.CompletionList, startPosition))
+                {
+                    completionWindow.Show();
+                    completionWindow.Closed += delegate
+                    {
+                        completionWindow = null;
+                    };
+                }
+                else
+                {
+                    completionWindow = null;
+                }
+            }
+        }
+
+        private void ShowCompletionWindowKeyboard(object sender, KeyEventArgs e)
+        {
+            if (sender is TextArea area && completionWindow == null && e.Key == Key.Space && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+            {
+                ShowCompletionWindow(area);
+                e.Handled = true;
+            }
+        }
+
+        private void TextEntered(object sender, TextCompositionEventArgs e)
+        {
+            if (e.Text.Length == 1 && sender is TextEditor editor)
+            {
+                var c = e.Text[0];
+                if (CompletionMarkers != null && CompletionMarkers.Contains(c))
+                {
+                    ShowCompletionWindow(editor.TextArea);
+                }
+            }
+        }
+
+        void TextEntering(object sender, TextCompositionEventArgs e)
+        {
+            if (e.Text.Length > 0 && completionWindow != null && completionWindow.CompletionList.IsEmpty())
+            {
+                completionWindow.Close();
+            }
+        }
+
+        private void UpdateInternal(TextEditor editor)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                editor.TextArea.TextView.Redraw();
+                Update();
+            });
         }
 
         public abstract void Update();
@@ -94,30 +193,9 @@ namespace Docdown.ViewModel.Editing
 
         public abstract bool FillCompletionList(CompletionList completionList, int selectionStart);
 
-        private void InitializeInternal()
+        protected static Action<int> JumpToLocation(TextEditor editor)
         {
-            foldingManager = FoldingManager.Install(TextEditor.TextArea);
-
-            foreach (var lineTransformer in LineTransformers)
-            {
-                TextEditor.TextArea.TextView.LineTransformers.Add(lineTransformer);
-            }
-            foreach (var backgroundRenderer in BackgroundRenderers)
-            {
-                TextEditor.TextArea.TextView.BackgroundRenderers.Add(backgroundRenderer);
-            }
-
-            Initialize();
-        }
-
-        public virtual void Initialize()
-        {
-
-        }
-
-        protected Action<int> JumpToLocation()
-        {
-            return TextEditor.ScrollTo;
+            return editor.ScrollTo;
         }
     }
 }
