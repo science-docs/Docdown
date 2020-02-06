@@ -3,6 +3,7 @@ using Docdown.Util;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
 using ICSharpCode.AvalonEdit.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -74,7 +75,7 @@ namespace Docdown.ViewModel
         public WorkspaceItemViewModel PreSelectedItem { get; set; }
 
         [ChangeListener(nameof(Data))]
-        public IEnumerable<WorkspaceItemViewModel> Children => Item == null ? new WorkspaceItemViewModel[0] : new[] { Item };
+        public IEnumerable<WorkspaceItemViewModel> Children => Item == null ? Array.Empty<WorkspaceItemViewModel>() : new[] { Item };
 
         
 
@@ -98,6 +99,14 @@ namespace Docdown.ViewModel
             private set => Set(ref explorer, value);
         }
 
+        public string PdfPath
+        {
+            get => pdfPath;
+            set => Set(ref pdfPath, value);
+        }
+
+        [ChangeListener(nameof(PdfPath))]
+        public ICommand PrintCommand => string.IsNullOrEmpty(PdfPath) ? null : new PrintCommand(Item.Name, PdfPath);
         public ICommand SaveSelectedItemCommand => new ActionCommand(SaveSelectedItem);
         public ICommand SaveAllItemsCommand => new ActionCommand(SaveAllItems);
         public ICommand CloseAllItemsCommand => new ActionCommand(CloseAll);
@@ -109,6 +118,7 @@ namespace Docdown.ViewModel
         private Explorer explorer;
         private WorkspaceItemViewModel item;
         private WorkspaceItemViewModel selectedItem;
+        private string pdfPath;
         
         public WorkspaceViewModel() : base(null)
         {
@@ -194,10 +204,10 @@ namespace Docdown.ViewModel
             if (OpenItems.Contains(explorerItem))
             {
                 item.IsSelected = explorerItem == SelectedItem;
-                if (explorerItem.Editor != null)
-                {
-                    item.ScrollOffset = await CalculateCurrentMidOffset(explorerItem.Editor.TextEditor.TextArea.TextView);
-                }
+                //if (explorerItem.Editor != null)
+                //{
+                //    item.ScrollOffset = await CalculateCurrentMidOffset(explorerItem.Editor.TextEditor.TextArea.TextView);
+                //}
             }
 
             if (item.IsNecessary())
@@ -260,10 +270,10 @@ namespace Docdown.ViewModel
                         {
                             SelectedItem = workspaceItem;
                         }
-                        if (workspaceItem.Editor != null)
-                        {
-                            workspaceItem.Editor.TextEditor.ScrollTo(item.ScrollOffset);
-                        }
+                        //if (workspaceItem.Editor != null)
+                        //{
+                        //    workspaceItem.Editor.TextEditor.ScrollTo(item.ScrollOffset);
+                        //}
                     }
                     else if (workspaceItem.IsDirectory)
                     {

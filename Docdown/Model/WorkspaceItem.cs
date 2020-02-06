@@ -119,7 +119,7 @@ namespace Docdown.Model
 
             if (content is null)
             {
-                content = new byte[0];
+                content = Array.Empty<byte>();
             }
 
             if (FindChild(fullName, out var existing))

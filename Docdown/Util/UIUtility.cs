@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -16,6 +17,16 @@ namespace Docdown.Util
     public static class UIUtility
     {
         private static readonly Dictionary<string, SolidColorBrush> brushes = new Dictionary<string, SolidColorBrush>();
+
+        public static void Focus(DependencyObject baseObject, TextBoxBase element)
+        {
+            FocusManager.SetFocusedElement(baseObject, element);
+            Delay(baseObject, 16, () =>
+            {
+                element.SelectAll();
+                Keyboard.Focus(element);
+            });
+        }
 
         public static SolidColorBrush GetColorBrush(string colorCode)
         {

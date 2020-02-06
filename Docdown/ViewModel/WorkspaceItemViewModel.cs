@@ -17,7 +17,6 @@ using System.Text;
 using Docdown.Editor;
 using System.Collections.ObjectModel;
 using Docdown.ViewModel.Editing;
-using HtmlAgilityPack;
 
 namespace Docdown.ViewModel
 {
@@ -128,12 +127,6 @@ namespace Docdown.ViewModel
             set => Set(ref showPreview, value);
         }
 
-        public string PdfPath
-        {
-            get => pdfPath;
-            set => Set(ref pdfPath, value);
-        }
-
         public ConverterType ConverterType
         {
             get => converterType;
@@ -162,8 +155,7 @@ namespace Docdown.ViewModel
         public ICommand ShowPreviewCommand => new ActionCommand(() => ShowPreview = true);
         public ICommand ExcludeCommand => new ActionCommand(() => IsExcluded = true);
         public ICommand IncludeCommand => new ActionCommand(() => IsExcluded = false);
-        [ChangeListener(nameof(PdfPath))]
-        public ICommand PrintCommand => string.IsNullOrEmpty(PdfPath) ? null : new PrintCommand(Name, PdfPath);
+        
         public ICommand RenameCommand => new ActionCommand(() => IsNameChanging = true);
         public ICommand CancelNameChangeCommand => new ActionCommand(CancelNameChange);
         public ICommand NameChangeEndCommand => new ActionCommand(NameChangeEnd);
@@ -182,11 +174,11 @@ namespace Docdown.ViewModel
                 if (view is null)
                 {
                     view = BuildView(out var vm);
-                    if (view is IEditor editor)
+                    if (view is IEditor editor && view is FrameworkElement frameworkElement)
                     {
                         Search = new SearchViewModel(editor);
                         Editor = vm;
-                        SetContent(editor);
+                        frameworkElement.DataContext = this;
                     }
                 }
                 return view;
@@ -224,6 +216,12 @@ namespace Docdown.ViewModel
         public bool IsDirectory => Data.IsDirectory;
         public bool IsFile => Data.IsFile;
 
+        public string PdfPath
+        {
+            get => pdfPath ?? Workspace.PdfPath;
+            set => Set(ref pdfPath, value);
+        }
+
         public WorkspaceViewModel Workspace { get; }
         public WorkspaceItemViewModel Parent { get; }
 
@@ -260,6 +258,16 @@ namespace Docdown.ViewModel
             foreach (var child in workspaceItem.Children)
             {
                 Children.Add(new WorkspaceItemViewModel(workspaceViewModel, this, child));
+            }
+
+            Workspace.PropertyChanged += PdfPathChanged;
+        }
+
+        private void PdfPathChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(WorkspaceViewModel.PdfPath))
+            {
+                SendPropertyUpdate(nameof(PdfPath));
             }
         }
 
@@ -337,8 +345,8 @@ namespace Docdown.ViewModel
             var watch = Stopwatch.StartNew();
             try
             {
-                PdfPath = string.Empty;
-                PdfPath = await Data.Convert(converterToken);
+                Workspace.PdfPath = string.Empty;
+                Workspace.PdfPath = await Data.Convert(converterToken);
                 IsCompiled = true;
                 ShowPreview = true;
                 watch.Stop();
@@ -429,7 +437,7 @@ namespace Docdown.ViewModel
                     {
                         var newHash = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, FullName);
                         Data.FileInfo.FileSystem.File.Move(oldHash, newHash);
-                        PdfPath = newHash;
+                        Workspace.PdfPath = newHash;
                     }
                 }
                 catch
@@ -547,56 +555,34 @@ namespace Docdown.ViewModel
         private DocumentViewer ShowPdf()
         {
             var docViewer = new DocumentViewer();
-
-            Task.Run(async () =>
-            {
-                try
-                {
-                    var bytes = Data.Read();
-                    var temp = IOUtility.GetTempFile(Data.FileInfo.FileSystem.Directory);
-                    await IOUtility.WriteAllBytes(temp, Data.FileInfo.FileSystem.File, bytes);
-                    PdfPath = temp;
-                }
-                catch (Exception e)
-                {
-                    Workspace.Messages.Error(await ErrorUtility.GetErrorMessage(e, Dispatcher));
-                }
-            });
-            
+            PdfPath = Data.FullName;
             return docViewer;
         }
 
         private IEditor ShowMdEditorAndPdf(out EditorViewModel vm)
         {
             var editorAndViewer = new EditorAndViewer();
-            var temp = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, Data.FullName);
+            var temp = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, Data.Workspace.Item.FullName);
             if (Data.FileInfo.FileSystem.File.Exists(temp))
             {
-                PdfPath = temp;
+                Workspace.PdfPath = temp;
                 ShowPreview = true;
             }
-            editorAndViewer.DataContext = this;
-            vm = new MarkdownEditorViewModel(this, editorAndViewer.Editor);
+            vm = new MarkdownEditorViewModel(this);
             return editorAndViewer;
         }
 
         private IEditor ShowBibEditor(out EditorViewModel vm)
         {
-            var editor = new DefaultEditor
-            {
-                DataContext = this
-            };
-            vm = new BibEditorViewModel(this, editor.Editor);
+            var editor = new EditorControl();
+            vm = new BibEditorViewModel(this);
             return editor;
         }
 
         private IEditor ShowDefaultEditor(out EditorViewModel vm)
         {
-            var editor = new DefaultEditor
-            {
-                DataContext = this
-            };
-            vm = new DefaultEditorViewModel(this, editor.Editor);
+            var editor = new EditorControl();
+            vm = new DefaultEditorViewModel(this);
             return editor;
         }
 

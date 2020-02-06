@@ -22,7 +22,7 @@ namespace Docdown.ViewModel
 
         private T data;
 
-        public ObservableObject(T data) : base()
+        protected ObservableObject(T data) : base()
         {
             this.data = data;
         }
@@ -63,7 +63,7 @@ namespace Docdown.ViewModel
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ObservableObject()
+        protected ObservableObject()
         {
             PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
             InspectChangeListener();
@@ -117,7 +117,7 @@ namespace Docdown.ViewModel
             }
         }
 
-        protected MessageBoxResult ShowMessage(string title, string message, MessageBoxButton button)
+        protected static MessageBoxResult ShowMessage(string title, string message, MessageBoxButton button)
         {
             return Util.MessageBox.Show(title, message, button);
         }
@@ -127,7 +127,7 @@ namespace Docdown.ViewModel
             return await Dispatcher.InvokeAsync(() => Util.MessageBox.Show(title, message, button));
         }
 
-        protected string ShowInput(string title, string message, string pretext)
+        protected static string ShowInput(string title, string message, string pretext)
         {
             return InputBox.Show(title, message, pretext);
         }
@@ -215,7 +215,7 @@ namespace Docdown.ViewModel
             {
                 if (emitter.Contains(e.PropertyName))
                 {
-                    listener.Invoke(sender, new object[0]);
+                    listener.Invoke(sender, Array.Empty<object>());
                 }
             }
         }

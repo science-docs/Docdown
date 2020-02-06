@@ -35,8 +35,7 @@ namespace Docdown.Util
         {
             if (obj is TextBoxBase textBox && e.NewValue is bool value && value)
             {
-                textBox.SelectAll();
-                FocusManager.SetFocusedElement(Application.Current.MainWindow, textBox);
+                UIUtility.Focus(Application.Current.MainWindow, textBox);
             }
         }
     }

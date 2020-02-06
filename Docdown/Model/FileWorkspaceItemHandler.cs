@@ -20,7 +20,7 @@ namespace Docdown.Model
                 throw new InvalidOperationException("Can only convert files");
             }
 
-            string temp = IOUtility.GetHashFile(item.Workspace.FileSystem.Directory, item.FullName);
+            string temp = IOUtility.GetHashFile(item.Workspace.FileSystem.Directory, item.Workspace.Item.FullName);
             var settings = Settings.Default;
             var onlySelected = settings.CompileOnlySelected;
 
