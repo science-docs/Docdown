@@ -127,10 +127,9 @@
             <MenuItem Header="View">
                 <MenuItem Header="Workspace Explorer" 
                           IsCheckable="True" 
-                          IsChecked="{Binding ExplorerVisible}"/>
+                          Command="{Binding ShowExplorerCommand}"/>
                 <MenuItem Header="Outline" 
-                          IsCheckable="True" 
-                          IsChecked="{Binding OutlineVisible}"/>
+                          Command="{Binding ShowOutlineCommand}"/>
                 <Separator/>
                 <MenuItem Header="Tasks"/>
             </MenuItem>
@@ -350,14 +349,14 @@
             </Grid.RowDefinitions>
         </Grid>
 
-        <Controls:TreeGrid x:Name="GridTree" Margin="6" Grid.ColumnSpan="3" Grid.Row="2" SplitterThickness="6">
-            <Controls:ViewWrapper x:Name="Explorer" Visibility="{Binding Path=ExplorerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Controls:TreeGrid Margin="6" Grid.ColumnSpan="3" Grid.Row="2" SplitterThickness="6" Tree="{Binding ContentTree}">
+            <Controls:ViewWrapper x:Name="_Explorer">
                 <Controls:WorkspaceView DataContext="{Binding Workspace.Explorer}"/>
             </Controls:ViewWrapper>
-            <Controls:ViewWrapper x:Name="Outline" Visibility="{Binding Path=OutlineVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Controls:ViewWrapper x:Name="_Outline">
                 <Controls:OutlineView DataContext="{Binding Workspace}"/>
             </Controls:ViewWrapper>
-            <Controls:TabView x:Name="Tab" DataContext="{Binding Workspace}"/>
+            <Controls:TabView x:Name="_Tab" DataContext="{Binding Workspace}"/>
         </Controls:TreeGrid>
 
         <Grid x:Name="StatusGrid" 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Docdown.ViewModel.Commands;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -19,6 +20,19 @@ namespace Docdown.Controls
             = DependencyProperty.Register(nameof(Tree), typeof(TreeNode), typeof(TreeGrid), new PropertyMetadata(null, TreeChanged));
         public static readonly DependencyProperty SplitterThicknessProperty 
             = DependencyProperty.Register(nameof(SplitterThickness), typeof(double), typeof(TreeGrid));
+
+        public static readonly DependencyProperty TreeNodeProperty
+            = DependencyProperty.RegisterAttached(nameof(TreeNode), typeof(TreeNode), typeof(TreeGrid));
+
+        public static TreeNode GetTreeNode(DependencyObject dependencyObject)
+        {
+            return dependencyObject.GetValue(TreeNodeProperty) as TreeNode;
+        }
+
+        public static void SetTreeNode(DependencyObject dependencyObject, TreeNode treeNode)
+        {
+            dependencyObject.SetValue(TreeNodeProperty, treeNode);
+        }
 
         public TreeNode Tree
         {
@@ -65,7 +79,10 @@ namespace Docdown.Controls
             if (sender is TreeGrid grid)
             {
                 grid.Children.Clear();
-                grid.AddNode((TreeNode)e.NewValue);
+                if (e.NewValue != null)
+                    grid.AddNode((TreeNode)e.NewValue);
+
+                grid.InvalidateMeasure();
             }
         }
 
@@ -76,6 +93,7 @@ namespace Docdown.Controls
             {
                 node.Splitter = null;
                 Children.Add(node.Element);
+                SetTreeNode(node.Element, node);
             }
             else
             {
@@ -92,14 +110,35 @@ namespace Docdown.Controls
                 AddNode(node.B);
             }
         }
+
+        public static ActionCommand RemoveTreeGridItemCommand(UIElement element)
+        {
+            return new ActionCommand(() =>
+            {
+                var treeNode = GetTreeNode(element);
+                treeNode.Parent.Remove(treeNode.Element);
+            });
+        }
     }
 
-    public class TreeNode : INotifyPropertyChanged
+    public class TreeNode
     {
+        public string Id { get; set; }
         public UIElement Element { get; set; }
         public TreeNode A { get; set; }
         public TreeNode B { get; set; }
         public TreeNode Parent { get; set; }
+        public TreeNode TopParent
+        {
+            get
+            {
+                if (Parent == null)
+                {
+                    return this;
+                }
+                return Parent.TopParent;
+            }
+        }
         public double Distribution
         {
             get => distribution;
@@ -117,47 +156,118 @@ namespace Docdown.Controls
 
         private double distribution = 0.5;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void Set<T>(ref T field, T value, [CallerMemberName]string property = null)
-        {
-            field = value;
-            SendPropertyUpdate(property);
-        }
-
-        protected internal void SendPropertyUpdate([CallerMemberName]string property = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
-        }
-
         public void AddA(UIElement element, Orientation orientation, double distribution = 0.5)
         {
             A = new TreeNode
             {
-                Element = element
+                Element = element,
+                Parent = this
             };
             B = new TreeNode
             {
-                Element = Element
+                Element = Element,
+                Parent = this
             };
             Orientation = orientation;
             Distribution = distribution;
             Element = null;
+            Grid.Tree = null;
+            Grid.Tree = TopParent;
+        }
+
+        public void RemoveA()
+        {
+            if (A.Element != null)
+            {
+                Grid.Children.Remove(A.Element);
+            }
+
+            Element = B.Element;
+            TreeGrid.SetTreeNode(Element, this);
+            A = B = null;
+            Grid.Tree = null;
+            Grid.Tree = TopParent;
+        }
+
+        public void RemoveB()
+        {
+            if (B.Element != null)
+            {
+                Grid.Children.Remove(B.Element);
+            }
+
+            Element = A.Element;
+            TreeGrid.SetTreeNode(Element, this);
+            A = B = null;
+            Grid.Tree = null;
+            Grid.Tree = TopParent;
+        }
+
+        public void Remove(UIElement element)
+        {
+            if (A != null && A.Element == element)
+            {
+                RemoveA();
+            }
+            else if (B != null && B.Element == element)
+            {
+                RemoveB();
+            }
+        }
+
+        public void Remove(string id)
+        {
+            if (A != null && A.Id == id)
+            {
+                RemoveA();
+            }
+            else if (B != null && B.Id == id)
+            {
+                RemoveB();
+            }
+            else if (A != null)
+            {
+                A.Remove(id);
+            }
+            else if (B != null)
+            {
+                B.Remove(id);
+            }
         }
 
         public void AddB(UIElement element, Orientation orientation, double distribution = 0.5)
         {
             A = new TreeNode
             {
-                Element = Element
+                Element = Element,
+                Parent = this
             };
             B = new TreeNode
             {
-                Element = element
+                Element = element,
+                Parent = this
             };
             Orientation = orientation;
             Distribution = distribution;
             Element = null;
+            Grid.Tree = null;
+            Grid.Tree = TopParent;
+        }
+
+        public bool ContainsId(string id)
+        {
+            if (Id == id)
+            {
+                return true;
+            }
+            else if (A != null && B != null)
+            {
+                return A.ContainsId(id) || B.ContainsId(id);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public Size Measure(Size availableSize, double splitterThickness)

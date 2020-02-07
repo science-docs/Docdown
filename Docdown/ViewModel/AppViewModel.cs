@@ -1,4 +1,5 @@
-﻿using Docdown.Editor.Commands;
+﻿using Docdown.Controls;
+using Docdown.Editor.Commands;
 using Docdown.Model;
 using Docdown.ViewModel.Commands;
 using Docdown.Windows;
@@ -41,10 +42,16 @@ namespace Docdown.ViewModel
         public IConverterService ConverterService { get; set; }
         public IFileSystem FileSystem { get; set; }
 
+        public TreeNode ContentTree { get; set; }
+
         public bool ExplorerVisible
         {
             get => explorerVisible;
-            set => Set(ref explorerVisible, value);
+            set
+            {
+                Set(ref explorerVisible, value);
+                ContentTree.AddA(MainWindow.Explorer, System.Windows.Controls.Orientation.Horizontal, 0.2);
+            }
         }
 
         public bool OutlineVisible
@@ -55,6 +62,9 @@ namespace Docdown.ViewModel
 
         private bool explorerVisible = true;
         private bool outlineVisible = true;
+
+        public ICommand ShowExplorerCommand => new ActionCommand(() => ShowNode("@Explorer"));
+        public ICommand ShowOutlineCommand => new ActionCommand(() => ShowNode("@Outline"));
 
         public ICommand SearchWorkspaceCommand => new SearchFolderCommand(Settings.WorkspacePath, "Select workspace", ChangeWorkspace);
         public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(Settings);
@@ -80,6 +90,7 @@ namespace Docdown.ViewModel
 
         private AppViewModel()
         {
+            ContentTree = new TreeNode();
             FileSystem = new FileSystem();
             ConverterService = new ConverterService
             {
@@ -138,6 +149,11 @@ namespace Docdown.ViewModel
         public async Task OnClosing(CancelEventArgs args)
         {
             await Workspace.OnClosing(args);
+        }
+
+        private void ShowNode(string name)
+        {
+            //ContentTree.Remove(name);
         }
     }
 }

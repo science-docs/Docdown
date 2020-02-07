@@ -10,16 +10,11 @@ namespace Docdown.Controls
 {
     public partial class WorkspaceView : IWrappedView
     {
-        public ICommand CloseCommand => new ActionCommand(Close);
+        public ICommand CloseCommand => TreeGrid.RemoveTreeGridItemCommand(this);
 
         public WorkspaceView()
         {
             InitializeComponent();
-        }
-
-        private void Close()
-        {
-            AppViewModel.Instance.ExplorerVisible = false;
         }
 
         private void ViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

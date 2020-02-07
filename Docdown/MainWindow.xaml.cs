@@ -16,6 +16,9 @@ namespace Docdown
         readonly AppViewModel app;
         bool closeFlag = true;
 
+        public static ViewWrapper Outline;
+        public static ViewWrapper Explorer;
+
         public MainWindow()
         {
             //if (Debugger.IsAttached)
@@ -37,6 +40,9 @@ namespace Docdown
                 DataContext = app = splash.ViewModel.Data;
                 Closing += OnClosing;
 
+                Outline = _Outline;
+                Explorer = _Explorer;
+
                 TreeNode c = new TreeNode
                 {
                     Element = Explorer
@@ -47,11 +53,11 @@ namespace Docdown
                     Element = Outline
                 };
 
-                
+
 
                 TreeNode a = new TreeNode
                 {
-                    Element = Tab
+                    Element = _Tab
                 };
 
                 TreeNode b = new TreeNode
@@ -62,6 +68,9 @@ namespace Docdown
                     Orientation = System.Windows.Controls.Orientation.Vertical
                 };
 
+                c.Parent = d.Parent = b;
+
+
                 TreeNode node = new TreeNode
                 {
                     A = b,
@@ -70,7 +79,9 @@ namespace Docdown
                     Orientation = System.Windows.Controls.Orientation.Horizontal
                 };
 
-                GridTree.Tree = node;
+                b.Parent = a.Parent = node;
+
+                app.ContentTree = node;
             }
             else
             {

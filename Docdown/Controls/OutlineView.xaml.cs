@@ -1,23 +1,16 @@
 ﻿using Docdown.ViewModel;
-using Docdown.ViewModel.Commands;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Docdown.Controls
 {
     public partial class OutlineView : IWrappedView
     {
-        public ICommand CloseCommand => new ActionCommand(Close);
+        public ICommand CloseCommand => TreeGrid.RemoveTreeGridItemCommand(this);
 
         public OutlineView()
         {
             InitializeComponent();
-        }
-
-        private void Close()
-        {
-            AppViewModel.Instance.OutlineVisible = false;
         }
 
         private void OutlineSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
