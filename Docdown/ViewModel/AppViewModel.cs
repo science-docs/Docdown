@@ -44,27 +44,8 @@ namespace Docdown.ViewModel
 
         public TreeNode ContentTree { get; set; }
 
-        public bool ExplorerVisible
-        {
-            get => explorerVisible;
-            set
-            {
-                Set(ref explorerVisible, value);
-                ContentTree.AddA(CommonControls.WorkspaceExplorer, System.Windows.Controls.Orientation.Horizontal, 0.2);
-            }
-        }
-
-        public bool OutlineVisible
-        {
-            get => outlineVisible;
-            set => Set(ref outlineVisible, value);
-        }
-
-        private bool explorerVisible = true;
-        private bool outlineVisible = true;
-
-        public ICommand ShowExplorerCommand => new ActionCommand(() => ShowNode("@Explorer"));
-        public ICommand ShowOutlineCommand => new ActionCommand(() => ShowNode("@Outline"));
+        public ICommand ShowExplorerCommand => new ActionCommand(() => ShowNode(CommonControlType.Explorer));
+        public ICommand ShowOutlineCommand => new ActionCommand(() => ShowNode(CommonControlType.Outline));
 
         public ICommand SearchWorkspaceCommand => new SearchFolderCommand(Settings.WorkspacePath, "Select workspace", ChangeWorkspace);
         public ICommand OpenSettingsCommand => new OpenWindowCommand<SettingsWindow>(Settings);
@@ -151,8 +132,18 @@ namespace Docdown.ViewModel
             await Workspace.OnClosing(args);
         }
 
-        private void ShowNode(string name)
+        private void ShowNode(CommonControlType type)
         {
+            if (ContentTree.ContainsType(type))
+                return;
+
+            //switch (type)
+            //{
+            //    case CommonControlType.Explorer:
+            //    case CommonControlType.Outline:
+
+            //}
+
             //ContentTree.Remove(name);
         }
     }

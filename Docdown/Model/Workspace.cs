@@ -275,6 +275,17 @@ namespace Docdown.Model
             return null;
         }
 
+        public async Task<string> Convert(CancelToken cancelToken)
+        {
+            string path = null;
+            var iterator = Handlers.GetEnumerator();
+            while (path == null && iterator.MoveNext())
+            {
+                path = await iterator.Current.Convert(this, cancelToken);
+            }
+            return path;
+        }
+
         public IWorkspaceItem FindRelativeItem(string relativePath)
         {
             if (string.IsNullOrWhiteSpace(relativePath))

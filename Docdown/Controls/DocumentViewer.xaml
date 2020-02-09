@@ -13,7 +13,7 @@
             <PdfViewer:PdfViewer.Style>
                 <Style TargetType="PdfViewer:PdfViewer">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsConverting}" Value="True">
+                        <DataTrigger Binding="{Binding Workspace.IsConverting}" Value="True">
                             <DataTrigger.EnterActions>
                                 <BeginStoryboard Storyboard="{StaticResource DecreaseOpacityAnimation}"/>
                             </DataTrigger.EnterActions>
@@ -27,7 +27,7 @@
         </PdfViewer:PdfViewer>
         <Control x:Name="Spinner" 
                  Style="{StaticResource BusyAnimationStyle}" 
-                 Visibility="{Binding IsConverting, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                 Visibility="{Binding Workspace.IsConverting, Converter={StaticResource BooleanToVisibilityConverter}}" 
                  VerticalAlignment="Center" 
                  HorizontalAlignment="Center"/>
     </Grid>

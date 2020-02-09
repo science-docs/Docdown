@@ -31,14 +31,25 @@ namespace Docdown.Controls
 
         private static PreviewGrid CreateMainContent()
         {
-            var tab = new PreviewGrid
+            var grid = new PreviewGrid
             {
                 DataContext = AppViewModel.Instance.Workspace
             };
             //tab.SetBinding(FrameworkElement.DataContextProperty, "Workspace");
-            tab.SetBinding(PreviewGrid.ItemsSourceProperty, "OpenItems");
+            grid.SetBinding(PreviewGrid.ItemsSourceProperty, "OpenItems");
 
-            return tab;
+            return grid;
+        }
+
+        public static void Layout(TreeGrid grid, CommonControlType type, Dock dock)
+        {
+            var tree = grid.Tree;
+            if (tree == null)
+            {
+                tree = new TreeNode();
+            }
+
+            grid.Tree = tree;
         }
     }
 

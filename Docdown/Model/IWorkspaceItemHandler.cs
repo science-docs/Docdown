@@ -9,7 +9,7 @@ namespace Docdown.Model
 
         byte[] Read(IWorkspaceItem item);
         Task Save(IWorkspaceItem item, byte[] bytes);
-        Task<string> Convert(IWorkspaceItem item, CancelToken cancelToken);
+        Task<string> Convert(IWorkspace workspace, CancelToken cancelToken);
         Task Delete(IWorkspaceItem item);
         Task Rename(IWorkspaceItem item, string newName);
     }

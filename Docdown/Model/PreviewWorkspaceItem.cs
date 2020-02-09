@@ -36,11 +36,6 @@ namespace Docdown.Model
 
         public bool IsExcludedEffectively => false;
 
-        public Task<string> Convert(CancelToken cancelToken)
-        {
-            return Task.FromResult(string.Empty);
-        }
-
         public Task<IWorkspaceItem> CopyExistingFolder(string path)
         {
             return Task.FromResult<IWorkspaceItem>(null);

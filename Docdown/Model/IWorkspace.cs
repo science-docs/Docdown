@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Threading.Tasks;
+using Docdown.Util;
 
 namespace Docdown.Model
 {
@@ -14,6 +16,7 @@ namespace Docdown.Model
         IConverterService ConverterService { get; }
         ConverterType FromType { get; }
         ConverterType ToType { get; set; }
+        Task<string> Convert(CancelToken cancelToken);
         List<IWorkspaceItemHandler> Handlers { get; }
         Bibliography Bibliography { get; }
         WorkspaceSettings Settings { get; }

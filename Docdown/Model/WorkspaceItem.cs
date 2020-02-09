@@ -1,4 +1,4 @@
-using Docdown.Util;
+﻿using Docdown.Util;
 using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
@@ -76,17 +76,6 @@ namespace Docdown.Model
             FileInfo = info;
             Parent = parent;
             Workspace = workspace;
-        }
-
-        public async Task<string> Convert(CancelToken cancelToken)
-        {
-            string path = null;
-            var iterator = Workspace.Handlers.GetEnumerator();
-            while (path == null && iterator.MoveNext())
-            {
-                path = await iterator.Current.Convert(this, cancelToken);
-            }
-            return path;
         }
 
         public async Task<IWorkspaceItem> CopyExistingFolder(string path)

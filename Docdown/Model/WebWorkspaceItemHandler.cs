@@ -17,7 +17,7 @@ namespace Docdown.Model
             User = user;
         }
 
-        public Task<string> Convert(IWorkspaceItem item, CancelToken cancelToken)
+        public Task<string> Convert(IWorkspace workspace, CancelToken cancelToken)
         {
             throw new NotImplementedException();
         }

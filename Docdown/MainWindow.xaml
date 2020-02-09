@@ -46,8 +46,9 @@
     <Window.InputBindings>
         <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding Workspace.SaveSelectedItemCommand}"/>
         <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{Binding Workspace.SaveAllItemsCommand}"/>
-        <KeyBinding Key="F5" Command="{Binding Workspace.SelectedItem.ConvertCommand}"/>
-        <KeyBinding Key="P" Modifiers="Ctrl" Command="{Binding Workspace.SelectedItem.PrintCommand}"/>
+        <KeyBinding Key="F5" Command="{Binding Workspace.ConvertCommand}"/>
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{Binding Workspace.PrintCommand}"/>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{Binding SearchWorkspaceCommand}"/>
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -78,7 +79,9 @@
         </Grid.ColumnDefinitions>
         <Menu Grid.ColumnSpan="3" Grid.Row="0" Style="{StaticResource VSMenu}" ItemContainerStyle="{StaticResource VSMenuItem}">
             <MenuItem Header="{DynamicResource Main_Menu_File}">
-                <MenuItem Header="{DynamicResource Main_Menu_File_OpenWorkspace}" Command="{Binding SearchWorkspaceCommand}">
+                <MenuItem Header="{DynamicResource Main_Menu_File_OpenWorkspace}" 
+                          Command="{Binding SearchWorkspaceCommand}"
+                          InputGestureText="{DynamicResource Main_Menu_File_OpenWorkspace_Gesture}">
                     <MenuItem.Icon>
                         <Rectangle Fill="{DynamicResource OpenFolderIcon}" Height="16" Width="16"/>
                     </MenuItem.Icon>
@@ -126,7 +129,6 @@
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Header="Workspace Explorer" 
-                          IsCheckable="True" 
                           Command="{Binding ShowExplorerCommand}"/>
                 <MenuItem Header="Outline" 
                           Command="{Binding ShowOutlineCommand}"/>
@@ -215,8 +217,8 @@
             <Rectangle Width="1" 
                        Margin="0 2" 
                        Fill="{DynamicResource GrayBrush9}"/>
-            <Button IsEnabled="{Binding Workspace.SelectedItem.CanConvert, FallbackValue=False}" 
-                    Command="{Binding Workspace.SelectedItem.ConvertCommand, FallbackValue={x:Null}}" 
+            <Button IsEnabled="{Binding Workspace.CanConvert, FallbackValue=False}" 
+                    Command="{Binding Workspace.ConvertCommand, FallbackValue={x:Null}}" 
                     Height="20" 
                     Width="Auto">
                 <Button.ToolTip>
@@ -233,16 +235,16 @@
                                Margin="4 0 6 0"/>
                 </StackPanel>
             </Button>
-            <Button Command="{Binding Workspace.SelectedItem.StopConvertCommand}" 
+            <Button Command="{Binding Workspace.StopConvertCommand}" 
                     ToolTip="{DynamicResource Main_Menu_Stop_Tooltip}" 
-                    IsEnabled="{Binding Workspace.SelectedItem.IsConverting, FallbackValue=False}">
+                    IsEnabled="{Binding Workspace.IsConverting, FallbackValue=False}">
                 <Rectangle Fill="{StaticResource StopIcon}" 
                            Height="16" 
                            Width="16"/>
             </Button>
             <Button Command="{Binding Workspace.PrintCommand, FallbackValue={x:Null}}" 
                     ToolTip="{DynamicResource Main_Menu_Print_Tooltip}" 
-                    IsEnabled="{Binding Workspace.SelectedItem.IsCompiled, FallbackValue=False}">
+                    IsEnabled="{Binding Workspace.IsCompiled, FallbackValue=False}">
                 <Rectangle Fill="{DynamicResource PrintIcon}" 
                            Height="16" 
                            Width="16"/>

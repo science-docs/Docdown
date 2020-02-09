@@ -1,4 +1,4 @@
-using Docdown.Model;
+﻿using Docdown.Model;
 using Docdown.Properties;
 using Docdown.Text;
 using Docdown.Text.Markdown;
@@ -73,7 +73,7 @@ namespace Docdown.Util
 
         public static async Task<HttpResponseMessage> DeleteRequest(string url, IEnumerable<MultipartFormParameter> postParameters)
         {
-            return await SimpleRequest(url, HttpMethod.Delete, CancellationToken.None, postParameters.ToArray());
+            return await SimpleRequest(url, HttpMethod.Delete, postParameters.ToArray(), CancellationToken.None);
         }
 
         public static async Task<HttpResponseMessage> GetRequest(string url, IEnumerable<MultipartFormParameter> postParameters)
@@ -93,7 +93,7 @@ namespace Docdown.Util
 
         public static async Task<byte[]> DownloadAsync(string url, IProgress<WebDownloadProgress> progress, CancellationToken cancellationToken)
         {
-            HttpResponseMessage response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
             
             using (var ms = new MemoryStream())
             {
@@ -102,7 +102,7 @@ namespace Docdown.Util
                     var clength = response.Content.Headers.ContentLength;
                     if (!clength.HasValue)
                     {
-                        return new byte[0];
+                        return Array.Empty<byte>();
                     }
                     var totalLength = (int)clength.Value;
                     progress.Report(new WebDownloadProgress(totalLength, 0));
@@ -124,7 +124,31 @@ namespace Docdown.Util
             }
         }
 
-        public static async Task<HttpResponseMessage> SimpleRequest(string url, HttpMethod method, CancellationToken cancellationToken, IEnumerable<MultipartFormParameter> postParameters)
+        public static async Task<HttpResponseMessage> SimpleRequest(string url, HttpMethod method, string body, CancellationToken cancellationToken)
+        {
+            var request = new HttpRequestMessage
+            {
+                Method = method,
+                RequestUri = new Uri(url)
+            };
+            request.Headers.UserAgent.Add(UserAgent);
+
+            if (body != null)
+            {
+                var content = new StringContent(body, Encoding.UTF8, "application/x-www-form-urlencoded");
+                request.Content = content;
+            }
+
+            var response = await client.SendAsync(request, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                var exception = await ServerException.Create(response);
+                throw exception;
+            }
+            return response;
+        }
+
+        public static async Task<HttpResponseMessage> SimpleRequest(string url, HttpMethod method, IEnumerable<MultipartFormParameter> postParameters, CancellationToken cancellationToken)
         {
             var request = new HttpRequestMessage
             {
@@ -162,7 +186,15 @@ namespace Docdown.Util
 
         public static async Task<HttpResponseMessage> GetRequest(string url, params MultipartFormParameter[] postParameters)
         {
-            return await SimpleRequest(url, HttpMethod.Get, CancellationToken.None, postParameters);
+            return await SimpleRequest(url, HttpMethod.Get, postParameters, CancellationToken.None);
+        }
+
+        public static async Task<byte[]> SimpleByteRequest(string url, params MultipartFormParameter[] parameters)
+        {
+            using (var res = await GetRequest(url, parameters))
+            {
+                return await res.Content.ReadAsByteArrayAsync();
+            }
         }
 
         public static async Task<string> SimpleTextRequest(string url, params MultipartFormParameter[] postParameters)
@@ -188,17 +220,17 @@ namespace Docdown.Util
 
         public static async Task<HttpResponseMessage> MoveRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters)
         {
-            return await SimpleRequest(postUrl, Move, CancellationToken.None, postParameters.ToArray());
+            return await SimpleRequest(postUrl, Move, postParameters.ToArray(), CancellationToken.None);
         }
 
         public static async Task<HttpResponseMessage> PostRequest(string postUrl, params MultipartFormParameter[] postParameters)
         {
-            return await SimpleRequest(postUrl, HttpMethod.Post, CancellationToken.None, postParameters);
+            return await SimpleRequest(postUrl, HttpMethod.Post, postParameters, CancellationToken.None);
         }
 
-        public static async Task<HttpResponseMessage> PostRequest(string postUrl, CancellationToken cancellationToken, IEnumerable<MultipartFormParameter> postParameters)
+        public static async Task<HttpResponseMessage> PostRequest(string postUrl, IEnumerable<MultipartFormParameter> postParameters, CancellationToken cancellationToken)
         {
-            return await SimpleRequest(postUrl, HttpMethod.Post, cancellationToken, postParameters.ToArray());
+            return await SimpleRequest(postUrl, HttpMethod.Post, postParameters.ToArray(), cancellationToken);
         }
     }
 
@@ -359,8 +391,9 @@ namespace Docdown.Util
 
         public static IEnumerable<MultipartFormParameter> FromFolder(IDirectoryInfo directoryInfo)
         {
-            var item = new WorkspaceItem(directoryInfo, null, null);
-            return CreateFormData(item, item, false).Where(e => e != null);
+            //var item = new WorkspaceItem(directoryInfo, null, null);
+            //return CreateFormData(item, item, false).Where(e => e != null);
+            throw new NotImplementedException();
         }
 
         public static IEnumerable<MultipartFormParameter> FromWebWorkspace(IWorkspace workspace, User user)
@@ -388,12 +421,12 @@ namespace Docdown.Util
             yield return CreateFile("content", file);
         }
 
-        public static IEnumerable<MultipartFormParameter> FromWorkspaceItem(IWorkspaceItem workspaceItem, bool onlySelected)
+        public static IEnumerable<MultipartFormParameter> FromWorkspace(IWorkspace workspace)
         {
-            return CreateFormData(workspaceItem.Parent, workspaceItem, onlySelected).Where(e => e != null).Distinct();
+            return CreateFormData(workspace.Item).Where(e => e != null).Distinct();
         }
 
-        private static IEnumerable<MultipartFormParameter> CreateFormData(IWorkspaceItem item, IWorkspaceItem root, bool onlySelected)
+        private static IEnumerable<MultipartFormParameter> CreateFormData(IWorkspaceItem item)
         {
             if (item is null || item.IsExcluded)
             {
@@ -403,13 +436,13 @@ namespace Docdown.Util
             {
                 foreach (var child in item.Children)
                 {
-                    foreach (var data in CreateFormData(child, root, onlySelected))
+                    foreach (var data in CreateFormData(child))
                     {
                         yield return data;
                     }
                 }
             }
-            else if (!onlySelected || item.Equals(root))
+            else
             {
                 yield return CreateFile(item);
             }

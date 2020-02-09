@@ -123,7 +123,7 @@ namespace Docdown.Controls
 
     public class TreeNode
     {
-        public string Id { get; set; }
+        public CommonControlType Type { get; set; }
         public UIElement Element { get; set; }
         public TreeNode A { get; set; }
         public TreeNode B { get; set; }
@@ -215,26 +215,6 @@ namespace Docdown.Controls
             }
         }
 
-        public void Remove(string id)
-        {
-            if (A != null && A.Id == id)
-            {
-                RemoveA();
-            }
-            else if (B != null && B.Id == id)
-            {
-                RemoveB();
-            }
-            else if (A != null)
-            {
-                A.Remove(id);
-            }
-            else if (B != null)
-            {
-                B.Remove(id);
-            }
-        }
-
         public void AddB(UIElement element, Orientation orientation, double distribution = 0.5)
         {
             A = new TreeNode
@@ -254,15 +234,15 @@ namespace Docdown.Controls
             Grid.Tree = TopParent;
         }
 
-        public bool ContainsId(string id)
+        public bool ContainsType(CommonControlType type)
         {
-            if (Id == id)
+            if (Type == type)
             {
                 return true;
             }
             else if (A != null && B != null)
             {
-                return A.ContainsId(id) || B.ContainsId(id);
+                return A.ContainsType(type) || B.ContainsType(type);
             }
             else
             {

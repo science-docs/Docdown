@@ -84,6 +84,8 @@ namespace Docdown.ViewModel.Editing
             editor.MouseHover += MouseHover;
             editor.MouseHoverStopped += MouseHoverStopped;
             editor.TextChanged += EditorTextChanged;
+
+            debounced(editor);
         }
 
         private void MouseHover(object sender, MouseEventArgs e)

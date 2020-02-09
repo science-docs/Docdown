@@ -13,28 +13,22 @@ namespace Docdown.Model
     {
         public int Order => 0;
 
-        public async Task<string> Convert(IWorkspaceItem item, CancelToken cancelToken)
+        public async Task<string> Convert(IWorkspace workspace, CancelToken cancelToken)
         {
-            if (item.IsDirectory)
-            {
-                throw new InvalidOperationException("Can only convert files");
-            }
-
-            string temp = IOUtility.GetHashFile(item.Workspace.FileSystem.Directory, item.Workspace.Item.FullName);
+            string temp = IOUtility.GetHashFile(workspace.FileSystem.Directory, workspace.Item.FullName);
             var settings = Settings.Default;
-            var onlySelected = settings.CompileOnlySelected;
 
             if (settings.UseOfflineCompiler)
             {
-                return PandocUtility.Compile(temp, item.TopParent.FullName, settings.LocalTemplate, settings.LocalCsl, "*.md");
+                return PandocUtility.Compile(temp, workspace.Item.FullName, settings.LocalTemplate, settings.LocalCsl, "*.md");
             }
             else
             {
-                var bytes = await item.Workspace.ConverterService.Convert(MultipartFormParameter
-                    .ApiParameter(item.FromType, item.ToType, settings.Template, settings.Csl)
+                var bytes = await workspace.ConverterService.Convert(MultipartFormParameter
+                    .ApiParameter(ConverterType.Markdown, ConverterType.Pdf, settings.Template, settings.Csl)
                     .Concat(MultipartFormParameter
-                    .FromWorkspaceItem(item, onlySelected)), cancelToken);
-                await IOUtility.WriteAllBytes(temp, item.FileInfo.FileSystem.File, bytes);
+                    .FromWorkspace(workspace)), cancelToken);
+                await IOUtility.WriteAllBytes(temp, workspace.FileSystem.File, bytes);
                 return temp;
             }
         }

@@ -1,74 +1,20 @@
-﻿using Docdown.Text.Bib;
-using HtmlAgilityPack;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Docdown.Text.Bib;
+using Docdown.Util;
+using HtmlAgilityPack;
 
-namespace Docdown.Util
+namespace Docdown.Bibliography
 {
-    public static class BibliographyUtility
+    public static class IdentifierUtility
     {
         private static readonly Regex URLRegex = new Regex(@"^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$", RegexOptions.Compiled);
         private static readonly Regex DoiRegex = new Regex(@"^10\.[a-zA-Z0-9\.]+\/[a-zA-Z0-9\.]+$", RegexOptions.Compiled);
         private static readonly Regex IsbnRegex = new Regex(@"^([0-9]{10}|[0-9]{13})$", RegexOptions.Compiled);
-
-        private const string WhereIsSciHubNow = "https://whereisscihub.now.sh/";
-        private static string CurrentSciHubAddress;
-
-        public static async Task<string> FindSciHub()
-        {
-            if (CurrentSciHubAddress == null)
-            {
-                string html = await WebUtility.SimpleTextRequest(WhereIsSciHubNow);
-                var doc = new HtmlDocument();
-                doc.LoadHtml(html);
-                CurrentSciHubAddress = doc.DocumentNode.SelectSingleNode(".//a").GetAttributeValue("href", string.Empty);
-            }
-            return CurrentSciHubAddress;
-        }
-
-        public static async Task<string> FindSciHubArticle(string doi)
-        {
-            var scihub = await FindSciHub();
-            var text = await WebUtility.SimpleTextRequest(WebUtility.BuildUrl(scihub, doi));
-            var doc = new HtmlDocument();
-            doc.LoadHtml(text);
-            var iframe = doc.GetElementbyId("pdf");
-            if (iframe != null)
-            {
-                var src = iframe.GetAttributeValue("src", string.Empty);
-                return src;
-            }
-            return null;
-        }
-
-        public static async Task<string> FindArticle(BibEntry entry)
-        {
-            var doi = entry["doi"];
-            var isbn = entry["isbn"];
-            var url = entry["url"];
-
-            if (doi == null && isbn != null)
-            {
-                doi = await DoiFromIsbn(isbn);
-            }
-
-            if (doi != null)
-            {
-                return await FindSciHubArticle(doi);
-            }
-
-            if (url != null)
-            {
-                if (url.Contains("arxiv.org"))
-                {
-                    url = url.Replace("/abs/", "/pdf/");
-                    return url;
-                }
-            }
-
-            return null;
-        }
 
         public static bool IsIsbn(string value)
         {

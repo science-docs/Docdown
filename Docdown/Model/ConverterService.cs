@@ -28,7 +28,7 @@ namespace Docdown.Model
         public async Task<byte[]> Convert(IEnumerable<MultipartFormParameter> parameters, CancelToken cancelToken)
         {
             var token = cancelToken?.ToCancellationToken() ?? new CancellationToken();
-            using (var req = await WebUtility.PostRequest(BuildConvertUrl(), token, parameters))
+            using (var req = await WebUtility.PostRequest(BuildConvertUrl(), parameters, token))
             {
                 using (var ms = new MemoryStream())
                 {

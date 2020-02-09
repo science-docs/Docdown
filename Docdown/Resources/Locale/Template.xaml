@@ -5,6 +5,7 @@
     <!-- Main Menu -->
     <System:String x:Key="Main_Menu_File">File</System:String>
     <System:String x:Key="Main_Menu_File_OpenWorkspace">Open Workspace</System:String>
+    <System:String x:Key="Main_Menu_File_OpenWorkspace_Gesture">Ctrl+O</System:String>
     <System:String x:Key="Main_Menu_File_LastWorkspaces">Last Workspaces</System:String>
     <System:String x:Key="Main_Menu_File_Close">Close</System:String>
     <System:String x:Key="Main_Menu_File_CloseAll">Close all</System:String>
@@ -21,14 +22,14 @@
     <System:String x:Key="Main_Menu_Help_Markdown">Markdown</System:String>
     <System:String x:Key="Main_Menu_Help_About">About</System:String>
 
-    <System:String x:Key="Main_Menu_Save_Tooltip">Save {0}</System:String>
+    <System:String x:Key="Main_Menu_Save_Tooltip">Save {0} (Ctrl+S)</System:String>
     <System:String x:Key="Main_Menu_SaveAll_Tooltip">Save all</System:String>
 
     <System:String x:Key="Main_Menu_Start">Start</System:String>
     <System:String x:Key="Main_Menu_Start_Tooltip">Convert to {0}</System:String>
     <System:String x:Key="Main_Menu_Stop_Tooltip">Stop compiling</System:String>
 
-    <System:String x:Key="Main_Menu_Print_Tooltip">Print File</System:String>
+    <System:String x:Key="Main_Menu_Print_Tooltip">Print File (Ctrl+P)</System:String>
 
     <System:String x:Key="Main_WordCount">Words:</System:String>
 

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -131,6 +132,21 @@ namespace Docdown.ViewModel
             set => Set(ref pdfPath, value);
         }
 
+        [ChangeListener(nameof(IsConverting))]
+        public bool CanConvert => !IsConverting;
+
+        public bool IsConverting
+        {
+            get => isConverting;
+            set => Set(ref isConverting, value);
+        }
+
+        public bool IsCompiled
+        {
+            get => isCompiled;
+            set => Set(ref isCompiled, value);
+        }
+
         [ChangeListener(nameof(PdfPath))]
         public ICommand PrintCommand => string.IsNullOrEmpty(PdfPath) ? null : new PrintCommand(Item.Name, PdfPath);
         public ICommand SaveSelectedItemCommand => new ActionCommand(SaveSelectedItem);
@@ -140,18 +156,62 @@ namespace Docdown.ViewModel
         public ICommand ChangeSelectedItemNameCommand => new ActionCommand(ChangeSelectedItemName);
         public ICommand DeleteSelectedItemCommand => new ActionCommand(DeleteSelectedItem);
         public ICommand ImportCommand => new ImportCommand(this, ConverterType.Markdown);
-        
+        public ICommand ConvertCommand => new ActionCommand(Convert);
+        public ICommand StopConvertCommand => new ActionCommand(StopConvert);
+
         private Explorer explorer;
         private WorkspaceItemViewModel item;
         private WorkspaceItemViewModel selectedItem;
         private WorkspaceItemViewModel selectedPreview;
         private WorkspaceItemViewModel pdfPreview;
+        private CancelToken converterToken;
         private string pdfPath;
-        
+        private bool isConverting;
+        private bool isCompiled;
+
         public WorkspaceViewModel() : base(null)
         {
             Wizard = new WizardViewModel(this);
             Explorer = new Explorer(this);
+        }
+
+        public async Task Convert()
+        {
+            if (!CanConvert)
+                return;
+
+            converterToken = new CancelToken();
+            AppViewModel.Instance.Messages.Working(Language.Current.Get("Workspace.Compilation.Running"));
+            IsConverting = true;
+            await SaveAllItems();
+            var watch = Stopwatch.StartNew();
+            try
+            {
+                PdfPath = await Data.Convert(converterToken);
+                IsCompiled = true;
+                watch.Stop();
+                Messages.Success(Language.Current.Get("Workspace.Compilation.Success", watch.Elapsed.Seconds, watch.Elapsed.Milliseconds));
+            }
+            catch (Exception e)
+            {
+                if (!converterToken.IsCanceled)
+                {
+                    Messages.Error(await ErrorUtility.GetErrorMessage(e, Dispatcher));
+                }
+                IsCompiled = false;
+            }
+            watch.Stop();
+
+            IsConverting = false;
+        }
+
+        public void StopConvert()
+        {
+            if (!IsConverting || converterToken is null)
+                return;
+
+            converterToken.Cancel();
+            Messages.Warning(Language.Current.Get("Workspace.Compilation.Cancelled"));
         }
 
         public void CloseAll()
@@ -270,7 +330,21 @@ namespace Docdown.ViewModel
             RefreshExplorer();
             RestoreSettings();
 
+            LoadPreview();
+
             Data.WorkspaceChanged += OnWorkspaceChanged;
+        }
+
+        private void LoadPreview()
+        {
+            if (Item != null)
+            {
+                var temp = IOUtility.GetHashFile(Data.FileSystem.Directory, Item.FullName);
+                if (Data.FileSystem.File.Exists(temp))
+                {
+                    PdfPath = temp;
+                }
+            }
         }
 
         private void RestoreSettings()

@@ -122,14 +122,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Bibliography\ICaptchaSolvingStrategy.cs" />
+    <Compile Include="Bibliography\IdentifierUtility.cs" />
+    <Compile Include="Bibliography\SciHubData.cs" />
+    <Compile Include="Bibliography\SciHubLoader.cs" />
+    <Compile Include="Bibliography\UICaptchaSolvingStrategy.cs" />
     <Compile Include="Controls\BindableTextBlock.cs" />
     <Compile Include="Controls\BindedRichTextBox.xaml.cs">
       <DependentUpon>BindedRichTextBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CommonControls.cs" />
-    <Compile Include="Controls\EditorAndViewer.xaml.cs">
-      <DependentUpon>EditorAndViewer.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\PreviewGrid.cs" />
     <Compile Include="Controls\SplitButton.cs" />
     <Compile Include="Controls\TabView.cs" />
@@ -230,7 +232,6 @@
     <Compile Include="Text\IPreprocessor.cs" />
     <Compile Include="Text\Markdown\MarkdownPreprocessor.cs" />
     <Compile Include="Text\Preprocessor.cs" />
-    <Compile Include="Util\BibliographyUtility.cs" />
     <Compile Include="Util\CancelToken.cs" />
     <Compile Include="Util\DependencyPropertyUtility.cs" />
     <Compile Include="Util\Enumerable.cs" />
@@ -252,6 +253,7 @@
     <Compile Include="Util\XamlUtility.cs" />
     <Compile Include="Util\XExtension.cs" />
     <Compile Include="ViewModel\AppViewModel.cs" />
+    <Compile Include="ViewModel\CaptchaViewModel.cs" />
     <Compile Include="ViewModel\Commands\ActionCommand.cs" />
     <Compile Include="ViewModel\ChangeListenerAttribute.cs" />
     <Compile Include="ViewModel\Commands\AddExistingFileCommand.cs" />
@@ -292,6 +294,9 @@
     <Compile Include="ViewModel\WizardViewModel.cs" />
     <Compile Include="ViewModel\WorkspaceItemViewModel.cs" />
     <Compile Include="ViewModel\WorkspaceViewModel.cs" />
+    <Compile Include="Windows\CaptchaWindow.xaml.cs">
+      <DependentUpon>CaptchaWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\InputWindow.xaml.cs">
       <DependentUpon>InputWindow.xaml</DependentUpon>
     </Compile>
@@ -322,10 +327,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Editor\EditorControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\EditorAndViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -404,6 +405,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Windows\CaptchaWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\InputWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -451,6 +456,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include=".editorconfig" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

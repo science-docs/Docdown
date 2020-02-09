@@ -26,7 +26,6 @@ namespace Docdown.Model
         bool IsExcludedEffectively { get; }
         byte[] Read();
         Task Save(string text);
-        Task<string> Convert(CancelToken cancelToken);
         Task Delete();
         Task Rename(string newName);
         Task Update();

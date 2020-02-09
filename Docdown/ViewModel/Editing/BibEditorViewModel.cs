@@ -11,7 +11,9 @@ using PandocMark.Syntax;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
+using System.Text;
+using HtmlAgilityPack;
+using Docdown.Bibliography;
 
 namespace Docdown.ViewModel.Editing
 {
@@ -149,12 +151,31 @@ namespace Docdown.ViewModel.Editing
 
         private async Task<bool> ShowPreview(BibEntry entry)
         {
-            var url = await BibliographyUtility.FindArticle(entry);
+            //var url = await BibliographyUtility.FindArticle(entry);
 
-            if (url == null)
-            {
-                return false;
-            }
+            //if (url == null)
+            //{
+            //    return false;
+            //}
+
+            //var bytes = await WebUtility.SimpleByteRequest(url);
+            //if (bytes.Length > 6)
+            //{
+            //    var html = Encoding.UTF8.GetString(bytes, 0, 6);
+            //    if (html == "<html>")
+            //    {
+            //        var fullHtml = Encoding.UTF8.GetString(bytes);
+            //        var imageBytes = BibliographyUtility.LoadSciHubCaptcha(fullHtml, out var id);
+            //    }
+            //}
+
+            var url = await SciHubLoader.FindArticle(entry);
+            var article = await SciHubLoader.LoadArticle(url, new UICaptchaSolvingStrategy());
+
+            var fs = Item.Workspace.Data.FileSystem;
+            var temp = IOUtility.GetTempFile(fs.Directory);
+            fs.File.WriteAllBytes(temp, article);
+
             var name = entry.Title;
             if (name == null)
             {
@@ -169,10 +190,14 @@ namespace Docdown.ViewModel.Editing
             {
                 var item = new PreviewWorkspaceItem
                 {
-                    FullName = url,
-                    Name = name
+                    FullName = temp,
+                    Name = name,
+                    Type = WorkspaceItemType.Pdf
                 };
-                var vm = new WorkspaceItemViewModel(Item.Workspace, null, item);
+                var vm = new WorkspaceItemViewModel(Item.Workspace, null, item)
+                {
+                    PdfPath = temp
+                };
                 Item.Workspace.SelectedPreview = vm;
             });
             

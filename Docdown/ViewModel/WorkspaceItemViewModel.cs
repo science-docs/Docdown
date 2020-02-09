@@ -1,4 +1,4 @@
-using Docdown.Controls;
+﻿using Docdown.Controls;
 using Docdown.Model;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -94,19 +94,10 @@ namespace Docdown.ViewModel
             set => Set(ref isExpanded, value);
         }
 
-        [ChangeListener(nameof(IsConverting), nameof(HasValidationErrors), nameof(IsConvertable))]
-        public bool CanConvert => IsConvertable && !IsConverting && !HasValidationErrors;
-
         public bool IsConvertable
         {
             get => isConvertable;
             set => Set(ref isConvertable, value);
-        }
-
-        public bool IsConverting
-        {
-            get => isConverting;
-            set => Set(ref isConverting, value);
         }
 
         public bool HasValidationErrors
@@ -119,12 +110,6 @@ namespace Docdown.ViewModel
         {
             get => isNameChanging;
             set => Set(ref isNameChanging, value);
-        }
-
-        public bool ShowPreview
-        {
-            get => showPreview;
-            set => Set(ref showPreview, value);
         }
 
         public ConverterType ConverterType
@@ -149,10 +134,6 @@ namespace Docdown.ViewModel
         public ObservableCollection<WorkspaceItemViewModel> Children { get; private set; } = new ObservableCollection<WorkspaceItemViewModel>();
         public ICommand SaveCommand => new ActionCommand(Save);
         public ICommand CloseCommand => new ActionCommand(Close);
-        public ICommand ConvertCommand => new ActionCommand(Convert);
-        public ICommand StopConvertCommand => new ActionCommand(StopConvert);
-        public ICommand HidePreviewCommand => new ActionCommand(() => ShowPreview = false);
-        public ICommand ShowPreviewCommand => new ActionCommand(() => ShowPreview = true);
         public ICommand ExcludeCommand => new ActionCommand(() => IsExcluded = true);
         public ICommand IncludeCommand => new ActionCommand(() => IsExcluded = false);
         
@@ -233,16 +214,13 @@ namespace Docdown.ViewModel
         private bool isCompiled;
         private bool isExpanded = false;
         private bool isConvertable;
-        private bool isConverting;
         private bool hasValidationErrors;
         private bool hasChanged;
         private bool isNameChanging;
-        private bool showPreview;
         private string tempName;
         private object view;
         private int? wordCount;
         private OutlineViewModel outline;
-        private CancelToken converterToken;
         private ConverterType converterType;
 
         // This is needed for the tab control to work correctly.
@@ -326,46 +304,9 @@ namespace Docdown.ViewModel
             Children.Add(child);
         }
 
-        public void StopConvert()
-        {
-            if (!IsConverting || converterToken is null)
-                return;
+       
 
-            converterToken.Cancel();
-            Messages.Warning(Language.Current.Get("Workspace.Compilation.Cancelled"));
-        }
-
-        public async Task Convert()
-        {
-            if (!CanConvert)
-                return;
-            
-            converterToken = new CancelToken();
-            AppViewModel.Instance.Messages.Working(Language.Current.Get("Workspace.Compilation.Running"));
-            IsConverting = true;
-            await Workspace.SaveAllItems();
-            var watch = Stopwatch.StartNew();
-            try
-            {
-                Workspace.PdfPath = string.Empty;
-                Workspace.PdfPath = await Data.Convert(converterToken);
-                IsCompiled = true;
-                ShowPreview = true;
-                watch.Stop();
-                Messages.Success(Language.Current.Get("Workspace.Compilation.Success", watch.Elapsed.Seconds, watch.Elapsed.Milliseconds));
-            }
-            catch (Exception e)
-            {
-                if (!converterToken.IsCanceled)
-                {
-                    Messages.Error(await ErrorUtility.GetErrorMessage(e, Dispatcher));
-                }
-                IsCompiled = false;
-            }
-            watch.Stop();
-
-            IsConverting = false;
-        }
+        
 
         public async Task Delete()
         {
@@ -637,7 +578,7 @@ namespace Docdown.ViewModel
         {
             if (Data is PreviewWorkspaceItem preview)
             {
-                WebViewer viewer = new WebViewer();
+                var viewer = new WebViewer();
                 viewer.Navigate(preview.FullName);
                 return viewer;
             }
