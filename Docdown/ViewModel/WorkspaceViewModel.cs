@@ -145,6 +145,7 @@ namespace Docdown.ViewModel
         private WorkspaceItemViewModel item;
         private WorkspaceItemViewModel selectedItem;
         private WorkspaceItemViewModel selectedPreview;
+        private WorkspaceItemViewModel pdfPreview;
         private string pdfPath;
         
         public WorkspaceViewModel() : base(null)
@@ -362,33 +363,6 @@ namespace Docdown.ViewModel
             }
         }
 
-        private void RestoreWorkspace(WorkspaceItemViewModel item, IEnumerable<WorkspaceItemViewModel> openItems, string selectedItemName)
-        {
-            foreach (var child in item.Children)
-            {
-                if (child.IsDirectory)
-                {
-                    RestoreWorkspace(child, openItems, null);
-                }
-                else if (openItems.Any(e => e.RelativeName == child.RelativeName))
-                {
-                    AddOpenItem(child);
-                }
-            }
-            Children.Restore(openItems);
-            if (selectedItemName != null)
-            {
-                foreach (var i in OpenItems)
-                {
-                    if (i.RelativeName == selectedItemName)
-                    {
-                        SelectedItem = i;
-                        break;
-                    }
-                }
-            }
-        }
-
         private void ChangeSelectedItemName()
         {
             if (PreSelectedItem != null)
@@ -448,20 +422,33 @@ namespace Docdown.ViewModel
         [ChangeListener(nameof(PdfPath))]
         private void PdfPathChanged()
         {
-            var newItem = new PreviewWorkspaceItem
+            if (pdfPreview == null)
             {
-                Type = WorkspaceItemType.Pdf,
-                FullName = PdfPath
-            };
-            var vm = new WorkspaceItemViewModel(this, null, newItem)
+                if (string.IsNullOrEmpty(PdfPath))
+                    return;
+
+                var newItem = new PreviewWorkspaceItem
+                {
+                    Type = WorkspaceItemType.Pdf,
+                    FullName = PdfPath
+                };
+
+                pdfPreview = new WorkspaceItemViewModel(this, null, newItem)
+                {
+                    Name = Item.Name + " [Preview]",
+                    PdfPath = PdfPath
+                };
+            }
+            else
             {
-                Name = Item.Name + " [Preview]"
-            };
+                pdfPreview.PdfPath = PdfPath;
+            }
+
             Task.Delay(10).ContinueWith(_ =>
             {
                 Dispatcher.Invoke(() =>
                 {
-                    SelectedPreview = vm;
+                    SelectedPreview = pdfPreview;
                 });
             });
         }

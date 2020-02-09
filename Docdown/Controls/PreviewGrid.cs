@@ -1,13 +1,11 @@
 ﻿using Docdown.ViewModel;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 
 namespace Docdown.Controls
 {
@@ -37,8 +35,8 @@ namespace Docdown.Controls
         {
             defaultTab.ItemsSource = defaultItems;
             previewTab.ItemsSource = previewItems;
-            defaultTab.SetBinding(Selector.SelectedItemProperty, new Binding("SelectedItem") { Mode = BindingMode.TwoWay });
-            previewTab.SetBinding(Selector.SelectedItemProperty, new Binding("SelectedPreview") { Mode = BindingMode.TwoWay });
+            defaultTab.SetBinding(Selector.SelectedItemProperty, "SelectedItem");
+            previewTab.SetBinding(Selector.SelectedItemProperty, "SelectedPreview");
             Children.Add(defaultTab);
             Children.Add(previewTab);
 
@@ -117,9 +115,9 @@ namespace Docdown.Controls
 
         private void ItemsChanged(IEnumerable list)
         {
-            var typedList = list.OfType<WorkspaceItemViewModel>();
-            var removeDefaultList = defaultItems.Except(typedList);
-            var removePreviewList = previewItems.Except(typedList);
+            var typedList = list.OfType<WorkspaceItemViewModel>().ToArray();
+            var removeDefaultList = defaultItems.Except(typedList).ToArray();
+            var removePreviewList = previewItems.Except(typedList).ToArray();
 
             InvalidateMeasure();
             if (list == null)

@@ -20,7 +20,7 @@ using Docdown.ViewModel.Editing;
 
 namespace Docdown.ViewModel
 {
-    public class WorkspaceItemViewModel : ObservableObject<IWorkspaceItem>, IExpandable<WorkspaceItemViewModel>, IComparable<WorkspaceItemViewModel>
+    public class WorkspaceItemViewModel : ObservableObject<IWorkspaceItem>, IExpandable<WorkspaceItemViewModel>
     {
         [ChangeListener(nameof(HasChanged), nameof(Name))]
         public string TabName => HasChanged ? Name + "*" : Name;
@@ -564,12 +564,12 @@ namespace Docdown.ViewModel
         private IEditor ShowMdEditorAndPdf(out EditorViewModel vm)
         {
             var editor = new EditorControl();
-            var temp = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, Data.Workspace.Item.FullName);
-            if (Data.FileInfo.FileSystem.File.Exists(temp))
-            {
-                Workspace.PdfPath = temp;
-                ShowPreview = true;
-            }
+            //var temp = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, Data.Workspace.Item.FullName);
+            //if (Data.FileInfo.FileSystem.File.Exists(temp))
+            //{
+            //    Workspace.PdfPath = temp;
+            //    ShowPreview = true;
+            //}
             vm = new MarkdownEditorViewModel(this);
             return editor;
         }
@@ -649,11 +649,6 @@ namespace Docdown.ViewModel
             Workspace.SelectedItem = this;
         }
         
-        public int CompareTo(WorkspaceItemViewModel other)
-        {
-            return RelativeName.CompareTo(other?.RelativeName);
-        }
-
         public override int GetHashCode()
         {
             if (originalHashcode == null)

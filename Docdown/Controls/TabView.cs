@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
+﻿using MahApps.Metro.Controls;
 
 namespace Docdown.Controls
 {
-    public class TabView : TabControl
+    public class TabView : MetroTabControl
     {
     }
 }
