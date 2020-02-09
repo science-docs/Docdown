@@ -169,11 +169,11 @@ namespace Docdown.ViewModel.Editing
             {
                 var item = new PreviewWorkspaceItem
                 {
-                    Url = url,
+                    FullName = url,
                     Name = name
                 };
                 var vm = new WorkspaceItemViewModel(Item.Workspace, null, item);
-                Item.Workspace.SelectedItem = vm;
+                Item.Workspace.SelectedPreview = vm;
             });
             
             return true;

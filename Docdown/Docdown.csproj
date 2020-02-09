@@ -126,10 +126,13 @@
     <Compile Include="Controls\BindedRichTextBox.xaml.cs">
       <DependentUpon>BindedRichTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CommonControls.cs" />
     <Compile Include="Controls\EditorAndViewer.xaml.cs">
       <DependentUpon>EditorAndViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PreviewGrid.cs" />
     <Compile Include="Controls\SplitButton.cs" />
+    <Compile Include="Controls\TabView.cs" />
     <Compile Include="Controls\TextBlockBuilder.cs" />
     <Compile Include="Controls\TreeGrid.cs" />
     <Compile Include="Controls\TreeGridSplitter.cs" />
@@ -176,9 +179,6 @@
     </Compile>
     <Compile Include="Controls\SearchControl.xaml.cs">
       <DependentUpon>SearchControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\TabView.xaml.cs">
-      <DependentUpon>TabView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ViewWrapper.xaml.cs">
       <DependentUpon>ViewWrapper.xaml</DependentUpon>
@@ -334,10 +334,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\SearchControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\TabView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

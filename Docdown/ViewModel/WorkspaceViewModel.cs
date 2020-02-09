@@ -72,6 +72,32 @@ namespace Docdown.ViewModel
             }
         }
 
+        [ChangeListener(nameof(Data))]
+        public WorkspaceItemViewModel SelectedPreview
+        {
+            get
+            {
+                return selectedPreview;
+            }
+            set
+            {
+                if (value != null &&
+                    value.IsFile &&
+                    !OpenItems.Contains(value))
+                {
+                    OpenItems.Add(value);
+                }
+
+                selectedPreview = value;
+                var item = value?.Data;
+
+                if (item is null || !item.IsDirectory)
+                {
+                    SendPropertyUpdate();
+                }
+            }
+        }
+
         public WorkspaceItemViewModel PreSelectedItem { get; set; }
 
         [ChangeListener(nameof(Data))]
@@ -118,6 +144,7 @@ namespace Docdown.ViewModel
         private Explorer explorer;
         private WorkspaceItemViewModel item;
         private WorkspaceItemViewModel selectedItem;
+        private WorkspaceItemViewModel selectedPreview;
         private string pdfPath;
         
         public WorkspaceViewModel() : base(null)
@@ -416,6 +443,27 @@ namespace Docdown.ViewModel
             {
                 OpenItems.Add(item);
             }
+        }
+
+        [ChangeListener(nameof(PdfPath))]
+        private void PdfPathChanged()
+        {
+            var newItem = new PreviewWorkspaceItem
+            {
+                Type = WorkspaceItemType.Pdf,
+                FullName = PdfPath
+            };
+            var vm = new WorkspaceItemViewModel(this, null, newItem)
+            {
+                Name = Item.Name + " [Preview]"
+            };
+            Task.Delay(10).ContinueWith(_ =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    SelectedPreview = vm;
+                });
+            });
         }
     }
 }

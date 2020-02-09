@@ -213,6 +213,8 @@ namespace Docdown.ViewModel
             set => Set(ref wordCount, value);
         }
 
+        public bool IsPreview => Data is PreviewWorkspaceItem;
+
         public bool IsDirectory => Data.IsDirectory;
         public bool IsFile => Data.IsFile;
 
@@ -561,7 +563,7 @@ namespace Docdown.ViewModel
 
         private IEditor ShowMdEditorAndPdf(out EditorViewModel vm)
         {
-            var editorAndViewer = new EditorAndViewer();
+            var editor = new EditorControl();
             var temp = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, Data.Workspace.Item.FullName);
             if (Data.FileInfo.FileSystem.File.Exists(temp))
             {
@@ -569,7 +571,7 @@ namespace Docdown.ViewModel
                 ShowPreview = true;
             }
             vm = new MarkdownEditorViewModel(this);
-            return editorAndViewer;
+            return editor;
         }
 
         private IEditor ShowBibEditor(out EditorViewModel vm)
@@ -636,7 +638,7 @@ namespace Docdown.ViewModel
             if (Data is PreviewWorkspaceItem preview)
             {
                 WebViewer viewer = new WebViewer();
-                viewer.Navigate(preview.Url);
+                viewer.Navigate(preview.FullName);
                 return viewer;
             }
             return null;

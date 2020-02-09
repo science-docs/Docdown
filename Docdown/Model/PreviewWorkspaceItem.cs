@@ -8,16 +8,14 @@ namespace Docdown.Model
 {
     public class PreviewWorkspaceItem : IWorkspaceItem
     {
-        public string Url { get; set; }
-
         public string RelativeName => Name;
 
         public string Name { get; set; }
 
-        public string FullName => Url;
+        public string FullName { get; set; }
 
         public IFileSystemInfo FileInfo { get; set; }
-        public WorkspaceItemType Type { get => WorkspaceItemType.Web; set { } }
+        public WorkspaceItemType Type { get; set; }
 
         public List<IWorkspaceItem> Children => new List<IWorkspaceItem>();
 
@@ -70,7 +68,7 @@ namespace Docdown.Model
 
         public byte[] Read()
         {
-            return new byte[0];
+            return Workspace.FileSystem.File.ReadAllBytes(FullName);
         }
 
         public Task Rename(string newName)

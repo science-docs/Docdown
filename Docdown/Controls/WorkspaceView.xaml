@@ -10,7 +10,8 @@
              xmlns:ViewModel="clr-namespace:Docdown.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="300"
-             Tag="{DynamicResource Workspace_Explorer_Title}">
+             Tag="{DynamicResource Workspace_Explorer_Title}"
+             DataContext="{Binding Workspace.Explorer}">
     <UserControl.InputBindings>
         <KeyBinding Key="F2" Command="{Binding Workspace.ChangeSelectedItemNameCommand}"/>
         <KeyBinding Key="Delete" Command="{Binding Workspace.DeleteSelectedItemCommand}"/>

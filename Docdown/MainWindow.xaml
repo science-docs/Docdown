@@ -350,13 +350,6 @@
         </Grid>
 
         <Controls:TreeGrid Margin="6" Grid.ColumnSpan="3" Grid.Row="2" SplitterThickness="6" Tree="{Binding ContentTree}">
-            <Controls:ViewWrapper x:Name="_Explorer">
-                <Controls:WorkspaceView DataContext="{Binding Workspace.Explorer}"/>
-            </Controls:ViewWrapper>
-            <Controls:ViewWrapper x:Name="_Outline">
-                <Controls:OutlineView DataContext="{Binding Workspace}"/>
-            </Controls:ViewWrapper>
-            <Controls:TabView x:Name="_Tab" DataContext="{Binding Workspace}"/>
         </Controls:TreeGrid>
 
         <Grid x:Name="StatusGrid" 

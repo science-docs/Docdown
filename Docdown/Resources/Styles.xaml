@@ -5,7 +5,11 @@
                     xmlns:System="clr-namespace:System;assembly=mscorlib"
                     xmlns:Converters="http://metro.mahapps.com/winfx/xaml/shared"
                     xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+                    xmlns:gg="urn:gong-wpf-dragdrop"
                     xmlns:Util="clr-namespace:Docdown.Util">
+
+    
+    
 
     <Style x:Key="{x:Type Docdown:TreeGridSplitter}"
            TargetType="{x:Type Docdown:TreeGridSplitter}">
@@ -993,5 +997,41 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
+
+    <Style x:Key="{x:Type Docdown:TabView}" TargetType="Docdown:TabView">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Docdown:TabView">
+                    <Grid x:Name="PART_Grid">
+                        <Controls:MetroTabControl x:Name="PART_Tab" 
+                               Style="{StaticResource VSTabControlStyle}" 
+                               SelectedItem="{TemplateBinding SelectedItem}"
+                               ItemsSource="{TemplateBinding ItemsSource}"
+                               BorderThickness="1 0 1 1"
+                               BorderBrush="{DynamicResource GrayBrush9}"
+                               gg:DragDrop.IsDragSource="True"
+                               gg:DragDrop.IsDropTarget="True">
+                            <Controls:MetroTabControl.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource VSTabItem}" TargetType="Controls:MetroTabItem">
+                                    <Setter Property="Header" Value="{Binding TabName}"/>
+                                    <Setter Property="Content" Value="{Binding View, FallbackValue={x:Null}}"/>
+                                    <Setter Property="Util:DependencyPropertyUtility.CloseCommand" Value="{Binding CloseCommand, FallbackValue={x:Null}}"/>
+                                </Style>
+                            </Controls:MetroTabControl.ItemContainerStyle>
+                        </Controls:MetroTabControl>
+                        <!--<Grid.Style>
+                <Style TargetType="Grid">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{, ItemsSource.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>-->
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

@@ -16,9 +16,6 @@ namespace Docdown
         readonly AppViewModel app;
         bool closeFlag = true;
 
-        public static ViewWrapper Outline;
-        public static ViewWrapper Explorer;
-
         public MainWindow()
         {
             //if (Debugger.IsAttached)
@@ -40,24 +37,19 @@ namespace Docdown
                 DataContext = app = splash.ViewModel.Data;
                 Closing += OnClosing;
 
-                Outline = _Outline;
-                Explorer = _Explorer;
-
                 TreeNode c = new TreeNode
                 {
-                    Element = Explorer
+                    Element = CommonControls.WorkspaceExplorer
                 };
 
                 TreeNode d = new TreeNode
                 {
-                    Element = Outline
+                    Element = CommonControls.Outline
                 };
-
-
 
                 TreeNode a = new TreeNode
                 {
-                    Element = _Tab
+                    Element = CommonControls.MainContent
                 };
 
                 TreeNode b = new TreeNode

@@ -50,7 +50,7 @@ namespace Docdown.ViewModel
             set
             {
                 Set(ref explorerVisible, value);
-                ContentTree.AddA(MainWindow.Explorer, System.Windows.Controls.Orientation.Horizontal, 0.2);
+                ContentTree.AddA(CommonControls.WorkspaceExplorer, System.Windows.Controls.Orientation.Horizontal, 0.2);
             }
         }
 
