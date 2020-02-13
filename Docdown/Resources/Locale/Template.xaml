@@ -125,4 +125,9 @@
     <System:String x:Key="Bib_EntryType">'{0}' is not a valid bib entry type.</System:String>
     <System:String x:Key="Bib_DuplicateKey">Entry with key '{0}' already exists.</System:String>
     
+    <!-- Sci Hub Messages/Errors -->
+    <System:String x:Key="Captcha_Title">Sci-Hub Captcha</System:String>
+    <System:String x:Key="Captcha_Watermark">Enter Captcha...</System:String>
+    <System:String x:Key="Captcha_Error">Entered wrong captcha '{0}'</System:String>
+    
 </ResourceDictionary>

@@ -3,14 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Docdown.Windows"
+        xmlns:Validation="clr-namespace:Docdown.Validation"
         xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-        Title="{DynamicResource Settings_Window_Title}"
+        Title="{DynamicResource Captcha_Title}"
         Style="{StaticResource SlimWindowStyle}"
         TitleTemplate="{StaticResource DefaultTitleTemplate}"
         IconTemplate="{StaticResource DefaultIconTemplate}"
-        Height="275" Width="450">
+        Height="216" Width="450"
+        WindowStartupLocation="CenterOwner">
     <FrameworkElement.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -21,16 +22,24 @@
     <Grid>
         <StackPanel Orientation="Vertical">
             <Image Source="{Binding Image}" Width="450" Height="110"/>
-            <TextBox Text="{Binding Captcha}" Margin="8"/>
+            <TextBox Margin="8 4" 
+                     Style="{StaticResource MetroButtonTextBox}"
+                     Metro:TextBoxHelper.Watermark="{DynamicResource Captcha_Watermark}"
+                     Metro:TextBoxHelper.ButtonCommand="{Binding ReloadCommand}"
+                     Metro:TextBoxHelper.ButtonContent="RL">
+                <TextBox.Text>
+                    <Binding Path="Captcha" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <Validation:StaticCaptchaValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
             <Button Content="{DynamicResource Message_Window_OK}" 
                     Style="{StaticResource MetroFlatButton}" 
-                    Click="OkClicked" 
-                    Margin="8" 
+                    Command="{Binding FinishCommand}"
+                    Margin="8 4" 
                     IsDefault="True"/>
-            <Button Content="{DynamicResource Message_Window_Cancel}" 
-                    Style="{StaticResource MetroFlatButton}" 
-                    Click="CloseClicked" 
-                    Margin="8"/>
         </StackPanel>
     </Grid>
 </Metro:MetroWindow>

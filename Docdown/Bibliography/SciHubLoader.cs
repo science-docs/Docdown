@@ -19,7 +19,15 @@ namespace Docdown.Bibliography
         {
             if (CurrentSciHubAddress == null)
             {
-                string html = await WebUtility.SimpleTextRequest(WhereIsSciHubNow);
+                string html;
+                try
+                {
+                    html = await WebUtility.SimpleTextRequest(WhereIsSciHubNow);
+                }
+                catch (Exception e)
+                {
+                    throw new SciHubException(SciHubExceptionType.Address, e);
+                }
                 var doc = new HtmlDocument();
                 doc.LoadHtml(html);
                 CurrentSciHubAddress = doc.DocumentNode.SelectSingleNode(".//a").GetAttributeValue("href", string.Empty);
@@ -43,22 +51,22 @@ namespace Docdown.Bibliography
                 return await FindArticle(doi);
             }
 
-            if (url != null)
-            {
-                if (url.Contains("arxiv.org"))
-                {
-                    url = url.Replace("/abs/", "/pdf/");
-                    return url;
-                }
-            }
-
-            return null;
+            throw new SciHubException(SciHubExceptionType.Article);
         }
 
         public static async Task<string> FindArticle(string doi)
         {
             var scihub = await FindAddress();
-            var text = await WebUtility.SimpleTextRequest(WebUtility.BuildUrl(scihub, doi));
+            string text;
+            try
+            {
+                text = await WebUtility.SimpleTextRequest(WebUtility.BuildUrl(scihub, doi));
+            }
+            catch (Exception e)
+            {
+                throw new SciHubException(SciHubExceptionType.Availability, e);
+            }
+            
             var doc = new HtmlDocument();
             doc.LoadHtml(text);
             var iframe = doc.GetElementbyId("pdf");
@@ -71,48 +79,67 @@ namespace Docdown.Bibliography
                 }
                 return src;
             }
-            return null;
-        }
-
-        public static async Task<byte[]> LoadArticleByDoi(string doi, ICaptchaSolvingStrategy strategy)
-        {
-            var url = await FindArticle(doi);
-            return await LoadArticle(url, strategy);
+            throw new SciHubException(SciHubExceptionType.Article);
         }
 
         public static async Task<byte[]> LoadArticle(string url, ICaptchaSolvingStrategy strategy)
         {
-            var bytes = await WebUtility.SimpleByteRequest(url);
-            var data = new SciHubData();
-            if (bytes.Length > 6)
+            var data = new SciHubData
             {
-                var html = Encoding.UTF8.GetString(bytes, 0, 6);
-                if (html == "<html>")
+                Url = url
+            };
+            try
+            {
+                await strategy.Initialize();
+                var result = await LoadArticleInternal(data, strategy);
+                return result;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                await strategy.Finish();
+            }
+        }
+
+        private static async Task<byte[]> LoadArticleInternal(SciHubData data, ICaptchaSolvingStrategy solvingStrategy)
+        {
+            var bytes = await WebUtility.SimpleByteRequest(data.Url);
+
+            if (bytes == null || bytes.Length < 6)
+            {
+                throw new SciHubException(SciHubExceptionType.Article);
+            }
+
+            if (!IsHtml(bytes))
+                return bytes;
+
+            var fullHtml = Encoding.UTF8.GetString(bytes);
+            data.Html = fullHtml;
+
+            await LoadImage(data);
+
+            do
+            {
+                var solved = await solvingStrategy.Solve(data.ImageData);
+
+                if (solved.Aborted)
+                    return null;
+                if (solved.Reload)
+                    return await LoadArticleInternal(data, solvingStrategy);
+
+                await PostCaptcha(data, solved.Captcha);
+
+                if (data.ArticleData == null)
                 {
-                    var fullHtml = Encoding.UTF8.GetString(bytes);
-                    data.Url = url;
-                    data.Html = fullHtml;
-                    await LoadImage(data);
-                    if (data.ImageData != null)
-                    {
-                        var solved = await strategy.Solve(data.ImageData);
-                        await PostCaptcha(data, solved);
-                        return data.ArticleData;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    return bytes;
+                    await solvingStrategy.Invalidate(solved.Captcha);
                 }
             }
-            else
-            {
-                return Array.Empty<byte>();
-            }
+            while (data.ArticleData == null);
+
+            return data.ArticleData;
         }
 
         public static async Task LoadImage(SciHubData data)
@@ -130,7 +157,17 @@ namespace Docdown.Bibliography
             shortUrl = shortUrl.Substring(0, shortUrl.IndexOf('/', 10));
             shortUrl += img;
 
-            data.ImageData = await WebUtility.SimpleByteRequest(shortUrl);
+            try
+            {
+                data.ImageData = await WebUtility.SimpleByteRequest(shortUrl);
+
+                if (data.ImageData == null)
+                    throw new Exception("Somehow no image data was loaded");
+            }
+            catch (Exception e)
+            {
+                throw new SciHubException(SciHubExceptionType.Captcha, e);
+            }
         }
 
         public static async Task PostCaptcha(SciHubData data, string solved)
@@ -138,8 +175,21 @@ namespace Docdown.Bibliography
             var body = $"id={data.Id}&answer={solved}";
             using (var res = await WebUtility.SimpleRequest(data.Url, HttpMethod.Post, body, CancellationToken.None))
             {
-                data.ArticleData = await res.Content.ReadAsByteArrayAsync();
+                var bytes = await res.Content.ReadAsByteArrayAsync();
+                if (!IsHtml(bytes))
+                {
+                    data.ArticleData = bytes;
+                }
             }
+        }
+
+        private static bool IsHtml(byte[] bytes)
+        {
+            if (bytes == null || bytes.Length < 6)
+                return false;
+
+            var html = Encoding.UTF8.GetString(bytes, 0, 6);
+            return html == "<html>";
         }
     }
 }

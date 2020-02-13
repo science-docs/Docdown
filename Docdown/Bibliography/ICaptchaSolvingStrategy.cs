@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Docdown.Bibliography
 {
     public interface ICaptchaSolvingStrategy
     {
-        Task<string> Solve(byte[] imageData); 
+        Task Initialize();
+        Task<CaptchaResult> Solve(byte[] imageData);
+        Task Invalidate(string lastCaptcha);
+        Task Finish();
     }
 }

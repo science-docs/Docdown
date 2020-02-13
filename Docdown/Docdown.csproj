@@ -122,9 +122,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Bibliography\CaptchaResult.cs" />
     <Compile Include="Bibliography\ICaptchaSolvingStrategy.cs" />
     <Compile Include="Bibliography\IdentifierUtility.cs" />
     <Compile Include="Bibliography\SciHubData.cs" />
+    <Compile Include="Bibliography\SciHubException.cs" />
     <Compile Include="Bibliography\SciHubLoader.cs" />
     <Compile Include="Bibliography\UICaptchaSolvingStrategy.cs" />
     <Compile Include="Controls\BindableTextBlock.cs" />
@@ -252,6 +254,7 @@
     <Compile Include="Util\WebUtility.cs" />
     <Compile Include="Util\XamlUtility.cs" />
     <Compile Include="Util\XExtension.cs" />
+    <Compile Include="Validation\StaticCaptchaValidationRule.cs" />
     <Compile Include="ViewModel\AppViewModel.cs" />
     <Compile Include="ViewModel\CaptchaViewModel.cs" />
     <Compile Include="ViewModel\Commands\ActionCommand.cs" />

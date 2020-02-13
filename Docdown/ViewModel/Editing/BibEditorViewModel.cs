@@ -11,8 +11,6 @@ using PandocMark.Syntax;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Text;
-using HtmlAgilityPack;
 using Docdown.Bibliography;
 
 namespace Docdown.ViewModel.Editing
@@ -151,26 +149,25 @@ namespace Docdown.ViewModel.Editing
 
         private async Task<bool> ShowPreview(BibEntry entry)
         {
-            //var url = await BibliographyUtility.FindArticle(entry);
+            byte[] article;
+            try
+            {
+                var url = await SciHubLoader.FindArticle(entry);
 
-            //if (url == null)
-            //{
-            //    return false;
-            //}
+                if (url == null)
+                    return false;
 
-            //var bytes = await WebUtility.SimpleByteRequest(url);
-            //if (bytes.Length > 6)
-            //{
-            //    var html = Encoding.UTF8.GetString(bytes, 0, 6);
-            //    if (html == "<html>")
-            //    {
-            //        var fullHtml = Encoding.UTF8.GetString(bytes);
-            //        var imageBytes = BibliographyUtility.LoadSciHubCaptcha(fullHtml, out var id);
-            //    }
-            //}
+                article = await SciHubLoader.LoadArticle(url, new UICaptchaSolvingStrategy());
 
-            var url = await SciHubLoader.FindArticle(entry);
-            var article = await SciHubLoader.LoadArticle(url, new UICaptchaSolvingStrategy());
+                if (article == null)
+                    return false;
+            }
+            catch (SciHubException e)
+            {
+                var text = Language.Current.Get(e.MessageId);
+                Messages.Error(text);
+                return false;
+            }
 
             var fs = Item.Workspace.Data.FileSystem;
             var temp = IOUtility.GetTempFile(fs.Directory);

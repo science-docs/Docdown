@@ -126,4 +126,6 @@ visual_basic_preferred_modifier_order = Partial,Default,Private,Protected,Public
 # FxCop disabled rules
 [*.cs]
 dotnet_diagnostic.CA1031.severity = none
+dotnet_diagnostic.CA1032.severity = none
+dotnet_diagnostic.CA2237.severity = none
 dotnet_diagnostic.CA1819.severity = none
