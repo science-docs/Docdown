@@ -12,6 +12,13 @@ namespace Docdown.Model.Test
         const string NewHiddenName = "C:/Workspace/.Ignore/New.txt";
 
         [TestMethod]
+        public async Task ConvertTest()
+        {
+            var path = await Workspace.Convert(null);
+            Assert.IsNotNull(path, "Could not create file from converter service");
+        }
+
+        [TestMethod]
         public async Task FileCreatedTest()
         {
             FileSystem.File.Create(NewName);

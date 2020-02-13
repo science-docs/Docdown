@@ -12,14 +12,6 @@ namespace Docdown.Model.Test
         const string RenamedFullName = @"C:\Workspace\Renamed.md";
 
         [TestMethod]
-        public async Task ConvertTest()
-        {
-            var main = FindItem("Main.md");
-            var path = await main.Convert(null);
-            Assert.IsNotNull(path, "Could not create file from converter service");
-        }
-
-        [TestMethod]
         public void LoadStringTest()
         {
             var main = FindItem("Main.md");
