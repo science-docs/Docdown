@@ -66,6 +66,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Bibliography\SciHubLoaderTests.cs" />
     <Compile Include="Model\FileWorkspaceItemHandlerTest.cs" />
     <Compile Include="Model\MockConverterService.cs" />
     <Compile Include="Model\FileSystemWatcherFactory.cs" />
@@ -73,7 +74,7 @@
     <Compile Include="Model\WorkspaceItemTests.cs" />
     <Compile Include="Model\WorkspaceTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Util\BibliographyUtilityTests.cs" />
+    <Compile Include="Bibliography\IdentifierUtilityTests.cs" />
     <Compile Include="Util\TextUtilityTests.cs" />
     <Compile Include="Util\ThesaurusUtilityTests.cs" />
   </ItemGroup>
