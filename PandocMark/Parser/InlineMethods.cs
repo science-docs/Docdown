@@ -649,8 +649,8 @@ namespace PandocMark.Parser
                     break;
                 }
             }
-            string content = subj.Buffer.Substring(start, subj.Position - start);
-            return new Inline(InlineTag.Tex, content, start, subj.Position)
+            int delta = subj.Position - start;
+            return new Inline(InlineTag.Tex, subj.Buffer, start, delta)
             {
                 SourcePosition = start,
                 SourceLastPosition = subj.Position
