@@ -9,7 +9,7 @@ using System.Windows.Controls.Primitives;
 
 namespace Docdown.Controls
 {
-    public class PreviewGrid : Panel
+    public class PreviewGrid : ContentControl
     {
         public static readonly DependencyProperty ItemsSourceProperty 
             = DependencyProperty.Register(nameof(ItemsSource), typeof(IEnumerable), typeof(PreviewGrid), new PropertyMetadata(null, ItemsSourceChanged));
@@ -30,6 +30,9 @@ namespace Docdown.Controls
 
         private readonly TabView defaultTab = new TabView();
         private readonly TabView previewTab = new TabView();
+        private readonly TreeGrid treeGrid = new TreeGrid();
+        private readonly TreeNode node = new TreeNode();
+        private double ratio = 0.5;
 
         public PreviewGrid()
         {
@@ -37,8 +40,9 @@ namespace Docdown.Controls
             previewTab.ItemsSource = previewItems;
             defaultTab.SetBinding(Selector.SelectedItemProperty, "SelectedItem");
             previewTab.SetBinding(Selector.SelectedItemProperty, "SelectedPreview");
-            Children.Add(defaultTab);
-            Children.Add(previewTab);
+            treeGrid.Tree = node;
+            treeGrid.SplitterThickness = 6;
+            Content = treeGrid;
 
             DataContextChanged += PreviewGrid_DataContextChanged;
         }
@@ -49,56 +53,56 @@ namespace Docdown.Controls
             previewTab.DataContext = DataContext;
         }
 
-        protected override Size MeasureOverride(Size constraint)
-        {
-            bool both = ShowDefault && ShowPreview;
-            double halfWidth = constraint.Width / 2 - 3;
+        //protected override Size MeasureOverride(Size constraint)
+        //{
+        //    bool both = ShowDefault && ShowPreview;
+        //    double halfWidth = constraint.Width / 2 - 3;
 
-            if (both)
-            {
-                var halfSize = new Size(halfWidth, constraint.Height);
-                defaultTab.Measure(halfSize);
-                previewTab.Measure(halfSize);
-            }
-            else if (ShowDefault)
-            {
-                defaultTab.Measure(constraint);
-            }
-            else if (ShowPreview)
-            {
-                previewTab.Measure(constraint);
-            }
+        //    if (both)
+        //    {
+        //        var halfSize = new Size(halfWidth, constraint.Height);
+        //        defaultTab.Measure(halfSize);
+        //        previewTab.Measure(halfSize);
+        //    }
+        //    else if (ShowDefault)
+        //    {
+        //        defaultTab.Measure(constraint);
+        //    }
+        //    else if (ShowPreview)
+        //    {
+        //        previewTab.Measure(constraint);
+        //    }
 
-            return constraint;
-        }
+        //    return constraint;
+        //}
 
-        protected override Size ArrangeOverride(Size arrangeBounds)
-        {
-            bool both = ShowDefault && ShowPreview;
-            double halfWidth = arrangeBounds.Width / 2 - 3;
-            double halfX = halfWidth + 6;
-            var rect = new Rect(arrangeBounds);
+        //protected override Size ArrangeOverride(Size arrangeBounds)
+        //{
+        //    bool both = ShowDefault && ShowPreview;
+        //    double halfWidth = arrangeBounds.Width / 2 - 3;
+        //    double halfX = halfWidth + 6;
+        //    var rect = new Rect(arrangeBounds);
 
-            if (both)
-            {
-                var halfSize = new Size(halfWidth, arrangeBounds.Height);
-                var defRect = new Rect(halfSize);
-                var previewRect = new Rect(new Point(halfX, 0), halfSize);
-                defaultTab.Arrange(defRect);
-                previewTab.Arrange(previewRect);
+        //    if (both)
+        //    {
+        //        var halfSize = new Size(halfWidth, arrangeBounds.Height);
+        //        var defRect = new Rect(halfSize);
+        //        var previewRect = new Rect(new Point(halfX, 0), halfSize);
+        //        defaultTab.Arrange(defRect);
+        //        previewTab.Arrange(previewRect);
                 
-            }
-            else if (ShowDefault)
-            {
-                defaultTab.Arrange(rect);
-            }
-            else if (ShowPreview)
-            {
-                previewTab.Arrange(rect);
-            }
+        //    }
+        //    else if (ShowDefault)
+        //    {
+        //        defaultTab.Arrange(rect);
+        //    }
+        //    else if (ShowPreview)
+        //    {
+        //        previewTab.Arrange(rect);
+        //    }
 
-            return arrangeBounds;
-        }
+        //    return arrangeBounds;
+        //}
 
         private void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
         {
@@ -146,21 +150,23 @@ namespace Docdown.Controls
 
             if (ShowDefault)
             {
-                if (!Children.Contains(defaultTab))
-                    Children.Add(defaultTab);
+                if (!node.Contains(defaultTab))
+                    node.AddA(defaultTab, Orientation.Horizontal, ratio);
             }
-            else
+            else if (node.Contains(defaultTab))
             {
-                Children.Remove(defaultTab);
+                ratio = node.Distribution;
+                node.Remove(defaultTab);
             }
             if (ShowPreview)
             {
-                if (!Children.Contains(previewTab))
-                    Children.Add(previewTab);
+                if (!node.Contains(previewTab))
+                    node.AddB(previewTab, Orientation.Horizontal, ratio);
             }
-            else
+            else if (node.Contains(previewTab))
             {
-                Children.Remove(previewTab);
+                ratio = node.Distribution;
+                node.Remove(previewTab);
             }
         }
 

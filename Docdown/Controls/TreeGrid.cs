@@ -95,7 +95,7 @@ namespace Docdown.Controls
                 Children.Add(node.Element);
                 SetTreeNode(node.Element, node);
             }
-            else
+            else if (node.A != null && node.B != null)
             {
                 AddNode(node.A);
                 if (node.Splitter == null)
@@ -158,6 +158,14 @@ namespace Docdown.Controls
 
         public void AddA(UIElement element, Orientation orientation, double distribution = 0.5)
         {
+            if (Element == null && B == null)
+            {
+                Element = element;
+                Grid.Tree = null;
+                Grid.Tree = TopParent;
+                return;
+            }
+
             A = new TreeNode
             {
                 Element = element,
@@ -177,11 +185,6 @@ namespace Docdown.Controls
 
         public void RemoveA()
         {
-            if (A.Element != null)
-            {
-                Grid.Children.Remove(A.Element);
-            }
-
             Element = B.Element;
             TreeGrid.SetTreeNode(Element, this);
             A = B = null;
@@ -191,11 +194,6 @@ namespace Docdown.Controls
 
         public void RemoveB()
         {
-            if (B.Element != null)
-            {
-                Grid.Children.Remove(B.Element);
-            }
-
             Element = A.Element;
             TreeGrid.SetTreeNode(Element, this);
             A = B = null;
@@ -205,6 +203,13 @@ namespace Docdown.Controls
 
         public void Remove(UIElement element)
         {
+            if (Element == element)
+            {
+                Element = null;
+                Grid.Tree = null;
+                Grid.Tree = TopParent;
+                return;
+            }
             if (A != null && A.Element == element)
             {
                 RemoveA();
@@ -217,6 +222,14 @@ namespace Docdown.Controls
 
         public void AddB(UIElement element, Orientation orientation, double distribution = 0.5)
         {
+            if (Element == null && A == null)
+            {
+                Element = element;
+                Grid.Tree = null;
+                Grid.Tree = TopParent;
+                return;
+            }
+
             A = new TreeNode
             {
                 Element = Element,
@@ -232,6 +245,22 @@ namespace Docdown.Controls
             Element = null;
             Grid.Tree = null;
             Grid.Tree = TopParent;
+        }
+
+        public bool Contains(UIElement element)
+        {
+            if (Element == element)
+            {
+                return true;
+            }
+            else if (A != null && B != null)
+            {
+                return A.Contains(element) || B.Contains(element);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool ContainsType(CommonControlType type)
@@ -258,7 +287,7 @@ namespace Docdown.Controls
                 Element.Measure(availableSize);
                 return availableSize;
             }
-            else
+            else if (A != null && B != null)
             {
                 // default orientation is horizontal
                 double width = availableSize.Width;
@@ -306,6 +335,10 @@ namespace Docdown.Controls
 
                 return new Size(width, height);
             }
+            else
+            {
+                return availableSize;
+            }
         }
 
         public void Arrange(Rect rect, double splitterThickness)
@@ -314,7 +347,7 @@ namespace Docdown.Controls
             {
                 Element.Arrange(rect);
             }
-            else
+            else if (A != null && B != null)
             {
                 double x = rect.X;
                 double y = rect.Y;
