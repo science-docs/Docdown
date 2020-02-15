@@ -111,12 +111,12 @@ namespace Docdown.Controls
             }
         }
 
-        public static ActionCommand RemoveTreeGridItemCommand(UIElement element)
+        public static ActionCommand RemoveTreeGridItemCommand(DependencyObject element)
         {
             return new ActionCommand(() =>
             {
                 var treeNode = GetTreeNode(element);
-                treeNode.Parent.Remove(treeNode.Element);
+                treeNode.Remove(treeNode.Element);
             });
         }
     }
@@ -124,7 +124,22 @@ namespace Docdown.Controls
     public class TreeNode
     {
         public CommonControlType Type { get; set; }
-        public UIElement Element { get; set; }
+        public UIElement Element
+        {
+            get => element;
+            set
+            {
+                if (element != null)
+                {
+                    TreeGrid.SetTreeNode(element, null);
+                }
+                element = value;
+                if (element != null)
+                {
+                    TreeGrid.SetTreeNode(element, this);
+                }
+            }
+        }
         public TreeNode A { get; set; }
         public TreeNode B { get; set; }
         public TreeNode Parent { get; set; }
@@ -154,6 +169,7 @@ namespace Docdown.Controls
 
         public Size Size { get; set; }
 
+        private UIElement element;
         private double distribution = 0.5;
 
         public void AddA(UIElement element, Orientation orientation, double distribution = 0.5)
@@ -186,7 +202,6 @@ namespace Docdown.Controls
         public void RemoveA()
         {
             Element = B.Element;
-            TreeGrid.SetTreeNode(Element, this);
             A = B = null;
             Grid.Tree = null;
             Grid.Tree = TopParent;
@@ -195,7 +210,6 @@ namespace Docdown.Controls
         public void RemoveB()
         {
             Element = A.Element;
-            TreeGrid.SetTreeNode(Element, this);
             A = B = null;
             Grid.Tree = null;
             Grid.Tree = TopParent;
@@ -205,10 +219,17 @@ namespace Docdown.Controls
         {
             if (Element == element)
             {
-                Element = null;
-                Grid.Tree = null;
-                Grid.Tree = TopParent;
-                return;
+                if (Parent == null)
+                {
+                    Element = null;
+                    Grid.Tree = null;
+                    Grid.Tree = TopParent;
+                    return;
+                }
+                else
+                {
+                    Parent.Remove(element);
+                }
             }
             if (A != null && A.Element == element)
             {

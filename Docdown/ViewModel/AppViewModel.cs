@@ -137,6 +137,8 @@ namespace Docdown.ViewModel
             if (ContentTree.ContainsType(type))
                 return;
 
+            CommonControls.Layout(ContentTree.Grid, type, 0);
+
             //switch (type)
             //{
             //    case CommonControlType.Explorer:

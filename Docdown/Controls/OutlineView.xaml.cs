@@ -6,7 +6,7 @@ namespace Docdown.Controls
 {
     public partial class OutlineView : IWrappedView
     {
-        public ICommand CloseCommand => TreeGrid.RemoveTreeGridItemCommand(this);
+        public ICommand CloseCommand => TreeGrid.RemoveTreeGridItemCommand(Parent);
 
         public OutlineView()
         {

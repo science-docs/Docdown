@@ -1,5 +1,6 @@
 ﻿using Docdown.ViewModel;
 using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Docdown.Controls
@@ -42,6 +43,35 @@ namespace Docdown.Controls
             if (tree == null)
             {
                 tree = new TreeNode();
+            }
+
+            UIElement element;
+            switch (type)
+            {
+                case CommonControlType.Explorer:
+                    element = WorkspaceExplorer;
+                    break;
+                case CommonControlType.Outline:
+                    element = Outline;
+                    break;
+                default:
+                    return;
+            }
+
+            if (tree.Element == null)
+            {
+                tree.Element = element;
+                tree.Type = type;
+            }
+            else if (tree.A == null)
+            {
+                tree.AddA(element, Orientation.Horizontal, 0.2);
+                tree.A.Type = type;
+            }
+            else
+            {
+                tree.A.AddA(element, Orientation.Vertical, 0.5);
+                tree.A.A.Type = type;
             }
 
             grid.Tree = tree;

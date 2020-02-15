@@ -10,7 +10,7 @@ namespace Docdown.Controls
 {
     public partial class WorkspaceView : IWrappedView
     {
-        public ICommand CloseCommand => TreeGrid.RemoveTreeGridItemCommand(this);
+        public ICommand CloseCommand => TreeGrid.RemoveTreeGridItemCommand(Parent);
 
         public WorkspaceView()
         {
