@@ -1,4 +1,5 @@
-﻿using Docdown.Util;
+﻿using Docdown.Net;
+using Docdown.Util;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,7 +14,7 @@ namespace Docdown.ViewModel.Commands
         }
 
         [Delegate]
-        public async Task Update(IProgress<WebDownloadProgress> progress)
+        public static async Task Update(IProgress<WebDownloadProgress> progress)
         {
             progress = progress ?? new Progress<WebDownloadProgress>();
             var newVersion = await UpdateUtility.CheckNewVersion();

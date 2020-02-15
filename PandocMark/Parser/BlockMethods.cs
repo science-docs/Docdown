@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using PandocMark.Syntax;
 
 namespace PandocMark.Parser
@@ -10,9 +11,7 @@ namespace PandocMark.Parser
         private const int TabSize = 4;
         private const string Spaces = "         ";
 
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool CanContain(BlockTag parent_type, BlockTag child_type)
         {
             return parent_type == BlockTag.Document ||
@@ -21,9 +20,7 @@ namespace PandocMark.Parser
                    (parent_type == BlockTag.List && child_type == BlockTag.ListItem);
         }
 
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool AcceptsLines(BlockTag block_type)
         {
             return block_type == BlockTag.Paragraph ||
@@ -556,13 +553,13 @@ namespace PandocMark.Parser
             int i;
             bool all_matched = true;
             Block cur = curptr;
-            var blank = false;
             char curChar;
             int indent;
 
             // container starts at the document root.
             var container = cur.Top;
 
+            bool blank;
             // for each containing block, try to parse the associated line start.
             // bail out on failure:  container will point to the last matching block.
 

@@ -1,8 +1,7 @@
-﻿using Docdown.Util;
-using Newtonsoft.Json.Linq;
+﻿using Docdown.Net;
+using Docdown.Util;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -141,42 +140,43 @@ namespace Docdown.Model
             }
         }
 
-        private async Task DownloadWorkspace(WebWorkspaceItemHandler handler)
+        private Task DownloadWorkspace(WebWorkspaceItemHandler handler)
         {
-            var req = await WebUtility.GetRequest(WebUtility.BuildWorkspaceUrl(), MultipartFormParameter.FromWebWorkspace(this, handler.User));
-            var json = await req.Content.ReadAsStringAsync();
+            return Task.CompletedTask;
+            //var req = await WebUtility.GetRequest(WebUtility.BuildWorkspaceUrl(), MultipartFormParameter.FromWebWorkspace(this, handler.User));
+            //var json = await req.Content.ReadAsStringAsync();
 
-            var obj = JObject.Parse(json);
+            //var obj = JObject.Parse(json);
 
-            var items = obj.SelectToken("items");
+            //var items = obj.SelectToken("items");
 
-            foreach (var item in items)
-            {
-                var path = item.SelectToken("path").Value<string>();
-                var dateString = item.SelectToken("date").Value<string>();
-                var date = DateTime.Parse(dateString, null, DateTimeStyles.RoundtripKind);
+            //foreach (var item in items)
+            //{
+            //    var path = item.SelectToken("path").Value<string>();
+            //    var dateString = item.SelectToken("date").Value<string>();
+            //    var date = DateTime.Parse(dateString, null, DateTimeStyles.RoundtripKind);
 
-                var filePath = Path.Combine(Settings.Path, path);
+            //    var filePath = Path.Combine(Settings.Path, path);
 
-                var lastWrite = DateTime.MinValue;
-                if (FileSystem.File.Exists(filePath))
-                {
-                    lastWrite = FileSystem.File.GetLastWriteTimeUtc(filePath);
-                }
+            //    var lastWrite = DateTime.MinValue;
+            //    if (FileSystem.File.Exists(filePath))
+            //    {
+            //        lastWrite = FileSystem.File.GetLastWriteTimeUtc(filePath);
+            //    }
 
-                if (date > lastWrite)
-                {
-                    var itemReq = await WebUtility.GetRequest(WebUtility.BuildWorkspaceItemUrl(), 
-                        MultipartFormParameter.FromWebWorkspace(this, handler.User).Concat(MultipartFormParameter.CreateField("name", path)));
+            //    if (date > lastWrite)
+            //    {
+            //        var itemReq = await WebUtility.GetRequest(WebUtility.BuildWorkspaceItemUrl(), 
+            //            MultipartFormParameter.FromWebWorkspace(this, handler.User).Concat(MultipartFormParameter.CreateField("name", path)));
 
-                    var parent = Path.GetDirectoryName(filePath);
-                    Directory.CreateDirectory(parent);
-                    using (var fs = FileSystem.File.Open(filePath, FileMode.Create))
-                    {
-                        await itemReq.Content.CopyToAsync(fs);
-                    }
-                }
-            }
+            //        var parent = Path.GetDirectoryName(filePath);
+            //        Directory.CreateDirectory(parent);
+            //        using (var fs = FileSystem.File.Open(filePath, FileMode.Create))
+            //        {
+            //            await itemReq.Content.CopyToAsync(fs);
+            //        }
+            //    }
+            //}
         }
 
         private void InitItem(IFileSystemInfo fileInfo, IWorkspaceItem parent, WebWorkspaceItemHandler handler)

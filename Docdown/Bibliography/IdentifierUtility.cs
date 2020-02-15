@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Docdown.Net;
 using Docdown.Text.Bib;
-using Docdown.Util;
 using HtmlAgilityPack;
 
 namespace Docdown.Bibliography

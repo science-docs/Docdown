@@ -6,6 +6,7 @@ using Docdown.Properties;
 using System;
 using System.IO.Abstractions;
 using System.Diagnostics;
+using Docdown.Net;
 
 namespace Docdown.Model
 {

@@ -2,7 +2,7 @@
 using Docdown.ViewModel.Commands;
 using System;
 using System.Linq;
-using WebUtility = Docdown.Util.WebUtility;
+using WebUtility = Docdown.Net.WebUtility;
 using System.Security;
 using System.Windows.Input;
 using Docdown.Util;
@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using Docdown.Properties;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using Docdown.Net;
 
 namespace Docdown.ViewModel
 {

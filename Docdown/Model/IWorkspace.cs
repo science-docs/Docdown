@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
+using Docdown.Net;
 using Docdown.Util;
 
 namespace Docdown.Model

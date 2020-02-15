@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using Docdown.Net;
 
 namespace Docdown.Util
 {

@@ -2,22 +2,19 @@
 using Docdown.Properties;
 using Docdown.Text;
 using Docdown.Text.Markdown;
-using Docdown.ViewModel;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 
-namespace Docdown.Util
+namespace Docdown.Net
 {
     public static class WebUtility
     {
@@ -29,31 +26,6 @@ namespace Docdown.Util
         public static string BuildConvertUrl()
         {
             return BuildUrl(Settings.Default.API, "convert");
-        }
-
-        public static string BuildWorkspaceUrl()
-        {
-            return BuildUrl(Settings.Default.API, "workspace");
-        }
-
-        public static string BuildWorkspaceItemUrl()
-        {
-            return BuildUrl(Settings.Default.API, "workspace", "file");
-        }
-
-        public static string BuildWorkspaceConvertUrl()
-        {
-            return BuildUrl(Settings.Default.API, "workspace", "convert");
-        }
-
-        public static string BuildTemplatesUrl()
-        {
-            return BuildUrl(Settings.Default.API, "templates");
-        }
-
-        public static string BuildCslUrl()
-        {
-            return BuildUrl(Settings.Default.API, "csl");
         }
 
         public static string BuildRegisterUrl()

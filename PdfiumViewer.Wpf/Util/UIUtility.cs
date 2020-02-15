@@ -18,20 +18,13 @@ namespace PdfiumViewer.Wpf.Util
             var last = long.MinValue;
             return arg =>
             {
-                try
+                var current = System.Threading.Interlocked.Increment(ref last);
+                Task.Delay(milliseconds).ContinueWith(task =>
                 {
-                    var current = System.Threading.Interlocked.Increment(ref last);
-                    Task.Delay(milliseconds).ContinueWith(task =>
-                    {
-                        // ReSharper disable once AccessToModifiedClosure
-                        if (current == last) func(arg);
-                        task.Dispose();
-                    });
-                }
-                catch (OverflowException)
-                {
-                    System.Threading.Interlocked.Exchange(ref last, long.MinValue);
-                }
+                    // ReSharper disable once AccessToModifiedClosure
+                    if (current == last) func(arg);
+                    task.Dispose();
+                });
             };
         }
 

@@ -5,21 +5,20 @@ namespace PdfiumViewer.Wpf.Util
 {
     internal static class ResourceUtility
     {
-        private static readonly ResourceDictionary dictionary;
+        private static readonly ResourceDictionary dictionary = new ResourceDictionary();
 
         static ResourceUtility()
         {
-            dictionary = new ResourceDictionary();
             AddDictionary("Style");
         }
 
         public static T TryFindResource<T>(string name)
         {
-            try
+            if (dictionary.Contains(name) && dictionary[name] is T obj)
             {
-                return (T)dictionary[name];
+                return obj;
             }
-            catch
+            else
             {
                 return default;
             }

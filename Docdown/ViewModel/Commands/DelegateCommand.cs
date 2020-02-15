@@ -8,7 +8,7 @@ using System.Windows.Input;
 namespace Docdown.ViewModel.Commands
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class DelegateAttribute : Attribute
+    public sealed class DelegateAttribute : Attribute
     {
 
     }
@@ -69,14 +69,14 @@ namespace Docdown.ViewModel.Commands
         public DelegateCommand(params object[] parameters)
         {
             del = ReflectionUtility.CreateDelegate(GetType(), this, out sta);
-            this.parameters = parameters ?? new object[0];
+            this.parameters = parameters ?? Array.Empty<object>();
             CheckDelegateParameters();
         }
 
         public DelegateCommand(Delegate del, params object[] parameters)
         {
             this.del = del;
-            this.parameters = parameters ?? new object[0];
+            this.parameters = parameters ?? Array.Empty<object>();
             CheckDelegateParameters();
         }
 

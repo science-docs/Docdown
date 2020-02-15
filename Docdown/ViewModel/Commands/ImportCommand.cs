@@ -1,4 +1,5 @@
 ﻿using Docdown.Model;
+using Docdown.Net;
 using Docdown.Util;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
@@ -19,7 +20,7 @@ namespace Docdown.ViewModel.Commands
 
         [Delegate]
         [STAThread]
-        private async static void Import(WorkspaceViewModel workspace, ConverterType target)
+        private static async void Import(WorkspaceViewModel workspace, ConverterType target)
         {
             var dialog = new CommonOpenFileDialog
             {
@@ -44,7 +45,7 @@ namespace Docdown.ViewModel.Commands
             dialog.Dispose();
         }
 
-        private async static Task ImportFile(WorkspaceViewModel workspace, string fileName, ConverterType target)
+        private static async Task ImportFile(WorkspaceViewModel workspace, string fileName, ConverterType target)
         {
             string targetFileName = Path.GetFileNameWithoutExtension(fileName) + target.GetExtension();
             targetFileName = Path.Combine(workspace.Item.RelativeName, targetFileName);

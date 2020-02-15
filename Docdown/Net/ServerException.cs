@@ -3,15 +3,14 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Docdown.Util
+namespace Docdown.Net
 {
     public class ServerException : Exception
     {
         public override string Message => message;
-        public string PandocMessage => pandoc;
+        public string PandocMessage { get; private set; }
 
         private string message;
-        private string pandoc;
 
         public static async Task<ServerException> Create(HttpResponseMessage response)
         {
@@ -25,7 +24,7 @@ namespace Docdown.Util
                 var message = error.SelectToken("message").Value<string>();
                 var pandoc = (string)error.SelectToken("pandoc");
 
-                e.pandoc = pandoc;
+                e.PandocMessage = pandoc;
                 e.message = message;
             }
             catch

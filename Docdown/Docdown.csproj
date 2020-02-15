@@ -234,7 +234,7 @@
     <Compile Include="Text\IPreprocessor.cs" />
     <Compile Include="Text\Markdown\MarkdownPreprocessor.cs" />
     <Compile Include="Text\Preprocessor.cs" />
-    <Compile Include="Util\CancelToken.cs" />
+    <Compile Include="Net\CancelToken.cs" />
     <Compile Include="Util\DependencyPropertyUtility.cs" />
     <Compile Include="Util\Enumerable.cs" />
     <Compile Include="Util\ErrorUtility.cs" />
@@ -245,13 +245,13 @@
     <Compile Include="Util\ProgramUtility.cs" />
     <Compile Include="Util\ReflectionUtility.cs" />
     <Compile Include="Util\ResourceUtility.cs" />
-    <Compile Include="Util\ServerException.cs" />
+    <Compile Include="Net\ServerException.cs" />
     <Compile Include="Util\TextUtility.cs" />
     <Compile Include="Util\ThesaurusUtility.cs" />
     <Compile Include="Util\TypeCache.cs" />
     <Compile Include="Util\UIUtility.cs" />
     <Compile Include="Util\UpdateUtility.cs" />
-    <Compile Include="Util\WebUtility.cs" />
+    <Compile Include="Net\WebUtility.cs" />
     <Compile Include="Util\XamlUtility.cs" />
     <Compile Include="Util\XExtension.cs" />
     <Compile Include="Validation\StaticCaptchaValidationRule.cs" />

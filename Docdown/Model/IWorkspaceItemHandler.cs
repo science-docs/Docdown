@@ -1,4 +1,4 @@
-﻿using Docdown.Util;
+﻿using Docdown.Net;
 using System.Threading.Tasks;
 
 namespace Docdown.Model

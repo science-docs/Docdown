@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Docdown.Util
+namespace Docdown.Net
 {
     public class CancelToken
     {

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Docdown.Net;
+using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Docdown.Util
 {
-    public class UpdateUtility
+    public static class UpdateUtility
     {
         public static async Task<Version> CheckNewVersion()
         {
