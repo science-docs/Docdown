@@ -1,4 +1,5 @@
 ﻿using Docdown.Model;
+using Docdown.Net;
 using Docdown.Properties;
 using Docdown.Util;
 using Docdown.ViewModel.Commands;
@@ -239,23 +240,24 @@ namespace Docdown.ViewModel
             }
         }
 
-        public async Task UploadTemplate(string path)
+        public Task UploadTemplate(string path)
         {
             var nameParam = MultipartFormParameter.CreateField("name", Path.GetFileName(path));
             var info = AppViewModel.Instance.FileSystem.DirectoryInfo.FromDirectoryName(path);
             var parameter = MultipartFormParameter.FromFolder(info).Concat(nameParam);
             try
             {
-                var res = await WebUtility.PostRequest(WebUtility.BuildTemplatesUrl(), parameter);
-                await res.Content.ReadAsStreamAsync();
-                res.Dispose();
-                await LoadTemplates();
-                app.Messages.Success("Successfully uploaded template");
+                //var res = await WebUtility.PostRequest(WebUtility.BuildTemplatesUrl(), parameter);
+                //await res.Content.ReadAsStreamAsync();
+                //res.Dispose();
+                //await LoadTemplates();
+                //app.Messages.Success("Successfully uploaded template");
             }
             catch
             {
                 app.Messages.Error("Could not upload template");
             }
+            return Task.CompletedTask;
         }
 
         private async Task UploadTemplate()

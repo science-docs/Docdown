@@ -56,7 +56,7 @@ namespace Docdown.ViewModel
                 {
                     await app.Settings.TestConnection();
                     var progress = new Progress<WebDownloadProgress>(DownloadCallback);
-                    await new UpdateCommand(progress).Update(progress);
+                    await UpdateCommand.Update(progress);
                     await app.ChangeWorkspace(workspacePath);
 
                     if (isFile)
