@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using Docdown.Util;
+using Docdown.Net;
 using Newtonsoft.Json.Linq;
 
 namespace Docdown.Model.Test
