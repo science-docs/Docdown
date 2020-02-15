@@ -8,8 +8,19 @@ namespace Docdown.Model.Test
     public class WorkspaceTests : WorkspaceTestBase
     {
         const string NewName = "C:/Workspace/New.txt";
+        const string MainName = "C:/Workspace/Main.md";
         const string IgnoredDirectory = "C:/Workspace/.Ignore";
         const string NewHiddenName = "C:/Workspace/.Ignore/New.txt";
+
+        [TestMethod]
+        public void WorkspaceWasInitialized()
+        {
+            Assert.IsNotNull(Workspace);
+            Assert.IsNotNull(Workspace.Settings);
+            Assert.IsNotNull(Workspace.ConverterService);
+            Assert.IsNotNull(Workspace.FileSystem);
+            Assert.IsNotNull(Workspace.Item);
+        }
 
         [TestMethod]
         public async Task ConvertTest()
@@ -26,6 +37,28 @@ namespace Docdown.Model.Test
             await Task.Delay(1100);
             var newItem = FindItem("New.txt");
             Assert.IsNotNull(newItem);
+        }
+
+        [TestMethod]
+        public async Task FileDeletedTest()
+        {
+            FileSystem.File.Delete(MainName);
+            Watcher.Trigger(new FileSystemEventArgs(WatcherChangeTypes.Deleted, "C:/Workspace", "Main.md"));
+            await Task.Delay(2000);
+            var newItem = FindItem("Main.md");
+            Assert.IsNull(newItem);
+        }
+
+        [TestMethod]
+        public async Task FileMovedTest()
+        {
+            FileSystem.File.Move(MainName, NewName);
+            Watcher.Trigger(new RenamedEventArgs(WatcherChangeTypes.Renamed, "C:/Workspace", "New.txt", "Main.md"));
+            await Task.Delay(1100);
+            var newItem = FindItem("New.txt");
+            Assert.IsNotNull(newItem);
+            var oldItem = FindItem("Main.md");
+            Assert.IsNull(oldItem);
         }
 
         [TestMethod]

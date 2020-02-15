@@ -25,17 +25,7 @@ namespace Docdown.Model.Test
             await Initialize();
         }
 
-        [TestMethod]
-        public void WorkspaceWasInitialized()
-        {
-            Assert.IsNotNull(Workspace);
-            Assert.IsNotNull(Workspace.Settings);
-            Assert.IsNotNull(Workspace.ConverterService);
-            Assert.IsNotNull(Workspace.FileSystem);
-            Assert.IsNotNull(Workspace.Item);
-        }
-
-        public void AssertParentChild(IWorkspaceItem parent, IWorkspaceItem child)
+        public static void AssertParentChild(IWorkspaceItem parent, IWorkspaceItem child)
         {
             CollectionAssert.Contains(parent.Children, child, "Item '{0}' does not contain '{1}'", parent, child);
             Assert.AreSame(parent, child.Parent, "Item '{0}' is not the parent of '{1}'", parent, child);

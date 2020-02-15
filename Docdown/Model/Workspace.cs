@@ -111,15 +111,40 @@ namespace Docdown.Model
             }
 
             WorkspaceChanged(this, eventDictionary.Values);
+            OnWorkspaceChanged(eventDictionary.Values);
         }
 
+        /// <summary>
+        /// Remove leftover deleted items. The <see cref="IdentifyItem(FileSystemEventArgs)"/> method should create/rename all other items.
+        /// </summary>
+        /// <param name="args"></param>
+        private void OnWorkspaceChanged(IEnumerable<WorkspaceChangeEventArgs> args) 
+        {
+            foreach (var arg in args.Where(e => e.Change == WorkspaceChange.Deleted))
+            {
+                var item = arg.Item;
+                if (item.Parent != null)
+                {
+                    item.Parent.Children.Remove(item);
+                    item.Parent = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finds the item that belongs to the specified file system event.
+        /// If it doesn't exist yet, it will be created.
+        /// Does not do anything for delete events.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
         private async Task<IWorkspaceItem> IdentifyItem(FileSystemEventArgs e)
         {
             var path = e.FullPath;
             if (e is RenamedEventArgs renamed)
             {
                 path = renamed.OldFullPath;
-                var item = FindItem(path);
+                var item = FindItem(path, true);
                 if (item != null && item.FullName != e.FullPath)
                 {
                     if (item.IsDirectory)
@@ -136,7 +161,7 @@ namespace Docdown.Model
             }
             else
             {
-                return FindItem(path);
+                return FindItem(path, true);
             }
         }
 
@@ -223,13 +248,13 @@ namespace Docdown.Model
             }
         }
 
-        private IWorkspaceItem FindItem(string fullPath)
+        private IWorkspaceItem FindItem(string fullPath, bool createItem)
         {
             var normalized = fullPath.Replace('/', '\\');
-            return FindItem(Item, normalized);
+            return FindItem(Item, normalized, createItem);
         }
 
-        private IWorkspaceItem FindItem(IWorkspaceItem parent, string fullPath)
+        private IWorkspaceItem FindItem(IWorkspaceItem parent, string fullPath, bool createItem)
         {
             var normalized = parent.FullName;
             if (normalized == fullPath)
@@ -242,14 +267,14 @@ namespace Docdown.Model
 
             foreach (var child in parent.Children)
             {
-                var item = FindItem(child, fullPath);
+                var item = FindItem(child, fullPath, createItem);
                 if (item != null)
                 {
                     return item;
                 }
             }
 
-            if (isParent)
+            if (isParent && createItem)
             {
                 // At that point we know, that although the item is logically
                 // a child of the current item, it was not registered as a
