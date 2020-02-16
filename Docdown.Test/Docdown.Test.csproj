@@ -49,6 +49,7 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.IO.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=96bf224d23c43e59, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.Abstractions.6.0.32\lib\net40\System.IO.Abstractions.dll</HintPath>
@@ -56,6 +57,7 @@
     <Reference Include="System.IO.Abstractions.TestingHelpers, Version=6.0.0.0, Culture=neutral, PublicKeyToken=96bf224d23c43e59, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.Abstractions.TestingHelpers.6.0.32\lib\net40\System.IO.Abstractions.TestingHelpers.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -75,8 +77,12 @@
     <Compile Include="Model\WorkspaceTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Bibliography\IdentifierUtilityTests.cs" />
+    <Compile Include="TestBase.cs" />
     <Compile Include="Util\TextUtilityTests.cs" />
     <Compile Include="Util\ThesaurusUtilityTests.cs" />
+    <Compile Include="ViewModel\WorkspaceItemViewModelTest.cs" />
+    <Compile Include="ViewModel\WorkspaceViewModelTests.cs" />
+    <Compile Include="ViewModel\WorkspaceViewModelTestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

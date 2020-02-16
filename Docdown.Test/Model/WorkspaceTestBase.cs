@@ -11,9 +11,10 @@ using System.Threading.Tasks;
 
 namespace Docdown.Model.Test
 {
-    public abstract class WorkspaceTestBase
+    public abstract class WorkspaceTestBase : TestBase
     {
         public IWorkspace Workspace { get; set; }
+        public MockConverterService ConverterService { get; set; }
         public MockFileSystem FileSystem { get; set; }
         public FileWorkspaceItemHandler FileHandler { get; set; }
         public FileSystemWatcherFactory Watcher { get; set; }
@@ -61,8 +62,8 @@ namespace Docdown.Model.Test
                 FileSystemWatcher = Watcher = new FileSystemWatcherFactory()
             };
 
-
-            Workspace = await WorkspaceProvider.Create(WorkspacePath, FileSystem, new MockConverterService());
+            ConverterService = new MockConverterService();
+            Workspace = await WorkspaceProvider.Create(WorkspacePath, FileSystem, ConverterService);
             Workspace.WorkspaceChanged += delegate { };
             FileHandler = Workspace.Handlers.OfType<FileWorkspaceItemHandler>().First();
         }

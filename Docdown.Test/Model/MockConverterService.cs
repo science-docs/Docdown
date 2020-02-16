@@ -10,6 +10,7 @@ namespace Docdown.Model.Test
     public class MockConverterService : IConverterService
     {
         public string Url { get; set; }
+        public int Delay { get; set; }
 
         public Task<ConnectionStatus> Connect()
         {
@@ -18,12 +19,15 @@ namespace Docdown.Model.Test
 
         public async Task<byte[]> Convert(IEnumerable<MultipartFormParameter> parameters, CancelToken cancelToken)
         {
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Docdown.Test.Files.Result.txt");
-            using (var ms = new MemoryStream())
+            return await Task.Delay(Delay).ContinueWith(t =>
             {
-                await stream.CopyToAsync(ms);
-                return ms.ToArray();
-            }
+                var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Docdown.Test.Files.Result.txt");
+                using (var ms = new MemoryStream())
+                {
+                    stream.CopyTo(ms);
+                    return ms.ToArray();
+                }
+            });
         }
 
         public Task<string[]> LoadCsls()

@@ -74,13 +74,11 @@ namespace Docdown.ViewModel
             set
             {
                 Data.IsExcluded = value;
-                SendPropertyUpdate();
-                foreach (var child in Children)
-                {
-                    child.SendPropertyUpdate();
-                }
+                UpdateIsExcluded();
             }
         }
+
+        
 
         [ChangeListener(nameof(IsExcluded))]
         public bool IsIncluded => !IsExcluded;
@@ -263,6 +261,15 @@ namespace Docdown.ViewModel
             return false;
         }
 
+        private void UpdateIsExcluded()
+        {
+            SendPropertyUpdate(nameof(IsExcluded));
+            foreach (var child in Children)
+            {
+                child.UpdateIsExcluded();
+            }
+        }
+
         public void InsertTextAtPosition(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -304,10 +311,6 @@ namespace Docdown.ViewModel
             Children.Add(child);
         }
 
-       
-
-        
-
         public async Task Delete()
         {
             var lang = Language.Current;
@@ -324,14 +327,20 @@ namespace Docdown.ViewModel
             {
                 await Data.Delete();
             }
-            else
+            else if (Data.Parent != null)
             {
                 Data.Parent.Children.Remove(Data);
             }
+            else
+            {
+                Workspace.Data = null;
+            }
+
             if (Parent != null)
             {
                 await Dispatcher.InvokeAsync(() => Parent.Children.Remove(this));
             }
+
             string hash = IOUtility.GetHashFile(Data.FileInfo.FileSystem.Directory, Data.FullName);
             if (Data.FileInfo.FileSystem.File.Exists(hash))
             {
@@ -355,6 +364,10 @@ namespace Docdown.ViewModel
             if (Workspace.PreSelectedItem == this)
             {
                 Workspace.PreSelectedItem = null;
+            }
+            if (Workspace.SelectedPreview == this)
+            {
+                Workspace.SelectedPreview = null;
             }
             Workspace.OpenItems.Remove(this);
             foreach (var child in Children)

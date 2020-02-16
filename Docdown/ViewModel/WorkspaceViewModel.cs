@@ -182,7 +182,7 @@ namespace Docdown.ViewModel
                 return;
 
             converterToken = new CancelToken();
-            AppViewModel.Instance.Messages.Working(Language.Current.Get("Workspace.Compilation.Running"));
+            Messages.Working(Language.Current.Get("Workspace.Compilation.Running"));
             IsConverting = true;
             await SaveAllItems();
             var watch = Stopwatch.StartNew();
@@ -519,12 +519,9 @@ namespace Docdown.ViewModel
                 pdfPreview.PdfPath = PdfPath;
             }
 
-            Task.Delay(10).ContinueWith(_ =>
+            Dispatcher.InvokeAsync(() =>
             {
-                Dispatcher.Invoke(() =>
-                {
-                    SelectedPreview = pdfPreview;
-                });
+                SelectedPreview = pdfPreview;
             });
         }
     }

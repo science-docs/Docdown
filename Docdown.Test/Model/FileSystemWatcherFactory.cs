@@ -6,7 +6,7 @@ namespace Docdown.Model.Test
 {
     public class FileSystemWatcherFactory : IFileSystemWatcherFactory
     {
-        private static readonly MockFileSystemWatcher Instance = new MockFileSystemWatcher();
+        private readonly MockFileSystemWatcher Instance = new MockFileSystemWatcher();
 
         public void Trigger(FileSystemEventArgs e)
         {
