@@ -169,7 +169,7 @@
     <Compile Include="Controls\IWrappedView.cs" />
     <Compile Include="Editor\Markdown\AbstractSyntaxTree.cs" />
     <Compile Include="Editor\Markdown\BlockBackgroundRenderer.cs" />
-    <Compile Include="Editor\Markdown\Highlight.cs" />
+    <Compile Include="Editor\Highlight.cs" />
     <Compile Include="Editor\Markdown\ListInputHandler.cs" />
     <Compile Include="Editor\Markdown\MarkdownCitationCompletionData.cs" />
     <Compile Include="Editor\Markdown\MarkdownCompletionData.cs" />
@@ -177,7 +177,7 @@
     <Compile Include="Editor\Markdown\MarkdownFoldingStrategy.cs" />
     <Compile Include="Editor\Markdown\MarkdownHighlightColorizer.cs" />
     <Compile Include="Editor\Markdown\MarkdownLatexCompletionData.cs" />
-    <Compile Include="Editor\Markdown\Theme.cs" />
+    <Compile Include="Editor\Theme.cs" />
     <Compile Include="Controls\OutlineView.xaml.cs">
       <DependentUpon>OutlineView.xaml</DependentUpon>
     </Compile>
@@ -198,6 +198,7 @@
     <Compile Include="Converters\StringToResourceConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\SvgToBrushConverter.cs" />
+    <Compile Include="Editor\ThemePersistance.cs" />
     <Compile Include="Model\Bibliography.cs" />
     <Compile Include="Model\PreviewWorkspaceItem.cs" />
     <Compile Include="Text\Bib\BibEntry.cs" />

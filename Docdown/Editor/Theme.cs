@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace Docdown.Editor.Markdown
+namespace Docdown.Editor
 {
     public class ThemeChangedEventArgs : EventArgs
     {
@@ -17,6 +17,21 @@ namespace Docdown.Editor.Markdown
         private string _editorBackground = "#404040";
         private string _editorForeground = "#ccc";
         private string _spellCheckError = "#f00";
+
+        public IEnumerable<Highlight> Highlights => highlights.Values;
+
+        private readonly Dictionary<string, Highlight> highlights = new Dictionary<string, Highlight>();
+
+        public Highlight this[string name]
+        {
+            get => highlights[name];
+            set => highlights[name] = value;
+        }
+
+        public void Add(Highlight highlight)
+        {
+            highlights[highlight.Name] = highlight;
+        }
 
         private Highlight _highlightHeading = new Highlight { Name = "Heading", Foreground = "#CF6A4C" };
         private Highlight _highlightEmphasis = new Highlight { Name = "Emphasis", Foreground = "#8F9D67" };

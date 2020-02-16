@@ -1,4 +1,4 @@
-﻿namespace Docdown.Editor.Markdown
+﻿namespace Docdown.Editor
 {
     public class Highlight
     {
