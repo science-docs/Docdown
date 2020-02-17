@@ -43,11 +43,23 @@ namespace Docdown.Editor.Markdown
 
         public static IEnumerable<Issue> Validate(string text, IWorkspaceItem item)
         {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
+
             return Validate(AbstractSyntaxTree.GenerateAbstractSyntaxTree(text), text, item);
         }
 
         public static IEnumerable<Issue> Validate(Block document, string text, IWorkspaceItem item)
         {
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
+
             foreach (var block in AbstractSyntaxTree.EnumerateBlocks(document))
             {
                 foreach (var issue in ValidateBlock(block, text, item))

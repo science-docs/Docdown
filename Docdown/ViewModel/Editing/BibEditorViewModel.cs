@@ -31,7 +31,7 @@ namespace Docdown.ViewModel.Editing
         {
             folding = new BibFoldingStrategy();
             entries = new List<BibEntry>();
-            var bibTheme = Theme.Get("Bib");
+            var bibTheme = ThemePersistance.Load("Bib");
             colorizer = new BibHighlightColorizer(bibTheme);
             issueRenderer = new IssueBackgroundRenderer(bibTheme)
             {

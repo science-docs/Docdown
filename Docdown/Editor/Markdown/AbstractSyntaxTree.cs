@@ -88,26 +88,26 @@ namespace Docdown.Editor.Markdown
 
         public static readonly Dictionary<BlockTag, Func<Theme, Highlight>> BlockHighlighter = new Dictionary<BlockTag, Func<Theme, Highlight>>
         {
-            {BlockTag.AtxHeading, t => t.HighlightHeading},
-            {BlockTag.SetextHeading, t => t.HighlightHeading},
-            {BlockTag.BlockQuote, t => t.HighlightBlockQuote},
-            {BlockTag.ListItem, t => t.HighlightStrongEmphasis},
-            {BlockTag.FencedCode, t => t.HighlightBlockCode},
-            {BlockTag.IndentedCode, t => t.HighlightBlockCode},
-            {BlockTag.HtmlBlock, t => t.HighlightBlockCode},
-            {BlockTag.ReferenceDefinition, t => t.HighlightLink}
+            {BlockTag.AtxHeading, t => t["Heading"]},
+            {BlockTag.SetextHeading, t => t["Heading"]},
+            {BlockTag.BlockQuote, t => t["BlockQuote"]},
+            {BlockTag.ListItem, t => t["StrongEmphasis"]},
+            {BlockTag.FencedCode, t => t["BlockCode"]},
+            {BlockTag.IndentedCode, t => t["BlockCode"]},
+            {BlockTag.HtmlBlock, t => t["BlockCode"]},
+            {BlockTag.ReferenceDefinition, t => t["Link"]}
         };
 
         public static readonly Dictionary<InlineTag, Func<Theme, Highlight>> InlineHighlighter = new Dictionary<InlineTag, Func<Theme, Highlight>>
         {
-            {InlineTag.Code, t => t.HighlightInlineCode},
-            {InlineTag.Emphasis, t => t.HighlightEmphasis},
-            {InlineTag.Strong, t => t.HighlightStrongEmphasis},
-            {InlineTag.Link, t => t.HighlightLink},
-            {InlineTag.Image, t => t.HighlightImage},
-            {InlineTag.RawHtml, t => t.HighlightBlockCode},
-            {InlineTag.Tex, t => t.HighlightTex},
-            {InlineTag.Task, t => t.HighlightTask}
+            {InlineTag.Code, t => t["InlineCode"]},
+            {InlineTag.Emphasis, t => t["Emphasis"]},
+            {InlineTag.Strong, t => t["StrongEmphasis"]},
+            {InlineTag.Link, t => t["Link"]},
+            {InlineTag.Image, t => t["Image"]},
+            {InlineTag.RawHtml, t => t["BlockCode"]},
+            {InlineTag.Tex, t => t["Tex"]},
+            {InlineTag.Task, t => t["Task"]}
         };
 
         public static IEnumerable<Block> EnumerateHeader(Block ast)

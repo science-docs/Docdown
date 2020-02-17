@@ -75,16 +75,16 @@ namespace Docdown.Editor.Markdown
         public void OnThemeChanged(Theme theme)
         {
             _brushes.Clear();
-            var codeBrush = UIUtility.GetColorBrush(theme.HighlightBlockCode.Background);
+            var codeBrush = UIUtility.GetColorBrush(theme["BlockCode"].Background);
             _brushes[BlockTag.FencedCode] = codeBrush;
             _brushes[BlockTag.IndentedCode] = codeBrush;
             _brushes[BlockTag.HtmlBlock] = codeBrush;
 
-            var headingBrush = UIUtility.GetColorBrush(theme.HighlightHeading.Background);
+            var headingBrush = UIUtility.GetColorBrush(theme["Heading"].Background);
             _brushes[BlockTag.AtxHeading] = headingBrush;
             _brushes[BlockTag.SetextHeading] = headingBrush;
 
-            _brushes[BlockTag.BlockQuote] = UIUtility.GetColorBrush(theme.HighlightBlockQuote.Background);
+            _brushes[BlockTag.BlockQuote] = UIUtility.GetColorBrush(theme["BlockQuote"].Background);
         }
     }
 }

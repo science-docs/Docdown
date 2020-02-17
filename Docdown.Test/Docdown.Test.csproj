@@ -70,6 +70,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Bibliography\SciHubLoaderTests.cs" />
+    <Compile Include="Editor\ThemePersistanceTests.cs" />
     <Compile Include="Settings\MemorySettingsProvider.cs" />
     <Compile Include="Model\FileWorkspaceItemHandlerTest.cs" />
     <Compile Include="Model\MockConverterService.cs" />

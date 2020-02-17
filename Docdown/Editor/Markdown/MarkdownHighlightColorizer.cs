@@ -35,11 +35,9 @@ namespace Docdown.Editor.Markdown
 
             foreach (var block in EnumerateSpanningBlocks(ast, start, end))
             {
-                if (BlockHighlighter.TryGetValue(block.Tag, out Func<Theme, Highlight> highlighter))
+                if (BlockHighlighter.TryGetValue(block.Tag, out var highlighter))
                 {
                     var magnify = double.NaN;
-                    //if (block.Heading.Level == 1) magnify = theme.Header1Height;
-                    //if (block.Heading.Level == 2) magnify = theme.Header2Height;
 
                     var length = block.Tag == BlockTag.ListItem
                         ? Math.Min(block.SourceLength, block.ListData.Padding)
@@ -48,7 +46,7 @@ namespace Docdown.Editor.Markdown
                     if (block.Tag == BlockTag.HtmlBlock &&
                         block.HtmlBlockType == HtmlBlockType.Comment)
                     {
-                        highlighter = t => t.HighlightComment;
+                        highlighter = t => t["Comment"];
                     }
 
 

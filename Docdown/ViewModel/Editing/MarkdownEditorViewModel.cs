@@ -31,7 +31,7 @@ namespace Docdown.ViewModel.Editing
 
         public MarkdownEditorViewModel(WorkspaceItemViewModel item) : base(item)
         {
-            var theme = Theme.Get("Markdown");
+            var theme = ThemePersistance.Load("Markdown");
             folding = new MarkdownFoldingStrategy();
             colorizer = new MarkdownHighlightingColorizer(theme);
             blockRenderer = new BlockBackgroundRenderer(theme);
