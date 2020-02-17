@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using Docdown.Properties;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Docdown.Editor
 {
     public static class ThemePersistance
     {
+        private const string ThemePrefix = "Theme_";
+
+
+        private static readonly string[] defaultLanguages =
+        {
+            "Markdown", "Bib"
+        };
+
         private static readonly Dictionary<string, Theme> internalDict
             = new Dictionary<string, Theme>();
 
@@ -20,7 +28,7 @@ namespace Docdown.Editor
             }
 
             var settings = Settings.Default;
-            var themeName = "Theme_" + name;
+            var themeName = ThemePrefix + name;
             settings.EnsureProperty(themeName, string.Empty);
             var themeJson = settings[themeName];
 
@@ -43,10 +51,37 @@ namespace Docdown.Editor
             throw new InvalidCastException();
         }
 
+        public static IEnumerable<Theme> LoadAll()
+        {
+            var settings = Settings.Default;
+            var defaultLangs = new List<string>(defaultLanguages);
+            foreach (SettingsPropertyValue prop in settings.PropertyValues)
+            {
+                if (prop.Name.StartsWith(ThemePrefix))
+                {
+                    string name = prop.Name.Substring(ThemePrefix.Length);
+                    defaultLangs.Remove(name);
+                    yield return Load(name);
+                }
+            }
+            foreach (var langName in defaultLangs)
+            {
+                yield return Load(langName);
+            }
+        }
+
+        public static void SaveAll(IEnumerable<Theme> themes)
+        {
+            foreach (var theme in themes)
+            {
+                Save(theme);
+            }
+        }
+
         public static void Save(Theme theme)
         {
             var name = theme.Name;
-            var themeName = "Theme_" + name;
+            var themeName = ThemePrefix + name;
             var json = ToJson(theme);
             var settings = Settings.Default;
             settings.EnsureProperty(themeName, string.Empty);
