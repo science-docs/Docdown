@@ -11,7 +11,7 @@ namespace Docdown.Util
 {
     public static class IOUtility
     {
-        private static readonly Regex InvalidFileNameRegex = new Regex("[" + new string(Path.GetInvalidFileNameChars()) + "]", RegexOptions.Compiled);
+        private static readonly Regex InvalidFileNameRegex = new Regex("[" + Regex.Escape(new string(Path.GetInvalidFileNameChars())) + "]", RegexOptions.Compiled);
         private static readonly MD5 md5 = MD5.Create();
 
         public static async Task WriteAllBytes(IFileInfo fileInfo, byte[] bytes)
@@ -84,9 +84,12 @@ namespace Docdown.Util
             return GetTempFile(directory, ByteArrayToString(bytes));
         }
 
-        public static bool IsValidFileName(string fileName)
+        public static bool ContainsInvalidCharacters(string fileName, out char c)
         {
-            return !InvalidFileNameRegex.IsMatch(fileName);
+            var match = InvalidFileNameRegex.Match(fileName);
+
+            c = match.Success ? match.Value[0] : default;
+            return !match.Success;
         }
 
         public static Stream LoadResource(string name)

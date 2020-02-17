@@ -257,6 +257,7 @@
     <Compile Include="Net\WebUtility.cs" />
     <Compile Include="Util\XamlUtility.cs" />
     <Compile Include="Util\XExtension.cs" />
+    <Compile Include="Validation\FileNameValidationRule.cs" />
     <Compile Include="Validation\StaticCaptchaValidationRule.cs" />
     <Compile Include="ViewModel\AppViewModel.cs" />
     <Compile Include="ViewModel\CaptchaViewModel.cs" />

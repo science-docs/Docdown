@@ -7,6 +7,7 @@
              xmlns:Metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:Util="clr-namespace:Docdown.Util"
+             xmlns:Val="clr-namespace:Docdown.Validation"
              xmlns:ViewModel="clr-namespace:Docdown.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="300"
@@ -121,8 +122,14 @@
                             <Setter TargetName="PART_Content" Property="Content">
                                 <Setter.Value>
                                     <TextBox Name="nameChangeBox" 
-                                             Text="{Binding WorkspaceItem.Name, UpdateSourceTrigger=PropertyChanged}"
                                              Util:DependencyPropertyUtility.FullSelect="{Binding WorkspaceItem.IsNameChanging}">
+                                        <TextBox.Text>
+                                            <Binding Path="WorkspaceItem.Name" UpdateSourceTrigger="PropertyChanged">
+                                                <Binding.ValidationRules>
+                                                    <Val:FileNameValidationRule/>
+                                                </Binding.ValidationRules>
+                                            </Binding>
+                                        </TextBox.Text>
                                         <TextBox.InputBindings>
                                             <KeyBinding Key="Return" Command="{Binding WorkspaceItem.NameChangeEndCommand}"/>
                                             <KeyBinding Key="Esc" Command="{Binding WorkspaceItem.CancelNameChangeCommand}"/>

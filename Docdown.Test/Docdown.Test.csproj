@@ -85,6 +85,7 @@
     <Compile Include="TestBase.cs" />
     <Compile Include="Util\TextUtilityTests.cs" />
     <Compile Include="Util\ThesaurusUtilityTests.cs" />
+    <Compile Include="Validation\FileNameValidationRuleTests.cs" />
     <Compile Include="ViewModel\WorkspaceItemViewModelTest.cs" />
     <Compile Include="ViewModel\WorkspaceViewModelTests.cs" />
     <Compile Include="ViewModel\WorkspaceViewModelTestBase.cs" />

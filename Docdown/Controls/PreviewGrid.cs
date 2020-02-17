@@ -53,57 +53,6 @@ namespace Docdown.Controls
             previewTab.DataContext = DataContext;
         }
 
-        //protected override Size MeasureOverride(Size constraint)
-        //{
-        //    bool both = ShowDefault && ShowPreview;
-        //    double halfWidth = constraint.Width / 2 - 3;
-
-        //    if (both)
-        //    {
-        //        var halfSize = new Size(halfWidth, constraint.Height);
-        //        defaultTab.Measure(halfSize);
-        //        previewTab.Measure(halfSize);
-        //    }
-        //    else if (ShowDefault)
-        //    {
-        //        defaultTab.Measure(constraint);
-        //    }
-        //    else if (ShowPreview)
-        //    {
-        //        previewTab.Measure(constraint);
-        //    }
-
-        //    return constraint;
-        //}
-
-        //protected override Size ArrangeOverride(Size arrangeBounds)
-        //{
-        //    bool both = ShowDefault && ShowPreview;
-        //    double halfWidth = arrangeBounds.Width / 2 - 3;
-        //    double halfX = halfWidth + 6;
-        //    var rect = new Rect(arrangeBounds);
-
-        //    if (both)
-        //    {
-        //        var halfSize = new Size(halfWidth, arrangeBounds.Height);
-        //        var defRect = new Rect(halfSize);
-        //        var previewRect = new Rect(new Point(halfX, 0), halfSize);
-        //        defaultTab.Arrange(defRect);
-        //        previewTab.Arrange(previewRect);
-                
-        //    }
-        //    else if (ShowDefault)
-        //    {
-        //        defaultTab.Arrange(rect);
-        //    }
-        //    else if (ShowPreview)
-        //    {
-        //        previewTab.Arrange(rect);
-        //    }
-
-        //    return arrangeBounds;
-        //}
-
         private void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
         {
             if (oldValue is INotifyCollectionChanged oldChanged)
