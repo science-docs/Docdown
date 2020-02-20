@@ -257,6 +257,7 @@
     <Compile Include="Net\WebUtility.cs" />
     <Compile Include="Util\XamlUtility.cs" />
     <Compile Include="Util\XExtension.cs" />
+    <Compile Include="Validation\ColorValidationRule.cs" />
     <Compile Include="Validation\FileNameValidationRule.cs" />
     <Compile Include="Validation\StaticCaptchaValidationRule.cs" />
     <Compile Include="ViewModel\AppViewModel.cs" />
@@ -296,6 +297,7 @@
     <Compile Include="ViewModel\SearchViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
     <Compile Include="ViewModel\SplashViewModel.cs" />
+    <Compile Include="ViewModel\ThemeEditorViewModel.cs" />
     <Compile Include="ViewModel\UserViewModel.cs" />
     <Compile Include="ViewModel\WizardItemViewModel.cs" />
     <Compile Include="ViewModel\WizardViewModel.cs" />
@@ -321,6 +323,9 @@
     </Compile>
     <Compile Include="Windows\SplashWindow.xaml.cs">
       <DependentUpon>SplashWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ThemeEditorWindow.xaml.cs">
+      <DependentUpon>ThemeEditorWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\WizardWindow.xaml.cs">
       <DependentUpon>WizardWindow.xaml</DependentUpon>
@@ -437,6 +442,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\SplashWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ThemeEditorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

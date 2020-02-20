@@ -99,7 +99,7 @@ namespace Docdown.Model
             {
                 var change = changeQueue.Dequeue();
                 var item = await IdentifyItem(change);
-                if (item != null)
+                if (item != null && change.ChangeType != WatcherChangeTypes.Changed)
                 {
                     var changeValue = (WorkspaceChange)(int)change.ChangeType;
                     var args = new WorkspaceChangeEventArgs(item, changeValue);

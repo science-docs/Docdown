@@ -25,13 +25,14 @@ namespace Docdown.ViewModel.Editing
         private readonly MarkdownHighlightingColorizer colorizer;
         private readonly BlockBackgroundRenderer blockRenderer;
         private readonly IssueBackgroundRenderer issueRenderer;
+        private readonly Theme theme;
 
         private int _previousLineCount = -1;
 
 
         public MarkdownEditorViewModel(WorkspaceItemViewModel item) : base(item)
         {
-            var theme = ThemePersistance.Load("Markdown");
+            theme = ThemePersistance.Load("Markdown");
             folding = new MarkdownFoldingStrategy();
             colorizer = new MarkdownHighlightingColorizer(theme);
             blockRenderer = new BlockBackgroundRenderer(theme);
@@ -46,6 +47,11 @@ namespace Docdown.ViewModel.Editing
             editor.TextArea.TextView.BackgroundRenderers.Add(issueRenderer);
             editor.TextArea.TextView.LineTransformers.Add(colorizer);
             editor.Document.PropertyChanged += OnEditBoxPropertyChanged;
+
+            theme.PropertyChanged += delegate
+            {
+                editor.TextArea.TextView.Redraw();
+            };
         }
 
         public override object FindHoverContent(int index)

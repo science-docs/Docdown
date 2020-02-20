@@ -74,6 +74,7 @@ namespace Docdown.Editor
         {
             foreach (var theme in themes)
             {
+                theme.SendPropertyUpdate(nameof(Theme.Highlights));
                 Save(theme);
             }
         }
@@ -96,7 +97,7 @@ namespace Docdown.Editor
             {
                 case "Bib":
                 case "Markdown":
-                    theme = CreateMarkdown();
+                    theme = CreateMarkdown(name);
                     break;
                 default:
                     throw new ArgumentException();
@@ -106,9 +107,9 @@ namespace Docdown.Editor
             return theme;
         }
 
-        private static Theme CreateMarkdown()
+        private static Theme CreateMarkdown(string name)
         {
-            return CreateTheme("Markdown",
+            return CreateTheme(name,
                 new Highlight { Name = "Heading", Foreground = "#CF6A4C" },
                 new Highlight { Name = "Emphasis", Foreground = "#8F9D67" },
                 new Highlight { Name = "StrongEmphasis", Foreground = "#8F9D67" },

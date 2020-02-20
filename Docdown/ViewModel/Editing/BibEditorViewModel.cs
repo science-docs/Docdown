@@ -24,6 +24,7 @@ namespace Docdown.ViewModel.Editing
         private readonly IssueBackgroundRenderer issueRenderer;
         private readonly List<Issue> issues;
         private readonly List<BibEntry> entries;
+        private readonly Theme theme;
 
         private MenuItemAction showArticleAction;
 
@@ -31,9 +32,9 @@ namespace Docdown.ViewModel.Editing
         {
             folding = new BibFoldingStrategy();
             entries = new List<BibEntry>();
-            var bibTheme = ThemePersistance.Load("Bib");
-            colorizer = new BibHighlightColorizer(bibTheme);
-            issueRenderer = new IssueBackgroundRenderer(bibTheme)
+            theme = ThemePersistance.Load("Bib");
+            colorizer = new BibHighlightColorizer(theme);
+            issueRenderer = new IssueBackgroundRenderer(theme)
             {
                 Issues = issues = new List<Issue>()
             };
@@ -64,6 +65,11 @@ namespace Docdown.ViewModel.Editing
             editor.TextArea.TextView.LineTransformers.Add(colorizer);
             
             editor.ContextMenuOpening += ContextMenuOpening;
+
+            theme.PropertyChanged += delegate
+            {
+                editor.TextArea.TextView.Redraw();
+            };
         }
 
         public override void Update()

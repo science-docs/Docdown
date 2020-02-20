@@ -130,4 +130,9 @@
     <System:String x:Key="Captcha_Watermark">Enter Captcha...</System:String>
     <System:String x:Key="Captcha_Error">Entered wrong captcha '{0}'</System:String>
     
+    
+    <!-- Theme Editor -->
+    <System:String x:Key="Theme_Editor_Title">Theme Editor</System:String>
+    
+    
 </ResourceDictionary>
