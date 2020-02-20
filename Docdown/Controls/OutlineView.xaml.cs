@@ -15,12 +15,12 @@ namespace Docdown.Controls
 
         private void OutlineSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (DataContext is WorkspaceViewModel workspace && 
+            if (DataContext is AppViewModel app && 
                 e.NewValue is OutlineItemViewModel outlineItem)
             {
-                if (workspace.SelectedItem != null)
+                if (app.Workspace.SelectedItem != null)
                 {
-                    workspace.SelectedItem.SelectedOutlineItem = outlineItem;
+                    app.Workspace.SelectedItem.SelectedOutlineItem = outlineItem;
                 }
             }
         }
@@ -28,10 +28,10 @@ namespace Docdown.Controls
         private void OutlineMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left && 
-                DataContext is WorkspaceViewModel workspace)
+                DataContext is AppViewModel app)
             {
-                var selectedItem = workspace?.SelectedItem?.SelectedOutlineItem;
-                var outline = workspace?.SelectedItem?.Outline;
+                var selectedItem = app.Workspace.SelectedItem?.SelectedOutlineItem;
+                var outline = app.Workspace.SelectedItem?.Outline;
                 if (outline?.JumpTo != null && selectedItem != null)
                 {
                     Keyboard.ClearFocus();
