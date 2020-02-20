@@ -188,6 +188,7 @@ namespace Docdown.ViewModel
             var watch = Stopwatch.StartNew();
             try
             {
+                PdfPath = string.Empty;
                 PdfPath = await Data.Convert(converterToken);
                 IsCompiled = true;
                 watch.Stop();
