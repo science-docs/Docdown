@@ -162,12 +162,12 @@ namespace Docdown.ViewModel.Editing
 
         private void TextEntered(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text.Length == 1 && sender is TextEditor editor)
+            if (e.Text.Length == 1 && sender is TextArea textArea)
             {
                 var c = e.Text[0];
                 if (CompletionMarkers != null && CompletionMarkers.Contains(c))
                 {
-                    ShowCompletionWindow(editor.TextArea);
+                    ShowCompletionWindow(textArea);
                 }
             }
         }
