@@ -4,6 +4,8 @@
 
 Docdown is a tool for creating PDF files from [markdown](#Markdown). It was made specifically to simplify the process of creating a scientific work by combining features of common TeX editors and Microsoft Word.
 
+![Preview](Docs/Preview.png)
+
 ## Download
 
 You can find the newest release [here](https://github.com/Darkgaja/Docdown/releases/latest). Docdown will automatically update itself on startup. Also, you can select `Check for updates` in the `Help` menu to find updates during runtime.
