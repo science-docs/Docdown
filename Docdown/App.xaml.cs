@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Windows;
+using ControlzEx.Theming;
 
 namespace Docdown
 {
@@ -23,12 +24,12 @@ namespace Docdown
             {
                 UnhandledExceptionCrash(this, new UnhandledExceptionEventArgs(ex, false));
             }
-            ThemeManager.AddAccent("BlueDoc", GetResourceUri("Resources/Accents/Blue.xaml"));
-            ThemeManager.AddAppTheme("DarkDoc", GetResourceUri("Resources/Themes/Dark.xaml"));
-            ThemeManager.AddAppTheme("LightDoc", GetResourceUri("Resources/Themes/Light.xaml"));
+            //ThemeManager.Current.AddTheme(new Theme(new LibraryTheme( .AddAccent("BlueDoc", GetResourceUri("Resources/Accents/Blue.xaml"));
+            //ThemeManager.AddAppTheme("DarkDoc", GetResourceUri("Resources/Themes/Dark.xaml"));
+            //ThemeManager.AddAppTheme("LightDoc", GetResourceUri("Resources/Themes/Light.xaml"));
             var theme = Settings.Default.Theme;
             ChangeLocale(Settings.Default.Locale);
-            ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent("BlueDoc"), ThemeManager.GetAppTheme(theme + "Doc"));
+            //ThemeManager.ChangeAppStyle(Current, ThemeManager.GetAccent("BlueDoc"), ThemeManager.GetAppTheme(theme + "Doc"));
             SplashViewModel.Args = e.Args;
             base.OnStartup(e);
         }

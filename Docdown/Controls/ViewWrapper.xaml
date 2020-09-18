@@ -7,7 +7,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Template>
         <ControlTemplate>
-            <Border x:Name="TopBorder" Background="{DynamicResource WhiteBrush}" BorderBrush="{DynamicResource GrayBrush10}" BorderThickness="1">
+            <Border x:Name="TopBorder" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" BorderBrush="{DynamicResource MahApps.Brushes.Gray10}" BorderThickness="1">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -19,7 +19,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Rectangle x:Name="InvisRect" Fill="{DynamicResource GrayBrush8}" Visibility="Collapsed"/>
+                        <Rectangle x:Name="InvisRect" Fill="{DynamicResource MahApps.Brushes.Gray8}" Visibility="Collapsed"/>
                         <Rectangle Grid.Column="1" x:Name="TopRect"
                            Margin="8 0" 
                            Height="5" 
@@ -42,19 +42,19 @@
                            Text="{Binding Path=Content.Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" 
                            Grid.Column="0"
                            Focusable="False"
-                           Foreground="{DynamicResource BlackBrush}" 
+                           Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" 
                            Margin="4 2 0 2"
                            FontSize="{StaticResource DefaultFontSize}"/>
                         <StackPanel Grid.Column="2">
                             <Button x:Name="CloseButton" 
-                                    Style="{StaticResource ChromelessButtonStyle}" 
+                                    Style="{StaticResource MahApps.Styles.Button.Chromeless}" 
                                     ToolTip="{DynamicResource Main_Menu_File_Close}"
                                     Command="{Binding Path=Content.CloseCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                     Margin="0 6 6 0" 
                                     VerticalAlignment="Center" 
                                     VerticalContentAlignment="Center">
                                 <Path x:Name="CloseButtonPath" Data="F1M0,0 8,8 M8,0 0,8" 
-                                      Stroke="{DynamicResource BlackBrush}" StrokeThickness="1.5" Margin="0"/>
+                                      Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}" StrokeThickness="1.5" Margin="0"/>
                             </Button>
                         </StackPanel>
                     </Grid>
@@ -63,7 +63,7 @@
             </Border>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                    <Setter TargetName="TopBorder" Property="Background" Value="{DynamicResource AccentColorBrush}"/>
+                    <Setter TargetName="TopBorder" Property="Background" Value="{DynamicResource MahApps.Brushes.Accent}"/>
                     <Setter TargetName="InvisRect" Property="Fill" Value="White"/>
                     <Setter TargetName="ViewName" Property="Foreground" Value="White"/>
                     <Setter TargetName="CloseButtonPath" Property="Stroke">

@@ -10,7 +10,7 @@
         TitleTemplate="{StaticResource DefaultTitleTemplate}"
         IconTemplate="{x:Null}"
         WindowStartupLocation="CenterOwner"
-        Title="Create New File" Height="450" Width="400" Background="{DynamicResource WhiteBrush}">
+        Title="Create New File" Height="450" Width="400" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -37,12 +37,12 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Name: " VerticalAlignment="Center" Margin="4" Foreground="{DynamicResource BlackBrush}"/>
+            <TextBlock Grid.Column="0" Text="Name: " VerticalAlignment="Center" Margin="4" Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
             <TextBox Grid.Column="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="4"/>
         </Grid>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="OK" Style="{StaticResource MetroFlatButton}" Margin="4" Click="OKClicked"/>
-            <Button Content="Close" Style="{StaticResource MetroFlatButton}" Margin="4" Click="CloseClicked"/>
+            <Button Content="OK" Style="{StaticResource MahApps.Styles.Button.Flat}" Margin="4" Click="OKClicked"/>
+            <Button Content="Close" Style="{StaticResource MahApps.Styles.Button.Flat}" Margin="4" Click="CloseClicked"/>
         </StackPanel>
     </Grid>
 </Metro:MetroWindow>

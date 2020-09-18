@@ -15,7 +15,7 @@
     <FrameworkElement.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </FrameworkElement.Resources>
@@ -23,7 +23,7 @@
         <StackPanel Orientation="Vertical">
             <Image Source="{Binding Image}" Width="450" Height="110"/>
             <TextBox Margin="8 4" 
-                     Style="{StaticResource MetroButtonTextBox}"
+                     Style="{StaticResource MahApps.Styles.TextBox.Button}"
                      Metro:TextBoxHelper.Watermark="{DynamicResource Captcha_Watermark}"
                      Metro:TextBoxHelper.ButtonCommand="{Binding ReloadCommand}"
                      Metro:TextBoxHelper.ButtonContent="RL">
@@ -36,7 +36,7 @@
                 </TextBox.Text>
             </TextBox>
             <Button Content="{DynamicResource Message_Window_OK}" 
-                    Style="{StaticResource MetroFlatButton}" 
+                    Style="{StaticResource MahApps.Styles.Button.Flat}" 
                     Command="{Binding FinishCommand}"
                     Margin="8 4" 
                     IsDefault="True"/>

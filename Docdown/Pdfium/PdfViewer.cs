@@ -1,4 +1,6 @@
-﻿using PdfiumViewer.Wpf.Util;
+﻿using Docdown;
+using Docdown.Util;
+using PdfiumLight;
 using System;
 using System.IO;
 using System.Windows;
@@ -19,7 +21,7 @@ namespace PdfiumViewer.Wpf
             MaxScaleProperty = DependencyProperty.Register(nameof(MaxScale),
                 typeof(double), type, new PropertyMetadata(double.NaN, OnMaxScaleChanged));
             DocumentProperty = DependencyProperty.Register(nameof(Document), 
-                typeof(IPdfDocument), type, new PropertyMetadata(null, OnDocumentChanged));
+                typeof(PdfDocument), type, new PropertyMetadata(null, OnDocumentChanged));
             DocumentPathProperty = DependencyProperty.Register(nameof(DocumentPath),
                 typeof(string), type, new PropertyMetadata(null, OnDocumentPathChanged));
 
@@ -36,9 +38,9 @@ namespace PdfiumViewer.Wpf
             set => SetValue(MaxScaleProperty, value);
         }
 
-        public IPdfDocument Document
+        public PdfDocument Document
         {
-            get => (IPdfDocument)GetValue(DocumentProperty);
+            get => (PdfDocument)GetValue(DocumentProperty);
             set => SetValue(DocumentProperty, value);
         }
 
@@ -54,11 +56,11 @@ namespace PdfiumViewer.Wpf
             set => SetValue(StackPanel.OrientationProperty, value);
         }
 
-        private PageViewModel[] pageCache = new PageViewModel[0];
+        private PageViewModel[] pageCache = Array.Empty<PageViewModel>();
 
         public PdfViewer()
         {
-            Template = ResourceUtility.TryFindResource<ControlTemplate>("PdfViewerTemplate");
+            Template = Application.Current.TryFindResource("PdfViewerTemplate") as ControlTemplate;
         }
 
         public void ScrollTo(int page)
@@ -66,28 +68,28 @@ namespace PdfiumViewer.Wpf
             var doc = Document;
             if (doc != null)
             {
-                page = Math.Max(0, Math.Min(page, doc.PageCount - 1));
+                page = Math.Max(0, Math.Min(page, doc.PageCount() - 1));
                 var scroller = this.GetDescendantByType<ScrollViewer>();
                 var itemsControl = this.GetDescendantByType<ItemsControl>();
                 // TODO: calculate height of page correctly someday
                 var height = itemsControl.ActualHeight;
-                var itemHeight = height / doc.PageCount;
+                var itemHeight = height / doc.PageCount();
                 var totalHeight = page * itemHeight;
                 scroller.ScrollToVerticalOffset(totalHeight);
             }
         }
 
-        private void DisplayPdf(IPdfDocument document)
+        private void DisplayPdf(PdfDocument document)
         {
             
             var itemsControl = this.GetDescendantByType<ItemsControl>();
             if (document is null)
             {
-                pageCache = new PageViewModel[0];
+                pageCache = Array.Empty<PageViewModel>();
             }
             else
             {
-                pageCache = new PageViewModel[document.PageCount];
+                pageCache = new PageViewModel[document.PageCount()];
                 for (int i = 0; i < pageCache.Length; i++)
                 {
                     pageCache[i] = new PageViewModel(document, i)
@@ -102,13 +104,13 @@ namespace PdfiumViewer.Wpf
 
         private static void OnDocumentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (e.OldValue is IPdfDocument oldDoc)
+            if (e.OldValue is PdfDocument oldDoc)
             {
                 oldDoc.Dispose();
             }
             if (d is PdfViewer viewer)
             {
-                viewer.DisplayPdf(e.NewValue as IPdfDocument);
+                viewer.DisplayPdf(e.NewValue as PdfDocument);
             }
         }
 
@@ -117,24 +119,22 @@ namespace PdfiumViewer.Wpf
             if (d is PdfViewer pdfViewer)
             {
                 var path = e.NewValue as string;
-                IPdfDocument doc;
+                PdfDocument doc;
                 if (File.Exists(path))
                 {
-                    using (var fs = File.Open(path, FileMode.Open))
+                    using var fs = File.Open(path, FileMode.Open);
+                    var ms = new MemoryStream();
+                    fs.CopyTo(ms);
+                    try
                     {
-                        var ms = new MemoryStream();
-                        fs.CopyTo(ms);
-                        try
-                        {
-                            doc = PdfDocument.Load(ms);
-                        }
-                        catch
-                        {
-                            doc = null;
-                        }
+                        doc = new PdfDocument(ms);
+                    }
+                    catch
+                    {
+                        doc = null;
                     }
                 }
-                else if (path == "")
+                else if (string.IsNullOrEmpty(path))
                 {
                     doc = pdfViewer.Document;
                 }

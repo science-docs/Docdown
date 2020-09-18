@@ -9,6 +9,7 @@
         Style="{StaticResource CleanWindowStyleKey}"
         TitleAlignment="Left"
         TitleCharacterCasing="Normal"
+        Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
         Title="User Credentials" Height="158" Width="400" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner">
     <Grid>
@@ -17,9 +18,9 @@
             <TextBox Text="{Binding Username}" Metro:TextBoxHelper.Watermark="Username" Margin="8 4"/>
             <PasswordBox PasswordChanged="PasswordBox_PasswordChanged" Metro:TextBoxHelper.Watermark="Password" Margin="8 4"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="4 0">
-                <Button Content="Register" Style="{StaticResource MetroFlatButton}" Command="{Binding RegisterCommand}" Margin="4"/>
-                <Button Content="Login" Style="{StaticResource MetroFlatButton}" Command="{Binding LoginCommand}" Margin="4"/>
-                <Button Content="Cancel" Style="{StaticResource MetroFlatButton}" Margin="4" IsCancel="True"/>
+                <Button Content="Register" Style="{StaticResource MahApps.Styles.Button.Flat}" Command="{Binding RegisterCommand}" Margin="4"/>
+                <Button Content="Login" Style="{StaticResource MahApps.Styles.Button.Flat}" Command="{Binding LoginCommand}" Margin="4"/>
+                <Button Content="Cancel" Style="{StaticResource MahApps.Styles.Button.Flat}" Margin="4" IsCancel="True"/>
             </StackPanel>
         </StackPanel>
     </Grid>

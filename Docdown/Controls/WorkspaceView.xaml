@@ -22,14 +22,14 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Border Background="{DynamicResource OverlayBrush}" 
-                BorderBrush="{DynamicResource GrayBrush10}" 
+                BorderBrush="{DynamicResource MahApps.Brushes.Gray10}" 
                 BorderThickness="0 1"
                 Grid.Row="0">
             <TextBox BorderThickness="0" 
                      Background="{DynamicResource GrayBrush11}"
                      FontSize="{StaticResource DefaultFontSize}"
                      Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}"
-                     Style="{StaticResource MetroButtonTextBox}"
+                     Style="{StaticResource MahApps.Styles.TextBox.Button}"
                      Metro:TextBoxHelper.ButtonCommand="{Binding ClearSearchCommand}"
                      Metro:TextBoxHelper.Watermark="{DynamicResource Workspace_Explorer_Search}" MinHeight="0">
             </TextBox>
@@ -127,11 +127,11 @@
                                             <KeyBinding Key="Return" Command="{Binding WorkspaceItem.NameChangeEndCommand}"/>
                                             <KeyBinding Key="Esc" Command="{Binding WorkspaceItem.CancelNameChangeCommand}"/>
                                         </TextBox.InputBindings>
-                                        <i:Interaction.Triggers>
+                                        <!--<i:Interaction.Triggers>
                                             <i:EventTrigger EventName="LostFocus">
                                                 <i:InvokeCommandAction Command="{Binding WorkspaceItem.NameChangeEndCommand}"/>
                                             </i:EventTrigger>
-                                        </i:Interaction.Triggers>
+                                        </i:Interaction.Triggers>-->
                                     </TextBox>
                                 </Setter.Value>
                             </Setter>

@@ -1,4 +1,5 @@
 ﻿using PdfiumViewer.Wpf.Util;
+using PdfiumLight;
 using System;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -11,14 +12,14 @@ namespace PdfiumViewer.Wpf
 {
     internal class PageViewModel
     {
-        public IPdfDocument Document { get; }
+        public PdfDocument Document { get; }
         public int Page { get; }
         public double MaxScale { get; set; }
         public WpfSize Size { get; private set; }
         public WpfSize RenderSize { get; private set; }
         public Orientation Orientation { get; set; }
 
-        public PageViewModel(IPdfDocument document, int page)
+        public PageViewModel(PdfDocument document, int page)
         {
             Document = document;
             Page = page;
@@ -26,7 +27,7 @@ namespace PdfiumViewer.Wpf
 
         public WpfSize Resize(WpfSize availableSize)
         {
-            Size = ConvertSize(Document.PageSizes[Page], availableSize, out var renderSize);
+            Size = ConvertSize(Document.GetPageSize(Page), availableSize, out var renderSize);
             RenderSize = renderSize;
             return Size;
         }
@@ -63,8 +64,8 @@ namespace PdfiumViewer.Wpf
             {
                 try
                 {
-                    return Document.Render(Page, (int)RenderSize.Width, (int)RenderSize.Height,
-                        (float)BitmapUtility.DpiX, (float)BitmapUtility.DpiY, PdfRenderFlags.Annotations);
+                    var page = Document.GetPage(Page);
+                    return page.Render((int)RenderSize.Width, (int)RenderSize.Height);
                 }
                 catch
                 {

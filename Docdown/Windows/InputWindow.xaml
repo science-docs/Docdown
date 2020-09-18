@@ -10,7 +10,7 @@
         TitleTemplate="{StaticResource DefaultTitleTemplate}"
         IconTemplate="{x:Null}"
         Title="{Binding Title}"
-        WindowStartupLocation="CenterOwner" Background="{DynamicResource WhiteBrush}"
+        WindowStartupLocation="CenterOwner" Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
         Width="300" Height="150">
     <Grid>
         <Grid.RowDefinitions>
@@ -27,7 +27,7 @@
                  Text="{Binding Text}"/>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <StackPanel.Resources>
-                <Style TargetType="Button" BasedOn="{StaticResource MetroFlatButton}">
+                <Style TargetType="Button" BasedOn="{StaticResource MahApps.Styles.Button.Flat}">
                     <Setter Property="Width" Value="61"/>
                     <Setter Property="Margin" Value="0 0 8 8"/>
                 </Style>

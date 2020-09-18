@@ -64,7 +64,7 @@ namespace Docdown.Model
 
         private void SetupFileSystemWatcher()
         {
-            watcher = FileSystem.FileSystemWatcher.FromPath(Settings.Path);
+            watcher = FileSystem.FileSystemWatcher.CreateNew(Settings.Path);
             watcher.IncludeSubdirectories = true;
             watcher.EnableRaisingEvents = true;
 

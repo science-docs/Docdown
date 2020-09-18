@@ -126,15 +126,15 @@ namespace PdfiumViewer.Wpf
         private async Task SetLinks(PageViewModel page)
         {
             var size = new System.Drawing.Size((int)ActualWidth, (int)ActualHeight);
-            var pageSize = page.Document.PageSizes[page.Page];
-            var links = page.Document.GetPageLinks(page.Page, size);
-            foreach (var link in links.Links)
-            {
-                var translated = page.Document.RectangleFromPdf(page.Page, link.Bounds);
-                System.Drawing.RectangleF rectF = translated;
-                RecalculateRect(pageSize, page.RenderSize, ref rectF);
-                await Dispatcher.InvokeAsync(() => CreateRectangle(rectF, link.TargetPage ?? 0));
-            }
+            var pageSize = page.Document.GetPageSize(page.Page);
+            //var links = page.Document.GetPageLinks(page.Page, size);
+            //foreach (var link in links.Links)
+            //{
+            //    var translated = page.Document.RectangleFromPdf(page.Page, link.Bounds);
+            //    System.Drawing.RectangleF rectF = translated;
+            //    RecalculateRect(pageSize, page.RenderSize, ref rectF);
+            //    await Dispatcher.InvokeAsync(() => CreateRectangle(rectF, link.TargetPage ?? 0));
+            //}
         }
 
         private void RecalculateRect(System.Drawing.SizeF pageSize, Size controlSize, ref System.Drawing.RectangleF linkRect)

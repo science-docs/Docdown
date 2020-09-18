@@ -9,14 +9,14 @@
         Style="{StaticResource SlimWindowStyle}"
         TitleTemplate="{StaticResource DefaultTitleTemplate}"
         IconTemplate="{StaticResource DefaultIconTemplate}"
-        WindowStartupLocation="CenterOwner" Background="{DynamicResource WhiteBrush}">
+        WindowStartupLocation="CenterOwner" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid Background="{DynamicResource WhiteBrush}">
+        <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
             <TextBlock Style="{StaticResource VersionTextBlockStyle}"
                        VerticalAlignment="Center"
                        Margin="12 0"
@@ -26,7 +26,7 @@
             <StackPanel.Resources>
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml"/>
+                        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml"/>
                     </ResourceDictionary.MergedDictionaries>
                     <SolidColorBrush x:Key="GrayBrush9" Color="#5EC9C9C9"/>
                 </ResourceDictionary>
@@ -51,7 +51,7 @@
                        Margin="0 2"
                        Style="{StaticResource DefaultInformationStyle}"/>
                 <TextBox Margin="0 2"
-                     Style="{StaticResource MetroButtonTextBox}"
+                     Style="{StaticResource MahApps.Styles.TextBox.Button}"
                      Text="{Binding SelectedLocalTemplate}"
                      Metro:TextBoxHelper.ButtonCommand="{Binding SearchTemplateCommand}"
                      Metro:TextBoxHelper.ButtonContent="🔍"
@@ -60,7 +60,7 @@
                        Margin="0 2"
                        Style="{StaticResource DefaultInformationStyle}"/>
                 <TextBox Margin="0 2"
-                     Style="{StaticResource MetroButtonTextBox}"
+                     Style="{StaticResource MahApps.Styles.TextBox.Button}"
                      Text="{Binding SelectedLocalCsl}"
                      Metro:TextBoxHelper.ButtonCommand="{Binding SearchCitationStyleCommand}"
                      Metro:TextBoxHelper.ButtonContent="🔍"
@@ -131,14 +131,14 @@
                                        Width="16"
                                        Margin="2 0 8 0"/>
                                 <TextBlock Text="{Binding Name}" 
-                                   Foreground="{DynamicResource BlackBrush}"/>
+                                   Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
                 <Button Content="{DynamicResource Settings_Window_Upload_Template}"
                     Command="{Binding UploadTemplateCommand}"
-                    Style="{StaticResource MetroFlatButton}"
+                    Style="{StaticResource MahApps.Styles.Button.Flat}"
                     IsEnabled="{Binding IsConnected}"
                     Margin="0 2"/>
                 <TextBlock Text="{DynamicResource Settings_Window_Online_Csl}"
@@ -149,14 +149,14 @@
                       IsEnabled="{Binding IsConnected}"
                       Margin="0 2"/>
                 <Button Content="{DynamicResource Settings_Window_Upload_Csl}"
-                    Style="{StaticResource MetroFlatButton}"
+                    Style="{StaticResource MahApps.Styles.Button.Flat}"
                     IsEnabled="False"
                     Margin="0 2"/>
             </StackPanel>
         </StackPanel>
-        <Grid Grid.Row="2" Background="{DynamicResource WhiteBrush}">
+        <Grid Grid.Row="2" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
             <Grid.Resources>
-                <Style TargetType="Button" BasedOn="{StaticResource MetroFlatButton}">
+                <Style TargetType="Button" BasedOn="{StaticResource MahApps.Styles.Button.Flat}">
                     <Setter Property="Margin" Value="4 8"/>
                 </Style>
             </Grid.Resources>

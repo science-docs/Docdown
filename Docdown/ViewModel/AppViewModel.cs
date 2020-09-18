@@ -33,7 +33,7 @@ namespace Docdown.ViewModel
         public new MessageQueue Messages { get; }
         [ChangeListener(nameof(Theme))]
         public string ThemeName => "Lightbulb" + theme;
-        public Theme Theme
+        public string Theme
         {
             get => theme;
             set => Set(ref theme, value);
@@ -65,7 +65,7 @@ namespace Docdown.ViewModel
         public ICommand DotAlphabeticalListCommand => new EditCommand(this, EditorCommands.DotAlphabeticalList);
         public ICommand ParenthesisAlphabeticalListCommand => new EditCommand(this, EditorCommands.ParenthesisAlphabeticalList);
 
-        private Theme theme;
+        private string theme;
 
         private static AppViewModel instance;
 
@@ -81,7 +81,7 @@ namespace Docdown.ViewModel
             Settings = new SettingsViewModel(this);
             Messages = new MessageQueue();
             User = new UserViewModel();
-            theme = (Theme)Enum.Parse(typeof(Theme), Properties.Settings.Default.Theme);
+            theme = Properties.Settings.Default.Theme;
         }
 
         public async Task ChangeWorkspace(string newWorkspace)
@@ -112,17 +112,17 @@ namespace Docdown.ViewModel
 
         public void SwitchTheme()
         {
-            if (theme == Theme.Dark)
+            if (theme == "Dark")
             {
-                Theme = Theme.Light;
+                Theme = "Light";
             }
             else
             {
-                Theme = Theme.Dark;
+                Theme = "Dark";
             }
             Properties.Settings.Default.Theme = Theme.ToString();
             Properties.Settings.Default.Save();
-            ThemeManager.ChangeAppStyle(Application.Current, ThemeManager.GetAccent("BlueDoc"), ThemeManager.GetAppTheme(theme + "Doc"));
+            //ThemeManager.ChangeAppStyle(Application.Current, ThemeManager.GetAccent("BlueDoc"), ThemeManager.GetAppTheme(theme + "Doc"));
             App.ReloadIcons();
             Workspace.UpdateIcons(Workspace.Children);
         }

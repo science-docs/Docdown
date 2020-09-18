@@ -12,7 +12,7 @@
         Style="{StaticResource SlimWindowStyle}"
         TitleTemplate="{StaticResource DefaultTitleTemplate}"
         IconTemplate="{StaticResource DefaultIconTemplate}"
-        WindowStartupLocation="CenterOwner" Background="{DynamicResource WhiteBrush}"
+        WindowStartupLocation="CenterOwner" Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
         Height="600"
         Width="680">
     <Grid Margin="0 20 0 0">
@@ -24,7 +24,7 @@
             <Grid.Resources>
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml"/>
+                        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml"/>
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
             </Grid.Resources>
@@ -36,7 +36,7 @@
             <ListBox Grid.Column="0"
                  ItemsSource="{Binding Items}"
                  SelectedItem="{Binding SelectedItem}"
-                 Background="{DynamicResource WhiteBrush}"
+                 Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
                  ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -46,7 +46,7 @@
             </ListBox>
             <Controls:BindedRichTextBox Grid.Column="2" 
                                         Padding="8"
-                                        Background="{DynamicResource WhiteBrush}"
+                                        Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
                                         Document="{Binding SelectedItem.Preview}"/>
         </Grid>
         <StackPanel Grid.Row="1"
@@ -56,12 +56,12 @@
                     Command="{Binding SelectedItem.InsertTextCommand}"
                     Margin="4 8"
                     Height="32"
-                    Style="{StaticResource MetroFlatButton}"/>
+                    Style="{StaticResource MahApps.Styles.Button.Flat}"/>
             <Button Content="Close"
                     IsCancel="True"
                     Margin="4 8 8 8"
                     Height="32"
-                    Style="{StaticResource MetroFlatButton}"/>
+                    Style="{StaticResource MahApps.Styles.Button.Flat}"/>
         </StackPanel>
     </Grid>
 </Metro:MetroWindow>

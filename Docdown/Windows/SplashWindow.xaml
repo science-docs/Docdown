@@ -29,13 +29,13 @@
                    VerticalAlignment="Center"
                    FontSize="28"/>
             <TextBlock Text="Document Converter" FontSize="24"
-                       Foreground="{DynamicResource BlackBrush}" HorizontalAlignment="Center"/>
+                       Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" HorizontalAlignment="Center"/>
         </StackPanel>
         <TextBlock Text="{Binding Version, StringFormat='Version {0}'}" 
                    Grid.Row="2"
                    VerticalAlignment="Bottom" 
                    HorizontalAlignment="Right" 
-                   Foreground="{DynamicResource AccentColorBrush}"
+                   Foreground="{DynamicResource MahApps.Brushes.Accent}"
                    FontSize="12"
                    Margin="8 4"/>
         <ProgressBar Grid.Row="3" Value="{Binding DownloadProgress}" Maximum="1" Background="Transparent" BorderBrush="Transparent"/>

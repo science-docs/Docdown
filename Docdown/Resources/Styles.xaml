@@ -2,11 +2,17 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
                     xmlns:Docdown="clr-namespace:Docdown.Controls"
-                    xmlns:System="clr-namespace:System;assembly=mscorlib"
+                    xmlns:System="clr-namespace:System;assembly=System.Runtime"
                     xmlns:Converters="http://metro.mahapps.com/winfx/xaml/shared"
                     xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
                     xmlns:gg="urn:gong-wpf-dragdrop"
                     xmlns:Util="clr-namespace:Docdown.Util">
+
+    <Color x:Key="EditorBackgroundColor">#FF1E1E1E</Color>
+    <SolidColorBrush x:Key="OverlayBrush" Color="#40808080"/>
+    <SolidColorBrush x:Key="EditorBackground" Color="{StaticResource EditorBackgroundColor}"/>
+    <Color x:Key="BlueColor">#FF7AC0FF</Color>
+    <SolidColorBrush x:Key="BlueBrush" Color="{StaticResource BlueColor}" />
 
     <Style x:Key="{x:Type Docdown:TreeGridSplitter}"
            TargetType="{x:Type Docdown:TreeGridSplitter}">
@@ -25,16 +31,16 @@
     </Style>
     
     <Style x:Key="DocWindowButtonStyle"
-               BasedOn="{StaticResource MetroWindowButtonStyle}"
+               BasedOn="{StaticResource MahApps.Styles.Button.MetroWindow.Base}"
                TargetType="{x:Type Button}">
-        <Setter Property="Foreground" Value="{DynamicResource BlackBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
         <Style.Triggers>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="{DynamicResource AccentColorBrush}" />
+                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent}" />
                 <Setter Property="Foreground" Value="White" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
-                <Setter Property="Foreground" Value="{DynamicResource IdealForegroundDisabledBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.IdealForegroundDisabled}" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -124,7 +130,7 @@
                                                 </Border>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Fill" TargetName="TrianglePath" Value="{DynamicResource AccentBaseColorBrush}"/>
+                                                        <Setter Property="Fill" TargetName="TrianglePath" Value="{DynamicResource MahApps.Brushes.AccentBase}"/>
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -140,10 +146,10 @@
                             <Setter Property="Background" TargetName="PART_DropDown" Value="{DynamicResource OverlayBrush}"/>
                         </Trigger>
                         <DataTrigger Binding="{Binding IsPressed, ElementName=Bd}" Value="True">
-                            <Setter Property="Background" TargetName="firstBorder" Value="{DynamicResource AccentColorBrush}"/>
+                            <Setter Property="Background" TargetName="firstBorder" Value="{DynamicResource MahApps.Brushes.Accent}"/>
                         </DataTrigger>
                         <Trigger Property="IsContextMenuOpen" Value="True">
-                            <Setter Property="Background" TargetName="PART_Grid" Value="{DynamicResource AccentColorBrush}"/>
+                            <Setter Property="Background" TargetName="PART_Grid" Value="{DynamicResource MahApps.Brushes.Accent}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Opacity" TargetName="PART_Grid" Value="0.5"/>
@@ -163,16 +169,16 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="WorkspaceTreeViewItem" BasedOn="{StaticResource MetroTreeViewItem}" TargetType="{x:Type TreeViewItem}">
+    <Style x:Key="WorkspaceTreeViewItem" BasedOn="{StaticResource MahApps.Styles.TreeViewItem}" TargetType="{x:Type TreeViewItem}">
         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Controls:ItemHelper.ActiveSelectionBackgroundBrush" Value="{DynamicResource AccentColorBrush}"/>
+        <Setter Property="Controls:ItemHelper.ActiveSelectionBackgroundBrush" Value="{DynamicResource MahApps.Brushes.Accent}"/>
         <Setter Property="Controls:ItemHelper.HoverBackgroundBrush" Value="{x:Null}" />
-        <Setter Property="Controls:ItemHelper.HoverSelectedBackgroundBrush" Value="{DynamicResource AccentColorBrush}" />
-        <Setter Property="Controls:ItemHelper.SelectedBackgroundBrush" Value="{DynamicResource GrayBrush9}" />
+        <Setter Property="Controls:ItemHelper.HoverSelectedBackgroundBrush" Value="{DynamicResource MahApps.Brushes.Accent}" />
+        <Setter Property="Controls:ItemHelper.SelectedBackgroundBrush" Value="{DynamicResource MahApps.Brushes.Gray9}" />
         <Style.Triggers>
             <Trigger Property="IsFocused" Value="False">
-                <Setter Property="Controls:ItemHelper.HoverSelectedBackgroundBrush" Value="{DynamicResource GrayBrush9}"/>
+                <Setter Property="Controls:ItemHelper.HoverSelectedBackgroundBrush" Value="{DynamicResource MahApps.Brushes.Gray9}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -190,9 +196,9 @@
         <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}, Path=Background, Mode=OneWay, FallbackValue=Transparent}" />
         <Setter Property="BorderBrush" Value="{DynamicResource AccentColorBrush}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Controls:ControlsHelper.HeaderFontSize" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}, Path=(Controls:ControlsHelper.HeaderFontSize), Mode=OneWay}" />
+        <!--<Setter Property="Controls:ControlsHelper.HeaderFontSize" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}, Path=(Controls:ControlsHelper.HeaderFontSize), Mode=OneWay}" />
         <Setter Property="Controls:ControlsHelper.HeaderFontStretch" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}, Path=(Controls:ControlsHelper.HeaderFontStretch), Mode=OneWay}" />
-        <Setter Property="Controls:ControlsHelper.HeaderFontWeight" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}, Path=(Controls:ControlsHelper.HeaderFontWeight), Mode=OneWay}" />
+        <Setter Property="Controls:ControlsHelper.HeaderFontWeight" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}, Path=(Controls:ControlsHelper.HeaderFontWeight), Mode=OneWay}" />-->
         <Setter Property="Controls:TabControlHelper.UnderlineBrush" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}, Path=(Controls:TabControlHelper.UnderlineBrush), Mode=OneWay}" />
         <Setter Property="Controls:TabControlHelper.UnderlineMouseOverBrush" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}, Path=(Controls:TabControlHelper.UnderlineMouseOverBrush), Mode=OneWay}" />
         <Setter Property="Controls:TabControlHelper.UnderlineMouseOverSelectedBrush" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}, Path=(Controls:TabControlHelper.UnderlineMouseOverSelectedBrush), Mode=OneWay}" />
@@ -236,16 +242,16 @@
                                                        ContentTemplate="{TemplateBinding HeaderTemplate}"
                                                        ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
                                                        FontSize="{StaticResource DefaultFontSize}"
-                                                       FontStretch="{TemplateBinding Controls:ControlsHelper.HeaderFontStretch}"
-                                                       FontStyle="{TemplateBinding FontStyle}"
-                                                       FontWeight="{TemplateBinding Controls:ControlsHelper.HeaderFontWeight}"
+                                                       FontStyle="{TemplateBinding FontStyle}" 
                                                        Foreground="{TemplateBinding Foreground}"
                                                        RecognizesAccessKey="True"
                                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                                        UseLayoutRounding="False" />
+                            <!--FontStretch="{TemplateBinding Controls:ControlsHelper.HeaderFontStretch}"
+                            FontWeight="{TemplateBinding Controls:ControlsHelper.HeaderFontWeight}"-->
                             <Button x:Name="CloseButton"
                                     Grid.Row="0" Grid.Column="1" 
-                                    Style="{StaticResource ChromelessButtonStyle}" 
+                                    Style="{StaticResource MahApps.Styles.Button.Chromeless}" 
                                     Margin="4 2 6 0"
                                     VerticalAlignment="Center"
                                     ToolTip="Close"
@@ -300,7 +306,7 @@
                         <Trigger Property="IsSelected" Value="true">
                             <Setter TargetName="ContentSite" Property="Foreground" Value="White"/>
                             <Setter TargetName="CloseButton" Property="Visibility" Value="Visible"/>
-                            <Setter Property="Background" Value="{DynamicResource GrayBrush10}" />
+                            <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Gray10}" />
                         </Trigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
@@ -309,7 +315,7 @@
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="ContentSite" Property="Foreground" Value="White"/>
                             <Setter TargetName="CloseButton" Property="Visibility" Value="Visible"/>
-                            <Setter Property="Background" Value="{DynamicResource AccentBaseColorBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.AccentBase}" />
                         </MultiDataTrigger>
                         
                         <MultiTrigger>
@@ -318,7 +324,7 @@
                                 <Condition Property="IsSelected" Value="False" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="ContentSite" Property="Foreground" Value="White"/>
-                            <Setter Property="Background" Value="{DynamicResource HighlightBrush}"/>
+                            <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Highlight}"/>
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -326,7 +332,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="VSTabControlStyle" BasedOn="{StaticResource MetroTabControl}" TargetType="{x:Type Controls:MetroTabControl}">
+    <Style x:Key="VSTabControlStyle" BasedOn="{StaticResource MahApps.Styles.TabControl}" TargetType="{x:Type Controls:MetroTabControl}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Controls:MetroTabControl}">
@@ -422,7 +428,7 @@
     <Geometry x:Key="UpArrow">M 0,4 L 3.5,0 L 7,4 Z</Geometry>
 
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
-        <Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}" />
+        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Menu.Background}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Margin" Value="6 2 6 2" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -432,12 +438,12 @@
                     <Grid Margin="0 6 0 4" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                         <Rectangle Height="1"
                                    Margin="20 0 1 1"
-                                   Fill="{DynamicResource GrayBrush7}"
+                                   Fill="{DynamicResource MahApps.Brushes.Gray7}"
                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                    UseLayoutRounding="True" />
                         <Rectangle Height="1"
                                    Margin="20 1 1 0"
-                                   Fill="{DynamicResource WhiteBrush}"
+                                   Fill="{DynamicResource MahApps.Brushes.ThemeBackground}"
                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                    UseLayoutRounding="True" />
                     </Grid>
@@ -447,7 +453,7 @@
     </Style>
 
     <Style x:Key="VSMenu" TargetType="{x:Type Menu}">
-        <Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}" />
+        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Menu.Background}" />
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" />
         <Setter Property="FontSize" Value="{StaticResource DefaultFontSize}" />
         <Setter Property="FontStyle" Value="{DynamicResource {x:Static SystemFonts.MenuFontStyleKey}}" />
@@ -466,9 +472,9 @@
     </Style>
 
     <Style x:Key="VSContextMenu" TargetType="{x:Type ContextMenu}">
-        <Setter Property="Background" Value="{DynamicResource ContextMenuBackgroundBrush}" />
+        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.ContextMenu.Background}" />
         <Setter Property="Block.TextAlignment" Value="Left" />
-        <Setter Property="BorderBrush" Value="{DynamicResource ContextMenuBorderBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.ContextMenu.Border}"/>
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" />
         <Setter Property="FontSize" Value="{StaticResource DefaultFontSize}" />
@@ -513,7 +519,7 @@
                                                       Direction="315"
                                                       Opacity="0.3"
                                                       ShadowDepth="2"
-                                                      Color="{DynamicResource MenuShadowColor}" />
+                                                      Color="{DynamicResource MahApps.Colors.MenuShadow}" />
                                 </Setter.Value>
                             </Setter>
                             <Setter TargetName="LayoutRoot" Property="Margin" Value="0 0 6 6" />
@@ -527,7 +533,7 @@
     </Style>
 
     <Style x:Key="VSMenuItem" TargetType="{x:Type MenuItem}">
-        <Setter Property="Background" Value="{DynamicResource MenuItemBackgroundBrush}" />
+        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.MenuItem.Background}" />
         <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
         <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled" />
         <Setter Property="ScrollViewer.PanningMode" Value="Both" />
@@ -554,20 +560,20 @@
     </Style>
 
     <Style x:Key="{x:Static Controls:Spelling.SuggestionMenuItemStyleKey}"
-           BasedOn="{StaticResource MetroMenuItem}"
+           BasedOn="{StaticResource MahApps.Styles.MenuItem}"
            TargetType="{x:Type MenuItem}">
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Header" Value="{Binding RelativeSource={RelativeSource Self}, Path=CommandParameter}" />
     </Style>
 
     <Style x:Key="{x:Static Controls:Spelling.IgnoreAllMenuItemStyleKey}"
-           BasedOn="{StaticResource MetroMenuItem}"
+           BasedOn="{StaticResource MahApps.Styles.MenuItem}"
            TargetType="{x:Type MenuItem}">
         <Setter Property="Header" Value="Ignore All" />
     </Style>
 
     <Style x:Key="{x:Static Controls:Spelling.NoSuggestionsMenuItemStyleKey}"
-           BasedOn="{StaticResource MetroMenuItem}"
+           BasedOn="{StaticResource MahApps.Styles.MenuItem}"
            TargetType="{x:Type MenuItem}">
         <Setter Property="Header" Value="(no spelling suggestions)" />
         <Setter Property="IsEnabled" Value="False" />
@@ -577,7 +583,7 @@
            BasedOn="{StaticResource {x:Static MenuItem.SeparatorStyleKey}}"
            TargetType="{x:Type Separator}" />
 
-    <ContextMenu x:Key="TextBoxMetroContextMenu" Style="{StaticResource MetroContextMenu}">
+    <ContextMenu x:Key="TextBoxMetroContextMenu" Style="{StaticResource MahApps.Styles.ContextMenu}">
         <MenuItem Command="ApplicationCommands.Cut" Style="{DynamicResource MetroMenuItem}" />
         <MenuItem Command="ApplicationCommands.Copy" Style="{DynamicResource MetroMenuItem}" />
         <MenuItem Command="ApplicationCommands.Paste" Style="{DynamicResource MetroMenuItem}" />
@@ -691,7 +697,7 @@
 
     <ControlTemplate x:Key="{ComponentResourceKey ResourceId=SubmenuContent, TypeInTargetAssembly={x:Type FrameworkElement}}" TargetType="{x:Type ContentControl}">
         <Border Background="{DynamicResource EditorBackground}"
-                BorderBrush="{DynamicResource WhiteBrush}"
+                BorderBrush="{DynamicResource MahApps.Brushes.ThemeBackground}"
                 BorderThickness="1">
             <ContentPresenter />
         </Border>
@@ -731,7 +737,7 @@
                    VerticalOffset="-1">
                 <Grid>
                     <Rectangle x:Name="LayoutRoot" Fill="{DynamicResource EditorBackground}" 
-                               Stroke="{DynamicResource WhiteBrush}"
+                               Stroke="{DynamicResource MahApps.Brushes.ThemeBackground}"
                                StrokeThickness="1"/>
                     <ContentControl x:Name="SubMenuBorder"
                                     IsTabStop="False"
@@ -768,7 +774,7 @@
                                           Direction="315"
                                           Opacity="0.3"
                                           ShadowDepth="2"
-                                          Color="{DynamicResource MenuShadowColor}" />
+                                          Color="{DynamicResource MahApps.Colors.MenuShadow}" />
                     </Setter.Value>
                 </Setter>
                 <Setter TargetName="LayoutRoot" Property="Margin" Value="0 0 6 6" />
@@ -924,7 +930,7 @@
                                           Direction="315"
                                           Opacity="0.3"
                                           ShadowDepth="2"
-                                          Color="{DynamicResource MenuShadowColor}" />
+                                          Color="{DynamicResource MahApps.Colors.MenuShadow}" />
                     </Setter.Value>
                 </Setter>
                 <Setter TargetName="LayoutRoot" Property="Margin" Value="0 0 6 6" />
@@ -934,8 +940,8 @@
                 <Setter TargetName="Bg" Property="Fill" Value="{DynamicResource OverlayBrush}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Foreground" Value="{DynamicResource DisabledMenuItemForeground}" />
-                <Setter TargetName="GlyphPanel" Property="Fill" Value="{DynamicResource DisabledMenuItemGlyphPanel}" />
+                <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.MenuItem.Foreground.Disabled}" />
+                <Setter TargetName="GlyphPanel" Property="Fill" Value="{DynamicResource MahApps.Brushes.MenuItem.GlyphPanel.Disabled}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -989,8 +995,8 @@
                 <Setter TargetName="Bg" Property="Fill" Value="{DynamicResource OverlayBrush}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Foreground" Value="{DynamicResource DisabledMenuItemForeground}" />
-                <Setter TargetName="GlyphPanel" Property="Fill" Value="{DynamicResource DisabledMenuItemGlyphPanel}" />
+                <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.MenuItem.Foreground.Disabled}" />
+                <Setter TargetName="GlyphPanel" Property="Fill" Value="{DynamicResource MahApps.Brushes.MenuItem.GlyphPanel.Disabled}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -1003,7 +1009,7 @@
     </Style>
 
     <Style x:Key="{x:Type Docdown:TabView}" BasedOn="{StaticResource VSTabControlStyle}" TargetType="Docdown:TabView">
-        <Setter Property="BorderBrush" Value="{DynamicResource GrayBrush9}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Gray9}"/>
         <Setter Property="BorderThickness" Value="1 0 1 1"/>
         <Setter Property="ItemContainerStyle">
             <Setter.Value>

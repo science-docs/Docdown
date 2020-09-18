@@ -10,21 +10,18 @@
         mc:Ignorable="d"
         TitleCharacterCasing="Normal"
         Title="Docdown - Document Converter" Height="450" Width="800"
-        WindowTitleBrush="{DynamicResource WhiteBrush}"
-        Background="{DynamicResource WhiteBrush}"
+        WindowTitleBrush="{DynamicResource MahApps.Brushes.ThemeBackground}"
+        Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
         Dialog:DialogParticipation.Register="{Binding}"
-        NonActiveWindowTitleBrush="{DynamicResource WhiteBrush}"
+        NonActiveWindowTitleBrush="{DynamicResource MahApps.Brushes.ThemeBackground}"
         UseLayoutRounding="True"
         x:Name="DocdownWindow"
-        WindowMinButtonStyle="{StaticResource DocWindowButtonStyle}"
-        WindowMaxButtonStyle="{StaticResource DocWindowButtonStyle}"
-        WindowCloseButtonStyle="{StaticResource DocWindowButtonStyle}"
         TitleTemplate="{StaticResource DefaultTitleTemplate}"
         IconTemplate="{StaticResource DefaultIconTemplate}">
     <FrameworkElement.Resources>
         <ResourceDictionary>
-            <Style BasedOn="{StaticResource MetroFlatButton}" TargetType="{x:Type Button}">
-                <Setter Property="Background" Value="{DynamicResource WhiteBrush}"/>
+            <Style BasedOn="{StaticResource MahApps.Styles.Button.Flat}" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.ThemeBackground}"/>
                 <Setter Property="Margin" Value="1 0"/>
                 <Setter Property="Padding" Value="0"/>
                 <Setter Property="Height" Value="20"/>
@@ -34,7 +31,7 @@
                         <Setter Property="Background" Value="{DynamicResource OverlayBrush}"/>
                     </Trigger>
                     <Trigger Property="IsPressed" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource HighlightBrush}"/>
+                        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Highlight}"/>
                     </Trigger>
                     <Trigger Property="IsEnabled" Value="False">
                         <Setter Property="Opacity" Value="0.5"/>
@@ -216,7 +213,7 @@
             </Button>
             <Rectangle Width="1" 
                        Margin="0 2" 
-                       Fill="{DynamicResource GrayBrush9}"/>
+                       Fill="{DynamicResource MahApps.Brushes.Gray9}"/>
             <Button IsEnabled="{Binding Workspace.CanConvert, FallbackValue=False}" 
                     Command="{Binding Workspace.ConvertCommand, FallbackValue={x:Null}}" 
                     Height="20" 
@@ -231,7 +228,7 @@
                                Width="16"/>
                     <TextBlock Text="{DynamicResource Main_Menu_Start}" 
                                FontSize="{StaticResource DefaultFontSize}" 
-                               Foreground="{DynamicResource BlackBrush}" 
+                               Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" 
                                Margin="4 0 6 0"/>
                 </StackPanel>
             </Button>
@@ -251,7 +248,7 @@
             </Button>
             <Rectangle Width="1" 
                        Margin="0 2" 
-                       Fill="{DynamicResource GrayBrush9}"/>
+                       Fill="{DynamicResource MahApps.Brushes.Gray9}"/>
             <Button Command="{Binding Workspace.OpenWizardCommand, FallbackValue={x:Null}}" 
                     CommandParameter="{StaticResource True}"
                     ToolTip="Open Markdown Wizard" 
@@ -262,7 +259,7 @@
             </Button>
             <Rectangle Width="1" 
                        Margin="0 2" 
-                       Fill="{DynamicResource GrayBrush9}"/>
+                       Fill="{DynamicResource MahApps.Brushes.Gray9}"/>
             <Button Command="{Binding BoldCommand}"
                     ToolTip="Bold" 
                     IsEnabled="{Binding Workspace.SelectedItem.IsConvertable, FallbackValue=False}">
@@ -361,13 +358,13 @@
               Height="23">
             <Grid.Style>
                 <Style TargetType="Grid">
-                    <Setter Property="Background" Value="{DynamicResource AccentBaseColorBrush}"/>
+                    <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.AccentBase}"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding NewestMessage.Type}">
                             <DataTrigger.Value>
                                 <ViewModel:MessageType>Success</ViewModel:MessageType>
                             </DataTrigger.Value>
-                            <Setter Property="Background" Value="{DynamicResource AccentBaseColorBrush}"/>
+                            <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.AccentBase}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding NewestMessage.Type}">
                             <DataTrigger.Value>

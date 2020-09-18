@@ -20,9 +20,9 @@
             ShowLineNumbers="True"
             WordWrap="True" 
             ContextMenuOpening="EditBox_ContextMenuOpening"
-            Foreground="{DynamicResource BlackBrush}" 
+            Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" 
             Background="{DynamicResource EditorBackground}" 
-            LineNumbersForeground="{StaticResource AccentBaseColorBrush}"
+            LineNumbersForeground="{StaticResource MahApps.Brushes.AccentBase}"
             FontFamily="Consolas" 
             FontSize="10pt">
             <AvalonEdit:TextEditor.Resources>
@@ -30,7 +30,7 @@
                     <Setter Property="FocusVisualStyle"      Value="{x:Null}"/>
                     <Setter Property="SelectionForeground"   Value="{x:Null}"/>
                     <Setter Property="SelectionCornerRadius" Value="0.0"/>
-                    <Setter Property="SelectionBrush"        Value="{StaticResource AccentColorBrush}"/>
+                    <Setter Property="SelectionBrush"        Value="{StaticResource MahApps.Brushes.AccentBase}"/>
                     <Setter Property="SelectionBorder"       Value="{x:Null}"/>
                 </Style>
                 <Style TargetType="{x:Type AvalonEdit:TextView}">
@@ -43,10 +43,10 @@
                 </Style>
                 <Style TargetType="{x:Type AvalonFolding:FoldingMargin}">
                     <Setter Property="Cursor"                               Value="Hand"/>
-                    <Setter Property="FoldingMarkerBrush"                   Value="{DynamicResource BlackBrush}"/>
-                    <Setter Property="FoldingMarkerBackgroundBrush"         Value="{DynamicResource WhiteBrush}"/>
-                    <Setter Property="SelectedFoldingMarkerBrush"           Value="{DynamicResource BlackBrush}"/>
-                    <Setter Property="SelectedFoldingMarkerBackgroundBrush" Value="{DynamicResource GrayBrush2}"/>
+                    <Setter Property="FoldingMarkerBrush"                   Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                    <Setter Property="FoldingMarkerBackgroundBrush"         Value="{DynamicResource MahApps.Brushes.ThemeBackground}"/>
+                    <Setter Property="SelectedFoldingMarkerBrush"           Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                    <Setter Property="SelectedFoldingMarkerBackgroundBrush" Value="{DynamicResource MahApps.Brushes.Gray2}"/>
                 </Style>
             </AvalonEdit:TextEditor.Resources>
             <AvalonEdit:TextEditor.ContextMenu>
