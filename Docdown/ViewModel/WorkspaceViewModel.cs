@@ -192,7 +192,8 @@ namespace Docdown.ViewModel
                 PdfPath = await Data.Convert(converterToken);
                 IsCompiled = true;
                 watch.Stop();
-                Messages.Success(Language.Current.Get("Workspace.Compilation.Success", watch.Elapsed.Seconds, watch.Elapsed.Milliseconds));
+                var mil = watch.ElapsedMilliseconds.ToString("000");
+                Messages.Success(Language.Current.Get("Workspace.Compilation.Success", watch.Elapsed.Seconds, mil));
             }
             catch (Exception e)
             {

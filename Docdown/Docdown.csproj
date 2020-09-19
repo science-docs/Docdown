@@ -21,10 +21,19 @@
     <PackageReference Include="PdfiumViewer.Native.x86_64.no_v8-no_xfa" Version="2018.4.8.256" />
     <PackageReference Include="System.IO.Abstractions" Version="12.1.9" />
     <PackageReference Include="System.Net.Http.WinHttpHandler" Version="4.7.2" />
+    <PackageReference Include="NHyphenator" Version="1.2.1" />
+    <PackageReference Include="PdfSharpCore" Version="1.1.24" />
+    <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PandocMark\PandocMark.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Scriber">
+      <HintPath>..\..\Tex.Net\Scriber\bin\Debug\netcoreapp3.1\Scriber.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

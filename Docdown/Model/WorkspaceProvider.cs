@@ -20,7 +20,8 @@ namespace Docdown.Model
 
             var settings = WorkspaceSettings.Create(fileSystem, path);
             var workspace = new Workspace(settings, fileSystem, converterService);
-            workspace.Handlers.Add(new FileWorkspaceItemHandler());
+            workspace.Handlers.Add(new ScriberWorkspaceItemHandler());
+            //workspace.Handlers.Add(new FileWorkspaceItemHandler());
             //if (!string.IsNullOrEmpty(settings.Sync))
             //{
             //    var user = AppViewModel.Instance.User;
